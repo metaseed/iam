@@ -104,6 +104,9 @@ export class Repository {
      */
     private getSha(path: string, branch: string = '') {
         branch = branch ? `?ref=${branch}` : '';
-        return this._http.get(`${Const.baseUrl}/repos/${this.fullName}/contents/${path}${branch}`);
+        let headers = new Headers();
+        headers.append("Authorization", "Basic " + btoa(this._userInfo.name + ":" + this._userInfo.password));
+        headers.append("Content-Type", "application/x-www-form-urlencoded");
+        return this._http.get(`${Const.baseUrl}/repos/${this.fullName}/contents/${path}${branch}`, new RequestOptions({ headers: headers }));
     }
 }

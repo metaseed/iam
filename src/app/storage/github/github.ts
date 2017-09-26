@@ -19,7 +19,10 @@ export class GithubStorage {
     }
 
     getRepos(name: string) {
-        return this._http.get(`${Const.baseUrl}/repos/${this._userInfo.name}/${name}`)
+        let headers: Headers = new Headers();
+        headers.append("Authorization", "Basic " + btoa(this._userInfo.name + ":" + this._userInfo.password));
+        headers.append("Content-Type", "application/x-www-form-urlencoded");
+        return this._http.get(`${Const.baseUrl}/repos/${this._userInfo.name}/${name}`, { headers: headers })
             .map(resp => {
                 return new Repository(this._http, name, this._userInfo);
             })
