@@ -1,6 +1,6 @@
 
 export class Const {
-    public static baseUrl = 'https://api.github.com';
+    public static apiBase = 'https://api.github.com';
     constructor() {
 
     }

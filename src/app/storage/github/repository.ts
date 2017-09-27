@@ -9,20 +9,20 @@ export class Repository {
         this.fullName = `${this._userInfo.name}/${this._name}`;
     }
 
-    newPost(path: string) {
-        let headers: Headers = new Headers();
-        headers.append("Authorization", "Basic " + btoa(this._userInfo.name + ":" + this._userInfo.password));
-        headers.append("Content-Type", "application/x-www-form-urlencoded");
+    newFile(path: string) {
+        const headers: Headers = new Headers();
+        headers.append('Authorization', 'Basic ' + btoa(this._userInfo.name + ':' + this._userInfo.password));
+        headers.append('Content-Type', 'application/x-www-form-urlencoded');
 
         return this._http.put(
-            `${Const.baseUrl}/repos/${this.fullName}/contents/${path}`,
+            `${Const.apiBase}/repos/${this.fullName}/contents/${path}`,
             {
-                "message": "create post",
-                "committer": {
-                    "name": this._userInfo.name,
-                    "email": this._userInfo.email
+                'message': 'create file',
+                'committer': {
+                    'name': this._userInfo.name,
+                    'email': this._userInfo.email
                 },
-                "content": btoa('')
+                'content': btoa('')
             },
             new RequestOptions({
                 headers: headers
@@ -31,25 +31,25 @@ export class Repository {
             .do(x => console.log(x), e => console.log(e));
     }
 
-    //https://developer.github.com/v3/repos/contents/
-    post(path: string, contents: string, branch: string = 'master') {
+    // https://developer.github.com/v3/repos/contents/
+    file(path: string, contents: string, branch: string = 'master') {
         return this.getSha(path, branch)
             .do(x => console.log(x), e => console.log(e))
             .flatMap(resp => {
-                let headers: Headers = new Headers();
-                headers.append("Authorization", "Basic " + btoa(this._userInfo.name + ":" + this._userInfo.password));
-                headers.append("Content-Type", "application/x-www-form-urlencoded");
+                const headers: Headers = new Headers();
+                headers.append('Authorization', 'Basic ' + btoa(this._userInfo.name + ':' + this._userInfo.password));
+                headers.append('Content-Type', 'application/x-www-form-urlencoded');
 
                 return this._http.put(
-                    `${Const.baseUrl}/repos/${this.fullName}/contents/${path}`,
+                    `${Const.apiBase}/repos/${this.fullName}/contents/${path}`,
                     {
-                        "message": "update post",
-                        "committer": {
-                            "name": this._userInfo.name,
-                            "email": this._userInfo.email
+                        'message': 'update file',
+                        'committer': {
+                            'name': this._userInfo.name,
+                            'email': this._userInfo.email
                         },
-                        "content": btoa(contents),
-                        "sha": resp.json().sha,
+                        'content': btoa(contents),
+                        'sha': resp.json().sha,
                         branch
                     },
                     new RequestOptions({
@@ -60,36 +60,36 @@ export class Repository {
 
             })
             .catch(error => {
-                let err = error.json();
-                return this.newPost(path);
+                const err = error.json();
+                return this.newFile(path);
             });
     }
 
     /**
      * https://developer.github.com/v3/repos/contents/#delete-a-file
-     * @param path 
-     * @param branch 
+     * @param path
+     * @param branch
      */
-    delPost(path: string, branch: string = 'master') {
+    delFile(path: string, branch: string = 'master') {
         return this.getSha(path, branch)
             .do(x => console.log(x), e => console.log(e))
             .flatMap(response => {
-                let headers: Headers = new Headers();
-                headers.append("Authorization", "Basic " + btoa(this._userInfo.name + ":" + this._userInfo.password));
-                headers.append("Content-Type", "application/x-www-form-urlencoded");
+                const headers: Headers = new Headers();
+                headers.append('Authorization', 'Basic ' + btoa(this._userInfo.name + ':' + this._userInfo.password));
+                headers.append('Content-Type', 'application/x-www-form-urlencoded');
 
                 return this._http.delete(
-                    `${Const.baseUrl}/repos/${this.fullName}/contents/${path}`,
+                    `${Const.apiBase}/repos/${this.fullName}/contents/${path}`,
                     new RequestOptions({
                         headers: headers,
                         body: {
-                            "message": "delete post",
-                            "committer": {
-                                "name": this._userInfo.name,
-                                "email": this._userInfo.email
+                            'message': 'delete file',
+                            'committer': {
+                                'name': this._userInfo.name,
+                                'email': this._userInfo.email
                             },
-                            "content": btoa('delete post'),
-                            "sha": response.json().sha,
+                            'content': btoa('delete file'),
+                            'sha': response.json().sha,
                             branch
                         }
                     })
@@ -99,14 +99,15 @@ export class Repository {
     }
     /**
      * https://developer.github.com/v3/repos/contents/#get-contentdm
-     * @param path 
-     * @param branch 
+     * @param path
+     * @param branch
      */
     private getSha(path: string, branch: string = '') {
         branch = branch ? `?ref=${branch}` : '';
-        let headers = new Headers();
-        headers.append("Authorization", "Basic " + btoa(this._userInfo.name + ":" + this._userInfo.password));
-        headers.append("Content-Type", "application/x-www-form-urlencoded");
-        return this._http.get(`${Const.baseUrl}/repos/${this.fullName}/contents/${path}${branch}`, new RequestOptions({ headers: headers }));
+        const headers = new Headers();
+        headers.append('Authorization', 'Basic ' + btoa(this._userInfo.name + ':' + this._userInfo.password));
+        headers.append('Content-Type', 'application/x-www-form-urlencoded');
+        return this._http.get(`${Const.apiBase}/repos/${this.fullName}/contents/${path}${branch}`,
+            new RequestOptions({ headers: headers }));
     }
 }

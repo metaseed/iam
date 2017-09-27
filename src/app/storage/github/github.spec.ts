@@ -7,7 +7,7 @@ describe('create repo', () => {
     let storage: GithubStorage;
 
     beforeAll(() => {
-    })
+    });
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -16,23 +16,23 @@ describe('create repo', () => {
                 HttpClientTestingModule
             ],
             providers: [
-                { provide: UserInfo, useValue: new UserInfo('metasong', 'mssong179', 'smetaseed@gmail.com') },
+                { provide: UserInfo, useValue: new UserInfo('metasong', 'mssong179', 'metaseed@gmail.com') },
                 GithubStorage,
             ]
-        })
-    })
+        });
+    });
 
     it('should create repository create and delete file', () => {
         storage = TestBed.get(GithubStorage);
         storage.repos('test2').subscribe(
             (repo: Repository) => {
                 console.log(repo);
-                repo.post('test0103', 'fabaa7777777447ac' + Date.now()).subscribe(() => {
-                    //repo.delPost('test00').subscribe();
+                repo.file('test0103', 'aafabaa777777744o7acaaa' + Date.now()).subscribe(() => {
+                    // repo.delPost('test00').subscribe();
                     expect(true === true);
                 });
             },
             (error) => console.log(error)
         );
-    })
-})
+    });
+});

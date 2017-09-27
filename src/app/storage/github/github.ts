@@ -19,10 +19,10 @@ export class GithubStorage {
     }
 
     getRepos(name: string) {
-        let headers: Headers = new Headers();
-        headers.append("Authorization", "Basic " + btoa(this._userInfo.name + ":" + this._userInfo.password));
-        headers.append("Content-Type", "application/x-www-form-urlencoded");
-        return this._http.get(`${Const.baseUrl}/repos/${this._userInfo.name}/${name}`, { headers: headers })
+        const headers: Headers = new Headers();
+        headers.append('Authorization', 'Basic ' + btoa(this._userInfo.name + ':' + this._userInfo.password));
+        headers.append('Content-Type', 'application/x-www-form-urlencoded');
+        return this._http.get(`${Const.apiBase}/repos/${this._userInfo.name}/${name}`, { headers: headers })
             .map(resp => {
                 return new Repository(this._http, name, this._userInfo);
             })
@@ -37,20 +37,20 @@ export class GithubStorage {
     }
 
     newRepos(name: string) {
-        let headers: Headers = new Headers();
-        headers.append("Authorization", "Basic " + btoa(this._userInfo.name + ":" + this._userInfo.password));
-        headers.append("Content-Type", "application/x-www-form-urlencoded");
+        const headers: Headers = new Headers();
+        headers.append('Authorization', 'Basic ' + btoa(this._userInfo.name + ':' + this._userInfo.password));
+        headers.append('Content-Type', 'application/x-www-form-urlencoded');
         return this._http.post(
-            Const.baseUrl + '/user/repos',
+            Const.apiBase + '/user/repos',
             {
-                "name": name,
-                "description": "This is your first repository",
-                "homepage": "https://github.com",
-                "private": false,
-                "auto_init": true,
-                "has_issues": true,
-                "has_projects": true,
-                "has_wiki": true
+                'name': name,
+                'description': 'This is your first repository',
+                'homepage': 'https://github.com',
+                'private': false,
+                'auto_init': true,
+                'has_issues': true,
+                'has_projects': true,
+                'has_wiki': true
             },
             {
                 headers: headers
@@ -64,11 +64,10 @@ export class GithubStorage {
         return this.getRepos(name).catch((err) => {
             if (err.id === 404) {
                 return this.newRepos(name);
-            }
-            else {
+            } else {
                 return Observable.throw(err);
             }
-        })
+        });
     }
 
 }
