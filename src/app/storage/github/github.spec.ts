@@ -27,7 +27,7 @@ describe('create repo', () => {
         storage.repos('test2').subscribe(
             (repo: Repository) => {
                 console.log(repo);
-                repo.file('test0103', 'aafabaa777777744o7acaaa' + Date.now()).subscribe(() => {
+                repo.file('test010a3', 'aafabaa777777744o7acaaaaaa' + Date.now()).subscribe(() => {
                     // repo.delPost('test00').subscribe();
                     expect(true === true);
                 });

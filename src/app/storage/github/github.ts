@@ -19,6 +19,17 @@ export class GithubStorage extends Requestable {
         super(http, userInfo);
     }
 
+    repos(name: string) {
+        return this.getRepos(name)
+            .catch((err) => {
+                if (err.id === 404) {
+                    return this.newRepos(name);
+                } else {
+                    return Observable.throw(err);
+                }
+            });
+    }
+
     getRepos(name: string) {
         return this.request(RequestMethod.Get, `/repos/${this._userInfo.name}/${name}`, null)
             .map(resp => {
@@ -49,16 +60,6 @@ export class GithubStorage extends Requestable {
             }
         ).map(value => {
             return new Repository(this._http, this._userInfo, name);
-        });
-    }
-
-    repos(name: string) {
-        return this.getRepos(name).catch((err) => {
-            if (err.id === 404) {
-                return this.newRepos(name);
-            } else {
-                return Observable.throw(err);
-            }
         });
     }
 
