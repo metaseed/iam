@@ -1,8 +1,8 @@
 
 export class UserInfo {
     constructor(public name: string,
-        public password: string,
         public email: string,
-        public token: string
+        public password?: string,
+        public token?: string
     ) { }
 }

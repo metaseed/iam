@@ -1,34 +1,14 @@
-import { Http, RequestOptions, Headers } from '@angular/http';
+import { Http, RequestOptions, Headers, RequestMethod } from '@angular/http';
 import { Const } from './const';
 import { UserInfo } from './user-info';
+import { Requestable } from './requestable';
 
-export class Repository {
-
+export class Repository extends Requestable {
     public fullName: string;
-    constructor(private _http: Http, private _name: string, private _userInfo: UserInfo) {
+
+    constructor(http: Http, userInfo: UserInfo, private _name: string) {
+        super(http, userInfo);
         this.fullName = `${this._userInfo.name}/${this._name}`;
-    }
-
-    newFile(path: string) {
-        const headers: Headers = new Headers();
-        headers.append('Authorization', 'Basic ' + btoa(this._userInfo.name + ':' + this._userInfo.password));
-        headers.append('Content-Type', 'application/x-www-form-urlencoded');
-
-        return this._http.put(
-            `${Const.apiBase}/repos/${this.fullName}/contents/${path}`,
-            {
-                'message': 'create file',
-                'committer': {
-                    'name': this._userInfo.name,
-                    'email': this._userInfo.email
-                },
-                'content': btoa('')
-            },
-            new RequestOptions({
-                headers: headers
-            })
-        )
-            .do(x => console.log(x), e => console.log(e));
     }
 
     // https://developer.github.com/v3/repos/contents/
@@ -36,12 +16,8 @@ export class Repository {
         return this.getSha(path, branch)
             .do(x => console.log(x), e => console.log(e))
             .flatMap(resp => {
-                const headers: Headers = new Headers();
-                headers.append('Authorization', 'Basic ' + btoa(this._userInfo.name + ':' + this._userInfo.password));
-                headers.append('Content-Type', 'application/x-www-form-urlencoded');
-
-                return this._http.put(
-                    `${Const.apiBase}/repos/${this.fullName}/contents/${path}`,
+                return this.request(RequestMethod.Put,
+                    `/repos/${this.fullName}/contents/${path}`,
                     {
                         'message': 'update file',
                         'committer': {
@@ -51,18 +27,26 @@ export class Repository {
                         'content': btoa(contents),
                         'sha': resp.json().sha,
                         branch
-                    },
-                    new RequestOptions({
-                        headers: headers
                     })
-                )
                     .do(x => console.log(x), e => console.log(e));
-
             })
             .catch(error => {
                 const err = error.json();
-                return this.newFile(path);
+                return this.newFile(path, contents);
             });
+    }
+
+    newFile(path: string, content: string) {
+        return this.request(RequestMethod.Put, `/repos/${this.fullName}/contents/${path}`,
+            {
+                'message': 'create file',
+                'committer': {
+                    'name': this._userInfo.name,
+                    'email': this._userInfo.email
+                },
+                'content': btoa(content)
+            })
+            .do(x => console.log(x), e => console.log(e));
     }
 
     /**
@@ -74,28 +58,20 @@ export class Repository {
         return this.getSha(path, branch)
             .do(x => console.log(x), e => console.log(e))
             .flatMap(response => {
-                const headers: Headers = new Headers();
-                headers.append('Authorization', 'Basic ' + btoa(this._userInfo.name + ':' + this._userInfo.password));
-                headers.append('Content-Type', 'application/x-www-form-urlencoded');
-
-                return this._http.delete(
-                    `${Const.apiBase}/repos/${this.fullName}/contents/${path}`,
-                    new RequestOptions({
-                        headers: headers,
-                        body: {
-                            'message': 'delete file',
-                            'committer': {
-                                'name': this._userInfo.name,
-                                'email': this._userInfo.email
-                            },
-                            'content': btoa('delete file'),
-                            'sha': response.json().sha,
-                            branch
-                        }
-                    })
-                )
-                    .do(x => console.log(x), e => console.log(e));
-            });
+                return this.request(RequestMethod.Delete,
+                    `/repos/${this.fullName}/contents/${path}`,
+                    {
+                        'message': 'delete file',
+                        'committer': {
+                            'name': this._userInfo.name,
+                            'email': this._userInfo.email
+                        },
+                        'content': btoa('delete file'),
+                        'sha': response.json().sha,
+                        branch
+                    });
+            })
+            .do(x => console.log(x), e => console.log(e));
     }
     /**
      * https://developer.github.com/v3/repos/contents/#get-contentdm
@@ -104,10 +80,6 @@ export class Repository {
      */
     private getSha(path: string, branch: string = '') {
         branch = branch ? `?ref=${branch}` : '';
-        const headers = new Headers();
-        headers.append('Authorization', 'Basic ' + btoa(this._userInfo.name + ':' + this._userInfo.password));
-        headers.append('Content-Type', 'application/x-www-form-urlencoded');
-        return this._http.get(`${Const.apiBase}/repos/${this.fullName}/contents/${path}${branch}`,
-            new RequestOptions({ headers: headers }));
+        return this.request(RequestMethod.Get, `/repos/${this.fullName}/contents/${path}${branch}`);
     }
 }

@@ -7,24 +7,22 @@ import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/observable/throw';
 import { Injectable } from '@angular/core';
-import { Http, RequestOptions, Headers } from '@angular/http';
+import { Http, RequestOptions, Headers, RequestMethod } from '@angular/http';
 import { Const } from './const';
 import { UserInfo } from './user-info';
 import { Repository } from './repository';
-
+import { Requestable } from './requestable';
 @Injectable()
-export class GithubStorage {
+export class GithubStorage extends Requestable {
 
-    constructor(private _http: Http, private _userInfo: UserInfo) {
+    constructor(http: Http, userInfo: UserInfo) {
+        super(http, userInfo);
     }
 
     getRepos(name: string) {
-        const headers: Headers = new Headers();
-        headers.append('Authorization', 'Basic ' + btoa(this._userInfo.name + ':' + this._userInfo.password));
-        headers.append('Content-Type', 'application/x-www-form-urlencoded');
-        return this._http.get(`${Const.apiBase}/repos/${this._userInfo.name}/${name}`, { headers: headers })
+        return this.request(RequestMethod.Get, `/repos/${this._userInfo.name}/${name}`, null)
             .map(resp => {
-                return new Repository(this._http, name, this._userInfo);
+                return new Repository(this._http, this._userInfo, name);
             })
             .catch(error => {
                 return Observable.throw(
@@ -37,11 +35,8 @@ export class GithubStorage {
     }
 
     newRepos(name: string) {
-        const headers: Headers = new Headers();
-        headers.append('Authorization', 'Basic ' + btoa(this._userInfo.name + ':' + this._userInfo.password));
-        headers.append('Content-Type', 'application/x-www-form-urlencoded');
-        return this._http.post(
-            Const.apiBase + '/user/repos',
+        return this.request(RequestMethod.Post,
+            '/user/repos',
             {
                 'name': name,
                 'description': 'This is your first repository',
@@ -51,12 +46,9 @@ export class GithubStorage {
                 'has_issues': true,
                 'has_projects': true,
                 'has_wiki': true
-            },
-            {
-                headers: headers
             }
         ).map(value => {
-            return new Repository(this._http, name, this._userInfo);
+            return new Repository(this._http, this._userInfo, name);
         });
     }
 

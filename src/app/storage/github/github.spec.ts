@@ -16,7 +16,7 @@ describe('create repo', () => {
                 HttpClientTestingModule
             ],
             providers: [
-                { provide: UserInfo, useValue: new UserInfo('metasong', 'mssong179', 'metaseed@gmail.com') },
+                { provide: UserInfo, useValue: new UserInfo('metasong', 'metaseed@gmail.com', 'mssong179') },
                 GithubStorage,
             ]
         });
