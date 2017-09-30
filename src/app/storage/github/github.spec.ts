@@ -2,6 +2,7 @@ import { UserInfo, GithubStorage, Repository } from './index';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Http, HttpModule } from '@angular/http';
+import { File } from './model/file';
 
 describe('create repo', () => {
     let storage: GithubStorage;
@@ -27,12 +28,14 @@ describe('create repo', () => {
         storage.repos('test2').subscribe(
             (repo: Repository) => {
                 console.log(repo);
-                repo.file('test010a3', 'aafabaa777777744o7acaaaaaa' + Date.now()).subscribe(() => {
+                repo.file('test010a83', 'aafabaa7777778744o7acaaaaaa' + Date.now()).subscribe((file) => {
                     // repo.delPost('test00').subscribe();
-                    expect(true === true);
+                    const f = <File>file;
+                    console.log(f);
                 });
             },
             (error) => console.log(error)
         );
+        expect(true === true);
     });
 });

@@ -1,8 +1,12 @@
 import { Http, RequestOptions, Headers, RequestMethod } from '@angular/http';
-import { Const } from './const';
+import { Const } from './model/const';
 import { UserInfo } from './user-info';
 import { Requestable } from './requestable';
+import { Injectable } from '@angular/core';
+import { Content } from './model/content';
+import { File } from './model/file';
 
+@Injectable()
 export class Repository extends Requestable {
     public fullName: string;
 
@@ -13,9 +17,11 @@ export class Repository extends Requestable {
 
     // https://developer.github.com/v3/repos/contents/
     file(path: string, contents: string, branch: string = 'master') {
+        let getShaSuccess = false;
         return this.getSha(path, branch)
-            .do(x => console.log(x), e => console.log(e))
+            .do(x => console.log('getSha' + x), e => console.log('getSha' + e))
             .flatMap(resp => {
+                getShaSuccess = true;
                 return this.request(RequestMethod.Put,
                     `/repos/${this.fullName}/contents/${path}`,
                     {
@@ -28,9 +34,15 @@ export class Repository extends Requestable {
                         'sha': resp.json().sha,
                         branch
                     })
-                    .do(x => console.log(x), e => console.log(e));
+                    .do(x => console.log(x), e => console.log(e))
+                    .map(x => {
+                        return <File>x.json();
+                    });
             })
-            .catch(error => {
+            .catch((error, ca) => {
+                if (getShaSuccess) {
+                    throw error;
+                }
                 const err = error.json();
                 return this.newFile(path, contents);
             });
@@ -46,7 +58,11 @@ export class Repository extends Requestable {
                 },
                 'content': btoa(content)
             })
-            .do(x => console.log(x), e => console.log(e));
+            .do(x => console.log('newFile' + x), e => console.log('newFile' + e))
+            .map(x => {
+                console.log(x);
+                return <File>x.json();
+            });
     }
 
     /**
@@ -55,11 +71,12 @@ export class Repository extends Requestable {
      * @param branch
      */
     delFile(path: string, branch: string = 'master') {
+        const filePath = path ? encodeURI(path) : '';
         return this.getSha(path, branch)
             .do(x => console.log(x), e => console.log(e))
             .flatMap(response => {
                 return this.request(RequestMethod.Delete,
-                    `/repos/${this.fullName}/contents/${path}`,
+                    `/repos/${this.fullName}/contents/${filePath}`,
                     {
                         'message': 'delete file',
                         'committer': {
@@ -71,15 +88,30 @@ export class Repository extends Requestable {
                         branch
                     });
             })
-            .do(x => console.log(x), e => console.log(e));
+            .do(x => console.log(x), e => console.log(e))
+            .map(x => <File>x.json());
     }
+
+    // https://developer.github.com/v3/repos/contents/#get-contents
+    getContents(path: string, branch: string = 'master') {
+        path = path ? encodeURI(path) : '';
+        return this.request(RequestMethod.Get, `/repos/${this.fullName}/contents/${path}`)
+            .map(x => <Content | Array<Content>>x.json());
+    }
+
+    getReadme(branch: string = 'master') {
+        return this.request(RequestMethod.Get, `/repos/${this.fullName}/readme`)
+            .map(x => <Content | Array<Content>>x.json());
+    }
+
     /**
      * https://developer.github.com/v3/repos/contents/#get-contentdm
-     * @param path
-     * @param branch
      */
     private getSha(path: string, branch: string = '') {
         branch = branch ? `?ref=${branch}` : '';
-        return this.request(RequestMethod.Get, `/repos/${this.fullName}/contents/${path}${branch}`);
+        return this.request(RequestMethod.Get, `/repos/${this.fullName}/contents/${path}${branch}`, {
+            ref: branch
+        });
     }
+
 }

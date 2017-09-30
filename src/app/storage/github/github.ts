@@ -8,7 +8,7 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/observable/throw';
 import { Injectable } from '@angular/core';
 import { Http, RequestOptions, Headers, RequestMethod } from '@angular/http';
-import { Const } from './const';
+import { Const } from './model/const';
 import { UserInfo } from './user-info';
 import { Repository } from './repository';
 import { Requestable } from './requestable';
