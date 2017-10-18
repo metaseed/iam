@@ -22,7 +22,7 @@ export const DEFAULT_HIGHLIGHT_FUNCTION = function (str, lang) {
 
 /**
 * This is the default function for rendering the markdown container.
-*  @param name
+* @param name
 * @param cssClass
 * @param showHeading
 */
