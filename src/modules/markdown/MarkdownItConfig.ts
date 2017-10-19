@@ -11,7 +11,7 @@ export interface MarkdownItConfig {
      */
     xhtmlOut?: boolean;
     /**
-     * Convert '\n' in paragraphs into
+     * Convert '\n' in paragraphs into <br>
      */
     breaks?: boolean;
     /**
@@ -21,7 +21,7 @@ export interface MarkdownItConfig {
     /**
      * CSS language prefix for fenced blocks. Can be useful for external highlighters
      */
-    langPrefix?: string;//'language-';
+    langPrefix?: string; // 'language-';
     /**
      * Autoconvert URL-like text to links
      */
@@ -35,7 +35,13 @@ export interface MarkdownItConfig {
      * Markdown containers plugins.
      */
     containers?: MarkdownItContainerConfig[];
-};
+    // Double + single quotes replacement pairs, when typographer enabled,
+    // and smartquotes on. Could be either a String or an Array.
+    //
+    // For example, you can use '«»„“' for Russian, '„“‚‘' for German,
+    // and ['«\xA0', '\xA0»', '‹\xA0', '\xA0›'] for French (including nbsp).
+    quotes: string | string[]; // '“”‘’';
+}
 
 /**
  * This interface will determine how to highlight a given code.
@@ -63,7 +69,7 @@ export interface MarkdownItHighlightConfig {
      * Default value is true
      */
     includeDefaultClass?: boolean;
-};
+}
 
 /**
  * Configure a Markdown container.

@@ -1,6 +1,5 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { MarkdownItConfig } from './config/MarkdownItConfig';
-import { MarkdownItComponent } from './components/MarkdownItComponent';
 import { MarkdownItService } from './services/MarkDownItService';
 // import md from 'markdown-it';
 // import mdContainer from 'markdown-it-container';
@@ -23,7 +22,7 @@ export function configureMarkdownService(config: MarkdownItConfig) {
 @NgModule({
   imports: [],
   exports: [],
-  declarations: [MarkdownItComponent],
+  declarations: [],
   providers: []
 })
 export class MarkdownItModule {

@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { MarkdownItConfig } from '../config/MarkdownItConfig';
 
+import { MarkdownItConfig } from '../MarkdownItConfig';
 import * as  MarkdownIt from 'markdown-it';
 import mdContainer from 'markdown-it-container';
 import highlightjs from 'markdown-it-highlightjs';
 import hljs from 'highlight.js';
 
 /**
-* This is the defaulr function for highlighting the markdown
+* This is the default function for highlighting the markdown
 * @param str
 * @param lang
 */
@@ -41,8 +41,8 @@ export const DEFAULT_CONTAINER_FUNCTION = function (name: string, cssClass: stri
         return '</div>';
       }
     }
-  }
-}
+  };
+};
 
 
 @Injectable()
