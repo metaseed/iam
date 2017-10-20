@@ -1,8 +1,8 @@
-export { MarkdownItConfig } from './markdownItConfig';
+export { MarkdownItConfig } from './markdown.config';
 // export { MarkdownItService } from './services/MarkDownItService';
 export * from './components/markdown-editor.component';
 export * from './components/markdown-viewer.component';
 
-export * from './angular-markdown.module';
+export * from './markdown.module';
 
 

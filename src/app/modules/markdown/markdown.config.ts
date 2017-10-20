@@ -30,7 +30,7 @@ export interface MarkdownItConfig {
      * Highlighter function. Should return escaped HTML, or '' if the source string is not changed and should be escaped externaly.
      * If result starts with <pre... internal wrapper is skipped.
      */
-    highlight?: MarkdownItHighlightConfig;
+    highlight?: (lang, str) => string;
     /**
      * Markdown containers plugins.
      */
@@ -40,7 +40,7 @@ export interface MarkdownItConfig {
     //
     // For example, you can use '«»„“' for Russian, '„“‚‘' for German,
     // and ['«\xA0', '\xA0»', '‹\xA0', '\xA0›'] for French (including nbsp).
-    quotes: string | string[]; // '“”‘’';
+    quotes?: string; // could be string[] // '“”‘’';
 }
 
 /**
@@ -64,7 +64,7 @@ export interface MarkdownItHighlightConfig {
      */
     containerClass?: string;
     /**
-     * User can specify if he wants to apply theh default 'hljs' class to the container or not.
+     * User can specify if he wants to apply the default 'hljs' class to the container or not.
      *
      * Default value is true
      */
@@ -73,6 +73,7 @@ export interface MarkdownItHighlightConfig {
 
 /**
  * Configure a Markdown container.
+ * https://github.com/markdown-it/markdown-it-container
  */
 export interface MarkdownItContainerConfig {
     /**
@@ -102,4 +103,9 @@ export interface MarkdownItContainerRenderConfig {
      * Define rules for rendering the container.
      */
     render?(tokens: any[], idx: number): string;
+}
+
+export interface MarkdownConfig {
+    markdownIt?: MarkdownItConfig;
+    highlight?: MarkdownItHighlightConfig;
 }

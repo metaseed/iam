@@ -33,6 +33,7 @@
     "markdown-it-block-image": "0.0.3",
     "markdown-it-container": "^2.0.0",
     "markdown-it-highlightjs": "^3.0.0",
+    "markdown-it-video": "^0.5.1",
     "rxjs": "^5.4.3",
     "zone.js": "^0.8.17"
   },

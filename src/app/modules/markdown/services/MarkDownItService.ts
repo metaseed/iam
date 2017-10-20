@@ -3,46 +3,9 @@ import { Injectable } from '@angular/core';
 import { MarkdownItConfig } from '../MarkdownItConfig';
 import * as  MarkdownIt from 'markdown-it';
 import mdContainer from 'markdown-it-container';
-import highlightjs from 'markdown-it-highlightjs';
-import hljs from 'highlight.js';
 
-/**
-* This is the default function for highlighting the markdown
-* @param str
-* @param lang
-*/
-export const DEFAULT_HIGHLIGHT_FUNCTION = function (str, lang) {
-  if (lang && hljs.getLanguage(lang)) {
-    try {
-      return '<pre class="hljs"><code>' + highlightjs.highlight(lang, str, true).value + '</code></pre>';
-    } catch (__) { }
-  }
-  return '<pre class="hljs"><code>' + str + '</code></pre>';
-};
 
-/**
-* This is the default function for rendering the markdown container.
-* @param name
-* @param cssClass
-* @param showHeading
-*/
-export const DEFAULT_CONTAINER_FUNCTION = function (name: string, cssClass: string, showHeading: boolean) {
 
-  const regex = new RegExp(`^${name}`);
-  return {
-    validate: function (params) {
-      return params.trim().match(regex);
-    },
-
-    render: function (tokens, idx) {
-      if (tokens[idx].nesting === 1) {
-        return `<div class="${cssClass ? cssClass : name}"> ${showHeading ? '<b>' + name + '</b>' : ''}`;
-      } else {
-        return '</div>';
-      }
-    }
-  };
-};
 
 
 @Injectable()
