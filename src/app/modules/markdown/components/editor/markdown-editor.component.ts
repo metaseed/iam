@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import ace from 'ace'
 @Component({
   selector: 'markdown-editor',
   templateUrl: 'markdown-editor.component.html'

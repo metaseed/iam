@@ -23,6 +23,7 @@
     "@angular/platform-browser": "^4.4.5",
     "@angular/platform-browser-dynamic": "^4.4.5",
     "@angular/router": "^4.4.5",
+    "ace-builds": "^1.2.9",
     "brace": "^0.10.0",
     "core-js": "^2.5.1",
     "font-awesome": "^4.7.0",
