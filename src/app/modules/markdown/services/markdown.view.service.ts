@@ -5,7 +5,7 @@ import { MarkdownConfig } from '../markdown.config';
 import hljs from 'highlight.js';
 
 import * as utils from '../../utils';
-import markdownContainer from 'markdown-it-container';
+import { ContainerPlugin } from './plugins/container';
 
 
 @Injectable()
@@ -22,6 +22,8 @@ export class MarkdownViewService {
   };
 
   private markdown: MarkdownIt.MarkdownIt;
+  private containerPlugin: ContainerPlugin;
+
   constructor(config?: MarkdownConfig) {
     config = config || utils.mergeConf(this.defaultConfig, config);
 
@@ -33,8 +35,12 @@ export class MarkdownViewService {
     this.markdown
       .use(markdownVideoPlugin, {
         youtube: { width: 640, height: 390 }
-      })
-      .user(markdownContainer, )
+      });
+    this.containerPlugin = new ContainerPlugin(this.markdown, 'spolier');
+  }
+
+  public render(raw: string): string {
+    return `${this.markdown.render(raw)}`;
   }
 
   private DEFAULT_HIGHLIGHT_FUNCTION = (str, lang) => {

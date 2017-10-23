@@ -11,7 +11,7 @@ export class MarkdownViewerComponent {
   @Input()
   set model(value: string) {
     if (value) {
-      this.parsedModel = this.sanitized.bypassSecurityTrustHtml(this.markdown.render(value));
+      this.parsedModel = this.sanitized.bypassSecurityTrustHtml(this.service.render(value));
     } else {
       this.parsedModel = '';
     }
@@ -19,7 +19,7 @@ export class MarkdownViewerComponent {
 
   private parsedModel: any;
 
-  constructor(private sanitized: DomSanitizer, service: MarkdownViewService) {
+  constructor(private sanitized: DomSanitizer, private service: MarkdownViewService) {
   }
 
 }
