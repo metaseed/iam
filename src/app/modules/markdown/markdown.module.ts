@@ -1,10 +1,11 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { MarkdownEditorComponent } from './components/markdown-editor.component';
-import { MarkdownViewerComponent } from './components/markdown-viewer.component';
+import { MarkdownEditorComponent } from './components/editor/markdown-editor.component';
+import { MarkdownViewerComponent } from './components/viewer/markdown-viewer.component';
 import { MarkdownConfig } from './markdown.config';
 import { MarkdownViewService } from './services/markdown.view.service';
+import { MarkdownComponent } from './components/markdown.component';
 
 @NgModule({
   imports: [
@@ -12,11 +13,13 @@ import { MarkdownViewService } from './services/markdown.view.service';
   ],
   declarations: [
     MarkdownEditorComponent,
-    MarkdownViewerComponent
+    MarkdownViewerComponent,
+    MarkdownComponent
   ],
   exports: [
     MarkdownEditorComponent,
-    MarkdownViewerComponent
+    MarkdownViewerComponent,
+    MarkdownComponent
   ],
 })
 export class MarkdownModule {
