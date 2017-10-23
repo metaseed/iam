@@ -12,6 +12,7 @@ import mdContainer from 'markdown-it-container';
 export class MarkdownItService {
 
   private markdown;
+  private plugins = [];
 
   constructor(private config: MarkdownItConfig) {
     if (config) {
