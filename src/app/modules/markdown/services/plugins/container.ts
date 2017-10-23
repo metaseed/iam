@@ -5,13 +5,13 @@ import markdownContainer from 'markdown-it-container';
 @Injectable()
 export class ContainerPlugin {
     constructor(private markdown: MarkdownIt.MarkdownIt, name: string,
-        private option?: (...params) => { validate: (params) => any, render: (tokens, idx) => string }) {
-        this.option = this.option || this.DEFAULT_CONTAINER_FUNCTION;
-        this.markdown.use(markdownContainer, name, option);
+        private option?: { validate: (params) => any, render: (tokens, idx) => string }) {
+        this.option = this.option || this.DEFAULT_CONTAINER_FUNCTION(name);
+        this.markdown.use(markdownContainer, name, this.option);
     }
 
     private DEFAULT_CONTAINER_FUNCTION = (name: string, cssClass?: string, showHeading?: boolean) => {
-        const regex = new RegExp(`^${name}\s+(.*)$`);
+        const regex = new RegExp(`^${name}\\s+(.*)$`);
         const me = this;
         return {
             validate: function (params) {

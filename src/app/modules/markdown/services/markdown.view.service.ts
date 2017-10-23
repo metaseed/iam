@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import MarkdownIt = require('markdown-it'); // or import * as MarkdownIt from 'markdown-it';
+import * as MarkdownIt from 'markdown-it';
 import markdownVideoPlugin from 'markdown-it-video';
 import { MarkdownConfig } from '../markdown.config';
-import hljs from 'highlight.js';
+import highlightjs from 'highlight.js';
 
 import * as utils from '../../utils';
 import { ContainerPlugin } from './plugins/container';
@@ -36,7 +36,7 @@ export class MarkdownViewService {
       .use(markdownVideoPlugin, {
         youtube: { width: 640, height: 390 }
       });
-    this.containerPlugin = new ContainerPlugin(this.markdown, 'spolier');
+    this.containerPlugin = new ContainerPlugin(this.markdown, 'spoiler');
   }
 
   public render(raw: string): string {
@@ -44,7 +44,7 @@ export class MarkdownViewService {
   }
 
   private DEFAULT_HIGHLIGHT_FUNCTION = (str, lang) => {
-    if (lang && hljs.getLanguage(lang)) {
+    if (lang && highlightjs.getLanguage(lang)) {
       try {
         return '<pre class="hljs"><code>' + highlightjs.highlight(lang, str, true).value + '</code></pre>';
       } catch (__) { }

@@ -1,4 +1,7 @@
 export const mergeConf = (config, fromConfig: Object): Object => {
+    if (!fromConfig) {
+        return config;
+    }
     if (Object.getPrototypeOf(fromConfig) !== Object.prototype) {
         throw new Error('fromConfig must be object literal!');
     }

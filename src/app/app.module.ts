@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MarkdownModule } from '../modules';
+import { MarkdownModule } from './modules';
 @NgModule({
   declarations: [
     AppComponent,
@@ -12,7 +12,7 @@ import { MarkdownModule } from '../modules';
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
-    MarkdownModule
+    MarkdownModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

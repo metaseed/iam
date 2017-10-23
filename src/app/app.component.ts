@@ -10,6 +10,10 @@ export class AppComponent {
 
   }
   private markdown = `
+
+:::spoiler click me
+*content*
+:::
 ## Tables
 
 | Option | Description |

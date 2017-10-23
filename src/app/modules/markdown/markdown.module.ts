@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MarkdownEditorComponent } from './components/markdown-editor.component';
 import { MarkdownViewerComponent } from './components/markdown-viewer.component';
 import { MarkdownConfig } from './markdown.config';
+import { MarkdownViewService } from './services/markdown.view.service';
 
 @NgModule({
   imports: [
@@ -27,17 +28,17 @@ export class MarkdownModule {
           provide: 'MarkdownConfig',
           useValue: config,
         },
-        // {
-        //   provide: MarkdownItService,
-        //   useFactory: configureMarkdownService,
-        //   deps: ['MarkdownItConfig']
-        // }
+        {
+          provide: MarkdownViewService,
+          useFactory: configureMarkdownService,
+          deps: ['MarkdownConfig']
+        }
       ]
     };
   }
 }
 
-// export function configureMarkdownService(config: MarkdownItConfig) {
-//   const service = new MarkdownItService(config);
-//   return service;
-// }
+export function configureMarkdownService(config: MarkdownConfig) {
+  const service = new MarkdownViewService(config);
+  return service;
+}
