@@ -1,4 +1,6 @@
 <div>
-  <markdown-editor [(model)]="markdown"></markdown-editor>
+  <!-- <markdown-editor [(model)]="markdown"></markdown-editor> -->
+  <div ace-editor [(text)]="markdown" [mode]="'markdwon'" [theme]="'eclipse'" [options]="aceOptions" [readOnly]="false" [autoUpdateContent]="true"
+    [durationBeforeCallback]="1000" (textChanged)="onAceChange($event)" style="min-height: 200px; width:100%; overflow: auto;"></div>
   <markdown-viewer [model]="markdown"></markdown-viewer>
 </div>

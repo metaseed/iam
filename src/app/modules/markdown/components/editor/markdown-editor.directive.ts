@@ -2,11 +2,12 @@ import { Directive, EventEmitter, Output, ElementRef, Input, OnInit } from '@ang
 import 'brace';
 import 'brace/theme/monokai';
 import 'brace/mode/html';
-
+// import ace from 'ace-builds';
 declare var ace: any;
+// import ace from 'ace-builds/src-noconflict/ace.js';
+// import 'ace-builds/src-min/theme-eclips.js';
 
 @Directive({
-    // tslint:disable-next-line:directive-selector
     selector: '[ace-editor]'
 })
 export class AceEditorDirective implements OnInit {
@@ -15,7 +16,7 @@ export class AceEditorDirective implements OnInit {
     _options: any = {};
     _readOnly = false;
     _theme = 'monokai';
-    _mode: any = 'html';
+    _mode: any = 'markdown';
     _autoUpdateContent = true;
     _durationBeforeCallback = 0;
     _text = '';
@@ -35,6 +36,7 @@ export class AceEditorDirective implements OnInit {
     }
 
     init() {
+        // this.editor.getSession().setUseWrapMode(true);
         this.editor.setOptions(this._options || {});
         this.editor.setTheme(`ace/theme/${this._theme}`);
         this.setMode(this._mode);

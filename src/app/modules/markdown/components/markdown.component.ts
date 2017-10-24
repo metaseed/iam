@@ -6,10 +6,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./markdown.component.scss']
 })
 export class MarkdownComponent implements OnInit {
-
+  private markdown: string;
+  aceOptions: any = { maxLines: 100000, printMargin: false };
   constructor() { }
 
   ngOnInit() {
   }
-
+  onAceChange(code) {
+    console.log("new code", code);
+  }
 }
