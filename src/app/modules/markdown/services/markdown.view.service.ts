@@ -53,6 +53,7 @@ export class MarkdownViewService {
       .use(footnote)
       .use(deflist)
       .use(abbr);
+    this.containerPlugin = new ContainerPlugin(this.markdown, 'warning');
     // Beautify output of parser for html content
     this.markdown.renderer.rules.table_open = function () {
       return '<table class="table table-striped">\n';
@@ -60,7 +61,7 @@ export class MarkdownViewService {
     this.markdown.renderer.rules.blockquote_open = function () {
       return '<blockquote class="blockquote">\n';
     };
-    this.containerPlugin = new ContainerPlugin(this.markdown, 'spoiler');
+
   }
 
   public render(raw: string): string {

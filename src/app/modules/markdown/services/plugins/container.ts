@@ -10,8 +10,8 @@ export class ContainerPlugin {
         this.markdown.use(markdownContainer, name, this.option);
     }
 
-    private DEFAULT_CONTAINER_FUNCTION = (name: string, cssClass?: string, showHeading?: boolean) => {
-        const regex = new RegExp(`^${name}\\s+(.*)$`);
+    private DEFAULT_CONTAINER_FUNCTION = (name: string, cssClass?: string, showHeading: boolean = true) => {
+        const regex = new RegExp(`^${name}\\s*(.*)$`);
         const me = this;
         return {
             validate: function (params) {
@@ -20,11 +20,12 @@ export class ContainerPlugin {
 
             render: function (tokens, idx) {
                 const m = tokens[idx].info.trim().match(regex);
+
                 if (tokens[idx].nesting === 1) {
-                    return `<details class="${cssClass ? cssClass : name}">  <summary>
+                    return `<div class="${cssClass ? cssClass : name}">
                     ${showHeading ? '<b>' + me.markdown.utils.escapeHtml(m[1]) + '</b>' : ''}\n`;
                 } else {
-                    return '</details>';
+                    return '</div>';
                 }
             }
         };
