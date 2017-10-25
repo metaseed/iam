@@ -6,6 +6,7 @@ import { MarkdownViewService } from '../../services/markdown.view.service';
   selector: 'markdown-viewer',
   templateUrl: 'markdown-viewer.component.html',
   styleUrls: [
+    './markdown-viewer.component.scss'
   ]
 })
 export class MarkdownViewerComponent {
