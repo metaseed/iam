@@ -49,3 +49,4 @@ export class MarkdownEditorComponent {
     }
   }
 }
+ // <!-- <markdown-editor [(model)]="markdown"></markdown-editor> [theme]="'eclipse'" -->

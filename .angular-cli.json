@@ -20,11 +20,7 @@
     "styles": [
       "styles.scss"
     ],
-    "scripts": [
-      "../node_modules/ace-builds/src-min/ace.js",
-
-      "../node_modules/ace-builds/src-min/theme-eclipse.js"
-    ],
+    "scripts": [],
     "environmentSource": "environments/environment.ts",
     "environments": {
       "dev": "environments/environment.ts",

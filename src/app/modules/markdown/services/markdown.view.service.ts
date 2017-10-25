@@ -6,7 +6,8 @@ import highlightjs from 'highlight.js';
 
 import * as utils from '../../utils';
 import { ContainerPlugin } from './plugins/container';
-
+import tasklists from 'markdown-it-task-lists';
+import emoji from 'markdown-it-emoji';
 
 @Injectable()
 export class MarkdownViewService {
@@ -17,7 +18,7 @@ export class MarkdownViewService {
       breaks: false,
       langPrefix: 'langPrefix-',
       linkify: true,
-      typographer: false
+      typographer: true
     }
   };
 
@@ -35,7 +36,10 @@ export class MarkdownViewService {
     this.markdown
       .use(markdownVideoPlugin, {
         youtube: { width: 640, height: 390 }
-      });
+      })
+      .use(tasklists, { enabled: true })
+      .use(emoji);
+
     this.containerPlugin = new ContainerPlugin(this.markdown, 'spoiler');
   }
 

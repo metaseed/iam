@@ -1,12 +1,9 @@
 import { Directive, EventEmitter, Output, ElementRef, Input, OnInit } from '@angular/core';
-import 'brace';
-import 'brace/theme/monokai';
-import 'brace/mode/html';
+import * as ace from 'brace';
+import 'brace/theme/twilight';
+import 'brace/mode/markdown';
 // import ace from 'ace-builds';
-declare var ace: any;
-// import ace from 'ace-builds/src-noconflict/ace.js';
-// import 'ace-builds/src-min/theme-eclips.js';
-
+// declare var ace: any;
 @Directive({
     selector: '[ace-editor]'
 })
@@ -15,7 +12,7 @@ export class AceEditorDirective implements OnInit {
     @Output() textChange = new EventEmitter();
     _options: any = {};
     _readOnly = false;
-    _theme = 'monokai';
+    _theme = 'twilight';
     _mode: any = 'markdown';
     _autoUpdateContent = true;
     _durationBeforeCallback = 0;
@@ -36,9 +33,9 @@ export class AceEditorDirective implements OnInit {
     }
 
     init() {
-        // this.editor.getSession().setUseWrapMode(true);
+        this.editor.getSession().setUseWrapMode(true);
         this.editor.setOptions(this._options || {});
-        this.editor.setTheme(`ace/theme/${this._theme}`);
+        //this.editor.setTheme(`ace/theme/${this._theme}`);
         this.setMode(this._mode);
         this.editor.setReadOnly(this._readOnly);
     }
