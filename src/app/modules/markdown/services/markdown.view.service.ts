@@ -15,6 +15,7 @@ import mark from 'markdown-it-mark';
 import footnote from 'markdown-it-footnote';
 import deflist from 'markdown-it-deflist';
 import abbr from 'markdown-it-abbr';
+import imsize from 'markdown-it-imsize';
 
 @Injectable()
 export class MarkdownViewService {
@@ -52,7 +53,9 @@ export class MarkdownViewService {
       .use(mark)
       .use(footnote)
       .use(deflist)
-      .use(abbr);
+      .use(abbr)
+      .use(imsize, { autofill: true });
+
     this.containerPlugin = new ContainerPlugin(this.markdown, 'warning');
     // Beautify output of parser for html content
     this.markdown.renderer.rules.table_open = function () {
