@@ -1,20 +1,26 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { HttpModule } from '@angular/http';
 import { MarkdownViewerComponent } from './components/viewer/markdown-viewer.component';
 import { MarkdownConfig } from './markdown.config';
 import { MarkdownViewService } from './services/markdown.view.service';
 import { MarkdownComponent } from './components/markdown.component';
 import { AceEditorDirective } from './components/editor/markdown-editor.directive';
+import { CommonModule } from '@angular/common';
+import { EditorToolbarComponent } from './components/editor-toolbar/markdown.editor-toolbar.component';
 
 @NgModule({
   imports: [
-    FormsModule
+    CommonModule,
+    FormsModule,
+    HttpModule
   ],
   declarations: [
     MarkdownViewerComponent,
     MarkdownComponent,
-    AceEditorDirective
+    AceEditorDirective,
+    EditorToolbarComponent
   ],
   exports: [
     MarkdownViewerComponent,

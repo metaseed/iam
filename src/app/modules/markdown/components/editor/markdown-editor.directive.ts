@@ -10,6 +10,8 @@ import 'brace/mode/markdown';
 export class AceEditorDirective implements OnInit {
     @Output() textChanged = new EventEmitter();
     @Output() textChange = new EventEmitter();
+    @Output() touch = new EventEmitter();
+
     _options: any = {};
     _readOnly = false;
     _theme = 'twilight';
@@ -17,7 +19,7 @@ export class AceEditorDirective implements OnInit {
     _autoUpdateContent = true;
     _durationBeforeCallback = 0;
     _text = '';
-    editor: any;
+    public editor: any;
     oldText: any;
     timeoutSaving: any;
 
@@ -35,7 +37,7 @@ export class AceEditorDirective implements OnInit {
     init() {
         this.editor.getSession().setUseWrapMode(true);
         this.editor.setOptions(this._options || {});
-        //this.editor.setTheme(`ace/theme/${this._theme}`);
+        this.editor.getSession().setUseWrapMode(true);
         this.setMode(this._mode);
         this.editor.setReadOnly(this._readOnly);
     }

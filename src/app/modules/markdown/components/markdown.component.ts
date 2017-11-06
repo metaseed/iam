@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { AceEditorDirective } from './editor/markdown-editor.directive';
+import { MarkdownViewerComponent } from './viewer/markdown-viewer.component';
 
 @Component({
   selector: 'ms-markdown',
@@ -10,9 +12,13 @@ export class MarkdownComponent implements OnInit {
   aceOptions: any = { maxLines: 100000, printMargin: false };
   constructor() { }
 
+  showPreviewPanel = true;
+
+  @ViewChild(AceEditorDirective) editor: AceEditorDirective;
+  @ViewChild(MarkdownViewerComponent) viewer: MarkdownComponent;
   ngOnInit() {
   }
-  onAceChange(code) {
-    console.log("new code", code);
+  onAceChange(text) {
+    console.log('new text', text);
   }
 }
