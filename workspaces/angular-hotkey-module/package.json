@@ -1,0 +1,50 @@
+{
+  "name": "angular-hotkey-module",
+  "version": "1.0.0",
+  "scripts": {
+    "lint": "tslint src/**/*.ts",
+    "test": "tsc && karma start",
+    "prepublish": "tsc",
+    "tsc": "tsc",
+    "ngc": "./node_modules/.bin/ngc -p tsconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brtnshrdr/angular2-hotkeys.git"
+  },
+  "author": {
+    "name": "Nick Richardson",
+    "email": "nick.richardson@mediapixeldesign.com"
+  },
+  "keywords": [
+    "angular",
+    "angular2",
+    "hotkeys",
+    "keyboard",
+    "shortcut"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "git@github.com:brtnshrdr/angular2-hotkeys.git/issues"
+  },
+  "main": "./index.js",
+  "dependencies": {
+    "@types/mousetrap": "^1.5.34",
+    "mousetrap": "^1.6.1"
+  },
+  "devDependencies": {
+    "@angular/common": "^5.0.0",
+    "@angular/compiler": "^5.0.0",
+    "@angular/compiler-cli": "^5.0.0",
+    "@angular/core": "^5.0.0",
+    "@types/core-js": "0.9.43",
+    "codelyzer": "~4.0.1",
+    "rxjs": "^5.5.2",
+    "tslint": "^5.8.0",
+    "typescript": "^2.4.2",
+    "zone.js": "^0.8.18"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  }
+}

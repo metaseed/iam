@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { HotkeyModule } from 'angular2-hotkeys';
+import { HotkeyModule } from 'angular-hotkey-module';
 import { CommandService } from './command.service';
 
 @NgModule({

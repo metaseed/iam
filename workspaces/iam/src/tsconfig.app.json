@@ -6,6 +6,10 @@
     "module": "es2015",
     "types": []
   },
+  "include": [
+    "../../../workspaces"
+  ],
+
   "exclude": [
     "test.ts",
     "**/*.spec.ts"

@@ -4,8 +4,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MarkdownModule } from './modules';
+import { HotkeyModule } from 'angular-hotkey-module';
 import { CoreModule } from './modules/core/core.module';
-import { HotkeyModule } from 'angular2-hotkeys';
 @NgModule({
   declarations: [
     AppComponent,
@@ -16,7 +16,12 @@ import { HotkeyModule } from 'angular2-hotkeys';
     FormsModule,
     MarkdownModule.forRoot(),
     CoreModule,
-    HotkeyModule.forRoot()
+    HotkeyModule.forRoot({
+      disableCheatSheet: false,
+      cheatSheetHotkey: 'h',
+      cheatSheetCloseEsc: true,
+      cheatSheetDescription: 'shortcuts'
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]

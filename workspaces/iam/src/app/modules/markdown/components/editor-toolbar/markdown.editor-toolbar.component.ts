@@ -35,18 +35,27 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     this.editor = this.markdown.editor.editor;
     this.editor.commands.addCommand({
       name: 'save',
-      bindKey: { win: 'Ctrl-S', 'mac': 'Cmd-S' },
+      bindKey: { win: 'Ctrl-S', mac: 'Cmd-S' },
       exec: function (editor) {
         console.log('saving', editor.session.getValue());
       }
     });
     this.editor.commands.addCommand({
       name: 'italic',
-      bindKey: { win: 'Ctrl-I', 'mac': 'Cmd-I' },
+      bindKey: { win: 'Ctrl-M I', mac: 'Cmd-M I' },
       exec: function (editor) {
         me.insertContent('Italic');
       }
     });
+    this.editor.commands.addCommand(
+      {
+        name: 'bold',
+        bindKey: { win: 'Ctrl-M B', mac: 'Cmd-M B' },
+        exec: function (editor) {
+          me.insertContent('Bold');
+        }
+      }
+    );
   }
 
   @Input()
