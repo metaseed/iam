@@ -3,5 +3,8 @@
 	"name": "iam",
 	"workspaces": [
 		"workspaces/*"
-	]
+	],
+	"scripts": {
+		"start": "cd workspaces\\iam & npm run start"
+	}
 }
