@@ -18,6 +18,7 @@ export class Requestable {
     }
 
     request(method: string, path: string, data: any = null, media?: string) {
+        method = method.toUpperCase();
         const url = this.getURL(path);
         const headers = this.getRequestHeader(media);
         const shouldUseDataAsParams = data && (typeof data === 'object') && this.methodHasNoBody(method);
@@ -25,13 +26,20 @@ export class Requestable {
         const request = new HttpRequest(method, url, {
             headers: headers,
             reportProgress: false,
+            observe: 'body',
             // withCredentials: true,
             body: shouldUseDataAsParams ? undefined : data,
             params: shouldUseDataAsParams ? new HttpParams(data) : undefined,
             responseType: respType
         });
-        if (method.toUpperCase() === 'PUT') {
+        if (method === 'PUT') {
             return this._http.put<Object>(url, data, { headers: headers, responseType: 'json' });
+        }
+        else if (method === 'POST') {
+            return this._http.post<Object>(url, data, { headers: headers, responseType: 'json' });
+        }
+        else if (method === 'GET') {
+            return this._http.get<Object>(url, { headers: headers, responseType: 'json' });
         }
         return <Observable<HttpResponse<any>>>this._http.request(request).filter(r => r instanceof HttpResponseBase);
     }

@@ -17,12 +17,20 @@ export class AppComponent {
     let storage = new GithubStorage(this._http, new UserInfo('metasong', 'metaseed@gmail.com', 'mssong179'));
     storage.repos('test2').subscribe(
       (repo: Repository) => {
-        console.log(repo);
-        repo.file('test010a8322.md', 'aafabaa7777778744o7acaaaaaa' + Date.now()).subscribe((file) => {
-          // repo.delPost('test00').subscribe();
-          const f = file;
-          console.log(f);
-        });
+        // console.log(repo);
+        // repo.file('test010a8322.md', 'aafabaa7777778744o7acaaaaaa' + Date.now()).subscribe((file) => {
+        //   // repo.delPost('test00').subscribe();
+        //   const f = file;
+        //   console.log(f);
+        // });
+        // repo.issue.create({
+        //   title: 'title',
+        //   body: 'body',
+        //   labels: ['a', 'b']
+        // }).subscribe((is) => {
+        //   console.log(is);
+        // });
+        let i = repo.issue.list().subscribe(is => console.log(is));
       },
       (error) => console.log(error)
     );

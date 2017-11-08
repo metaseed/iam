@@ -7,6 +7,7 @@ import { MarkdownModule } from './modules';
 import { HotkeyModule } from 'angular-hotkey-module';
 import { CoreModule } from './modules/core/core.module';
 import { HttpClientModule } from '@angular/common/http';
+import { DocsModule } from './docs/docs.module';
 @NgModule({
   declarations: [
     AppComponent,
@@ -18,6 +19,7 @@ import { HttpClientModule } from '@angular/common/http';
     FormsModule,
     MarkdownModule.forRoot(),
     CoreModule,
+    DocsModule,
     HotkeyModule.forRoot({
       disableCheatSheet: false,
       cheatSheetHotkey: 'h',

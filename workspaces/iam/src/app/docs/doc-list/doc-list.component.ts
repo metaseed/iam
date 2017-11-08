@@ -3,13 +3,18 @@ import { Document } from "../models/document";
 import { DocListService } from "../services/doc-list.service";
 
 @Component({
-  selector: 'document-list',
-  templateUrl: './document-list.component.html',
-  styleUrls: ['./document-list.component.css']
+  selector: 'doc-list',
+  templateUrl: './doc-list.component.html',
+  styleUrls: ['./doc-list.component.css']
 })
 export class DocListComponent implements OnInit {
-
-  @Input() documents: Document[];
+  private docs;
+  @Input() set documents(v) {
+    this.docs = v;
+  }
+  get documents() {
+    return this.docs;
+  }
 
   @Output() onDone: EventEmitter<Document> = new EventEmitter<Document>();
 

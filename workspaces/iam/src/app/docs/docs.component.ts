@@ -9,12 +9,20 @@ import { DocListService } from "./services/doc-list.service";
 })
 export class DocsComponent {
 
-  public todoList: Document[] = [];
+  public docList;
 
   constructor(private _todoListService: DocListService) { }
 
+  ngOnInit() {
+    this._todoListService.getAll().subscribe(
+      docs => {
+        this.docList = docs;
+        console.log(this.docList);
+      });
+  }
+
   addNewElement(element: string) {
-    let todo = { id: this.todoList.length + 1, text: element, done: false };
+    let todo = { id: this.docList.length + 1, text: element, done: false };
     // this._todoListService.store(todo)
     //   .subscribe(t => this.todoList.push(t), alert);
   }

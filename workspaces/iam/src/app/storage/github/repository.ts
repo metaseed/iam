@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 import { Content } from './model/content';
 import { File } from './model/file';
 import { HttpClient } from '@angular/common/http';
+import { Issue } from './issues/issue';
 
 @Injectable()
 export class Repository extends Requestable {
@@ -14,6 +15,10 @@ export class Repository extends Requestable {
     constructor(http: HttpClient, userInfo: UserInfo, private _name: string) {
         super(http, userInfo);
         this.fullName = `${this._userInfo.name}/${this._name}`;
+    }
+
+    get issue() {
+        return new Issue(this._http, this._name, this._userInfo);
     }
 
     // https://developer.github.com/v3/repos/contents/
@@ -32,12 +37,12 @@ export class Repository extends Requestable {
                             'email': this._userInfo.email
                         },
                         'content': btoa(contents),
-                        'sha': resp.body.sha,
+                        'sha': resp['sha'],
                         branch
                     })
                     .do(x => console.log(x), e => console.log(e))
                     .map(x => {
-                        return <File>x.body;
+                        return <File>x;
                     });
             })
             .catch((error, ca) => {
@@ -62,7 +67,7 @@ export class Repository extends Requestable {
             .do(x => console.log('newFile' + x), e => console.log('newFile' + e))
             .map(x => {
                 console.log(x);
-                return <File>x.body;
+                return <File>x;
             });
     }
 
@@ -85,24 +90,24 @@ export class Repository extends Requestable {
                             'email': this._userInfo.email
                         },
                         'content': btoa('delete file'),
-                        'sha': response.body.sha,
+                        'sha': response['sha'],
                         branch
                     });
             })
             .do(x => console.log(x), e => console.log(e))
-            .map(x => <File>x.body);
+            .map(x => <File>x);
     }
 
     // https://developer.github.com/v3/repos/contents/#get-contents
     getContents(path: string, branch: string = 'master') {
         path = path ? encodeURI(path) : '';
         return this.request('GET', `/repos/${this.fullName}/contents/${path}`)
-            .map(x => <Content | Array<Content>>x.body);
+            .map(x => <Content | Array<Content>>x);
     }
 
     getReadme(branch: string = 'master') {
         return this.request('GET', `/repos/${this.fullName}/readme`)
-            .map(x => <Content | Array<Content>>x.body);
+            .map(x => <Content | Array<Content>>x);
     }
 
     /**
