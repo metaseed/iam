@@ -9,7 +9,9 @@
   "include": [
     "../../../workspaces"
   ],
-
+  "angularCompilerOptions": {
+    "preserveWhitespaces": false
+  },
   "exclude": [
     "test.ts",
     "**/*.spec.ts"

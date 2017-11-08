@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MarkdownModule } from './modules';
 import { HotkeyModule } from 'angular-hotkey-module';
 import { CoreModule } from './modules/core/core.module';
+import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
@@ -13,6 +14,7 @@ import { CoreModule } from './modules/core/core.module';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    HttpClientModule,
     FormsModule,
     MarkdownModule.forRoot(),
     CoreModule,
@@ -23,7 +25,9 @@ import { CoreModule } from './modules/core/core.module';
       cheatSheetDescription: 'shortcuts'
     })
   ],
-  providers: [],
+  providers: [
+
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

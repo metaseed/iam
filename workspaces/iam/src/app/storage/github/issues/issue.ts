@@ -1,5 +1,5 @@
 
-import { Http, RequestOptions, Headers, RequestMethod } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/Common/http';
 import { Const } from '../model/const';
 import { UserInfo } from '../user-info';
 import { Requestable } from '../requestable';
@@ -40,15 +40,15 @@ export class Issue extends Requestable {
     updated_at: string;
     closed_by: User;
 
-    constructor(http: Http, private repository: string, userInfo: UserInfo) {
+    constructor(http: HttpClient, private repository: string, userInfo: UserInfo) {
         super(http, userInfo);
     }
 
     // https://developer.github.com/v3/issues/#create-an-issue
     create(data: IssueData) {
-        return this.request(RequestMethod.Post, `/repos/${this.repository}/issues`, data)
+        return this.request('POST', `/repos/${this.repository}/issues`, data)
             .map((resp) => {
-                return <Issue>resp.json();
+                return <Issue>resp.body;
             });
     }
 

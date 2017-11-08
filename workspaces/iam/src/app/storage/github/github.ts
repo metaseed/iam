@@ -7,7 +7,7 @@ import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/observable/throw';
 import { Injectable } from '@angular/core';
-import { Http, RequestOptions, Headers, RequestMethod } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Const } from './model/const';
 import { UserInfo } from './user-info';
 import { Repository } from './repository';
@@ -15,7 +15,7 @@ import { Requestable } from './requestable';
 @Injectable()
 export class GithubStorage extends Requestable {
 
-    constructor(http: Http, userInfo: UserInfo) {
+    constructor(http: HttpClient, userInfo: UserInfo) {
         super(http, userInfo);
     }
 
@@ -31,7 +31,7 @@ export class GithubStorage extends Requestable {
     }
 
     getRepos(name: string) {
-        return this.request(RequestMethod.Get, `/repos/${this._userInfo.name}/${name}`, null)
+        return this.request('GET', `/repos/${this._userInfo.name}/${name}`, null)
             .map(resp => {
                 return new Repository(this._http, this._userInfo, name);
             })
@@ -39,14 +39,14 @@ export class GithubStorage extends Requestable {
                 return Observable.throw(
                     {
                         id: error.status,
-                        message: `no such repository: ${name}, message:${error.json().message}`
+                        message: `get repository error: ${name}, message:${error.message}`
                     }
                 );
             });
     }
 
     newRepos(name: string) {
-        return this.request(RequestMethod.Post,
+        return this.request('POST',
             '/user/repos',
             {
                 'name': name,

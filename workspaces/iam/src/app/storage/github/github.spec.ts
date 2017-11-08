@@ -1,7 +1,7 @@
 import { UserInfo, GithubStorage, Repository } from './index';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Http, HttpModule } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { File } from './model/file';
 
 describe('create repo', () => {
@@ -13,7 +13,6 @@ describe('create repo', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [
-                HttpModule,
                 HttpClientTestingModule
             ],
             providers: [
