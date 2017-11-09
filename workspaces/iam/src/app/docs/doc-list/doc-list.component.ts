@@ -9,39 +9,25 @@ import { DocService } from "../services/doc.service";
 })
 export class DocListComponent implements OnInit {
   private docs;
+  constructor() { }
+
   @Input() set documents(v) {
     this.docs = v;
   }
   get documents() {
     return this.docs;
   }
-
-  @Output() onDone: EventEmitter<Document> = new EventEmitter<Document>();
-
-  @Output() onUndone: EventEmitter<Document> = new EventEmitter<Document>();
-
-  constructor(private _docService: DocService) { }
-
+  @Output() onDelete = new EventEmitter<Document>();
+  @Output() onShow = new EventEmitter<Document>();
   ngOnInit() {
-    this._docService.getAll().subscribe(
-      (docs: Document[]) => {
-        this.docs = docs;
-        console.log(docs);
-      },
-      (error) => console.log(error));
-    // this.todoListService.getAll().subscribe(
-    //   (documents: Document[]) => {
-    //     documents.forEach(document => this.documents.push(document));
-    //   },
-    //   (error: string) => alert(error));
+
   }
 
-  markDone(document: Document) {
-    this.onDone.emit(document);
-    this._docService.showDoc(document);
+  show(document: Document) {
+    this.onShow.emit(document);
   }
-  markUndone(document: Document) {
-    this.onUndone.emit(document);
+  delete(document: Document) {
+    this.onDelete.emit(document);
   }
 
 }

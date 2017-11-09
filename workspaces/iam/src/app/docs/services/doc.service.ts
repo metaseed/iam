@@ -30,6 +30,11 @@ export class DocService {
   //     });
   // }
 
+  deleteDoc(doc) {
+    this._repo.issue.edit(doc.number, { state: 'closed' }).subscribe(
+      a => console.log(a)
+    );
+  }
   showDoc(doc) {
     this._doc = doc;
     this.docShow$.next(doc);
@@ -45,7 +50,7 @@ export class DocService {
   private _storage = new GithubStorage(this._http, new UserInfo('metasong', 'metaseed@gmail.com', 'mssong179'));
   getAll() {
     return this._repoSub$.flatMap(repo => {
-      return this._repo.issue.list();
+      return repo.issue.list('open');
     });
   }
 

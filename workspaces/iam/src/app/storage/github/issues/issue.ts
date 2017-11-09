@@ -51,8 +51,8 @@ export class Issue extends Requestable {
         return this.request('POST', `/repos/${this._userInfo.name}/${this.repository}/issues`, data);
     }
     // https://developer.github.com/v3/issues/#list-issues-for-a-repository
-    list() {
-        return this.request('GET', `/repos/${this._userInfo.name}/${this.repository}/issues`, { state: 'all' });
+    list(state: 'open' | 'closed' | 'all') {
+        return this.request('GET', `/repos/${this._userInfo.name}/${this.repository}/issues`, { state: state });
     }
     // https://developer.github.com/v3/issues/#edit-an-issue
     edit(number: number, params: EditIssueParams) {

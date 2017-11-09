@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Document } from "./models/document";
 import { DocService } from "./services/doc.service";
+import { DocsModel } from './models/docs.model';
 
 @Component({
   selector: 'docs',
@@ -9,33 +10,32 @@ import { DocService } from "./services/doc.service";
 })
 export class DocsComponent {
 
-  public docList;
+  public model: DocsModel;
 
-  constructor(private _todoListService: DocService) { }
+  constructor(private _docService: DocService) { }
 
   ngOnInit() {
-
+    this._docService.getAll().subscribe(
+      (docs: Document[]) => {
+        this.model = new DocsModel(docs);
+      },
+      (error) => {
+        console.log(error);
+      });
   }
 
   addNewElement(element: string) {
-    let todo = { id: this.docList.length + 1, text: element, done: false };
+    // let todo = { id: this.model.length + 1, text: element, done: false };
     // this._todoListService.store(todo)
     //   .subscribe(t => this.todoList.push(t), alert);
   }
 
-  markDone(todo: Document) {
-    // todo.done = true;
-    this.mark(todo);
+  showDoc(doc: Document) {
+    this._docService.showDoc(doc);
   }
 
-  markUndone(todo: Document) {
-    //todo.done = false;
-    this.mark(todo);
-  }
-
-  private mark(todo: Document) {
-    // this._todoListService.update(todo)
-    //   .subscribe(console.log, alert);
+  deleteDoc(doc: Document) {
+    this._docService.deleteDoc(doc);
   }
 
 }

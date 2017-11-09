@@ -5,8 +5,11 @@
         <td [class.done-true]="todo.done">{{todo.id}}</td>
         <td [class.done-true]="todo.done">{{todo.title}}</td>
         <td>
-          <button class="pull-right btn btn-default" (click)="markDone(todo)">
-            Done
+          <button class="pull-right btn btn-default" (click)="delete(todo)">
+            Delete
+          </button>
+          <button class="pull-right btn btn-default" (click)="show(todo)">
+            Show
           </button>
           <!-- <button class="pull-right btn btn-default" (click)="markUndone(todo)" *ngIf="todo.done">
             Redo
