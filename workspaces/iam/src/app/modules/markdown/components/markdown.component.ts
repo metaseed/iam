@@ -22,6 +22,11 @@ export class MarkdownComponent implements OnInit {
   aceOptions: any = { maxLines: 100000, printMargin: false };
   constructor(private _docService: DocService) {
     this._docService.onShowDoc(doc => {
+      if (doc === null) {
+        this._text = '';
+        this.title = '';
+        return;
+      }
       this._text = doc.body;
       this.title = doc.title;
       this._doc = doc;

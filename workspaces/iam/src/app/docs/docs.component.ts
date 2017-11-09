@@ -10,21 +10,14 @@ import { DocsModel } from './models/docs.model';
 })
 export class DocsComponent {
 
-  public model: DocsModel;
-
   constructor(private _docService: DocService) { }
 
   ngOnInit() {
-    this._docService.getAll().subscribe(
-      (docs: Document[]) => {
-        this.model = new DocsModel(docs);
-      },
-      (error) => {
-        console.log(error);
-      });
+    this._docService.getAll();
   }
 
   addNewElement(element: string) {
+    this._docService.newDoc();
     // let todo = { id: this.model.length + 1, text: element, done: false };
     // this._todoListService.store(todo)
     //   .subscribe(t => this.todoList.push(t), alert);

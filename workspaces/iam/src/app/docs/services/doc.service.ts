@@ -4,15 +4,15 @@ import { Observable } from "rxjs/Observable";
 import { HttpClient } from "@angular/common/http";
 import { GithubStorage, UserInfo, EditIssueParams } from '../../storage/github/index';
 import { Repository } from '../../storage/github/repository';
+import { DocsModel } from '../models/docs.model';
 
 @Injectable()
 export class DocService {
   public docAdd$ = new EventEmitter();
   public docRemove$ = new EventEmitter();
   public docModify$ = new EventEmitter();
-
+  public model: DocsModel;
   private docShow$ = new EventEmitter();
-  private _doc;
   private _repo;
   private _repoSub$;
   constructor(private _http: HttpClient) {
@@ -35,23 +35,37 @@ export class DocService {
       a => console.log(a)
     );
   }
+  newDoc() {
+    this.showDoc(null);
+  }
   showDoc(doc) {
-    this._doc = doc;
+    this.model.currentDoc = doc;
     this.docShow$.next(doc);
   }
   onShowDoc(fun) {
     this.docShow$.subscribe(fun);
   }
   edit = (data: EditIssueParams) => {
-    this._doc && (this._repo.issue.edit(this._doc.number, data).subscribe(
+    let doc = this.model.currentDoc;
+    if (!doc) {
+      this._repo.issue.create(data).subscribe(a => console.log(a));
+      return;
+    }
+    this._repo.issue.edit(doc.number, data).subscribe(
       (a) => console.log(a)
-    ));
+    );
   }
   private _storage = new GithubStorage(this._http, new UserInfo('metasong', 'metaseed@gmail.com', 'mssong179'));
   getAll() {
     return this._repoSub$.flatMap(repo => {
       return repo.issue.list('open');
-    });
+    }).subscribe(
+      (docs: Document[]) => {
+        this.model = new DocsModel(docs);
+      },
+      (error) => {
+        console.log(error);
+      });;
   }
 
   // update(todo: Document) {
