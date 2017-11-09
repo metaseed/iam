@@ -33,6 +33,20 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     const me = this;
     this.editor = this.markdown.editor.editor;
+    const configs = EditorToolbarComponent.COMMANDS_CONFIG;
+    for (let key in configs) {
+      if (configs.hasOwnProperty(key)) {
+        var config = configs[key];
+
+        this.editor.commands.addCommand({
+          name: key,
+          bindKey: config.hotKey,
+          exec: function (editor) {
+            me.insertContent(key);
+          }
+        });
+      }
+    }
     this.editor.commands.addCommand({
       name: 'save',
       bindKey: { win: 'Ctrl-S', mac: 'Cmd-S' },
@@ -40,22 +54,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
         console.log('saving', editor.session.getValue());
       }
     });
-    this.editor.commands.addCommand({
-      name: 'italic',
-      bindKey: { win: 'Ctrl-M I', mac: 'Cmd-M I' },
-      exec: function (editor) {
-        me.insertContent('Italic');
-      }
-    });
-    this.editor.commands.addCommand(
-      {
-        name: 'bold',
-        bindKey: { win: 'Ctrl-M B', mac: 'Cmd-M B' },
-        exec: function (editor) {
-          me.insertContent('Bold');
-        }
-      }
-    );
+
   }
 
   @Input()
@@ -96,57 +95,36 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
       }, timeOut);
     }
   }
+
+
+
+  private static COMMANDS_CONFIG = {
+    Bold: { command: 'Bold', func: (selectedText, defaultText) => `**${selectedText || defaultText}**`, startSize: 2, hotKey: { win: 'Alt-B', mac: 'Cmd-B' } }, // not Ctrl-M B also work
+    Italic: { command: 'Italic', func: (selectedText, defaultText) => `*${selectedText || defaultText}*`, startSize: 1, hotKey: { win: 'Alt-I', mac: 'Cmd-I' } },
+    Heading: { command: 'Heading', func: (selectedText, defaultText) => `# ${selectedText || defaultText}`, startSize: 2, hotKey: { win: 'Alt-H', mac: 'Cmd-H' } },
+    Reference: { command: 'Reference', func: (selectedText, defaultText) => `> ${selectedText || defaultText}`, startSize: 2, hotKey: { win: 'Alt-R', mac: 'Cmd-R' } },
+    Link: { command: 'Link', func: (selectedText, defaultText) => `[${selectedText || defaultText}](http://)`, startSize: 1, hotKey: { win: 'Alt-L', mac: 'Cmd-L' } },
+    Image: { command: 'Image', func: (selectedText, defaultText) => `![${selectedText || defaultText}](http://)`, startSize: 2, hotKey: { win: 'Alt-M', mac: 'Cmd-M' } },
+    Ul: { command: 'Ul', func: (selectedText, defaultText) => `- ${selectedText || defaultText}`, startSize: 2, hotKey: { win: 'Alt-U', mac: 'Cmd-U' } },
+    Ol: { command: 'Ol', func: (selectedText, defaultText) => `1 ${selectedText || defaultText}`, startSize: 2, hotKey: { win: 'Alt-O', mac: 'Cmd-O' } },
+    Code: { command: 'Code', func: (selectedText, defaultText) => '```lang\r\n' + (selectedText || defaultText) + '\r\n```', startSize: 3, hotKey: { win: 'Alt-C', mac: 'Cmd-C' } },
+  };
+
   insertContent(type: string) {
     if (!this.editor) {
       return;
     }
     let selectedText = this.editor.getSelectedText();
     const isSelected = !!selectedText;
-    let startSize = 2;
-    let initText = '';
     const range = this.editor.selection.getRange();
-    switch (type) {
-      case 'Bold':
-        initText = 'Bold Text';
-        selectedText = `**${selectedText || initText}**`;
-        break;
-      case 'Italic':
-        initText = 'Italic Text';
-        selectedText = `*${selectedText || initText}*`;
-        startSize = 1;
-        break;
-      case 'Heading':
-        initText = 'Heading';
-        selectedText = `# ${selectedText || initText}`;
-        break;
-      case 'Reference':
-        initText = 'Reference';
-        selectedText = `> ${selectedText || initText}`;
-        break;
-      case 'Link':
-        selectedText = `[](http://)`;
-        startSize = 1;
-        break;
-      case 'Image':
-        selectedText = `![](http://)`;
-        break;
-      case 'Ul':
-        selectedText = `- ${selectedText || initText}`;
-        break;
-      case 'Ol':
-        selectedText = `1. ${selectedText || initText}`;
-        startSize = 3;
-        break;
-      case 'Code':
-        initText = 'Source Code';
-        selectedText = '```language\r\n' + (selectedText || initText) + '\r\n```';
-        startSize = 3;
-        break;
-    }
+
+    const config = EditorToolbarComponent.COMMANDS_CONFIG[type];
+    let startSize = config.startSize;
+    selectedText = config.func(selectedText, config.command);
     this.editor.session.replace(range, selectedText);
     if (!isSelected) {
       range.start.column += startSize;
-      range.end.column = range.start.column + initText.length;
+      range.end.column = range.start.column + config.command.length;
       this.editor.selection.setRange(range);
     }
     this.editor.focus();
