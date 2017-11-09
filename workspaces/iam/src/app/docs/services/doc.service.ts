@@ -48,7 +48,11 @@ export class DocService {
   edit = (data: EditIssueParams) => {
     let doc = this.model.currentDoc;
     if (!doc) {
-      this._repo.issue.create(data).subscribe(a => console.log(a));
+      this._repo.issue.create(data).subscribe(a => {
+        this.model.currentDoc = a;
+        this.model.docs.unshift(a);
+        console.log(a)
+      });
       return;
     }
     this._repo.issue.edit(doc.number, data).subscribe(
