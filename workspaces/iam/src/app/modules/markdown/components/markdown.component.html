@@ -1,5 +1,6 @@
 <div class="md-editor-container" [class.fullscreen]="isFullScreen">
   <editor-toolbar></editor-toolbar>
+  <input class="form-control" type="text" [(ngModel)]="title" placeholder="Title" />
   <div class="editor-container">
     <div class="editor-panel">
       <div ace-editor [(text)]="markdown" [mode]="'markdown'" [options]="aceOptions" [readOnly]="false" [autoUpdateContent]="true"

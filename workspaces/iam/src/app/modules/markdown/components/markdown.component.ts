@@ -11,6 +11,7 @@ import { DocService } from '../../../docs/index';
 export class MarkdownComponent implements OnInit {
   private _text: string;
   private _doc: any;
+  title: string;
   public get markdown(): string {
     return this._text;
   }
@@ -22,6 +23,7 @@ export class MarkdownComponent implements OnInit {
   constructor(private _docService: DocService) {
     this._docService.onShowDoc(doc => {
       this._text = doc.body;
+      this.title = doc.title;
       this._doc = doc;
     });
   }
