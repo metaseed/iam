@@ -88,7 +88,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   }
   save = () => {
     const content = this.editor.session.getValue();
-    this._docService.edit({ body: content });
+    this._docService.edit({ title: this.markdown.title, body: content });
     console.log('saving', content);
   }
 
