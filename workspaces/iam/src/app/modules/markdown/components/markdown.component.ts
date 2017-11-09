@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AceEditorDirective } from './editor/markdown-editor.directive';
 import { MarkdownViewerComponent } from './viewer/markdown-viewer.component';
+import { DocService } from '../../../docs/index';
 
 @Component({
   selector: 'ms-markdown',
@@ -10,7 +11,9 @@ import { MarkdownViewerComponent } from './viewer/markdown-viewer.component';
 export class MarkdownComponent implements OnInit {
   public markdown: string;
   aceOptions: any = { maxLines: 100000, printMargin: false };
-  constructor() { }
+  constructor(private _docService: DocService) {
+    this._docService.docShow$.subscribe(doc => this.markdown = doc.body);
+  }
 
   showPreviewPanel = true;
 

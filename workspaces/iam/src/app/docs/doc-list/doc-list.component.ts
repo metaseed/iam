@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Document } from "../models/document";
-import { DocListService } from "../services/doc-list.service";
+import { DocService } from "../services/doc.service";
 
 @Component({
   selector: 'doc-list',
@@ -20,9 +20,15 @@ export class DocListComponent implements OnInit {
 
   @Output() onUndone: EventEmitter<Document> = new EventEmitter<Document>();
 
-  constructor(private todoListService: DocListService) { }
+  constructor(private _docService: DocService) { }
 
   ngOnInit() {
+    this._docService.getAll().subscribe(
+      (docs: Document[]) => {
+        this.docs = docs;
+        console.log(docs);
+      },
+      (error) => console.log(error));
     // this.todoListService.getAll().subscribe(
     //   (documents: Document[]) => {
     //     documents.forEach(document => this.documents.push(document));
@@ -32,6 +38,7 @@ export class DocListComponent implements OnInit {
 
   markDone(document: Document) {
     this.onDone.emit(document);
+    this._docService.docShow$.next(document);
   }
   markUndone(document: Document) {
     this.onUndone.emit(document);

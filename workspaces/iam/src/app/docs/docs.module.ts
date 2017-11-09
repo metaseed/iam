@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { DocsComponent } from "./docs.component";
 import { NewDocComponent } from "./new-doc/new-doc.component";
 import { DocListComponent } from "./doc-list/doc-list.component";
-import { DocListService } from './services/doc-list.service';
+import { DocService } from './services/doc.service';
 
 const todosRoutes: Routes = [
   {
@@ -29,7 +29,7 @@ const todosRoutes: Routes = [
     DocsComponent
   ],
   providers: [
-    DocListService
+    DocService
   ]
 })
 export class DocsModule {

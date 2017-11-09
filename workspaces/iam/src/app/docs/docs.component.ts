@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Document } from "./models/document";
-import { DocListService } from "./services/doc-list.service";
+import { DocService } from "./services/doc.service";
 
 @Component({
   selector: 'docs',
@@ -11,14 +11,10 @@ export class DocsComponent {
 
   public docList;
 
-  constructor(private _todoListService: DocListService) { }
+  constructor(private _todoListService: DocService) { }
 
   ngOnInit() {
-    this._todoListService.getAll().subscribe(
-      docs => {
-        this.docList = docs;
-        console.log(this.docList);
-      });
+
   }
 
   addNewElement(element: string) {
