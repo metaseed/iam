@@ -9,15 +9,12 @@ import { UserInfo } from './storage/github/user-info';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'app';
+  title = 'Iam';
   constructor(private _http: HttpClient) {
 
   }
   ngOnInit() {
 
   }
-  private markdown = `
-
-
-`;
+  private markdown = '';
 }

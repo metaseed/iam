@@ -1,10 +1,10 @@
 
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
 import { HotkeysService, Hotkey } from 'angular-hotkey-module';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/toPromise';
+import { HttpClient } from '@angular/common/http';
 class HotkeyConfig {
     [key: string]: string[];
 }
@@ -26,11 +26,11 @@ export class CommandService {
     commands: Observable<Command>;
 
     constructor(private hotkeysService: HotkeysService,
-        private http: Http) {
+        private http: HttpClient) {
         this.subject = new Subject<Command>();
         this.commands = this.subject.asObservable();
         this.http.get('assets/config.json').toPromise()
-            .then(r => r.json() as ConfigModel)
+            .then(r => r as ConfigModel)
             .then(c => {
                 for (const key in c.hotkeys) {
                     if (!c.hotkeys.hasOwnProperty(key)) {
