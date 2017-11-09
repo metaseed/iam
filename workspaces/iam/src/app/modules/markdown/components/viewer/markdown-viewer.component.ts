@@ -19,7 +19,7 @@ export class MarkdownViewerComponent {
     }
   }
 
-  private parsedModel: any;
+  parsedModel: any;
 
   constructor(private sanitized: DomSanitizer, private service: MarkdownViewService) {
   }

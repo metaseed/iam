@@ -10,7 +10,7 @@ import { DocsModel } from './models/docs.model';
 })
 export class DocsComponent {
 
-  constructor(private _docService: DocService) { }
+  constructor(public _docService: DocService) { }
 
   ngOnInit() {
     this._docService.getAll();

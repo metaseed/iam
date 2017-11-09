@@ -9,8 +9,10 @@ import { CoreModule } from './modules/core/core.module';
 import { HttpClientModule } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { DocsModule } from './docs/docs.module';
+import { NotFoundComponent } from './not-found/not-found.component';
 @NgModule({
   declarations: [
+    NotFoundComponent,
     AppComponent,
   ],
   imports: [

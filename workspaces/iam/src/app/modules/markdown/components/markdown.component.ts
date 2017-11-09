@@ -13,7 +13,7 @@ export class MarkdownComponent implements OnInit {
   private _text: string;
   private _doc: any;
   title: string;
-
+  isFullScreen: boolean;
   constructor(private _docService: DocService, private _http: HttpClient) {
     this._docService.onShowDoc(doc => {
       if (doc === null) {
