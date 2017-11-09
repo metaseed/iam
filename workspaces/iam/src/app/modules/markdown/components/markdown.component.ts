@@ -28,7 +28,9 @@ export class MarkdownComponent implements OnInit {
   }
 
   showDemo() {
-    this._http.get('/assets/markdown.md').subscribe();
+    this._http.get('/assets/markdown.md', { responseType: 'text' }).subscribe(a => {
+      this._text = a;
+    });
   }
   public get markdown(): string {
     return this._text;
