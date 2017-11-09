@@ -53,14 +53,17 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
       name: 'save',
       bindKey: { win: 'Ctrl-S', mac: 'Cmd-S' },
       exec: function (editor) {
-        const content = editor.session.getValue();
-        me._docService.edit({ body: content });
-        console.log('saving', content);
+        me.save();
       }
+
     });
 
   }
-
+  save = () => {
+    const content = this.editor.session.getValue();
+    this._docService.edit({ body: content });
+    console.log('saving', content);
+  }
   @Input()
   get options(): any {
     return this._options;
