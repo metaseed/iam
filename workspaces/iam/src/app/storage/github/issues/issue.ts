@@ -9,13 +9,15 @@ import { Milestone } from '../model/milestone';
 import { PullRequest } from '../model/pull-request';
 
 export interface IssueData {
-    title: string;
+    title?: string;
     body?: string;
     milestone?: number; // only user with push access can set
     labels?: string[]; // only user with push access
     assignees?: User[]; // only user with push access
 }
-
+export interface EditIssueParams extends IssueData {
+    state?: 'open' | 'closed';
+}
 export class Issue extends Requestable {
     public id: string;
     public url: string;
@@ -51,6 +53,10 @@ export class Issue extends Requestable {
     // https://developer.github.com/v3/issues/#list-issues-for-a-repository
     list() {
         return this.request('GET', `/repos/${this._userInfo.name}/${this.repository}/issues`, { state: 'all' });
+    }
+    // https://developer.github.com/v3/issues/#edit-an-issue
+    edit(number: number, params: EditIssueParams) {
+        return this.request('PATCH', `/repos/${this._userInfo.name}/${this.repository}/issues/${number}`, params);
     }
 
 }

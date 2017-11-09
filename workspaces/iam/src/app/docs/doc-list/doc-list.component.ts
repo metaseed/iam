@@ -38,7 +38,7 @@ export class DocListComponent implements OnInit {
 
   markDone(document: Document) {
     this.onDone.emit(document);
-    this._docService.docShow$.next(document);
+    this._docService.showDoc(document);
   }
   markUndone(document: Document) {
     this.onUndone.emit(document);

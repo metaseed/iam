@@ -9,10 +9,21 @@ import { DocService } from '../../../docs/index';
   styleUrls: ['./markdown.component.scss']
 })
 export class MarkdownComponent implements OnInit {
-  public markdown: string;
+  private _text: string;
+  private _doc: any;
+  public get markdown(): string {
+    return this._text;
+  }
+  public set markdown(text) {
+    this._text = text;
+    this._doc && (this._doc.body = text);
+  }
   aceOptions: any = { maxLines: 100000, printMargin: false };
   constructor(private _docService: DocService) {
-    this._docService.docShow$.subscribe(doc => this.markdown = doc.body);
+    this._docService.onShowDoc(doc => {
+      this._text = doc.body;
+      this._doc = doc;
+    });
   }
 
   showPreviewPanel = true;

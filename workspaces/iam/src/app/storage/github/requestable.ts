@@ -41,6 +41,9 @@ export class Requestable {
         else if (method === 'GET') {
             return this._http.get<Object>(url, { headers: headers, responseType: 'json' });
         }
+        else if (method === 'PATCH') {
+            return this._http.patch<Object>(url, data, { headers: headers, responseType: 'json' });
+        }
         return <Observable<HttpResponse<any>>>this._http.request(request).filter(r => r instanceof HttpResponseBase);
     }
 

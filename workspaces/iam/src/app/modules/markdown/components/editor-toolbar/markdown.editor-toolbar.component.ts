@@ -4,6 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { AceEditorDirective } from '../editor/markdown-editor.directive';
 import { Command, CommandService } from '../../../core';
 import { Subscription } from 'rxjs/Subscription';
+import { DocService } from '../../../../docs/index';
 
 @Component({
   selector: 'editor-toolbar',
@@ -18,6 +19,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   _options: any;
   _hideIcons: any = {};
   constructor(private markdown: MarkdownComponent,
+    private _docService: DocService,
     private _renderer: Renderer,
     private _commandService: CommandService,
     private _domSanitizer: DomSanitizer) {
@@ -51,7 +53,9 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
       name: 'save',
       bindKey: { win: 'Ctrl-S', mac: 'Cmd-S' },
       exec: function (editor) {
-        console.log('saving', editor.session.getValue());
+        const content = editor.session.getValue();
+        me._docService.edit({ body: content });
+        console.log('saving', content);
       }
     });
 
