@@ -1,19 +1,13 @@
 <div class="col-xs-12">
   <table class="table">
-    <tr *ngFor="let todo of documents; let i = index">
-      <ng-container *ngIf="todo.state!=='closed'">
-        <td [class.done-true]="todo.done">{{todo.id}}</td>
-        <td [class.done-true]="todo.done">{{todo.title}}</td>
+    <tr *ngFor="let doc of documents; let i = index" (click)="show(doc)">
+      <ng-container *ngIf="doc.state!=='closed'">
+        <td [class.done-true]="doc.done">{{doc.updated_at}}</td>
+        <td [class.done-true]="doc.done">{{doc.title}}</td>
         <td>
-          <button class="pull-right btn btn-default" (click)="delete(todo)">
+          <button class="pull-right btn btn-default" (click)="delete(doc)">
             Delete
           </button>
-          <button class="pull-right btn btn-default" (click)="show(todo)">
-            Show
-          </button>
-          <!-- <button class="pull-right btn btn-default" (click)="markUndone(todo)" *ngIf="todo.done">
-            Redo
-          </button> -->
         </td>
       </ng-container>
     </tr>
