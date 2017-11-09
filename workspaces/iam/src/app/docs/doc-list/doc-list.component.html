@@ -1,7 +1,7 @@
 <div class="col-xs-12">
   <table class="table">
     <tr *ngFor="let todo of documents; let i = index">
-      <ng-container>
+      <ng-container *ngIf="todo.state!=='closed'">
         <td [class.done-true]="todo.done">{{todo.id}}</td>
         <td [class.done-true]="todo.done">{{todo.title}}</td>
         <td>

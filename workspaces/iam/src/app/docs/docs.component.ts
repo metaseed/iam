@@ -35,6 +35,7 @@ export class DocsComponent {
   }
 
   deleteDoc(doc: Document) {
+    doc.state = 'closed';
     this._docService.deleteDoc(doc);
   }
 

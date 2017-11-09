@@ -12,12 +12,39 @@ import { DocService } from '../../../../docs/index';
   styleUrls: ['./markdown.editor-toolbar.component.scss']
 })
 export class EditorToolbarComponent implements OnInit, AfterViewInit {
+
+  private static COMMANDS_CONFIG = {
+    Bold: { command: 'Bold', func: (selectedText, defaultText) => `**${selectedText || defaultText}**`, startSize: 2, hotKey: { win: 'Alt-B', mac: 'Cmd-B' } }, // not Ctrl-M B also work
+    Italic: { command: 'Italic', func: (selectedText, defaultText) => `*${selectedText || defaultText}*`, startSize: 1, hotKey: { win: 'Alt-I', mac: 'Cmd-I' } },
+    Heading: { command: 'Heading', func: (selectedText, defaultText) => `# ${selectedText || defaultText}`, startSize: 2, hotKey: { win: 'Alt-H', mac: 'Cmd-H' } },
+    Reference: { command: 'Reference', func: (selectedText, defaultText) => `> ${selectedText || defaultText}`, startSize: 2, hotKey: { win: 'Alt-R', mac: 'Cmd-R' } },
+    Link: { command: 'Link', func: (selectedText, defaultText) => `[${selectedText || defaultText}](http://)`, startSize: 1, hotKey: { win: 'Alt-L', mac: 'Cmd-L' } },
+    Image: { command: 'Image', func: (selectedText, defaultText) => `![${selectedText || defaultText}](http://)`, startSize: 2, hotKey: { win: 'Alt-M', mac: 'Cmd-M' } },
+    Ul: { command: 'Ul', func: (selectedText, defaultText) => `- ${selectedText || defaultText}`, startSize: 2, hotKey: { win: 'Alt-U', mac: 'Cmd-U' } },
+    Ol: { command: 'Ol', func: (selectedText, defaultText) => `1 ${selectedText || defaultText}`, startSize: 2, hotKey: { win: 'Alt-O', mac: 'Cmd-O' } },
+    Code: { command: 'Code', func: (selectedText, defaultText) => '```lang\r\n' + (selectedText || defaultText) + '\r\n```', startSize: 3, hotKey: { win: 'Alt-C', mac: 'Cmd-C' } },
+  };
+
   isFullScreen: boolean;
   editor: any;
 
   _subscription: Subscription;
   _options: any;
   _hideIcons: any = {};
+
+  @Input()
+  get options(): any {
+    return this._options;
+  }
+  set options(value: any) {
+    this._options = value || {
+      hideIcons: []
+    };
+    this._hideIcons = {};
+    (this._options.hideIcons || []).forEach((v: any) => {
+      this._hideIcons[v] = true;
+    });
+  }
   constructor(private markdown: MarkdownComponent,
     private _docService: DocService,
     private _renderer: Renderer,
@@ -64,25 +91,11 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     this._docService.edit({ body: content });
     console.log('saving', content);
   }
-  @Input()
-  get options(): any {
-    return this._options;
-  }
-  set options(value: any) {
-    this._options = value || {
-      hideIcons: []
-    };
-    this._hideIcons = {};
-    (this._options.hideIcons || []).forEach((v: any) => {
-      this._hideIcons[v] = true;
-    });
-  }
 
   togglePreview() {
     this.markdown.showPreviewPanel = !this.markdown.showPreviewPanel;
     this.editorResize();
   }
-
 
   previewPanelClick(event: Event) {
     event.preventDefault();
@@ -102,20 +115,6 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
       }, timeOut);
     }
   }
-
-
-
-  private static COMMANDS_CONFIG = {
-    Bold: { command: 'Bold', func: (selectedText, defaultText) => `**${selectedText || defaultText}**`, startSize: 2, hotKey: { win: 'Alt-B', mac: 'Cmd-B' } }, // not Ctrl-M B also work
-    Italic: { command: 'Italic', func: (selectedText, defaultText) => `*${selectedText || defaultText}*`, startSize: 1, hotKey: { win: 'Alt-I', mac: 'Cmd-I' } },
-    Heading: { command: 'Heading', func: (selectedText, defaultText) => `# ${selectedText || defaultText}`, startSize: 2, hotKey: { win: 'Alt-H', mac: 'Cmd-H' } },
-    Reference: { command: 'Reference', func: (selectedText, defaultText) => `> ${selectedText || defaultText}`, startSize: 2, hotKey: { win: 'Alt-R', mac: 'Cmd-R' } },
-    Link: { command: 'Link', func: (selectedText, defaultText) => `[${selectedText || defaultText}](http://)`, startSize: 1, hotKey: { win: 'Alt-L', mac: 'Cmd-L' } },
-    Image: { command: 'Image', func: (selectedText, defaultText) => `![${selectedText || defaultText}](http://)`, startSize: 2, hotKey: { win: 'Alt-M', mac: 'Cmd-M' } },
-    Ul: { command: 'Ul', func: (selectedText, defaultText) => `- ${selectedText || defaultText}`, startSize: 2, hotKey: { win: 'Alt-U', mac: 'Cmd-U' } },
-    Ol: { command: 'Ol', func: (selectedText, defaultText) => `1 ${selectedText || defaultText}`, startSize: 2, hotKey: { win: 'Alt-O', mac: 'Cmd-O' } },
-    Code: { command: 'Code', func: (selectedText, defaultText) => '```lang\r\n' + (selectedText || defaultText) + '\r\n```', startSize: 3, hotKey: { win: 'Alt-C', mac: 'Cmd-C' } },
-  };
 
   insertContent(type: string) {
     if (!this.editor) {
