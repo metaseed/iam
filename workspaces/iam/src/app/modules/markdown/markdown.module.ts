@@ -9,6 +9,7 @@ import { MarkdownComponent } from './components/markdown.component';
 import { AceEditorDirective } from './components/editor/markdown-editor.directive';
 import { CommonModule } from '@angular/common';
 import { EditorToolbarComponent } from './components/editor-toolbar/markdown.editor-toolbar.component';
+//import { MarkdownEditorComponent } from './components/editor/markdown-editor.codemirror.directive';
 
 @NgModule({
   imports: [
@@ -20,6 +21,7 @@ import { EditorToolbarComponent } from './components/editor-toolbar/markdown.edi
     MarkdownViewerComponent,
     MarkdownComponent,
     AceEditorDirective,
+    // MarkdownEditorComponent,
     EditorToolbarComponent
   ],
   exports: [

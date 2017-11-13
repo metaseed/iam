@@ -6,6 +6,7 @@
       <div ace-editor [(text)]="markdown" [mode]="'markdown'" [options]="aceOptions" [readOnly]="false" [autoUpdateContent]="true"
         [durationBeforeCallback]="1000" (textChanged)="onAceChange($event)" style="min-height: 200px; width:100%; overflow: auto;"></div>
     </div>
+    <!-- <md-editor [(value)]="markdown" style="min-height: 200px; width:100%; overflow: auto;"></md-editor> -->
     <div class="preview-panel" [style.display]="showPreviewPanel ? 'block' : 'none'">
       <markdown-viewer [model]="markdown"></markdown-viewer>
     </div>

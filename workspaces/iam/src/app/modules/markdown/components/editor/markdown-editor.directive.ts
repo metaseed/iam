@@ -2,8 +2,7 @@ import { Directive, EventEmitter, Output, ElementRef, Input, OnInit } from '@ang
 import * as ace from 'brace';
 import 'brace/theme/twilight';
 import 'brace/mode/markdown';
-// import ace from 'ace-builds';
-// declare var ace: any;
+
 @Directive({
     selector: '[ace-editor]'
 })
@@ -138,3 +137,7 @@ export class AceEditorDirective implements OnInit {
         return this.editor;
     }
 }
+// usage:
+// <div ace-editor [(text)]="markdown" [mode]="'markdown'" [options]="aceOptions" [readOnly]="false" [autoUpdateContent]="true"
+//     [durationBeforeCallback]="1000" (textChanged)="onAceChange($event)" style="min-height: 200px; width:100%; overflow: auto;"></div>
+// </div>
