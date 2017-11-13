@@ -88,6 +88,10 @@ Start numbering with offset:
 57. foo
 1. bar
 
+Task list
+
+- [x] task 1
+- [ ] task 2
 
 ## Code
 
@@ -145,8 +149,9 @@ Autoconverted link https://github.com/nodeca/pica (enable linkify to see)
 
 ## Images
 
-![Minion](https://octodex.github.com/images/minion.png)
-![Stormtroopocat](https://octodex.github.com/images/stormtroopocat.jpg "The Stormtroopocat")
+![Minion](https://octodex.github.com/images/minion.png =400x)
+![Minion](https://octodex.github.com/images/minion.png =x300)
+![Stormtroopocat](https://octodex.github.com/images/stormtroopocat.jpg "The Stormtroopocat" =400x300)
 
 Like links, Images also have a footnote style syntax
 

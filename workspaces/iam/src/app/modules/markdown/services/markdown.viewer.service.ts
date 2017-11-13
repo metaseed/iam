@@ -1,11 +1,7 @@
 import { Injectable } from '@angular/core';
+import highlightjs from 'highlight.js';
 import * as MarkdownIt from 'markdown-it';
 import markdownVideoPlugin from 'markdown-it-video';
-import { MarkdownConfig } from '../markdown.config';
-import highlightjs from 'highlight.js';
-
-import * as utils from '../../utils';
-import { ContainerPlugin } from './plugins/container';
 import tasklists from 'markdown-it-task-lists';
 import emoji from 'markdown-it-emoji';
 import sub from 'markdown-it-sub';
@@ -16,6 +12,10 @@ import footnote from 'markdown-it-footnote';
 import deflist from 'markdown-it-deflist';
 import abbr from 'markdown-it-abbr';
 import imsize from 'markdown-it-imsize';
+
+import { ContainerPlugin } from './plugins/container';
+import { MarkdownConfig } from '../markdown.config';
+import * as utils from '../../utils';
 
 @Injectable()
 export class MarkdownViewService {
@@ -45,7 +45,7 @@ export class MarkdownViewService {
       .use(markdownVideoPlugin, {
         youtube: { width: 640, height: 390 }
       })
-      .use(tasklists, { enabled: true })
+      .use(tasklists, { enabled: false })
       .use(emoji)
       .use(sub)
       .use(sup)

@@ -1,8 +1,6 @@
-import { Injectable } from '@angular/core';
 import * as MarkdownIt from 'markdown-it';
 import markdownContainer from 'markdown-it-container';
 
-@Injectable()
 export class ContainerPlugin {
     constructor(private markdown: MarkdownIt.MarkdownIt, name: string,
         private option?: { validate: (params) => any, render: (tokens, idx) => string }) {

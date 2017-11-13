@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { MarkdownViewerComponent } from './components/viewer/markdown-viewer.component';
 import { MarkdownConfig } from './markdown.config';
-import { MarkdownViewService } from './services/markdown.view.service';
+import { MarkdownViewService } from './services/markdown.viewer.service';
 import { MarkdownComponent } from './components/markdown.component';
 import { AceEditorDirective } from './components/editor/markdown-editor.directive';
 import { CommonModule } from '@angular/common';
