@@ -17,6 +17,7 @@ import toc from 'markdown-it-table-of-contents';
 import { ContainerPlugin } from './plugins/container';
 import { MarkdownConfig } from '../markdown.config';
 import * as utils from '../../utils';
+import latex from 'markdown-it-latex';
 
 @Injectable()
 export class MarkdownViewService {
@@ -57,6 +58,7 @@ export class MarkdownViewService {
       .use(abbr)
       .use(anchor)
       .use(toc)
+      .use(latex)
       .use(imsize, { autofill: true });
 
     this.containerPlugin = new ContainerPlugin(this.markdown, 'warning');
