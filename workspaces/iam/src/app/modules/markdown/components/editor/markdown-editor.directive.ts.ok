@@ -2,7 +2,7 @@ import { Directive, EventEmitter, Output, ElementRef, Input, OnInit } from '@ang
 import * as ace from 'brace';
 import 'brace/theme/twilight';
 import 'brace/mode/markdown';
-
+// the bundle size of brace is about 1.2M, so big
 @Directive({
     selector: '[ace-editor]'
 })

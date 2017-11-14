@@ -1,7 +1,8 @@
 import { Component, OnInit, AfterViewInit, Input, Renderer } from '@angular/core';
 import { MarkdownComponent } from '../markdown.component';
 import { DomSanitizer } from '@angular/platform-browser';
-import { AceEditorDirective } from '../editor/markdown-editor.directive';
+// import { AceEditorDirective } from '../editor/markdown-editor.directive';
+
 import { Command, CommandService } from '../../../core';
 import { Subscription } from 'rxjs/Subscription';
 import { DocService } from '../../../../docs/index';

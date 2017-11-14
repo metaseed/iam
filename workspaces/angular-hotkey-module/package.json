@@ -33,10 +33,10 @@
     "mousetrap": "^1.6.1"
   },
   "devDependencies": {
-    "@angular/common": "^5.0.0",
-    "@angular/compiler": "^5.0.0",
-    "@angular/compiler-cli": "^5.0.0",
-    "@angular/core": "^5.0.0",
+    "@angular/common": "^5.0.1",
+    "@angular/compiler": "^5.0.1",
+    "@angular/compiler-cli": "^5.0.1",
+    "@angular/core": "^5.0.1",
     "@types/core-js": "0.9.43",
     "codelyzer": "~4.0.1",
     "rxjs": "^5.5.2",

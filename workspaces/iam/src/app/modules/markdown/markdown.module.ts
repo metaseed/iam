@@ -6,28 +6,34 @@ import { MarkdownViewerComponent } from './components/viewer/markdown-viewer.com
 import { MarkdownConfig } from './markdown.config';
 import { MarkdownViewService } from './services/markdown.viewer.service';
 import { MarkdownComponent } from './components/markdown.component';
-import { AceEditorDirective } from './components/editor/markdown-editor.directive';
+// import { AceEditorDirective } from './components/editor/markdown-editor.directive';
 import { CommonModule } from '@angular/common';
 import { EditorToolbarComponent } from './components/editor-toolbar/markdown.editor-toolbar.component';
 // import { MarkdownEditorComponent } from './components/editor/markdown-editor.codemirror.directive';
+// import { MonacoEditorModule } from 'ngx-monaco-editor';
 
+import { MonacoEditorComponent } from './components/editor/monaco-editor/monaco-editor.component';
+import { MonacoEditorLoaderModule } from './components/editor/monaco-editor/monaco-editor-loader/monaco-editor-loader.module';
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    MonacoEditorLoaderModule
+    // MonacoEditorModule
   ],
   declarations: [
     MarkdownViewerComponent,
     MarkdownComponent,
-    AceEditorDirective,
+    // AceEditorDirective,
     // MarkdownEditorComponent,
-    EditorToolbarComponent
+    EditorToolbarComponent,
+    MonacoEditorComponent
   ],
   exports: [
     MarkdownViewerComponent,
     MarkdownComponent,
-    AceEditorDirective
+    // AceEditorDirective
   ],
 })
 export class MarkdownModule {

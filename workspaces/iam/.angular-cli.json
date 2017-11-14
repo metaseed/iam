@@ -6,9 +6,22 @@
   "apps": [{
     "root": "src",
     "outDir": "dist",
-    "assets": [
-      "assets",
-      "favicon.ico"
+    "assets": [{
+        "glob": "**/*",
+        "input": "../node_modules/monaco-editor/min/",
+        "output": "./assets/monaco-editor/"
+      },
+      {
+        "glob": "**/*",
+        "input": "../node_modules/monaco-editor/min-maps/",
+        "output": "./assets/min-maps/"
+      },
+      {
+        "glob": "favicon.ico",
+        "input": "./",
+        "output": "./"
+      },
+      "assets"
     ],
     "index": "index.html",
     "main": "main.ts",

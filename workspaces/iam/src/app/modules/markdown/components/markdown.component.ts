@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AceEditorDirective } from './editor/markdown-editor.directive';
+// import { AceEditorDirective } from './editor/markdown-editor.directive';
 import { MarkdownViewerComponent } from './viewer/markdown-viewer.component';
 import { DocService } from '../../../docs/index';
 import { HttpClient } from '@angular/common/http';
+import { MonacoEditorComponent } from './editor/monaco-editor/monaco-editor.component';
 
 @Component({
   selector: 'ms-markdown',
@@ -21,6 +22,7 @@ export class MarkdownComponent implements OnInit {
         this.title = '';
         return;
       }
+
       this._text = doc.body;
       this.title = doc.title;
       this._doc = doc;
@@ -32,6 +34,8 @@ export class MarkdownComponent implements OnInit {
       this._text = a;
     });
   }
+
+  editorOptions = { theme: 'vs-dark', language: 'markdown' };
   public get markdown(): string {
     return this._text;
   }
@@ -42,7 +46,7 @@ export class MarkdownComponent implements OnInit {
   aceOptions: any = { maxLines: 100000, printMargin: false };
   showPreviewPanel = true;
 
-  @ViewChild(AceEditorDirective) editor: AceEditorDirective;
+  @ViewChild(MonacoEditorComponent) editor: MonacoEditorComponent;
   @ViewChild(MarkdownViewerComponent) viewer: MarkdownComponent;
   ngOnInit() {
   }
