@@ -1,4 +1,9 @@
-#container {
+.editorContainer {
   width: 100%;
-  height: 99%;
+  min-height: 200px;
+  height: 100%;
+}
+
+ :host {
+  min-height: 200px;
 }

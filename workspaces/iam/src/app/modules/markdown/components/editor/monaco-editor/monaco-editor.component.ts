@@ -1,39 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, EventEmitter, ViewChild, Output, AfterViewInit, NgZone, forwardRef } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { fromEvent } from 'rxjs/observable/fromEvent';
+import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 declare var monaco;
 @Component({
   selector: 'monaco-editor',
   templateUrl: './monaco-editor.component.html',
-  styleUrls: ['./monaco-editor.component.css']
+  styleUrls: ['./monaco-editor.component.css'],
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => MonacoEditorComponent),
+    multi: true
+  }]
 })
-export class MonacoEditorComponent implements OnInit {
-
-  constructor() { }
-
-  editor: any;
-  ngOnInit() {
-    this.editor = monaco;
-    monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-      noSemanticValidation: true,
-      noSyntaxValidation: false
-    });
-
-    // compiler options
-    monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-      target: monaco.languages.typescript.ScriptTarget.ES2016,
-      allowNonTsExtensions: true
-    });
-
-    // extra libraries
-    monaco.languages.typescript.javascriptDefaults.addExtraLib([
-      'declare class Facts {',
-      '    /**',
-      '     * Returns the next fact',
-      '     */',
-      '    static next():string',
-      '}',
-    ].join('\n'), 'filename/facts.d.ts');
-
-    var jsCode = [
+export class MonacoEditorComponent implements AfterViewInit, ControlValueAccessor {
+  _value: '';
+  _options = {
+    value: [
       '"use strict";',
       '',
       "class Chuck {",
@@ -41,12 +24,101 @@ export class MonacoEditorComponent implements OnInit {
       "        return Facts.next();",
       "    }",
       "}"
-    ].join('\n');
+    ].join('\n'),
+    language: "javascript"
+  };
+  propagateChange = (_: any) => { };
+  onTouched = () => { };
+  private _windowResizeSubscription: Subscription;
+  @ViewChild('editorContainer') _editorContainer: ElementRef;
+  @Output() onInit = new EventEmitter<any>();
+  constructor(private zone: NgZone) { }
 
-    monaco.editor.create(document.getElementById("container"), {
-      value: jsCode,
-      language: "javascript"
+  editor: any;
+
+
+  @Input('options')
+  set options(options) {
+    this._options = options;
+    if (this.editor) {
+      this.editor.dispose();
+      this.initMonaco(options);
+    }
+  }
+  get options() {
+    return this._options;
+  }
+  registerOnChange(fn: any): void {
+    this.propagateChange = fn;
+  }
+  writeValue(value: any): void {
+    this._value = value;
+    // Fix for value change while dispose in process.
+    setTimeout(() => {
+      if (this.editor && value) {
+        this.editor.setValue(value);
+        this.editor.layout();
+      }
     });
+
+  }
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+  ngAfterViewInit() {
+    this.initMonaco(this._options);
   }
 
+  private initMonaco(options) {
+    // monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+    //   noSemanticValidation: true,
+    //   noSyntaxValidation: false
+    // });
+
+    // // compiler options
+    // monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+    //   target: monaco.languages.typescript.ScriptTarget.ES2016,
+    //   allowNonTsExtensions: true
+    // });
+
+    // // extra libraries
+    // monaco.languages.typescript.javascriptDefaults.addExtraLib([
+    //   'declare class Facts {',
+    //   '    /**',
+    //   '     * Returns the next fact',
+    //   '     */',
+    //   '    static next():string',
+    //   '}',
+    // ].join('\n'), 'filename/facts.d.ts');
+
+
+
+    this.editor = monaco.editor.create(this._editorContainer.nativeElement, this.options);
+    if (this._value) {
+      this.editor.setValue(this._value);
+    }
+    this.editor.onDidChangeModelContent((e: any) => {
+      let value = this.editor.getValue();
+      this.propagateChange(value);
+      // value is not propagated to parent when executing outside zone.
+      this.zone.run(() => this._value = value);
+    });
+    // refresh layout on resize event.
+    if (this._windowResizeSubscription) {
+      this._windowResizeSubscription.unsubscribe();
+    }
+    this._windowResizeSubscription = fromEvent(window, 'resize').subscribe(() => {
+      this.editor.layout();
+    });
+    this.onInit.emit(this.editor);
+  }
+  ngOnDestroy() {
+    if (this._windowResizeSubscription) {
+      this._windowResizeSubscription.unsubscribe();
+    }
+    if (this.editor) {
+      this.editor.dispose();
+      this.editor = undefined;
+    }
+  }
 }

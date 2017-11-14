@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import highlightjs from 'highlight.js';
+import highlightjs from 'highlight.js/lib/highlight';
+
 import * as MarkdownIt from 'markdown-it';
 import markdownVideoPlugin from 'markdown-it-video';
 import tasklists from 'markdown-it-task-lists';
@@ -34,8 +35,53 @@ export class MarkdownViewService {
 
   private markdown: MarkdownIt.MarkdownIt;
   private containerPlugin: ContainerPlugin;
-
+  a = ['markdown', 'java', 'javascript',
+    'typescript',
+    'json',
+    'julia',
+    'kotlin',
+    'less',
+    'lisp',
+    'lua',
+    'makefile',
+    'matlab',
+    'mathematica',
+    'mercury',
+    'perl',
+    'php',
+    'powershell',
+    'prolog',
+    'r',
+    'puppet',
+    'ruby',
+    'rust',
+    'scala',
+    'scheme',
+    'scss',
+    'shell',
+    'rust',
+    'sql',
+    'stylus',
+    'swift',
+    'tcl',
+    'thrift',
+    'vala',
+    'vbnet',
+    'vbscript',
+    'vbscript-html',
+    'verilog',
+    'vhdl',
+    'vim',
+    'x86asm',
+    'xml',
+    'xquery',
+    'yaml'];
   constructor(config?: MarkdownConfig) {
+    ['javascript', 'python', 'bash'].forEach((langName) => {
+      // Using require() here because import() support hasn't landed in Webpack yet
+      const langModule = require(`highlight.js/lib/languages/${langName}`);
+      highlightjs.registerLanguage(langName, langModule);
+    });
     config = config || utils.mergeConf(this.defaultConfig, config);
 
     if (!config.markdownIt.highlight) {
