@@ -2,6 +2,7 @@ import { Component, OnInit, Input, ElementRef, EventEmitter, ViewChild, Output, 
 import { Subscription } from 'rxjs';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+import { MarkdownEditorService } from '../../../services/markdown.editor.service';
 declare var monaco;
 @Component({
   selector: 'monaco-editor',
@@ -14,6 +15,10 @@ declare var monaco;
   }]
 })
 export class MonacoEditorComponent implements AfterViewInit, ControlValueAccessor {
+
+  constructor(private service: MarkdownEditorService, private zone: NgZone) {
+
+  }
   _value: '';
   _options = {
     value: [
@@ -32,7 +37,6 @@ export class MonacoEditorComponent implements AfterViewInit, ControlValueAccesso
   private _windowResizeSubscription: Subscription;
   @ViewChild('editorContainer') _editorContainer: ElementRef;
   @Output() onInit = new EventEmitter<any>();
-  constructor(private zone: NgZone) { }
 
   editor: any;
 
@@ -111,6 +115,8 @@ export class MonacoEditorComponent implements AfterViewInit, ControlValueAccesso
       this.editor.layout();
     });
     this.onInit.emit(this.editor);
+
+    this.service.editorLoaded$.next(this.editor);
   }
   ngOnDestroy() {
     if (this._windowResizeSubscription) {

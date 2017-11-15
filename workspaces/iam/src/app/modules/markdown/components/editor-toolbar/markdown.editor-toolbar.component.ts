@@ -6,25 +6,15 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Command, CommandService } from '../../../core';
 import { Subscription } from 'rxjs/Subscription';
 import { DocService } from '../../../../docs/index';
-
+import { MarkdownEditorService } from '../../services/markdown.editor.service';
+declare var monaco;
 @Component({
   selector: 'editor-toolbar',
   templateUrl: './markdown.editor-toolbar.component.html',
   styleUrls: ['./markdown.editor-toolbar.component.scss']
 })
 export class EditorToolbarComponent implements OnInit, AfterViewInit {
-
-  private static COMMANDS_CONFIG = {
-    Bold: { command: 'Bold', func: (selectedText, defaultText) => `**${selectedText || defaultText}**`, startSize: 2, hotKey: { win: 'Alt-B', mac: 'Cmd-B' } }, // not Ctrl-M B also work
-    Italic: { command: 'Italic', func: (selectedText, defaultText) => `*${selectedText || defaultText}*`, startSize: 1, hotKey: { win: 'Alt-I', mac: 'Cmd-I' } },
-    Heading: { command: 'Heading', func: (selectedText, defaultText) => `# ${selectedText || defaultText}`, startSize: 2, hotKey: { win: 'Alt-H', mac: 'Cmd-H' } },
-    Reference: { command: 'Reference', func: (selectedText, defaultText) => `> ${selectedText || defaultText}`, startSize: 2, hotKey: { win: 'Alt-R', mac: 'Cmd-R' } },
-    Link: { command: 'Link', func: (selectedText, defaultText) => `[${selectedText || defaultText}](http://)`, startSize: 1, hotKey: { win: 'Alt-L', mac: 'Cmd-L' } },
-    Image: { command: 'Image', func: (selectedText, defaultText) => `![${selectedText || defaultText}](http://)`, startSize: 2, hotKey: { win: 'Alt-M', mac: 'Cmd-M' } },
-    Ul: { command: 'Ul', func: (selectedText, defaultText) => `- ${selectedText || defaultText}`, startSize: 2, hotKey: { win: 'Alt-U', mac: 'Cmd-U' } },
-    Ol: { command: 'Ol', func: (selectedText, defaultText) => `1 ${selectedText || defaultText}`, startSize: 2, hotKey: { win: 'Alt-O', mac: 'Cmd-O' } },
-    Code: { command: 'Code', func: (selectedText, defaultText) => '```lang\r\n' + (selectedText || defaultText) + '\r\n```', startSize: 3, hotKey: { win: 'Alt-C', mac: 'Cmd-C' } },
-  };
+  private static COMMANDS_CONFIG;
 
   isFullScreen: boolean;
   editor: any;
@@ -47,6 +37,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     });
   }
   constructor(private markdown: MarkdownComponent,
+    private editorService: MarkdownEditorService,
     private _docService: DocService,
     private _renderer: Renderer,
     private _commandService: CommandService,
@@ -62,31 +53,41 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     const me = this;
-    this.editor = this.markdown.editor;
-    const configs = EditorToolbarComponent.COMMANDS_CONFIG;
-    for (let key in configs) {
-      if (configs.hasOwnProperty(key)) {
-        var config = configs[key];
 
-        this.editor.commands.addCommand({
-          name: key,
-          bindKey: config.hotKey,
-          exec: function (editor) {
-            me.insertContent(key);
-          }
-        });
+    this.editorService.editorLoaded$.subscribe((editor) => {
+      if (!EditorToolbarComponent.COMMANDS_CONFIG) {
+        EditorToolbarComponent.COMMANDS_CONFIG = {
+          Bold: { command: 'Bold', func: (selectedText, defaultText) => `**${selectedText || defaultText}**`, startSize: 2, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_B] }, // not Ctrl-M B also work
+          Italic: { command: 'Italic', func: (selectedText, defaultText) => `*${selectedText || defaultText}*`, startSize: 1, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_I] },
+          Heading: { command: 'Heading', func: (selectedText, defaultText) => `# ${selectedText || defaultText}`, startSize: 2, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_H] },
+          Reference: { command: 'Reference', func: (selectedText, defaultText) => `> ${selectedText || defaultText}`, startSize: 2, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_R] },
+          Link: { command: 'Link', func: (selectedText, defaultText) => `[${selectedText || defaultText}](http://)`, startSize: 1, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_L] },
+          Image: { command: 'Image', func: (selectedText, defaultText) => `![${selectedText || defaultText}](http://)`, startSize: 2, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_M] },
+          Ul: { command: 'Ul', func: (selectedText, defaultText) => `- ${selectedText || defaultText}`, startSize: 2, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_U] },
+          Ol: { command: 'Ol', func: (selectedText, defaultText) => `1 ${selectedText || defaultText}`, startSize: 2, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_O] },
+          Code: { command: 'Code', func: (selectedText, defaultText) => '```lang\r\n' + (selectedText || defaultText) + '\r\n```', startSize: 3, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_C] },
+          Save: { command: 'Save', func: me.save, startSize: 0, hotKey: [monaco.KeyCode.CtrlCmd | monaco.KeyCode.KEY_S] },
+        };
       }
-    }
+      this.editor = editor;
+      const configs = EditorToolbarComponent.COMMANDS_CONFIG;
+      for (let key in configs) {
+        if (configs.hasOwnProperty(key)) {
+          var config = configs[key];
 
-    this.editor.commands.addCommand({
-      name: 'save',
-      bindKey: { win: 'Ctrl-S', mac: 'Cmd-S' },
-      exec: function (editor) {
-        me.save();
+          this.editor.addAction({
+            id: key,
+            label: key,
+            contextMenuGroupId: 'navigation',
+            keybindings: config.hotKey,
+            run: function (editor) {
+              me.insertContent(key);
+            }
+          });
+        }
       }
 
     });
-
   }
   save = () => {
     const content = this.editor.session.getValue();
@@ -122,7 +123,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     if (!this.editor) {
       return;
     }
-    let selectedText = this.editor.getSelectedText();
+    let selectedText = this.editor.getSelection();
     const isSelected = !!selectedText;
     const range = this.editor.selection.getRange();
 
