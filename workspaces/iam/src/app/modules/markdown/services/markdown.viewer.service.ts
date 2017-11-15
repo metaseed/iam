@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import highlightjs from 'highlight.js/lib/highlight';
-
+// import highlightjs from 'highlight.js/lib/highlight';
+import prismjs from 'prismjs';
 import * as MarkdownIt from 'markdown-it';
 import markdownVideoPlugin from 'markdown-it-video';
 import tasklists from 'markdown-it-task-lists';
@@ -77,11 +77,11 @@ export class MarkdownViewService {
     'xquery',
     'yaml'];
   constructor(config?: MarkdownConfig) {
-    ['javascript', 'python', 'bash'].forEach((langName) => {
-      // Using require() here because import() support hasn't landed in Webpack yet
-      const langModule = require(`highlight.js/lib/languages/${langName}`);
-      highlightjs.registerLanguage(langName, langModule);
-    });
+    // ['javascript', 'python', 'bash'].forEach((langName) => {
+    //   // Using require() here because import() support hasn't landed in Webpack yet
+    //   const langModule = require(`highlight.js/lib/languages/${langName}`);
+    //   highlightjs.registerLanguage(langName, langModule);
+    // });
     config = config || utils.mergeConf(this.defaultConfig, config);
 
     if (!config.markdownIt.highlight) {
@@ -123,12 +123,21 @@ export class MarkdownViewService {
   }
 
   private DEFAULT_HIGHLIGHT_FUNCTION = (str, lang) => {
-    if (lang && highlightjs.getLanguage(lang)) {
+    let language = prismjs.languages[lang];
+    if (lang && language) {
       try {
-        return '<pre class="hljs"><code>' + highlightjs.highlight(lang, str, true).value + '</code></pre>';
+        return `<pre class="language-${lang}"><code> ${prismjs.highlight(str, language)} </code></pre>`;
       } catch (__) { }
     }
-    return '<pre class="hljs"><code>' + this.markdown.utils.escapeHtml(str) + '</code></pre>';
+    return '<pre class="highlight"><code>' + this.markdown.utils.escapeHtml(str) + '</code></pre>';
   }
+  // private DEFAULT_HIGHLIGHT_FUNCTION = (str, lang) => {
+  //   if (lang && highlightjs.getLanguage(lang)) {
+  //     try {
+  //       return '<pre class="hljs"><code>' + highlightjs.highlight(lang, str, true).value + '</code></pre>';
+  //     } catch (__) { }
+  //   }
+  //   return '<pre class="hljs"><code>' + this.markdown.utils.escapeHtml(str) + '</code></pre>';
+  // }
 
 }

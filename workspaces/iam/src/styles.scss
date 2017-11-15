@@ -5,7 +5,8 @@
 @import 'variables';
 @import '~font-awesome/scss/font-awesome';
 @import '~bootstrap/scss/bootstrap';
-@import '~highlight.js/styles/github';
+// @import '~highlight.js/styles/github';
+@import '~prismjs/themes/prism';
 .blockquote {
   padding: .5rem 1rem;
   margin-bottom: 1rem;

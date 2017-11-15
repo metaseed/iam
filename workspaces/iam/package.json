@@ -50,9 +50,10 @@
     "markdown-it-table-of-contents": "^0.3.2",
     "markdown-it-task-lists": "^2.1.0",
     "markdown-it-video": "^0.5.1",
-    "mousetrap": "^1.6.1",
-    "rxjs": "^5.5.2",
     "monaco-editor": "?^0.10.1",
+    "mousetrap": "^1.6.1",
+    "prismjs": "^1.8.4",
+    "rxjs": "^5.5.2",
     "webpack-bundle-size-analyzer": "^2.7.0",
     "zone.js": "^0.8.18"
   },
