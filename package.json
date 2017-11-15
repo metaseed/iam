@@ -5,6 +5,7 @@
 		"workspaces/*"
 	],
 	"scripts": {
-		"start": "cd workspaces\\iam & npm run start"
+		"start": "cd workspaces\\iam & npm run start",
+		"deploy": "cd workspaces\\iam & npm run deploy"
 	}
 }

@@ -5,11 +5,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --prod -vendor-chunk=true --stats-json --deploy-url=tt1/",
-    "deploy": "ng build --prod --output-path docs --deploy-url=Iam",
+    "build": "ng build --prod -vendor-chunk=true",
+    "deploy": "ng build --prod --output-path docs --deploy-url=iam",
     "test": "ng test",
     "lint": "ng lint",
-    "ba": "webpack-bundle-analyzer dist/stats.json",
+    "ba": "ng build --prod -vendor-chunk=true --stats-json & webpack-bundle-analyzer dist/stats.json",
     "e2e": "ng e2e"
   },
   "private": true,
