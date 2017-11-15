@@ -1,17 +1,18 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, NgZone, Inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { APP_BASE_HREF } from '@angular/common';
 
 @Injectable()
 export class MonacoEditorLoaderService {
     isMonacoLoaded: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-    private _monacoPath = `${window.location.pathname.split('/'[1])}/assets/monaco-editor/vs`;
+    private _monacoPath = `${this.baseHref.slice(1)}/assets/monaco-editor/vs`;
     set monacoPath(value) {
         if (value) {
             this._monacoPath = value;
         }
     }
 
-    constructor(ngZone: NgZone) {
+    constructor(ngZone: NgZone, @Inject(APP_BASE_HREF) private baseHref: string) {
         var onGotAmdLoader = () => {
             if (typeof ((<any>window).monaco) === 'object') {
                 ngZone.run(() => this.isMonacoLoaded.next(true));

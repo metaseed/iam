@@ -1,10 +1,11 @@
 
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { HotkeysService, Hotkey } from 'angular-hotkey-module';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/toPromise';
 import { HttpClient } from '@angular/common/http';
+import { APP_BASE_HREF } from '@angular/common';
 class HotkeyConfig {
     [key: string]: string[];
 }
@@ -26,10 +27,11 @@ export class CommandService {
     commands: Observable<Command>;
 
     constructor(private hotkeysService: HotkeysService,
-        private http: HttpClient) {
+        private http: HttpClient,
+        @Inject(APP_BASE_HREF) private baseHref) {
         this.subject = new Subject<Command>();
         this.commands = this.subject.asObservable();
-        this.http.get('assets/config.json').toPromise()
+        this.http.get(`${baseHref.slice(1)}/assets/config.json`).toPromise()
             .then(r => r as ConfigModel)
             .then(c => {
                 for (const key in c.hotkeys) {

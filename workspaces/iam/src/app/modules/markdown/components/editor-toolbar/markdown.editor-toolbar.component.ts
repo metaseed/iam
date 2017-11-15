@@ -62,7 +62,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     const me = this;
-    this.editor = this.markdown.editor.editor;
+    this.editor = this.markdown.editor;
     const configs = EditorToolbarComponent.COMMANDS_CONFIG;
     for (let key in configs) {
       if (configs.hasOwnProperty(key)) {
