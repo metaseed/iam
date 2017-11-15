@@ -77,6 +77,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
         });
       }
     }
+
     this.editor.commands.addCommand({
       name: 'save',
       bindKey: { win: 'Ctrl-S', mac: 'Cmd-S' },
