@@ -32,7 +32,7 @@ export class MarkdownComponent implements OnInit {
   editorOptions = {/* theme: 'vs-dark', */ language: 'markdown' };
 
   showDemo() {
-    this._http.get('/assets/markdown.md', { responseType: 'text' }).subscribe(a => {
+    this._http.get('assets/markdown.md', { responseType: 'text' }).subscribe(a => {
       this._text = a;
     });
   }
