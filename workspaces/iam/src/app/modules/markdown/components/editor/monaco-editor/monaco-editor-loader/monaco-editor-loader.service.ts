@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 @Injectable()
 export class MonacoEditorLoaderService {
     isMonacoLoaded: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-    private _monacoPath = 'assets/monaco-editor/vs';
+    private _monacoPath = `${window.location.pathname.split('/'[1])}/assets/monaco-editor/vs`;
     set monacoPath(value) {
         if (value) {
             this._monacoPath = value;

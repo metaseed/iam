@@ -4,7 +4,7 @@ import prismjs from 'prismjs';
 import * as MarkdownIt from 'markdown-it';
 import markdownVideoPlugin from 'markdown-it-video';
 import tasklists from 'markdown-it-task-lists';
-import emoji from 'markdown-it-emoji';
+import emoji from 'markdown-it-emoji/light';
 import sub from 'markdown-it-sub';
 import sup from 'markdown-it-sup';
 import ins from 'markdown-it-ins';
@@ -19,7 +19,7 @@ import { ContainerPlugin } from './plugins/container';
 import { MarkdownConfig } from '../markdown.config';
 import * as utils from '../../utils';
 import latex from 'markdown-it-latex';
-
+//import latex from 'markdown-it-katex';
 @Injectable()
 export class MarkdownViewService {
   private defaultConfig: MarkdownConfig = {
@@ -35,47 +35,6 @@ export class MarkdownViewService {
 
   private markdown: MarkdownIt.MarkdownIt;
   private containerPlugin: ContainerPlugin;
-  a = ['markdown', 'java', 'javascript',
-    'typescript',
-    'json',
-    'julia',
-    'kotlin',
-    'less',
-    'lisp',
-    'lua',
-    'makefile',
-    'matlab',
-    'mathematica',
-    'mercury',
-    'perl',
-    'php',
-    'powershell',
-    'prolog',
-    'r',
-    'puppet',
-    'ruby',
-    'rust',
-    'scala',
-    'scheme',
-    'scss',
-    'shell',
-    'rust',
-    'sql',
-    'stylus',
-    'swift',
-    'tcl',
-    'thrift',
-    'vala',
-    'vbnet',
-    'vbscript',
-    'vbscript-html',
-    'verilog',
-    'vhdl',
-    'vim',
-    'x86asm',
-    'xml',
-    'xquery',
-    'yaml'];
   constructor(config?: MarkdownConfig) {
     // ['javascript', 'python', 'bash'].forEach((langName) => {
     //   // Using require() here because import() support hasn't landed in Webpack yet

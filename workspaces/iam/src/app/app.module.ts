@@ -10,6 +10,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { DocsModule } from './docs/docs.module';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { Config } from './modules/core/index';
+import { APP_BASE_HREF } from '@angular/common';
 @NgModule({
   declarations: [
     NotFoundComponent,
@@ -32,7 +34,8 @@ import { NotFoundComponent } from './not-found/not-found.component';
     })
   ],
   providers: [
-
+    { provide: Config, useValue: new Config(window.location.pathname.split('/')[1]) },
+    { provide: APP_BASE_HREF, useValue: window['_app_base'] || '/' },
   ],
   bootstrap: [AppComponent]
 })

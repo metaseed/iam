@@ -2548,10 +2548,6 @@ he@1.1.x:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/he/-/he-1.1.1.tgz#93410fd21b009735151f8868c2f271f3427e23fd"
 
-highlight.js@^9.12.0:
-  version "9.12.0"
-  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.12.0.tgz#e6d9dbe57cbefe60751f02af336195870c90c01e"
-
 hmac-drbg@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/hmac-drbg/-/hmac-drbg-1.0.1.tgz#d2745701025a6c775a6c545793ed502fc0c649a1"
@@ -3256,6 +3252,12 @@ karma@~1.7.1:
     tmp "0.0.31"
     useragent "^2.1.12"
 
+katex@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/katex/-/katex-0.6.0.tgz#12418e09121c05c92041b6b3b9fb6bab213cb6f3"
+  dependencies:
+    match-at "^0.1.0"
+
 katex@^0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/katex/-/katex-0.7.1.tgz#06bb5298efad05e1e7228035ba8e1591f3061b8f"
@@ -3491,6 +3493,12 @@ markdown-it-anchor@^4.0.0:
   dependencies:
     string "^3.3.3"
 
+markdown-it-asciimath@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/markdown-it-asciimath/-/markdown-it-asciimath-1.0.0.tgz#6748ebfb1e614fd3dd6670b43d255a9d43ec6329"
+  dependencies:
+    katex "^0.7.1"
+
 markdown-it-block-embed@0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/markdown-it-block-embed/-/markdown-it-block-embed-0.0.3.tgz#5eb08253f35c37b34c07eec2b9e275ee85eea906"
@@ -3522,6 +3530,12 @@ markdown-it-imsize@^2.0.1:
 markdown-it-ins@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/markdown-it-ins/-/markdown-it-ins-2.0.0.tgz#a5aa6a30f1e2f71e9497567cfdff40f1fde67483"
+
+markdown-it-katex@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/markdown-it-katex/-/markdown-it-katex-2.0.3.tgz#d7b86a1aea0b9d6496fab4e7919a18fdef589c39"
+  dependencies:
+    katex "^0.6.0"
 
 markdown-it-latex@^0.1.3:
   version "0.1.3"
