@@ -6,7 +6,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --prod -vendor-chunk=true",
-    "deploy": "ng build --prod --output-path ../../docs --deploy-url=iam && git add . && git commit -am \"deploy\" && git push",
+    "deploy": "ng build --prod --output-path ../../docs --deploy-url=iam && cd ../.. && git add . && git commit -am \"deploy\" && git push && start http://metaseed.github.io/",
     "test": "ng test",
     "lint": "ng lint",
     "ba": "ng build --prod -vendor-chunk=true --stats-json & webpack-bundle-analyzer dist/stats.json",
