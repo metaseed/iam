@@ -32,8 +32,8 @@
 npm-debug.log
 testem.log
 /typings
-**/assets/min-maps/*
-**/assets/monaco-editor/*
+**/src/assets/min-maps/*
+**/src/assets/monaco-editor/*
 # e2e
 /e2e/*.js
 /e2e/*.map
