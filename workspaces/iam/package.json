@@ -6,7 +6,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --prod -vendor-chunk=true",
-    "deploy": "ng build --prod --output-path docs --deploy-url=iam",
+    "deploy": "ng build --prod --output-path ../../docs --deploy-url=iam",
     "test": "ng test",
     "lint": "ng lint",
     "ba": "ng build --prod -vendor-chunk=true --stats-json & webpack-bundle-analyzer dist/stats.json",
