@@ -1,0 +1,8 @@
+{
+  "hotkeys": {
+    "ctrl+b": ["Bold"],
+    "ctrl+i": ["Italic"],
+    "ctrl+h": ["Heading"],
+    "ctrl+right": ["AppComponent.Forward", "MainComponent.MoveRight"]
+  }
+}
