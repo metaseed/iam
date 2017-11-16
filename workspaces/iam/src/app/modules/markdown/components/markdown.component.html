@@ -2,18 +2,20 @@
   <editor-toolbar></editor-toolbar>
   <input class="form-control" type="text" [(ngModel)]="title" placeholder="Title" />
   <div class="editor-container">
-    <div class="editor-panel" style="min-height: 200px; width:100%;">
-      <!-- <div ace-editor [(text)]="markdown" [mode]="'markdown'" [options]="aceOptions" [readOnly]="false" [autoUpdateContent]="true"
-        [durationBeforeCallback]="1000" (textChanged)="onAceChange($event)" style="min-height: 200px; width:100%; overflow: auto;"></div> -->
-      <!-- <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="markdown"></ngx-monaco-editor> -->
-      <monaco-editor *loadMonacoEditor [options]="editorOptions" [(ngModel)]="markdown"></monaco-editor>
+    <div class="editor-panel" style="min-height: 200px;">
+      <!-- <div ace-editor [(text)]=" markdown " [mode]=" 'markdown' " [options]="aceOptions " [readOnly]="false
+      " [autoUpdateContent]="true "
+        [durationBeforeCallback]="1000 " (textChanged)="onAceChange($event) " style="min-height: 200px; width:100%; overflow:
+      auto; "></div> -->
+      <!-- <ngx-monaco-editor [options]="editorOptions " [(ngModel)]="markdown "></ngx-monaco-editor> -->
+      <monaco-editor *loadMonacoEditor [options]="editorOptions " [(ngModel)]="markdown "></monaco-editor>
 
-      <!-- <md-editor [(value)]="markdown" style="min-height: 200px; width:100%; overflow: auto;"></md-editor> -->
+      <!-- <md-editor [(value)]="markdown " style="min-height: 200px; width:100%; overflow: auto; "></md-editor> -->
     </div>
-    <div class="preview-panel" [style.display]="showPreviewPanel ? 'block' : 'none'">
-      <markdown-viewer [model]="markdown"></markdown-viewer>
+    <div class="preview-panel" style="height: fit-content;" *ngIf="showPreviewPanel ">
+      <markdown-viewer [model]="markdown "></markdown-viewer>
     </div>
-    <a href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts" target="blank">shortcuts</a>
+    <a href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts " target="blank ">shortcuts</a>
   </div>
 </div>
-<button (click)="showDemo()">demo</button>
+<button (click)="showDemo() ">demo</button>

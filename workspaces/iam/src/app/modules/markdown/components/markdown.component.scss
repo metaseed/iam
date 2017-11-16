@@ -57,7 +57,9 @@
 }
 
 .md-editor-container .editor-container>div {
-  flex: 1;
+  flex: 1 1 0;
+  width: 0;
+  min-height: 200px;
 }
 
 .md-editor-container .preview-panel {

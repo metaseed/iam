@@ -49,6 +49,7 @@ export class MarkdownComponent implements OnInit {
 
   @ViewChild(MonacoEditorComponent) editor: MonacoEditorComponent;
   @ViewChild(MarkdownViewerComponent) viewer: MarkdownViewerComponent;
+
   ngOnInit() {
   }
   onAceChange(text) {
