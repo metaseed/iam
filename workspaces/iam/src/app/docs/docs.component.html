@@ -1,5 +1,5 @@
 <div>
-  <new-doc (onNewElement)="addNewElement($event)"></new-doc>
-  <hr/>
+  <!-- <new-doc (onNewElement)="addNewElement($event)"></new-doc> -->
+  <!-- <hr/> -->
   <doc-list [documents]="_docService.model?.docs" (onShow)="showDoc($event)" (onDelete)="deleteDoc($event)"></doc-list>
 </div>

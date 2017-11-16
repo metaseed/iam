@@ -101,6 +101,9 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     this._docService.edit({ title: title ? title.slice(2) : 'iam title', body: content });
     console.log('saving', content);
   }
+  new = () => {
+    this._docService.newDoc();
+  }
 
   togglePreview() {
     this.markdown.showPreviewPanel = !this.markdown.showPreviewPanel;
