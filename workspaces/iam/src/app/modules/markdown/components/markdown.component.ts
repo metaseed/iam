@@ -14,19 +14,16 @@ import { APP_BASE_HREF } from '@angular/common';
 export class MarkdownComponent implements OnInit {
   private _text: string;
   private _doc: any;
-  title: string;
   isFullScreen: boolean;
   constructor(private _docService: DocService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref) {
     this._docService.onShowDoc(doc => {
       if (doc === null) {
         this._text = '';
-        this.title = '';
         return;
       }
-
       this._text = doc.body;
-      this.title = doc.title;
       this._doc = doc;
+      this.editor.editor.focus();
     });
   }
 

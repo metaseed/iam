@@ -36,7 +36,10 @@ export class DocService {
     );
   }
   newDoc() {
-    this.showDoc(null);
+    let doc = {
+      body: '# Title\n*summery*\n'
+    }
+    this.showDoc(doc);
   }
   showDoc(doc) {
     this.model.currentDoc = doc;
@@ -47,7 +50,7 @@ export class DocService {
   }
   edit = (data: EditIssueParams) => {
     let doc = this.model.currentDoc;
-    if (!doc) {
+    if (!doc || !doc.number) {
       this._repo.issue.create(data).subscribe(a => {
         this.model.currentDoc = a;
         this.model.docs.unshift(a);

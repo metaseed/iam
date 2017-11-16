@@ -90,9 +90,15 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
 
     });
   }
+  getFirstLine(text) {
+    var index = text.indexOf("\n");
+    if (index === -1) index = undefined;
+    return text.substring(0, index);
+  }
   save = () => {
     const content = this.editor.getValue();
-    this._docService.edit({ title: this.markdown.title, body: content });
+    let title = this.getFirstLine(content);
+    this._docService.edit({ title: title ? title.slice(2) : 'iam title', body: content });
     console.log('saving', content);
   }
 
