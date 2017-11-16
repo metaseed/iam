@@ -1,3 +1,4 @@
+/// <reference path="..../../../../../../../../../../node_modules/monaco-editor/monaco.d.ts" />
 import { Component, OnInit, AfterViewInit, Input, Renderer } from '@angular/core';
 import { MarkdownComponent } from '../markdown.component';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -7,7 +8,7 @@ import { Command, CommandService } from '../../../core';
 import { Subscription } from 'rxjs/Subscription';
 import { DocService } from '../../../../docs/index';
 import { MarkdownEditorService } from '../../services/markdown.editor.service';
-declare var monaco;
+
 @Component({
   selector: 'editor-toolbar',
   templateUrl: './markdown.editor-toolbar.component.html',
@@ -17,7 +18,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   private static COMMANDS_CONFIG;
 
   isFullScreen: boolean;
-  editor: any;
+  editor: monaco.editor.IStandaloneCodeEditor;
 
   _subscription: Subscription;
   _options: any;
@@ -54,19 +55,19 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     const me = this;
 
-    this.editorService.editorLoaded$.subscribe((editor) => {
+    this.editorService.editorLoaded$.subscribe((editor: monaco.editor.IStandaloneCodeEditor) => {
       if (!EditorToolbarComponent.COMMANDS_CONFIG) {
         EditorToolbarComponent.COMMANDS_CONFIG = {
-          Bold: { command: 'Bold', func: (selectedText, defaultText) => `**${selectedText || defaultText}**`, startSize: 2, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_B] }, // not Ctrl-M B also work
-          Italic: { command: 'Italic', func: (selectedText, defaultText) => `*${selectedText || defaultText}*`, startSize: 1, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_I] },
-          Heading: { command: 'Heading', func: (selectedText, defaultText) => `# ${selectedText || defaultText}`, startSize: 2, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_H] },
-          Reference: { command: 'Reference', func: (selectedText, defaultText) => `> ${selectedText || defaultText}`, startSize: 2, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_R] },
-          Link: { command: 'Link', func: (selectedText, defaultText) => `[${selectedText || defaultText}](http://)`, startSize: 1, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_L] },
-          Image: { command: 'Image', func: (selectedText, defaultText) => `![${selectedText || defaultText}](http://)`, startSize: 2, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_M] },
-          Ul: { command: 'Ul', func: (selectedText, defaultText) => `- ${selectedText || defaultText}`, startSize: 2, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_U] },
-          Ol: { command: 'Ol', func: (selectedText, defaultText) => `1 ${selectedText || defaultText}`, startSize: 2, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_O] },
-          Code: { command: 'Code', func: (selectedText, defaultText) => '```lang\r\n' + (selectedText || defaultText) + '\r\n```', startSize: 3, hotKey: [monaco.KeyCode.AltCmd | monaco.KeyCode.KEY_C] },
-          Save: { command: 'Save', func: me.save, startSize: 0, hotKey: [monaco.KeyCode.CtrlCmd | monaco.KeyCode.KEY_S] },
+          Bold: { command: 'Bold', func: (selectedText, defaultText) => `**${selectedText || defaultText}**`, startSize: 2, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_B)] },
+          Italic: { command: 'Italic', func: (selectedText, defaultText) => `*${selectedText || defaultText}*`, startSize: 1, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_I)] },
+          Heading: { command: 'Heading', func: (selectedText, defaultText) => `# ${selectedText || defaultText}`, startSize: 2, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_H)] },
+          Reference: { command: 'Reference', func: (selectedText, defaultText) => `> ${selectedText || defaultText}`, startSize: 2, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_R)] },
+          Link: { command: 'Link', func: (selectedText, defaultText) => `[${selectedText || defaultText}](http://)`, startSize: 1, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_L)] },
+          Image: { command: 'Image', func: (selectedText, defaultText) => `![${selectedText || defaultText}](http://)`, startSize: 2, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_M)] },
+          Ul: { command: 'Ul', func: (selectedText, defaultText) => `- ${selectedText || defaultText}`, startSize: 2, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_U)] },
+          Ol: { command: 'Ol', func: (selectedText, defaultText) => `1 ${selectedText || defaultText}`, startSize: 2, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_O)] },
+          Code: { command: 'Code', func: (selectedText, defaultText) => '```lang\r\n' + (selectedText || defaultText) + '\r\n```', startSize: 3, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_C)] },
+          Save: { command: 'Save', func: me.save, startSize: 0, hotKey: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S] },
         };
       }
       this.editor = editor;
@@ -90,7 +91,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     });
   }
   save = () => {
-    const content = this.editor.session.getValue();
+    const content = this.editor.getValue();
     this._docService.edit({ title: this.markdown.title, body: content });
     console.log('saving', content);
   }
@@ -113,7 +114,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   editorResize(timeOut: number = 100) {
     if (this.editor) {
       setTimeout(() => {
-        this.editor.resize();
+        this.editor.layout();
         this.editor.focus();
       }, timeOut);
     }
@@ -123,19 +124,17 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     if (!this.editor) {
       return;
     }
-    let selectedText = this.editor.getSelection();
-    const isSelected = !!selectedText;
-    const range = this.editor.selection.getRange();
+    let selection = this.editor.getSelection();
 
     const config = EditorToolbarComponent.COMMANDS_CONFIG[type];
     let startSize = config.startSize;
-    selectedText = config.func(selectedText, config.command);
-    this.editor.session.replace(range, selectedText);
-    if (!isSelected) {
-      range.start.column += startSize;
-      range.end.column = range.start.column + config.command.length;
-      this.editor.selection.setRange(range);
+    let selectionText: string = this.editor.getModel().getValueInRange(selection);
+    selectionText = config.func(selectionText, config.command);
+    this.editor.executeEdits('', [{ identifier: null, range: selection, text: selectionText, forceMoveMarkers: true }]);
+    if (selection.startColumn == selection.endColumn && selection.startLineNumber == selection.endLineNumber) {
+      selection = new monaco.Selection(selection.startLineNumber, selection.startColumn + startSize, selection.endLineNumber, selection.startColumn + startSize + config.command.length);
+      this.editor.setSelection(selection);
     }
-    this.editor.focus();
+    this.editor.layout();
   }
 }
