@@ -4,7 +4,7 @@
     <div class="editor-panel" #editorDiv style="min-height: 200px;">
       <monaco-editor *loadMonacoEditor [options]="editorOptions " [(ngModel)]="markdown "></monaco-editor>
     </div>
-    <div class="preview-panel" #viewerDiv style="height: fit-content;" *ngIf="showPreviewPanel ">
+    <div class="preview-panel" #viewerDiv style="height: fit-content;" [style.display]="showPreviewPanel ? 'block' : 'none'">
       <markdown-viewer [model]="markdown "></markdown-viewer>
     </div>
     <a href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts " target="blank ">shortcuts</a>

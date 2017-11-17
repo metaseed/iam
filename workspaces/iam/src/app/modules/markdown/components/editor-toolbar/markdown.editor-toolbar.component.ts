@@ -2,7 +2,6 @@
 import { Component, OnInit, AfterViewInit, Input, Renderer } from '@angular/core';
 import { MarkdownComponent } from '../markdown.component';
 import { DomSanitizer } from '@angular/platform-browser';
-// import { AceEditorDirective } from '../editor/markdown-editor.directive';
 
 import { Command, CommandService } from '../../../core';
 import { Subscription } from 'rxjs/Subscription';
@@ -37,8 +36,9 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
       this._hideIcons[v] = true;
     });
   }
+
   constructor(private markdown: MarkdownComponent,
-    private editorService: MarkdownEditorService,
+    private _editorService: MarkdownEditorService,
     private _docService: DocService,
     private _renderer: Renderer,
     private _commandService: CommandService,
@@ -55,7 +55,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     const me = this;
 
-    this.editorService.editorLoaded$.subscribe((editor: monaco.editor.IStandaloneCodeEditor) => {
+    this._editorService.editorLoaded$.subscribe((editor: monaco.editor.IStandaloneCodeEditor) => {
       if (!EditorToolbarComponent.COMMANDS_CONFIG) {
         EditorToolbarComponent.COMMANDS_CONFIG = {
           Bold: { command: 'Bold', func: (selectedText, defaultText) => `**${selectedText || defaultText}**`, startSize: 2, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_B)] },
@@ -120,14 +120,11 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     this.editorResize();
   }
   editorResize(timeOut: number = 100) {
-    if (this.editor) {
-      setTimeout(() => {
-        this.editor.layout();
-        this.editor.focus();
-      }, timeOut);
-    }
-  }
+    setTimeout(() => {
+      this._editorService.refresh();
 
+    }, timeOut);
+  }
   insertContent(type: string) {
     if (!this.editor) {
       return;
