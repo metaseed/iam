@@ -4,8 +4,10 @@ import { APP_BASE_HREF } from '@angular/common';
 
 @Injectable()
 export class MonacoEditorLoaderService {
-    isMonacoLoaded: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
     private _monacoPath = `${this.baseHref.slice(1)}/assets/monaco-editor/vs`;
+    isMonacoLoaded: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
     set monacoPath(value) {
         if (value) {
             this._monacoPath = value;
@@ -18,8 +20,6 @@ export class MonacoEditorLoaderService {
                 ngZone.run(() => this.isMonacoLoaded.next(true));
                 return;
             }
-            // Load monaco
-            // console.log(this._monacoPath);
             (<any>window).require.config({ paths: { 'vs': this._monacoPath } });
             (<any>window).require(['vs/editor/editor.main'], () => {
                 ngZone.run(() => this.isMonacoLoaded.next(true));

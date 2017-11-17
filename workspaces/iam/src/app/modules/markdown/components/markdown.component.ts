@@ -7,6 +7,7 @@ import { MonacoEditorComponent } from './editor/monaco-editor/monaco-editor.comp
 import { APP_BASE_HREF } from '@angular/common';
 import { timeout } from 'rxjs/operator/timeout';
 import { setTimeout } from 'timers';
+import { MarkdownEditorService } from '../services/markdown.editor.service';
 
 @Component({
   selector: 'ms-markdown',
@@ -17,8 +18,10 @@ export class MarkdownComponent implements OnInit {
   private _text: string;
   private _doc: any;
   isFullScreen: boolean;
-  constructor(private _docService: DocService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref) {
+  constructor(private _docService: DocService, private _editorService: MarkdownEditorService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref) {
 
+  }
+  ngOnInit() {
   }
 
   ngAfterViewInit() {
@@ -29,12 +32,14 @@ export class MarkdownComponent implements OnInit {
       }
       this._text = doc.body;
       this._doc = doc;
+    });
+    this._editorService.contentChanged$.subscribe(([content, editor]) => {
       let me = this;
       setTimeout(() => { //should be after viewer rendered its contents
         me.editorDiv.nativeElement.style.height = me.viewerDiv.nativeElement.clientHeight + 'px';
         me.editor.editor.layout();
         me.editor.editor.focus();
-      }, 800);
+      }, 0);
     });
   }
   editorOptions = {/* theme: 'vs-dark', */ language: 'markdown' };
@@ -59,9 +64,4 @@ export class MarkdownComponent implements OnInit {
   @ViewChild('viewerDiv') viewerDiv;
   @ViewChild('editorDiv') editorDiv;
 
-  ngOnInit() {
-  }
-  onAceChange(text) {
-    console.log('new text', text);
-  }
 }

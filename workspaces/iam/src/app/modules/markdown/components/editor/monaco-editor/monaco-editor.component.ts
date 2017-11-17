@@ -16,9 +16,6 @@ declare var monaco;
 })
 export class MonacoEditorComponent implements AfterViewInit, ControlValueAccessor {
 
-  constructor(private service: MarkdownEditorService, private zone: NgZone) {
-
-  }
   _value: '';
   _options = {
     value: [
@@ -37,9 +34,14 @@ export class MonacoEditorComponent implements AfterViewInit, ControlValueAccesso
   private _windowResizeSubscription: Subscription;
   @ViewChild('editorContainer') _editorContainer: ElementRef;
   @Output() onInit = new EventEmitter<any>();
-
   editor: any;
+  constructor(private _service: MarkdownEditorService, private zone: NgZone) {
 
+  }
+
+  registerOnChange(fn: any): void {
+    this.propagateChange = fn;
+  }
 
   @Input('options')
   set options(options) {
@@ -52,9 +54,7 @@ export class MonacoEditorComponent implements AfterViewInit, ControlValueAccesso
   get options() {
     return this._options;
   }
-  registerOnChange(fn: any): void {
-    this.propagateChange = fn;
-  }
+
   writeValue(value: any): void {
     this._value = value;
     // Fix for value change while dispose in process.
@@ -95,17 +95,21 @@ export class MonacoEditorComponent implements AfterViewInit, ControlValueAccesso
     //   '}',
     // ].join('\n'), 'filename/facts.d.ts');
 
-
-
     this.editor = monaco.editor.create(this._editorContainer.nativeElement, this.options);
     if (this._value) {
       this.editor.setValue(this._value);
     }
+
+    this._service._editorRefresh$.subscribe(() => {
+      this.editor.layout();
+      this.editor.focus();
+    });
     this.editor.onDidChangeModelContent((e: any) => {
       let value = this.editor.getValue();
       this.propagateChange(value);
       // value is not propagated to parent when executing outside zone.
       this.zone.run(() => this._value = value);
+      this._service.contentChanged$.next([value, this.editor]);
     });
     // refresh layout on resize event.
     if (this._windowResizeSubscription) {
@@ -116,7 +120,7 @@ export class MonacoEditorComponent implements AfterViewInit, ControlValueAccesso
     });
     this.onInit.emit(this.editor);
 
-    this.service.editorLoaded$.next(this.editor);
+    this._service.editorLoaded$.next(this.editor);
   }
   ngOnDestroy() {
     if (this._windowResizeSubscription) {

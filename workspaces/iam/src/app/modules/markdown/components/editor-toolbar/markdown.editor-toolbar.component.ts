@@ -99,7 +99,6 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     const content = this.editor.getValue();
     let title = this.getFirstLine(content);
     this._docService.edit({ title: title ? title.slice(2) : 'iam title', body: content });
-    console.log('saving', content);
   }
   new = () => {
     this._docService.newDoc();

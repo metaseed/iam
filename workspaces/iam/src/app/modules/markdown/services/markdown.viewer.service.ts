@@ -36,11 +36,6 @@ export class MarkdownViewService {
   private markdown: MarkdownIt.MarkdownIt;
   private containerPlugin: ContainerPlugin;
   constructor(config?: MarkdownConfig) {
-    // ['javascript', 'python', 'bash'].forEach((langName) => {
-    //   // Using require() here because import() support hasn't landed in Webpack yet
-    //   const langModule = require(`highlight.js/lib/languages/${langName}`);
-    //   highlightjs.registerLanguage(langName, langModule);
-    // });
     config = config || utils.mergeConf(this.defaultConfig, config);
 
     if (!config.markdownIt.highlight) {
