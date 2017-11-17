@@ -5,6 +5,8 @@ import { DocService } from '../../../docs/index';
 import { HttpClient } from '@angular/common/http';
 import { MonacoEditorComponent } from './editor/monaco-editor/monaco-editor.component';
 import { APP_BASE_HREF } from '@angular/common';
+import { timeout } from 'rxjs/operator/timeout';
+import { setTimeout } from 'timers';
 
 @Component({
   selector: 'ms-markdown',
@@ -16,6 +18,10 @@ export class MarkdownComponent implements OnInit {
   private _doc: any;
   isFullScreen: boolean;
   constructor(private _docService: DocService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref) {
+
+  }
+
+  ngAfterViewInit() {
     this._docService.onShowDoc(doc => {
       if (doc === null) {
         this._text = '';
@@ -23,10 +29,14 @@ export class MarkdownComponent implements OnInit {
       }
       this._text = doc.body;
       this._doc = doc;
-      this.editor.editor.focus();
+      let me = this;
+      setTimeout(() => { //should be after viewer rendered its contents
+        me.editorDiv.nativeElement.style.height = me.viewerDiv.nativeElement.clientHeight + 'px';
+        me.editor.editor.layout();
+        me.editor.editor.focus();
+      }, 800);
     });
   }
-
   editorOptions = {/* theme: 'vs-dark', */ language: 'markdown' };
 
   showDemo() {
@@ -46,6 +56,8 @@ export class MarkdownComponent implements OnInit {
 
   @ViewChild(MonacoEditorComponent) editor: MonacoEditorComponent;
   @ViewChild(MarkdownViewerComponent) viewer: MarkdownViewerComponent;
+  @ViewChild('viewer') viewerDiv;
+  @ViewChild('editor') editorDiv;
 
   ngOnInit() {
   }

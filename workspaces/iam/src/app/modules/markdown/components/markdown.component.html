@@ -1,7 +1,7 @@
 <div class="md-editor-container" [class.fullscreen]="isFullScreen">
   <editor-toolbar></editor-toolbar>
   <div class="editor-container">
-    <div class="editor-panel" style="min-height: 200px;">
+    <div class="editor-panel" #editor style="min-height: 200px;">
       <!-- <div ace-editor [(text)]=" markdown " [mode]=" 'markdown' " [options]="aceOptions " [readOnly]="false
       " [autoUpdateContent]="true "
         [durationBeforeCallback]="1000 " (textChanged)="onAceChange($event) " style="min-height: 200px; width:100%; overflow:
@@ -11,7 +11,7 @@
 
       <!-- <md-editor [(value)]="markdown " style="min-height: 200px; width:100%; overflow: auto; "></md-editor> -->
     </div>
-    <div class="preview-panel" style="height: fit-content;" *ngIf="showPreviewPanel ">
+    <div class="preview-panel" #viewer style="height: fit-content;" *ngIf="showPreviewPanel ">
       <markdown-viewer [model]="markdown "></markdown-viewer>
     </div>
     <a href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts " target="blank ">shortcuts</a>
