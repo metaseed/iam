@@ -56,8 +56,8 @@ export class MarkdownComponent implements OnInit {
 
   @ViewChild(MonacoEditorComponent) editor: MonacoEditorComponent;
   @ViewChild(MarkdownViewerComponent) viewer: MarkdownViewerComponent;
-  @ViewChild('viewer') viewerDiv;
-  @ViewChild('editor') editorDiv;
+  @ViewChild('viewerDiv') viewerDiv;
+  @ViewChild('editorDiv') editorDiv;
 
   ngOnInit() {
   }
