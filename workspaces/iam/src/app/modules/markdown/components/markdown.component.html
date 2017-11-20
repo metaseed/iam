@@ -5,7 +5,13 @@
       <monaco-editor *loadMonacoEditor [options]="editorOptions " [(ngModel)]="markdown "></monaco-editor>
     </div>
     <div class="preview-panel" #viewerDiv style="height: fit-content;" [style.display]="showPreviewPanel ? 'block' : 'none'">
+      <div style="float:right">
+        <button mat-icon-button>
+          <mat-icon aria-label="edit">mode_edit</mat-icon>
+        </button>
+      </div>
       <markdown-viewer [model]="markdown "></markdown-viewer>
+
     </div>
   </div>
 </div>

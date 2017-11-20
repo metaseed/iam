@@ -15,10 +15,12 @@ import { EditorToolbarComponent } from './components/editor-toolbar/markdown.edi
 import { MonacoEditorComponent } from './components/editor/monaco-editor/monaco-editor.component';
 import { MonacoEditorLoaderModule } from './components/editor/monaco-editor/monaco-editor-loader/monaco-editor-loader.module';
 import { MarkdownEditorService } from './services/markdown.editor.service';
+import { MaterialModule } from '../material/mat.module';
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
+    MaterialModule,
     HttpModule,
     MonacoEditorLoaderModule
     // MonacoEditorModule
