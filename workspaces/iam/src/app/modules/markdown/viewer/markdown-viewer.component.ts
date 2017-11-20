@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MarkdownViewService } from '../../services/markdown.viewer.service';
+import { MarkdownViewerService } from './services/markdown.viewer.service';
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'markdown-viewer',
@@ -21,7 +21,7 @@ export class MarkdownViewerComponent {
 
   parsedModel: any;
 
-  constructor(private sanitized: DomSanitizer, private service: MarkdownViewService) {
+  constructor(private sanitized: DomSanitizer, private service: MarkdownViewerService) {
   }
 
 }

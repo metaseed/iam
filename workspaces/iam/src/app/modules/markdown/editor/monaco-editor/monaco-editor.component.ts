@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ElementRef, EventEmitter, ViewChild, Output, 
 import { Subscription } from 'rxjs';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
-import { MarkdownEditorService } from '../../../services/markdown.editor.service';
+import { MarkdownEditorService } from '../index';
 declare var monaco;
 @Component({
   selector: 'monaco-editor',

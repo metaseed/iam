@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 // import { AceEditorDirective } from './editor/markdown-editor.directive';
 import { MarkdownViewerComponent } from './viewer/markdown-viewer.component';
-import { DocService } from '../../../docs/index';
 import { HttpClient } from '@angular/common/http';
 import { MonacoEditorComponent } from './editor/monaco-editor/monaco-editor.component';
 import { APP_BASE_HREF } from '@angular/common';
 import { timeout } from 'rxjs/operator/timeout';
 import { setTimeout } from 'timers';
-import { MarkdownEditorService } from '../services/markdown.editor.service';
+import { DocService } from '../../docs/index';
+import { MarkdownEditorService } from './editor/index';
 
 @Component({
   selector: 'ms-markdown',

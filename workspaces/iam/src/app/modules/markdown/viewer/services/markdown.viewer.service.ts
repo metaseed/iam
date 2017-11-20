@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 // import highlightjs from 'highlight.js/lib/highlight';
 import prismjs from 'prismjs';
 import * as MarkdownIt from 'markdown-it';
@@ -17,11 +17,11 @@ import anchor from 'markdown-it-anchor';
 import toc from 'markdown-it-table-of-contents';
 import { ContainerPlugin } from './plugins/container';
 import { MarkdownConfig } from '../markdown.config';
-import * as utils from '../../utils';
 import latex from 'markdown-it-latex';
+import { mergeConf } from '../../../core/index';
 //import latex from 'markdown-it-katex';
 @Injectable()
-export class MarkdownViewService {
+export class MarkdownViewerService {
   private defaultConfig: MarkdownConfig = {
     markdownIt: {
       html: true,
@@ -35,8 +35,8 @@ export class MarkdownViewService {
 
   private markdown: MarkdownIt.MarkdownIt;
   private containerPlugin: ContainerPlugin;
-  constructor(config?: MarkdownConfig) {
-    config = config || utils.mergeConf(this.defaultConfig, config);
+  constructor( @Optional() config?: MarkdownConfig) {
+    config = config || mergeConf(this.defaultConfig, config);
 
     if (!config.markdownIt.highlight) {
       config.markdownIt.highlight = this.DEFAULT_HIGHLIGHT_FUNCTION;

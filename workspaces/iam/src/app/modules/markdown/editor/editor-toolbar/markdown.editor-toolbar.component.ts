@@ -1,13 +1,12 @@
-/// <reference path="..../../../../../../../../../../node_modules/monaco-editor/monaco.d.ts" />
+/// <reference path="../../../../../../../../node_modules/monaco-editor/monaco.d.ts" />
 import { Component, OnInit, AfterViewInit, Input, Renderer } from '@angular/core';
-import { MarkdownComponent } from '../markdown.component';
+import { MarkdownComponent } from '../../markdown.component';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { Command, CommandService } from '../../../core';
 import { Subscription } from 'rxjs/Subscription';
 import { DocService } from '../../../../docs/index';
-import { MarkdownEditorService } from '../../services/markdown.editor.service';
-
+import { MarkdownEditorService } from '../../editor/index';
+import { CommandService, Command } from '../../../core/index';
 @Component({
   selector: 'editor-toolbar',
   templateUrl: './markdown.editor-toolbar.component.html',
