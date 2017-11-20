@@ -1,12 +1,12 @@
 <div class="md-editor-container" [class.fullscreen]="isFullScreen">
-  <editor-toolbar></editor-toolbar>
+  <editor-toolbar *ngIf="this.isEditMode"></editor-toolbar>
   <div class="editor-container">
-    <div class="editor-panel" #editorDiv style="min-height: 200px;">
+    <div class="editor-panel" #editorDiv style="min-height: 200px;" *ngIf="this.isEditMode">
       <monaco-editor *loadMonacoEditor [options]="editorOptions " [(ngModel)]="markdown "></monaco-editor>
     </div>
     <div class="preview-panel" #viewerDiv style="height: fit-content;" [style.display]="showPreviewPanel ? 'block' : 'none'">
       <div style="float:right">
-        <button mat-icon-button>
+        <button mat-icon-button (click)="this.isEditMode= !this.isEditMode">
           <mat-icon aria-label="edit">mode_edit</mat-icon>
         </button>
       </div>
