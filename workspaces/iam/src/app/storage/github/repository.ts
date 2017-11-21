@@ -28,22 +28,7 @@ export class Repository extends Requestable {
             .do(x => console.log('getSha' + x), e => console.log('getSha' + e))
             .flatMap(resp => {
                 getShaSuccess = true;
-                return this.request('PUT',
-                    `/repos/${this.fullName}/contents/${path}`,
-                    {
-                        'message': 'update file',
-                        'committer': {
-                            'name': this._userInfo.name,
-                            'email': this._userInfo.email
-                        },
-                        'content': btoa(contents),
-                        'sha': resp['sha'],
-                        branch
-                    })
-                    .do(x => console.log(x), e => console.log(e))
-                    .map(x => {
-                        return <File>x;
-                    });
+                return this.updateFile(path, contents, resp['sha']);
             })
             .catch((error, ca) => {
                 if (getShaSuccess) {
@@ -54,6 +39,27 @@ export class Repository extends Requestable {
             });
     }
 
+    updateFile(path, contents, sha, branch = 'master') {
+
+        return this.request('PUT',
+            `/repos/${this.fullName}/contents/${path}`,
+            {
+                'message': 'update file',
+                'committer': {
+                    'name': this._userInfo.name,
+                    'email': this._userInfo.email
+                },
+                'content': btoa(contents),
+                'sha': sha,
+                branch
+            })
+            .do(x => console.log(x), e => console.log(e))
+            .map(x => {
+                return <File>x;
+            });
+    }
+
+    //https://developer.github.com/v3/repos/contents/#create-a-file
     newFile(path: string, content: string) {
         return this.request('PUT', `/repos/${this.fullName}/contents/${path}`,
             {

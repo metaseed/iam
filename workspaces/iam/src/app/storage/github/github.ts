@@ -19,7 +19,7 @@ export class GithubStorage extends Requestable {
         super(http, userInfo);
     }
 
-    repos(name: string) {
+    repos(name: string): Observable<Repository> {
         return this.getRepos(name)
             .catch((err) => {
                 if (err.id === 404) {
@@ -30,7 +30,7 @@ export class GithubStorage extends Requestable {
             });
     }
 
-    getRepos(name: string) {
+    getRepos(name: string): Observable<Repository> {
         return this.request('GET', `/repos/${this._userInfo.name}/${name}`, null)
             .map(resp => {
                 return new Repository(this._http, this._userInfo, name);

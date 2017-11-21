@@ -7,6 +7,7 @@ import { User } from '../model/user';
 import { Label } from '../model/label';
 import { Milestone } from '../model/milestone';
 import { PullRequest } from '../model/pull-request';
+import { Observable } from 'rxjs/Observable';
 
 export interface IssueData {
     title?: string;
@@ -48,14 +49,14 @@ export class Issue extends Requestable {
 
     // https://developer.github.com/v3/issues/#create-an-issue
     create(data: IssueData) {
-        return this.request('POST', `/repos/${this._userInfo.name}/${this.repository}/issues`, data);
+        return <Observable<Issue>>this.request('POST', `/repos/${this._userInfo.name}/${this.repository}/issues`, data);
     }
     // https://developer.github.com/v3/issues/#list-issues-for-a-repository
     list(state: 'open' | 'closed' | 'all') {
         return this.request('GET', `/repos/${this._userInfo.name}/${this.repository}/issues`, { state: state });
     }
     // https://developer.github.com/v3/issues/#edit-an-issue
-    edit(number: number, params: EditIssueParams) {
+    edit(number, params: EditIssueParams) {
         return this.request('PATCH', `/repos/${this._userInfo.name}/${this.repository}/issues/${number}`, params);
     }
 

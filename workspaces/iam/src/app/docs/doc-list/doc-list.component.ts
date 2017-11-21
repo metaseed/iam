@@ -26,6 +26,7 @@ export class DocListComponent implements OnInit {
   show(document: Document) {
     this.onShow.emit(document);
   }
+
   delete(document: Document) {
     this.onDelete.emit(document);
   }
