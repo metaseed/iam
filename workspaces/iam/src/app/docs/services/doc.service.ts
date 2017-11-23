@@ -109,7 +109,8 @@ export class DocService {
     let title = DocMeta.getTitle(content);
     if (!title) throw 'must have title';
 
-    return this._repo.updateFile(`${DocService.FolderName}/${doc.metaData.title}_${doc.number}`, content, doc.metaData.contentId).flatMap(
+    const changeTitle = title !== doc.metaData.title;
+    return this._repo.updateFile(`${DocService.FolderName}/${title}_${doc.number}`, content, doc.metaData.contentId).flatMap(
       file => {
         let url = this.getContentUrl(doc.number);
         return DocMeta.serializeContent(content, file.content.sha, url).flatMap(
@@ -117,6 +118,9 @@ export class DocService {
             let data: EditIssueParams = { title: title, body: <string>metaString };
             return this._repo.issue.edit(doc.number, data).map(
               (a) => {
+                if (changeTitle) {
+                  this._repo.delFileViaSha(`${DocService.FolderName}/${doc.metaData.title}_${doc.number}`, doc.metaData.contentId).subscribe();
+                }
                 doc.metaData = <DocMeta>metaData;
                 return doc;
               }
@@ -127,6 +131,7 @@ export class DocService {
       }
     );
   }
+  x
   getAll() {
     return this._repoSub$.flatMap(repo => {
       return repo.issue.list('open');

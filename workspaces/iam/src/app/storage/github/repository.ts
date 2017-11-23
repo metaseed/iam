@@ -7,18 +7,24 @@ import { Content } from './model/content';
 import { File } from './model/file';
 import { HttpClient } from '@angular/common/http';
 import { Issue } from './issues/issue';
-
+import { Observable } from 'rxjs/Observable';
 @Injectable()
 export class Repository extends Requestable {
+    remoteRepo: any;
     public fullName: string;
 
-    constructor(http: HttpClient, userInfo: UserInfo, private _name: string) {
+    constructor(http: HttpClient, userInfo: UserInfo, private _name: string, private githubApi) {
         super(http, userInfo);
         this.fullName = `${this._userInfo.name}/${this._name}`;
+        this.remoteRepo = githubApi.getRepo(userInfo.name, _name);
     }
 
     get issue() {
         return new Issue(this._http, this._name, this._userInfo);
+    }
+
+    renameFile(oldName: string, newName: string) {
+        return Observable.fromPromise(this.remoteRepo.move('master', oldName, newName));
     }
 
     // https://developer.github.com/v3/repos/contents/
@@ -100,6 +106,23 @@ export class Repository extends Requestable {
                         'sha': response['sha'],
                         branch
                     });
+            })
+            .do(x => console.log(x), e => console.log(e))
+            .map(x => <File>x);
+    }
+
+    delFileViaSha(path: string, sha: string, branch: string = 'master') {
+        const filePath = path ? encodeURI(path) : '';
+        return this.request('DELETE',
+            `/repos/${this.fullName}/contents/${filePath}`,
+            {
+                'message': 'delete file',
+                'committer': {
+                    'name': this._userInfo.name,
+                    'email': this._userInfo.email
+                },
+                'sha': sha,
+                branch
             })
             .do(x => console.log(x), e => console.log(e))
             .map(x => <File>x);

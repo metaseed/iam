@@ -43,6 +43,8 @@ export class Requestable {
         }
         else if (method === 'PATCH') {
             return this._http.patch<Object>(url, data, { headers: headers, responseType: 'json' });
+        } else if (method === 'DELETE') {
+            return this._http.delete<Object>(url, { headers: headers, params: data, responseType: 'json' })
         }
         return <Observable<HttpResponse<any>>>this._http.request(request).filter(r => r instanceof HttpResponseBase);
     }

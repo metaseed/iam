@@ -2,8 +2,11 @@
   <table class="table">
     <tr *ngFor="let doc of documents; let i = index" (click)="show(doc)">
       <ng-container *ngIf="doc.state!=='closed'">
+        <td [class.done-true]="doc.done">{{doc.metaData.title}}</td>
+        <td [class.done-true]="doc.done">{{doc.metaData.summary}}</td>
+
         <td [class.done-true]="doc.done">{{doc.updated_at}}</td>
-        <td [class.done-true]="doc.done">{{doc.title}}</td>
+        <img src="{{doc.metaData.imageData}}">
         <td>
           <button class="pull-right btn btn-default" (click)="delete(doc)">
             Delete
