@@ -63,7 +63,7 @@ export class DocMeta {
     static getFirstPicture(content: string) {
         let re = /.*!\[.*\]\((.*?)\)/g;
         let r = re.exec(content);
-        if (re) return r[1];
+        if (r) return r[1];
         return '';
     }
     static serializeContent(content: string, contentId: string, contentUrl: string) {
