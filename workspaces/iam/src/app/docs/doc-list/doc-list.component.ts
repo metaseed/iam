@@ -9,6 +9,9 @@ import { DocService } from "../services/doc.service";
 })
 export class DocListComponent implements OnInit {
   private docs;
+  @Output() onDelete = new EventEmitter<Document>();
+  @Output() onShow = new EventEmitter<Document>();
+
   constructor() { }
 
   @Input() set documents(v) {
@@ -17,8 +20,6 @@ export class DocListComponent implements OnInit {
   get documents() {
     return this.docs;
   }
-  @Output() onDelete = new EventEmitter<Document>();
-  @Output() onShow = new EventEmitter<Document>();
   ngOnInit() {
 
   }

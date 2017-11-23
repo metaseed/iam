@@ -1,100 +1,111 @@
 import { Observable } from "rxjs/Observable";
-
+import 'rxjs/add/observable/bindCallback';
 export class DocMeta {
     static width: 100;
-    static height: 200;
 
-    contentId: string;// sha of file
-    displayHeader: string;
-    summary: string;
-    imageData: string;
+    constructor(
+        public contentId: string,// sha of file
+        public title: string,
+        public summary: string,
+        public imageData: string) { }
 
-    static serialize(header: string,
+    static serialize(title: string,
         summary: string,
         imageUrl: string,
         contentId: string, contentUrl: string) {
         if (imageUrl) {
             let o = Observable.bindCallback(DocMeta.convertImgToDataUrlViaCanvas);
-            return o(imageUrl, 'image/png', DocMeta.width, DocMeta.height).map((v) => {
+            return o(imageUrl, 'image/png', 100).map((v: string) => {
                 let contentLink = contentUrl ? `[${contentUrl}](${contentUrl})` : '';
-                return `
-<!--
+                return [`
+<!-- type:iam
     {
-        "displayHeader": ${header},
-        "summary": ${summary},
-        "imageData":${v},
-        "contentId":${contentId} 
+        "title": "${title}",
+        "summary": "${summary}",
+        "imageData":"${v}",
+        "contentId":"${contentId}"
     }
 -->
         ${contentLink}
-`;
+`, new DocMeta(contentId, title, summary, v)];
             });
         }
-        return Observable.of(`
-<!--
+        return Observable.of([`
+<!-- type:iam
     {
 
-        "displayHeader": ${header},
-        "summary": ${summary},
-        "imageData":'',
-        "contentId":${contentId} 
+        "title": "${title}",
+        "summary": "${summary}",
+        "imageData":"",
+        "contentId":"${contentId}"
     }
 -->
         please visit: ${contentUrl}
-        `);
+        `, new DocMeta(contentId, title, summary, '')]);
     }
     static getFirstLine(text) {
         var index = text.indexOf("\n");
         if (index === -1) index = undefined;
         return text.substring(0, index);
     }
-    static getHeader(content: string) {
-        let re = /\s*#\s(.*?)\s/g
+    static getTitle(content: string) {
+        let re = /\s*#\s(.*)/g
         let r = re.exec(content)
         if (r) return r[1];
         return '';
     }
     static getSummary(content: string) {
-        let re = /\s*#\s(.*?)\s/g
+        let re = /\s*\*(.*?)\*\s*/g
         let r = re.exec(content)
         if (r) return r[1];
         return '';
     }
     static getFirstPicture(content: string) {
-        let re = /.*!\[.*\]\((.*?)\)/gm;;
-        if (re) return re[1];
+        let re = /.*!\[.*\]\((.*?)\)/g;
+        let r = re.exec(content);
+        if (re) return r[1];
         return '';
     }
     static serializeContent(content: string, contentId: string, contentUrl: string) {
-        let header = DocMeta.getHeader(content);
+        let header = DocMeta.getTitle(content);
         let summary = DocMeta.getSummary(content);
         let picUrl = DocMeta.getFirstPicture(content);
         return DocMeta.serialize(header, summary, picUrl, contentId, contentUrl);
     }
 
     static deSerialize(metaData: string) {
-        let re = /(<!--[\r\n]*)([\s\S]*)(-->[\s\S]*)/gm;
-        let jsonString = metaData.replace(re, "$2");
-        let meta = <DocMeta>JSON.parse(jsonString);
-        return meta;
+        let re = /<!--\stype:iam[\r\n]*([\s\S]*)-->[\s\S]*/gm;
+        let jsonString = re.exec(metaData);
+        if (!jsonString) return null;
+        try {
+            let meta = <DocMeta>JSON.parse(jsonString[1]);
+            return meta;
+        }
+        catch{
+            return null;
+        }
     }
 
     //http://jsfiddle.net/handtrix/YvQ5y/
-    static convertImgToDataUrlViaCanvas(url, outputFormat, width, height, callback) {
-        var img = new Image();
-        img.crossOrigin = 'Anonymous';
+    //https://stackoverflow.com/questions/34639708/how-do-i-set-crossorigin-attribute-when-using-canvas-todataurl
+    static convertImgToDataUrlViaCanvas(url, outputFormat, width, callback) {
+        var img = document.createElement("img");
+        img.setAttribute('crossOrigin', 'anonymous');
+        img.src = url;
         img.onload = function () {
             var canvas = document.createElement('canvas');
             var ctx = canvas.getContext('2d');
+            //document.body.appendChild(canvas);
             var dataURL;
-            canvas.height = height;
+            canvas.height = width;
             canvas.width = width;
-            ctx.drawImage(<HTMLImageElement>this, 0, 0, width, height);
+            ctx.fillStyle = 'white';
+            ctx.font = '15px sans-serif';
+            ctx.drawImage(<HTMLImageElement>this, 0, 0, width, width * (img.height / img.width));
             dataURL = canvas.toDataURL(outputFormat);
             callback(dataURL);
             canvas = null;
         };
-        img.src = url;
     }
 
     static convertFileToDataUrlViaFileReader(url, callback) {

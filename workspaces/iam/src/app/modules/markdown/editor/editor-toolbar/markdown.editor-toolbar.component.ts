@@ -92,7 +92,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
 
   save = () => {
     const content = this.editor.getValue();
-    this._docService.edit(content);
+    this._docService.save(content);
   }
   new = () => {
     this._docService.newDoc();

@@ -38,12 +38,13 @@ export class Repository extends Requestable {
                 return this.newFile(path, contents);
             });
     }
-
+    //https://developer.github.com/v3/repos/contents/#update-a-file
     updateFile(path, contents, sha, branch = 'master') {
 
         return this.request('PUT',
             `/repos/${this.fullName}/contents/${path}`,
             {
+                'path': 'pp',
                 'message': 'update file',
                 'committer': {
                     'name': this._userInfo.name,

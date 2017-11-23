@@ -6,9 +6,12 @@ import { GithubStorage, UserInfo, EditIssueParams } from '../../storage/github/i
 import { Repository } from '../../storage/github/repository';
 import { DocsModel } from '../models/docs.model';
 import { DocMeta } from '../models/doc-meta';
+import { Content } from '../../storage/github/model/content';
 
 @Injectable()
 export class DocService {
+  static FolderName = 'documents';
+
   public docAdd$ = new EventEmitter();
   public docRemove$ = new EventEmitter();
   public docModify$ = new EventEmitter();
@@ -17,6 +20,7 @@ export class DocService {
   private _repo: Repository;
   private _repoSub$: Observable<Repository>;
   private _storage = new GithubStorage(this._http, new UserInfo('metasong', 'metaseed@gmail.com', 'mssong179'));
+
 
   constructor(private _http: HttpClient) {
     this._repoSub$ = this._storage.repos('test2');
@@ -40,16 +44,28 @@ export class DocService {
   }
   newDoc() {
     let doc = {
-      body: '# Title\n*summery*\n'
+      content: {
+        content: btoa('# Title\n*summery*\n')
+      }
+
     }
-    this.showDoc(doc);
-  }
-  showDoc(doc) {
-    this.model.currentDoc = doc;
+    this.model.currentDoc = null;
     this.docShow$.next(doc);
   }
-  onShowDoc(fun) {
-    this.docShow$.subscribe(fun);
+  showDoc(doc: Document) {
+    this._repo.getContents(`${DocService.FolderName}/${doc.metaData.title}_${doc.number}`).subscribe(
+      (content: Content) => {
+        doc.content = content;
+        this.model.currentDoc = doc;
+        this.docShow$.next(doc);
+      }
+    );
+  }
+
+  onShowDoc(fun: (doc: Document) => void) {
+    this.docShow$.subscribe(doc => {
+      fun(doc);
+    });
   }
 
   getContentUrl(issueNum) {
@@ -57,17 +73,16 @@ export class DocService {
   }
 
   saveNew = (content: string) => {
-    let title = DocMeta.getHeader(content);
+    let title = DocMeta.getTitle(content);
     if (!title) throw 'must have title';
     return this._repo.issue.create({ title }).flatMap((issue) => {
       let id = issue.number;
-      return this._repo.newFile(`documents/${title}_${id}`, content).flatMap((file) => {
-        let sha = file.content.sha;
+      return this._repo.newFile(`${DocService.FolderName}/${title}_${id}`, content).flatMap((file) => {
         let url = this.getContentUrl(id);
-        return DocMeta.serializeContent(content, sha, url).flatMap((metaString) => {
-          let data: EditIssueParams = { title: title, body: content };
+        return DocMeta.serializeContent(content, file.content.sha, url).flatMap(([metaString, metaData]) => {
+          let data: EditIssueParams = { title: title, body: <string>metaString };
           return this._repo.issue.edit(id, data).map((doc: Document) => {
-            doc.metaData.contentId = sha;
+            doc.metaData = <DocMeta>metaData;
             this.model.docs.unshift(doc);
             return doc;
           });
@@ -78,23 +93,31 @@ export class DocService {
 
   }
 
-
+  save(content) {
+    if (this.model.currentDoc) {
+      this.edit(content, this.model.currentDoc).subscribe(doc => {
+        this.model.currentDoc = doc;
+      });
+    } else {
+      this.saveNew(content).subscribe(doc => {
+        this.model.currentDoc = doc;
+      });
+    }
+  }
 
   edit = (content: string, doc: Document) => {
-    let title = DocMeta.getHeader(content);
+    let title = DocMeta.getTitle(content);
     if (!title) throw 'must have title';
 
-    return this._repo.updateFile(`documents/${title}_${doc.number}`, content, doc.metaData.contentId).flatMap(
+    return this._repo.updateFile(`${DocService.FolderName}/${doc.metaData.title}_${doc.number}`, content, doc.metaData.contentId).flatMap(
       file => {
-        let summary = DocMeta.getSummary(content);
-        let picUrl = DocMeta.getFirstPicture(content);
-        return DocMeta.serialize(title, summary, picUrl, file.content.sha, this.getContentUrl(doc.number)).flatMap(
-          (metaString) => {
-            let data: EditIssueParams = { title: title, body: metaString };
+        let url = this.getContentUrl(doc.number);
+        return DocMeta.serializeContent(content, file.content.sha, url).flatMap(
+          ([metaString, metaData]) => {
+            let data: EditIssueParams = { title: title, body: <string>metaString };
             return this._repo.issue.edit(doc.number, data).map(
               (a) => {
-                doc.metaData.contentId = file.content.sha;
-                console.log(a);
+                doc.metaData = <DocMeta>metaData;
                 return doc;
               }
             );
@@ -109,10 +132,15 @@ export class DocService {
       return repo.issue.list('open');
     }).subscribe(
       (docs: Document[]) => {
+        let docList = new Array<Document>();
         docs.forEach(d => {
-          d.metaData = DocMeta.deSerialize(d.body);
+          let meta = DocMeta.deSerialize(d.body);
+          if (meta) {
+            d.metaData = meta;
+            docList.push(d);
+          }
         });
-        this.model = new DocsModel(docs);
+        this.model = new DocsModel(docList);
       },
       (error) => {
         console.log(error);

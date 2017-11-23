@@ -25,12 +25,12 @@ export class MarkdownComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this._docService.onShowDoc(doc => {
+    this._docService.onShowDoc((doc) => {
       if (doc === null) {
         this._text = '';
         return;
       }
-      this._text = doc.body;
+      this._text = atob(doc.content.content);
       this._doc = doc;
     });
     this._editorService.contentChanged$.subscribe(([content, editor]) => {
@@ -39,7 +39,7 @@ export class MarkdownComponent implements OnInit {
         me.editorDiv.nativeElement.style.height = me.viewerDiv.nativeElement.clientHeight + 'px';
         me.editor.editor.layout();
         me.editor.editor.focus();
-      }, 0);
+      }, 0)
     });
   }
   editorOptions = {/* theme: 'vs-dark', */ language: 'markdown' };
