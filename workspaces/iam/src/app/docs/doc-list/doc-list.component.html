@@ -11,10 +11,10 @@
             </mdc-card-primary>
             <img mdc-card-media-item [size]="1.5" src="{{doc.metaData.imageData}}" />
           </mdc-card-horizontal>
-          <mdc-card-actions>
+          <mdc-card-actions style="position:relative">
             <button mdc-card-button>Action 1</button>
             <button mdc-card-button>Action 2</button>
-            <button mdc-button>
+            <button mdc-button style="position:absolute; right:0" (click)="delete(doc)">
               <mdc-icon>delete</mdc-icon>
 
             </button>
