@@ -1,9 +1,10 @@
+/// <reference path="../../../../../../../../node_modules/monaco-editor/monaco.d.ts" />
 import { Component, OnInit, Input, ElementRef, EventEmitter, ViewChild, Output, AfterViewInit, NgZone, forwardRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { MarkdownEditorService } from '../index';
-declare var monaco;
+
 @Component({
   selector: 'monaco-editor',
   templateUrl: './monaco-editor.component.html',

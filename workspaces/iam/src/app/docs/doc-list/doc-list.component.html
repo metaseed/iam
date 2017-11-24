@@ -2,23 +2,24 @@
   <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="10px">
     <div *ngFor="let doc of documents; let i = index" (click)="show(doc)">
       <ng-container *ngIf="doc.state!=='closed'">
-        <mat-card class="doc-card">
-          <mat-card-header>
-            <!-- <div mat-card-avatar class="doc-header-image"></div> -->
-            <mat-card-title>{{doc.metaData.title}}</mat-card-title>
-            <mat-card-subtitle>{{doc.metaData.summary}}</mat-card-subtitle>
-          </mat-card-header>
-          <img mat-card-sm-image src="{{doc.metaData.imageData}}" alt="Photo">
-          <mat-card-content>
-            <p>
-              {{doc.metaData.summary}}
-            </p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-button>LIKE</button>
-            <button mat-button>SHARE</button>
-          </mat-card-actions>
-        </mat-card>
+
+        <mdc-card class="doc-card">
+          <mdc-card-horizontal>
+            <mdc-card-primary>
+              <mdc-card-title class="title-truncate">{{doc.metaData.title}}</mdc-card-title>
+              <mdc-card-supporting-text class="summary-truncate">{{doc.metaData.summary}}</mdc-card-supporting-text>
+            </mdc-card-primary>
+            <img mdc-card-media-item [size]="1.5" src="{{doc.metaData.imageData}}" />
+          </mdc-card-horizontal>
+          <mdc-card-actions>
+            <button mdc-card-button>Action 1</button>
+            <button mdc-card-button>Action 2</button>
+            <button mdc-button>
+              <mdc-icon>delete</mdc-icon>
+
+            </button>
+          </mdc-card-actions>
+        </mdc-card>
       </ng-container>
     </div>
   </div>

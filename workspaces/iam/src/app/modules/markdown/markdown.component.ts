@@ -42,7 +42,7 @@ export class MarkdownComponent implements OnInit {
       }, 0)
     });
   }
-  editorOptions: monaco.editor.IEditorOptions = {/* theme: 'vs-dark', */ language: 'markdown', wordWrapColumn: 120, wordWrap: 'bounded' };
+  editorOptions: monaco.editor.IEditorConstructionOptions = {/* theme: 'vs-dark', */ language: 'markdown', wordWrapColumn: 120, wordWrap: 'bounded' };
 
   showDemo() {
     this._http.get(`${this.baseHref.slice(1)}/assets/markdown.md`, { responseType: 'text' }).subscribe(a => {

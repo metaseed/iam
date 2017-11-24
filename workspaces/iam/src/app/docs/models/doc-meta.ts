@@ -1,7 +1,7 @@
 import { Observable } from "rxjs/Observable";
 import 'rxjs/add/observable/bindCallback';
 export class DocMeta {
-    static width: 100;
+    static width: 400;
 
     constructor(
         public contentId: string,// sha of file
