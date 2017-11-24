@@ -97,11 +97,12 @@ export class DocMeta {
             var ctx = canvas.getContext('2d');
             //document.body.appendChild(canvas);
             var dataURL;
-            canvas.height = width;
+            const height = width * (img.height / img.width);
+            canvas.height = height;
             canvas.width = width;
             ctx.fillStyle = 'white';
             ctx.font = '15px sans-serif';
-            ctx.drawImage(<HTMLImageElement>this, 0, 0, width, width * (img.height / img.width));
+            ctx.drawImage(<HTMLImageElement>this, 0, 0, width, height);
             dataURL = canvas.toDataURL(outputFormat);
             callback(dataURL);
             canvas = null;
