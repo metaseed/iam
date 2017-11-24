@@ -1,3 +1,4 @@
+/// <reference path="../../../../../../node_modules/monaco-editor/monaco.d.ts" />
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 // import { AceEditorDirective } from './editor/markdown-editor.directive';
 import { MarkdownViewerComponent } from './viewer/markdown-viewer.component';
@@ -8,7 +9,6 @@ import { timeout } from 'rxjs/operator/timeout';
 import { setTimeout } from 'timers';
 import { DocService } from '../../docs/index';
 import { MarkdownEditorService } from './editor/index';
-
 @Component({
   selector: 'ms-markdown',
   templateUrl: './markdown.component.html',
@@ -42,7 +42,7 @@ export class MarkdownComponent implements OnInit {
       }, 0)
     });
   }
-  editorOptions = {/* theme: 'vs-dark', */ language: 'markdown' };
+  editorOptions: monaco.editor.IEditorOptions = {/* theme: 'vs-dark', */ language: 'markdown', wordWrapColumn: 120, wordWrap: 'bounded' };
 
   showDemo() {
     this._http.get(`${this.baseHref.slice(1)}/assets/markdown.md`, { responseType: 'text' }).subscribe(a => {
@@ -56,7 +56,6 @@ export class MarkdownComponent implements OnInit {
     this._text = text;
     this._doc && (this._doc.body = text);
   }
-  aceOptions: any = { maxLines: 100000, printMargin: false };
   showPreviewPanel = true;
 
   @ViewChild(MonacoEditorComponent) editor: MonacoEditorComponent;

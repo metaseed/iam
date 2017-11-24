@@ -2,3 +2,13 @@
   text-decoration: line-through;
   color: #CCC;
 }
+
+.doc-card {
+  width: 400px;
+  height: 500px;
+}
+
+.doc-header-image {
+  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-size: cover;
+}
