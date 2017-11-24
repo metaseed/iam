@@ -5,13 +5,14 @@
       <monaco-editor *loadMonacoEditor [options]="editorOptions " [(ngModel)]="markdown "></monaco-editor>
     </div>
     <div class="preview-panel" #viewerDiv style="height: fit-content;" [style.display]="showPreviewPanel ? 'block' : 'none'">
-      <div>
+      <div style="position:relative">
 
-        <button mdc-fab class="mdc-fab--bottom-right" (click)="this.isEditMode= !this.isEditMode" [mini]="false">
+        <markdown-viewer [model]="markdown "></markdown-viewer>
+        <button [class.edit-button-fix]="fixEditButton" [mini]="true" [class.edit-button-static]="!fixEditButton" mdc-fab class="mdc-fab"
+          (click)="this.isEditMode= !this.isEditMode" [mini]="false">
           <mdc-icon>edit</mdc-icon>
         </button>
       </div>
-      <markdown-viewer [model]="markdown "></markdown-viewer>
 
     </div>
   </div>

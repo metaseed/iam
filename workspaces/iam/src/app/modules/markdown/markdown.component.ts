@@ -1,5 +1,5 @@
 /// <reference path="../../../../../../node_modules/monaco-editor/monaco.d.ts" />
-import { Component, OnInit, ViewChild, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, HostListener, ElementRef } from '@angular/core';
 // import { AceEditorDirective } from './editor/markdown-editor.directive';
 import { MarkdownViewerComponent } from './viewer/markdown-viewer.component';
 import { HttpClient } from '@angular/common/http';
@@ -18,12 +18,20 @@ export class MarkdownComponent implements OnInit {
   private _text: string;
   private _doc: any;
   isFullScreen: boolean;
-  constructor(private _docService: DocService, private _editorService: MarkdownEditorService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref) {
+  fixEditButton = false;
+  constructor(private _docService: DocService, private _el: ElementRef, private _editorService: MarkdownEditorService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref) {
 
   }
   ngOnInit() {
   }
 
+  @HostListener('window:scroll', ['$event'])
+  onScroll(event) {
+    var viewportOffset = this._el.nativeElement.getBoundingClientRect();
+    // these are relative to the viewport, i.e. the window
+    this.fixEditButton = viewportOffset.top <= 0;
+
+  }
   ngAfterViewInit() {
     this._docService.onShowDoc((doc) => {
       if (doc === null) {

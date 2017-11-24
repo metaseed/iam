@@ -9,13 +9,13 @@
               <mdc-card-title class="title-truncate">{{doc.metaData.title}}</mdc-card-title>
               <mdc-card-supporting-text class="summary-truncate">{{doc.metaData.summary}}</mdc-card-supporting-text>
             </mdc-card-primary>
-            <img mdc-card-media-item [size]="1.5" src="{{doc.metaData.imageData}}" />
+            <img mdc-card-media-item [size]="2" src="{{doc.metaData.imageData}}" />
           </mdc-card-horizontal>
           <mdc-card-actions style="position:relative">
             <button mdc-card-button>Action 1</button>
             <button mdc-card-button>Action 2</button>
             <button mdc-button style="position:absolute; right:0" (click)="delete(doc)">
-              <mdc-icon>delete</mdc-icon>
+              <mdc-icon>delete_forever</mdc-icon>
 
             </button>
           </mdc-card-actions>
