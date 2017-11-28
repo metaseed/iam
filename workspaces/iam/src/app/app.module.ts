@@ -15,7 +15,7 @@ import { APP_BASE_HREF } from '@angular/common';
 @NgModule({
   declarations: [
     NotFoundComponent,
-    AppComponent,
+    AppComponent
   ],
   imports: [
     BrowserModule,

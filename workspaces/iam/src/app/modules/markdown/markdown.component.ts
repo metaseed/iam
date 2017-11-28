@@ -19,6 +19,7 @@ export class MarkdownComponent implements OnInit {
   private _doc: any;
   isFullScreen: boolean;
   fixEditButton = false;
+  isEditMode = false;
   constructor(private _docService: DocService, private _el: ElementRef, private _editorService: MarkdownEditorService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref) {
 
   }
@@ -26,6 +27,7 @@ export class MarkdownComponent implements OnInit {
   }
 
   @HostListener('window:scroll', ['$event'])
+
   onScroll(event) {
     var viewportOffset = this._el.nativeElement.getBoundingClientRect();
     // these are relative to the viewport, i.e. the window
