@@ -1,5 +1,6 @@
 import { Observable } from "rxjs/Observable";
 import 'rxjs/add/observable/bindCallback';
+const pica = require('pica')();
 export class DocMeta {
     static width: 400;
 
@@ -13,35 +14,39 @@ export class DocMeta {
         summary: string,
         imageUrl: string,
         contentId: string, contentUrl: string) {
-        if (imageUrl) {
-            let o = Observable.bindCallback(DocMeta.convertImgToDataUrlViaCanvas);
-            return o(imageUrl, 'image/png', 100).map((v: string) => {
-                let contentLink = contentUrl ? `[${contentUrl}](${contentUrl})` : '';
-                return [`
-<!-- type:iam
-    {
-        "title": "${title}",
-        "summary": "${summary}",
-        "imageData":"${v}",
-        "contentId":"${contentId}"
-    }
--->
-        ${contentLink}
-`, new DocMeta(contentId, title, summary, v)];
-            });
-        }
+        //         if (imageUrl) {
+        //             let o = Observable.bindCallback(DocMeta.convertImgToDataUrlViaCanvas);
+        //             return o(imageUrl, 'image/png', 100)
+        //                 // .catch(e => {
+        //                 //     return Observable.of({});
+        //                 // })
+        //                 .map((v: string) => {
+        //                     let contentLink = contentUrl ? `[${contentUrl}](${contentUrl})` : '';
+        //                     return [`
+        // <!-- type:iam
+        //     {
+        //         "title": "${title}",
+        //         "summary": "${summary}",
+        //         "imageData":"${v}",
+        //         "contentId":"${contentId}"
+        //     }
+        // -->
+        //         ${contentLink}
+        // `, new DocMeta(contentId, title, summary, v)];
+        //                 });
+        //         }
         return Observable.of([`
 <!-- type:iam
     {
 
         "title": "${title}",
         "summary": "${summary}",
-        "imageData":"",
+        "imageData":"${imageUrl}",
         "contentId":"${contentId}"
     }
 -->
         please visit: ${contentUrl}
-        `, new DocMeta(contentId, title, summary, '')]);
+        `, new DocMeta(contentId, title, summary, imageUrl)]);
     }
     static getFirstLine(text) {
         var index = text.indexOf("\n");
@@ -110,6 +115,14 @@ export class DocMeta {
             callback(dataURL);
             canvas = null;
         };
+        var canvas = document.createElement('canvas');
+        var dataURL;
+        const height = width * (img.height / img.width);
+        canvas.height = height;
+        canvas.width = width;
+        pica.resize(img, canvas)
+            .then(result => pica.toBlob(result, 'image/jpeg', 0.90))
+            .then(blob => console.log('resized to canvas & created blob!'));
     }
 
     static convertFileToDataUrlViaFileReader(url, callback) {

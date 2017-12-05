@@ -8,6 +8,11 @@
     height: 250px;
   }
 
+  .doc-card:hover {
+    left: .1em;
+    background-color: #DDD;
+  }
+
   .doc-header-image {
     background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
     background-size: cover;

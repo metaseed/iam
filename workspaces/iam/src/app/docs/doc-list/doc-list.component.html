@@ -9,7 +9,8 @@
               <mdc-card-title class="title-truncate">{{doc.metaData.title}}</mdc-card-title>
               <mdc-card-supporting-text class="summary-truncate">{{doc.metaData.summary}}</mdc-card-supporting-text>
             </mdc-card-primary>
-            <img mdc-card-media-item [size]="2" src="{{doc.metaData.imageData}}" />
+            <!-- <img mdc-card-media-item [size]="1.5" src="{{doc.metaData.imageData}}" /> -->
+            <div style="background-position:50% 50%; width:168px;height:158px;margin-top:16px" [style.background-image]="'url('+doc.metaData.imageData+')'"></div>
           </mdc-card-horizontal>
           <mdc-card-actions style="position:relative">
             <button mdc-card-button>Action 1</button>
