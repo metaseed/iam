@@ -30,7 +30,7 @@ function loadConfig() {
 
 var config = loadConfig();
 
-function authenticate(code, cb) {
+function authenticate(code, state, cb) {
   var data = qs.stringify({
     client_id: config.oauth_client_id,
     client_secret: config.oauth_client_secret,
@@ -96,9 +96,12 @@ app.all('*', function (req, res, next) {
 });
 
 
-app.get('/authenticate/:code', function (req, res) {
-  log('authenticating code:', req.params.code, true);
-  authenticate(req.params.code, function (err, token) {
+app.get('/authenticate', function (req, res) {
+  var state = req.param('state');
+  var code = req.param('code');
+  log('authenticating code:', code, true);
+  log('state:', state);
+  authenticate(code, state, function (err, token) {
     var result
     if (err || !token) {
       result = {
@@ -111,7 +114,11 @@ app.get('/authenticate/:code', function (req, res) {
       };
       log("token", result.token, true);
     }
-    res.json(result);
+    //res.json(result);
+    res.redirect(url.format({
+      pathname: state,
+      query: result
+    }))
   });
 });
 
