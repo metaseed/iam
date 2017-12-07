@@ -55,7 +55,7 @@
     "markdown-it-table-of-contents": "^0.3.2",
     "markdown-it-task-lists": "^2.1.0",
     "markdown-it-video": "^0.5.1",
-    "monaco-editor": "?^0.10.1",
+    "monaco-editor": "^0.10.1",
     "mousetrap": "^1.6.1",
     "pica": "^4.0.1",
     "prismjs": "^1.8.4",
