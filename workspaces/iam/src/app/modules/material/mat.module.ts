@@ -8,7 +8,6 @@ import { MdcCardModule, MdcIconModule } from '@angular-mdc/web';
 //     exports: [MatIconModule, MatButtonModule, MatCheckboxModule, MatCardModule]
 // })
 import {
-    MdcCoreModule, // required
     MdcFabModule,
     MdcButtonModule,
     MdcMenuModule
@@ -16,7 +15,6 @@ import {
 
 @NgModule({
     imports: [
-        MdcCoreModule, // required
         MdcFabModule,
         MdcMenuModule,
         MdcIconModule,
@@ -24,7 +22,6 @@ import {
         MdcCardModule
     ],
     exports: [
-        MdcCoreModule, // required
         MdcFabModule,
         MdcMenuModule,
         MdcIconModule,
