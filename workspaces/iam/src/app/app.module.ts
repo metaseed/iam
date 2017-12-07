@@ -11,7 +11,9 @@ import { StoreModule } from '@ngrx/store';
 import { DocsModule } from './docs/docs.module';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { Config } from './modules/core/index';
+import { ServiceWorkerModule } from '@angular/service-worker';
 import { APP_BASE_HREF } from '@angular/common';
+import { environment } from '../environments/environment';
 @NgModule({
   declarations: [
     NotFoundComponent,
@@ -25,6 +27,7 @@ import { APP_BASE_HREF } from '@angular/common';
     MarkdownModule.forRoot(),
     CoreModule,
     DocsModule,
+    environment.production ? ServiceWorkerModule.register('/ngsw-worker.js') : [],
     // StoreModule.forRoot({ a: 'b' });
     HotkeyModule.forRoot({
       disableCheatSheet: false,

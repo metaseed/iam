@@ -6,6 +6,7 @@
   "apps": [{
     "root": "src",
     "outDir": "dist",
+    "serviceWorker": true,
     "assets": [{
         "glob": "**/*",
         "input": "../node_modules/monaco-editor/min/",

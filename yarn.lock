@@ -114,7 +114,7 @@
   optionalDependencies:
     node-sass "^4.3.0"
 
-"@angular/common@^5.0.1", "@angular/common@~5.1.0":
+"@angular/common@^5.0.1":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@angular/common/-/common-5.1.0.tgz#88b586e0aff6a93b8de08cce1e14c0e65fde5a56"
   dependencies:
@@ -184,6 +184,18 @@
 "@angular/router@^5.0.1":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@angular/router/-/router-5.1.0.tgz#4e7283e34cd3d244899b289d835b830640c7bad9"
+  dependencies:
+    tslib "^1.7.1"
+
+"@angular/service-worker@5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@angular/service-worker/-/service-worker-5.0.0.tgz#99a2f5d37035062bd1056120ccff43d6323c3987"
+  dependencies:
+    tslib "^1.7.1"
+
+"@angular/service-worker@5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@angular/service-worker/-/service-worker-5.1.0.tgz#bf998e094ef37c13d50b7e32a91d2921f73316d3"
   dependencies:
     tslib "^1.7.1"
 
