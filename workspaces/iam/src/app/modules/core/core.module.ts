@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { WindowRef } from './window-ref';
 import { CommonModule } from '@angular/common';
 
 import { HotkeyModule } from 'angular-hotkey-module';
@@ -11,7 +12,8 @@ import { CommandService } from './command.service';
   ],
   declarations: [],
   providers: [
-    CommandService
+    CommandService,
+    WindowRef
   ]
 })
 export class CoreModule { }

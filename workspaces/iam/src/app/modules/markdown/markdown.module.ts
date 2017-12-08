@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { MarkdownComponent } from './markdown.component';
 import { CommonModule } from '@angular/common';
-import { MaterialModule } from '../material/mat.module';
+import { MaterialModule } from '../material/material.module';
 import { MarkdownEditorModule } from './editor/markdown-editor.module';
 import { MarkdownViewerModule } from './viewer/index';
 import { MarkdownConfig } from './viewer/markdown.config';
