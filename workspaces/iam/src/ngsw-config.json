@@ -1,26 +1,44 @@
 {
   "index": "/index.html",
   "appData": {
-    "test": true
+    "name": "i'm",
+    "description": "i'm writing your professional life"
   },
   "assetGroups": [{
-    "name": "appshell",
-    "resources": {
-      "files": [
-        "/assets/**/*",
-        "!/ngsw-worker.js"
-      ],
-      "versionedFiles": [
-        "/**/*.html",
-        "/**/*.js",
-        "/**/*.css"
-      ],
-      "urls": [
-        "https://fonts.googleapis.com/css?family=Material+Icons",
-        "https://fonts.gstatic.com/s/materialicons/v29/2fcrYFNaTjcS6g4U3t-Y5UEw0lE80llgEseQY3FEmqw.woff2"
-      ]
+      "name": "app",
+      "installMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/index.html"
+        ],
+        "versionedFiles": [
+          "/*.bundle.css",
+          "/*.bundle.js",
+          "/*.chunk.js"
+        ]
+      }
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/assets/**/*"
+        ]
+      }
+    },
+    {
+      "name": "fonts",
+      "resources": {
+        "urls": [
+          "https://fonts.googleapis.com/**",
+          "https://fonts.gstatic.com/**"
+        ]
+      }
     }
-  }],
+  ],
   "dataGroups": [{
       "name": "api-freshness",
       "urls": [

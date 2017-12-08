@@ -3,57 +3,54 @@
   "project": {
     "name": "iam"
   },
-  "apps": [
-    {
-      "root": "src",
-      "outDir": "dist",
-      "assets": [
-        {
-  "glob": "**/*",
-  "input": "../node_modules/monaco-editor/min/",
-  "output": "./assets/monaco-editor/",
-  "allowOutsideOutDir": false
-},
-        {
-  "glob": "**/*",
-  "input": "../node_modules/monaco-editor/min-maps/",
-  "output": "./assets/min-maps/",
-  "allowOutsideOutDir": false
-},
-        {
-  "glob": "favicon.ico",
-  "input": "./",
-  "output": "./",
-  "allowOutsideOutDir": false
-},
-        "assets"
-      ],
-      "index": "index.html",
-      "main": "main.ts",
-      "polyfills": "polyfills.ts",
-      "test": "test.ts",
-      "tsconfig": "tsconfig.app.json",
-      "testTsconfig": "tsconfig.spec.json",
-      "prefix": "meta",
-      "serviceWorker": true,
-      "styles": [
-        "styles.scss"
-      ],
-      "scripts": [],
-      "environmentSource": "environments/environment.ts",
-      "environments": {
-        "dev": "environments/environment.ts",
-        "prod": "environments/environment.prod.ts"
-      }
+  "apps": [{
+    "root": "src",
+    "outDir": "dist",
+    "assets": [{
+        "glob": "**/*",
+        "input": "../node_modules/monaco-editor/min/",
+        "output": "./assets/monaco-editor/",
+        "allowOutsideOutDir": false
+      },
+      {
+        "glob": "**/*",
+        "input": "../node_modules/monaco-editor/min-maps/",
+        "output": "./assets/min-maps/",
+        "allowOutsideOutDir": false
+      },
+      {
+        "glob": "favicon.ico",
+        "input": "./",
+        "output": "./",
+        "allowOutsideOutDir": false
+      },
+      "assets",
+      "manifest.json"
+    ],
+    "index": "index.html",
+    "main": "main.ts",
+    "polyfills": "polyfills.ts",
+    "test": "test.ts",
+    "tsconfig": "tsconfig.app.json",
+    "testTsconfig": "tsconfig.spec.json",
+    "prefix": "meta",
+    "serviceWorker": true,
+    "styles": [
+      "styles.scss"
+    ],
+    "scripts": [],
+    "environmentSource": "environments/environment.ts",
+    "environments": {
+      "dev": "environments/environment.ts",
+      "prod": "environments/environment.prod.ts"
     }
-  ],
+  }],
   "e2e": {
     "protractor": {
       "config": "./protractor.conf.js"
     }
   },
-  "lint": [
-    {
+  "lint": [{
       "project": "src/tsconfig.app.json",
       "exclude": "**/node_modules/**"
     },
@@ -73,7 +70,6 @@
   },
   "defaults": {
     "styleExt": "scss",
-    "component": {
-    }
+    "component": {}
   }
 }
