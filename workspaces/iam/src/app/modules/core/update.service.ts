@@ -1,23 +1,21 @@
 
 import { Component, OnInit, Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material';
 import { WindowRef } from './window-ref';
 import { SwUpdate } from '@angular/service-worker';
+import { MdcSnackbar } from '@angular-mdc/web';
 
 @Injectable()
 export class UpdateService {
 
-    constructor(private swUpdate: SwUpdate, public snackBar: MatSnackBar, private winRef: WindowRef) {
+    constructor(private swUpdate: SwUpdate, public snackBar: MdcSnackbar, private winRef: WindowRef) {
 
         this.swUpdate.available.subscribe(event => {
 
             console.log('[App] Update available: current version is', event.current, 'available version is', event.available);
-            let snackBarRef = this.snackBar.open('Newer version of the app is available', 'Refresh');
-
-            snackBarRef.onAction().subscribe(() => {
-                this.winRef.nativeWindow.location.reload()
+            let snackBarRef = this.snackBar.show('Newer version of the app is available', 'Refresh', {
+                timeout: 6,
+                actionHandler: () => this.winRef.nativeWindow.location.reload()
             });
-
         });
 
         this.swUpdate.activated.subscribe(event => {

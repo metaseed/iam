@@ -11,7 +11,8 @@ import {
     MdcIconModule,
     MdcFabModule,
     MdcButtonModule,
-    MdcMenuModule
+    MdcMenuModule,
+    MdcSnackbarModule
 } from '@angular-mdc/web';
 
 @NgModule({
@@ -20,14 +21,16 @@ import {
         MdcMenuModule,
         MdcIconModule,
         MdcButtonModule,
-        MdcCardModule
+        MdcCardModule,
+        MdcSnackbarModule
     ],
     exports: [
         MdcFabModule,
         MdcMenuModule,
         MdcIconModule,
         MdcButtonModule,
-        MdcCardModule
+        MdcCardModule,
+        MdcSnackbarModule
     ]
 })
 export class MaterialModule { }
