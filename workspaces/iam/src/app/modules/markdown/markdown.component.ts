@@ -27,7 +27,6 @@ export class MarkdownComponent implements OnInit {
   }
 
   @HostListener('window:scroll', ['$event'])
-
   onScroll(event) {
     var viewportOffset = this._el.nativeElement.getBoundingClientRect();
     // these are relative to the viewport, i.e. the window

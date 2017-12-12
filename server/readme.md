@@ -6,8 +6,8 @@ http://52.175.247.124:3000/authenticate?code=081a4cf33d8fbc45aed0
 https://metaseed.github.io/iam/?token=56ae6c4cb41e49461bd1ddb8ba76e66287b316fb
 
 .env
-OAUTH_CLIENT_ID=584a5ba8c6d54eee0873
-OAUTH_CLIENT_SECRET=bb2f14f03f7ea0dd3eb9dbed8349db18b234f61a
+OAUTH_CLIENT_ID=
+OAUTH_CLIENT_SECRET=
 PORT=3000
 
  pscp M:\Workspace\i'm\server\*.* echosong@52.175.247.124:iam

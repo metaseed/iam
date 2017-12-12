@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 
 import { HotkeyModule } from 'angular-hotkey-module';
 import { CommandService } from './command.service';
+import { UpdateService } from './update.service';
 
 @NgModule({
   imports: [
@@ -13,7 +14,8 @@ import { CommandService } from './command.service';
   declarations: [],
   providers: [
     CommandService,
-    WindowRef
+    WindowRef,
+    UpdateService
   ]
 })
 export class CoreModule { }
