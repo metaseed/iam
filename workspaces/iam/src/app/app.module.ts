@@ -17,7 +17,6 @@ import { environment } from '../environments/environment';
 
 function getBaseHref() {
   let href = ((<any>(document.getElementById('baseHref'))).href);
-  console.log(href);
   return href;
 }
 
@@ -34,7 +33,7 @@ function getBaseHref() {
     MarkdownModule.forRoot(),
     CoreModule,
     DocsModule,
-    ServiceWorkerModule.register(`./ngsw-worker.js`, {
+    ServiceWorkerModule.register(`${getBaseHref()}ngsw-worker.js`, {
       enabled: environment.production
     }),
     // StoreModule.forRoot({ a: 'b' });
