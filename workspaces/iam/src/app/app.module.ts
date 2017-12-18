@@ -27,7 +27,9 @@ import { environment } from '../environments/environment';
     MarkdownModule.forRoot(),
     CoreModule,
     DocsModule,
-    environment.production ? ServiceWorkerModule.register('/ngsw-worker.js') : [],
+    ServiceWorkerModule.register(`${window['_app_base'] || '/'}ngsw-worker.js`, {
+      enabled: environment.production
+    }),
     // StoreModule.forRoot({ a: 'b' });
     HotkeyModule.forRoot({
       disableCheatSheet: false,

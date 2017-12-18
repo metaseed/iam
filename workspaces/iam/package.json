@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --base-href /iam/",
     "build": "ng build --prod -vendor-chunk=true",
     "deploy": "ng build --prod --output-path ../../docs --deploy-url=iam && cd ../.. && git add . && git commit -am \"deploy\" && git push && start http://metaseed.github.io/iam",
     "test": "ng test",
