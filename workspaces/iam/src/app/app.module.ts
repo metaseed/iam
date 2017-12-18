@@ -40,7 +40,7 @@ import { environment } from '../environments/environment';
   ],
   providers: [
     { provide: Config, useValue: new Config(window.location.pathname.split('/')[1]) },
-    { provide: APP_BASE_HREF, useValue: window['_app_base'] || '/' },
+    // { provide: APP_BASE_HREF, useValue: window['_app_base'] || '/' },
   ],
   bootstrap: [AppComponent]
 })
