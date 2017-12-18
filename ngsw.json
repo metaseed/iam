@@ -5,7 +5,8 @@
     "name": "i'm",
     "description": "i'm writing your professional life"
   },
-  "assetGroups": [{
+  "assetGroups": [
+    {
       "name": "app",
       "installMode": "prefetch",
       "updateMode": "prefetch",
@@ -124,7 +125,8 @@
       ]
     }
   ],
-  "dataGroups": [{
+  "dataGroups": [
+    {
       "name": "api-freshness",
       "patterns": [
         "\\/timeline"
@@ -158,7 +160,7 @@
     "/iam/assets/icons/apple-icon-180x180.png": "bb8a58c36ebda029074b8311a48d654d8de53f77",
     "/iam/favicon.ico": "359885a4becb4be06bc5ab54776d0394ac695b20",
     "/iam/assets/icons/favicon-16x16.png": "61aef8fd931e6dfa4ac6875653b2cdb00fe3e1cf",
-    "/iam/index.html": "20b40464dc2660b64152490880d676de0a744558",
+    "/iam/index.html": "71109fdf06741c12213cacc60d758dc2063099b2",
     "/iam/assets/icons/favicon-32x32.png": "2123b4edea394c45d7655125e9331b6de804abf2",
     "/iam/assets/icons/favicon-96x96.png": "8b6a11b8baa63801e8da4fa1bf55f5237fe66f76",
     "/iam/assets/icons/ms-icon-310x310.png": "b658a7aadca98424d70b2fe279fe92ec59b29021",
