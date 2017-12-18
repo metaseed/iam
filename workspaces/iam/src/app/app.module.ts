@@ -39,8 +39,8 @@ import { environment } from '../environments/environment';
     })
   ],
   providers: [
-    { provide: Config, useValue: new Config(window.location.pathname.split('/')[1]) },
-    // { provide: APP_BASE_HREF, useValue: window['_app_base'] || '/' },
+    { provide: Config, useValue: new Config((<any>(document.getElementById('baseHref'))).href) },
+    { provide: APP_BASE_HREF, useValue: ((<any>(document.getElementById('baseHref'))).href) || '/' },
   ],
   bootstrap: [AppComponent]
 })
