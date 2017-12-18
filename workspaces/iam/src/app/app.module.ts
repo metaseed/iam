@@ -14,6 +14,12 @@ import { Config } from './modules/core/index';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { APP_BASE_HREF } from '@angular/common';
 import { environment } from '../environments/environment';
+
+function getBaseHref() {
+  let href = ((<any>(document.getElementById('baseHref'))).href);
+  return href;
+}
+
 @NgModule({
   declarations: [
     NotFoundComponent,
@@ -39,8 +45,8 @@ import { environment } from '../environments/environment';
     })
   ],
   providers: [
-    { provide: Config, useValue: new Config((<any>(document.getElementById('baseHref'))).href) },
-    { provide: APP_BASE_HREF, useValue: ((<any>(document.getElementById('baseHref'))).href) || '/' },
+    { provide: Config, useValue: new Config(getBaseHref()) },
+    { provide: APP_BASE_HREF, useValue: getBaseHref() || '/' },
   ],
   bootstrap: [AppComponent]
 })
