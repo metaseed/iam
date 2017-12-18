@@ -31,7 +31,7 @@ export class CommandService {
         @Inject(APP_BASE_HREF) private baseHref) {
         this.subject = new Subject<Command>();
         this.commands = this.subject.asObservable();
-        this.http.get(`${baseHref.slice(1)}assets/config.json`).toPromise()
+        this.http.get(`${baseHref}assets/config.json`).toPromise()
             .then(r => r as ConfigModel)
             .then(c => {
                 for (const key in c.hotkeys) {

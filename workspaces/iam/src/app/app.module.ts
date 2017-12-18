@@ -17,6 +17,7 @@ import { environment } from '../environments/environment';
 
 function getBaseHref() {
   let href = ((<any>(document.getElementById('baseHref'))).href);
+  console.log(href);
   return href;
 }
 

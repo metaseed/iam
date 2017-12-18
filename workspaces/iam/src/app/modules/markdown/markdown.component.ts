@@ -54,7 +54,7 @@ export class MarkdownComponent implements OnInit {
   editorOptions: monaco.editor.IEditorConstructionOptions = {/* theme: 'vs-dark', */ language: 'markdown', wordWrapColumn: 120, wordWrap: 'bounded' };
 
   showDemo() {
-    this._http.get(`${this.baseHref.slice(1)}assets/markdown.md`, { responseType: 'text' }).subscribe(a => {
+    this._http.get(`${this.baseHref}assets/markdown.md`, { responseType: 'text' }).subscribe(a => {
       this._text = a;
     });
   }

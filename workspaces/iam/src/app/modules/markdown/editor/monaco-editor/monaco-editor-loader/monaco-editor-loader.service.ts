@@ -5,7 +5,7 @@ import { APP_BASE_HREF } from '@angular/common';
 @Injectable()
 export class MonacoEditorLoaderService {
 
-    private _monacoPath = `${this.baseHref.slice(1)}assets/monaco-editor/vs`;
+    private _monacoPath = `${this.baseHref}assets/monaco-editor/vs`;
     isMonacoLoaded: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
     set monacoPath(value) {
