@@ -6,7 +6,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --prod -vendor-chunk=true",
-    "deploy_ngh": "ng build --prod --deploy-url=iam && angular-cli-ghpages && start http://metaseed.github.io/iam",
+    "deploy_ngh": "ng build --prod --deploy-url=/iam/ && angular-cli-ghpages && start http://metaseed.github.io/iam",
     "deploy": "ng build --prod --output-path ../../docs  --base-href /iam/ && cd ../.. && git add . && git commit -am \"deploy\" && git push && start http://metaseed.github.io/iam",
     "test": "ng test",
     "lint": "ng lint",
