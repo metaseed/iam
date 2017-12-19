@@ -3,17 +3,7 @@ import { Injectable, Inject } from '@angular/core';
 import { HotkeysService, Hotkey } from 'angular-hotkey-module';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/toPromise';
-import { HttpClient } from '@angular/common/http';
-import { APP_BASE_HREF } from '@angular/common';
-class HotkeyConfig {
-    [key: string]: string[];
-}
-
-class ConfigModel {
-    hotkeys: HotkeyConfig;
-}
-
+import { ConfigService } from './index';
 export class Command {
     name: string;
     combo: string;
@@ -27,21 +17,17 @@ export class CommandService {
     commands: Observable<Command>;
 
     constructor(private hotkeysService: HotkeysService,
-        private http: HttpClient,
-        @Inject(APP_BASE_HREF) private baseHref) {
+        private configService: ConfigService) {
         this.subject = new Subject<Command>();
         this.commands = this.subject.asObservable();
-        this.http.get(`${baseHref}assets/config.json`).toPromise()
-            .then(r => r as ConfigModel)
-            .then(c => {
-                for (const key in c.hotkeys) {
-                    if (!c.hotkeys.hasOwnProperty(key)) {
-                        continue;
-                    }
-                    const commands = c.hotkeys[key];
-                    hotkeysService.add(new Hotkey(key, (ev, combo) => this.hotkey(ev, combo, commands)));
-                }
-            });
+        let hotkeys = configService.config.hotkeys;
+        for (const key in hotkeys) {
+            if (!hotkeys.hasOwnProperty(key)) {
+                continue;
+            }
+            const commands = hotkeys[key];
+            hotkeysService.add(new Hotkey(key, (ev, combo) => this.hotkey(ev, combo, commands)));
+        }
     }
 
     hotkey(ev: KeyboardEvent, combo: string, commands: string[]): boolean {

@@ -32,7 +32,7 @@ function getBaseHref() {
     MarkdownModule.forRoot(),
     CoreModule,
     DocsModule,
-    ServiceWorkerModule.register(`${((<any>(document.getElementById('baseHref'))).href)}ngsw-worker.js`, {
+    ServiceWorkerModule.register(`./ngsw-worker.js`, {
       enabled: environment.production
     }),
     // StoreModule.forRoot({ a: 'b' });

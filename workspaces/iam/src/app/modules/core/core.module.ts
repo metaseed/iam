@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { HotkeyModule } from 'angular-hotkey-module';
 import { CommandService } from './command.service';
 import { UpdateService } from './update.service';
+import { ConfigService } from './index';
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import { UpdateService } from './update.service';
   providers: [
     CommandService,
     WindowRef,
+    ConfigService,
     UpdateService
   ]
 })
