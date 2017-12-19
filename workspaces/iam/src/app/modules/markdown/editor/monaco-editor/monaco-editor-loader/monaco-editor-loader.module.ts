@@ -3,9 +3,9 @@ import { MonacoEditorLoaderService } from './monaco-editor-loader.service';
 import { MonacoEditorLoaderDirective } from './monaco-editor-loader.directive';
 import { APP_BASE_HREF } from '@angular/common';
 
-export const factory = (ngZone: NgZone, baseHref) => {
-  return new MonacoEditorLoaderService(ngZone, baseHref);
-};
+// export const factory = (ngZone: NgZone, baseHref) => {
+//   return new MonacoEditorLoaderService(ngZone, baseHref);
+// };
 
 @NgModule({
   declarations: [

@@ -14,7 +14,6 @@ import { Config } from './modules/core/index';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { APP_BASE_HREF } from '@angular/common';
 import { environment } from '../environments/environment';
-
 function getBaseHref() {
   let href = ((<any>(document.getElementById('baseHref'))).href);
   return href;
@@ -33,7 +32,7 @@ function getBaseHref() {
     MarkdownModule.forRoot(),
     CoreModule,
     DocsModule,
-    ServiceWorkerModule.register(`${getBaseHref()}ngsw-worker.js`, {
+    ServiceWorkerModule.register(`${((<any>(document.getElementById('baseHref'))).href)}ngsw-worker.js`, {
       enabled: environment.production
     }),
     // StoreModule.forRoot({ a: 'b' });

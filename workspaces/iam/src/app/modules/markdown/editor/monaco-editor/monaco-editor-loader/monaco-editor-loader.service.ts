@@ -1,7 +1,7 @@
 import { Injectable, NgZone, Inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { APP_BASE_HREF } from '@angular/common';
-
+import { WindowRef } from '../../../../core/index';
 @Injectable()
 export class MonacoEditorLoaderService {
 
@@ -14,20 +14,21 @@ export class MonacoEditorLoaderService {
         }
     }
 
-    constructor(ngZone: NgZone, @Inject(APP_BASE_HREF) private baseHref: string) {
+    constructor(ngZone: NgZone, @Inject(APP_BASE_HREF) private baseHref: string, private winRef: WindowRef) {
+        let win = winRef.nativeWindow;
         var onGotAmdLoader = () => {
-            if (typeof ((<any>window).monaco) === 'object') {
+            if (typeof ((<any>win).monaco) === 'object') {
                 ngZone.run(() => this.isMonacoLoaded.next(true));
                 return;
             }
-            (<any>window).require.config({ paths: { 'vs': this._monacoPath } });
-            (<any>window).require(['vs/editor/editor.main'], () => {
+            (<any>win).require.config({ paths: { 'vs': this._monacoPath } });
+            (<any>win).require(['vs/editor/editor.main'], () => {
                 ngZone.run(() => this.isMonacoLoaded.next(true));
             });
         };
 
         // Load AMD loader if necessary
-        if (!(<any>window).require) {
+        if (!(<any>win).require) {
             var loaderScript = document.createElement('script');
             loaderScript.type = 'text/javascript';
             loaderScript.src = `${this._monacoPath}/loader.js`;
