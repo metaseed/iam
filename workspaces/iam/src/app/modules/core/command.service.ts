@@ -3,7 +3,7 @@ import { Injectable, Inject } from '@angular/core';
 import { HotkeysService, Hotkey } from 'angular-hotkey-module';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
-import { ConfigService } from './index';
+import { ConfigService } from './config.service';
 export class Command {
     name: string;
     combo: string;

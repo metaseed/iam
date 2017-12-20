@@ -12,11 +12,12 @@ import { ConfigService } from './index';
     CommonModule,
     HotkeyModule
   ],
-  declarations: [],
+  declarations: [
+  ],
   providers: [
+    ConfigService,
     CommandService,
     WindowRef,
-    ConfigService,
     UpdateService
   ]
 })
