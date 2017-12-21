@@ -9,7 +9,7 @@ import { UserInfo } from './storage/github/user-info';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'Iam';
+  title = "I'm";
   constructor(private _http: HttpClient) {
 
   }

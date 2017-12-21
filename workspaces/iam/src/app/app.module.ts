@@ -9,10 +9,11 @@ import { CoreModule } from './modules/core/core.module';
 import { HttpClientModule } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { DocsModule } from './docs/docs.module';
-import { NotFoundComponent } from './modules/router/not-found/not-found.component';
+import { NotFoundComponent } from './not-found/not-found.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { APP_BASE_HREF } from '@angular/common';
 import { environment } from '../environments/environment';
+import { AppRoutingModule } from './app-router.module';
 function getBaseHref() {
   let href = ((<any>(document.getElementById('baseHref'))).href);
   return href;
@@ -24,6 +25,7 @@ function getBaseHref() {
     AppComponent
   ],
   imports: [
+    AppRoutingModule,
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
