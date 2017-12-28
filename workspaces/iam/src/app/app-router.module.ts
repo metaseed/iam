@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from "@angular/router";
 import { SelectivePreloadingStrategy } from "./selective-preloading-strategy";
 import { CanDeactivateGuard } from "./can-deactivate-guard.service";
-import { DocsComponent } from "./modules/docs/docs.component";
+import { DocsComponent } from 'docs';
 import { MarkdownComponent } from "./modules/markdown/markdown.component";
 
 const appRoutes: Routes = [

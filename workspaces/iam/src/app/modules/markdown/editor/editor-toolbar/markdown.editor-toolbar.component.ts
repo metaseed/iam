@@ -4,7 +4,7 @@ import { MarkdownComponent } from '../../markdown.component';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { Subscription } from 'rxjs/Subscription';
-import { DocService } from '../../../docs/index';
+import { DocService } from 'docs';
 import { MarkdownEditorService } from '../../editor/index';
 import { CommandService, Command } from '../../../core/index';
 @Component({
