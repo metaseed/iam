@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { MonacoEditorComponent } from './editor/monaco-editor/monaco-editor.component';
 import { APP_BASE_HREF } from '@angular/common';
 import { timeout } from 'rxjs/operator/timeout';
+import 'rxjs/add/operator/take';
 import { setTimeout } from 'timers';
 import { DocService } from 'docs';
 import { MarkdownEditorService } from './editor/index';
@@ -21,6 +22,7 @@ export class MarkdownComponent implements OnInit {
   isFullScreen: boolean;
   fixEditButton = false;
   isEditMode = false;
+
   constructor(private _docService: DocService, private _el: ElementRef, private _editorService: MarkdownEditorService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref,
     private route: ActivatedRoute) {
 

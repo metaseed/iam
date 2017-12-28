@@ -7,6 +7,7 @@ import { Repository } from '../../../storage/github/repository';
 import { DocsModel } from '../models/docs.model';
 import { DocMeta } from '../models/doc-meta';
 import { Content } from '../../../storage/github/model/content';
+import { ReplaySubject } from 'rxjs';
 
 @Injectable()
 export class DocService {
@@ -17,14 +18,13 @@ export class DocService {
   public docModify$ = new EventEmitter();
   public model: DocsModel = new DocsModel();
   private docShow$ = new EventEmitter();
-  private _repo: Repository;
-  private _repoSub$: Observable<Repository>;
+
+  private _repoSub$ = new ReplaySubject<Repository>();
   private _storage = new GithubStorage(this._http, new UserInfo('metasong', 'metaseed@gmail.com', 'mssong179'));
 
 
   constructor(private _http: HttpClient) {
-    this._repoSub$ = this._storage.repos('test2');
-    this._repoSub$.subscribe(repo => this._repo = repo);
+    this._storage.repos('test2').subscribe(repo => this._repoSub$.next(repo));
   }
 
   // store(todo: Document) {
@@ -38,9 +38,9 @@ export class DocService {
   // }
 
   deleteDoc(doc) {
-    this._repo.issue.edit(doc.number, { state: 'closed' }).subscribe(
+    this._repoSub$.subscribe(repo => repo.issue.edit(doc.number, { state: 'closed' }).subscribe(
       a => console.log(a)
-    );
+    ));
   }
   newDoc() {
     let doc = {
@@ -53,7 +53,7 @@ export class DocService {
     this.docShow$.next(doc);
   }
   showDoc(title: string, id: number | string) {
-    this._repo.getContents(`${DocService.FolderName}/${title}_${id}`).subscribe(
+    this._repoSub$.subscribe(repo => repo.getContents(`${DocService.FolderName}/${title}_${id}`).subscribe(
       (content: Content) => {
         let doc = this.model.docs.find((doc) => doc.number === +id);
         if (!doc) { doc = <Document>{} }
@@ -61,7 +61,7 @@ export class DocService {
         this.model.currentDoc = doc;
         this.docShow$.next(doc);
       }
-    );
+    ));
   }
 
   onShowDoc(fun: (doc: Document) => void) {
@@ -77,13 +77,13 @@ export class DocService {
   saveNew = (content: string) => {
     let title = DocMeta.getTitle(content);
     if (!title) throw 'must have title';
-    return this._repo.issue.create({ title }).flatMap((issue) => {
+    return this._repoSub$.flatMap(repo => repo.issue.create({ title })).flatMap((issue) => {
       let id = issue.number;
-      return this._repo.newFile(`${DocService.FolderName}/${title}_${id}`, content).flatMap((file) => {
+      return this._repoSub$.flatMap(repo => repo.newFile(`${DocService.FolderName}/${title}_${id}`, content)).flatMap((file) => {
         let url = this.getContentUrl(id);
         return DocMeta.serializeContent(content, file.content.sha, url).flatMap(([metaString, metaData]) => {
           let data: EditIssueParams = { title: title, body: <string>metaString };
-          return this._repo.issue.edit(id, data).map((doc: Document) => {
+          return this._repoSub$.flatMap(repo => repo.issue.edit(id, data)).map((doc: Document) => {
             doc.metaData = <DocMeta>metaData;
             this.model.docs.unshift(doc);
             return doc;
@@ -112,16 +112,16 @@ export class DocService {
     if (!title) throw 'must have title';
 
     const changeTitle = title !== doc.metaData.title;
-    return this._repo.updateFile(`${DocService.FolderName}/${title}_${doc.number}`, content, doc.metaData.contentId).flatMap(
+    return this._repoSub$.flatMap(repo => repo.updateFile(`${DocService.FolderName}/${title}_${doc.number}`, content, doc.metaData.contentId)).flatMap(
       file => {
         let url = this.getContentUrl(doc.number);
         return DocMeta.serializeContent(content, file.content.sha, url).flatMap(
           ([metaString, metaData]) => {
             let data: EditIssueParams = { title: title, body: <string>metaString };
-            return this._repo.issue.edit(doc.number, data).map(
+            return this._repoSub$.flatMap(repo => repo.issue.edit(doc.number, data)).map(
               (a) => {
                 if (changeTitle) {
-                  this._repo.delFileViaSha(`${DocService.FolderName}/${doc.metaData.title}_${doc.number}`, doc.metaData.contentId).subscribe();
+                  this._repoSub$.flatMap(repo => repo.delFileViaSha(`${DocService.FolderName}/${doc.metaData.title}_${doc.number}`, doc.metaData.contentId)).subscribe();
                 }
                 doc.metaData = <DocMeta>metaData;
                 return doc;

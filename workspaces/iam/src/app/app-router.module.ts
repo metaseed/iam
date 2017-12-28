@@ -1,10 +1,11 @@
 import { Routes } from "@angular/router";
 import { NotFoundComponent } from './not-found/not-found.component';
 import { NgModule } from '@angular/core';
-import { RouterModule } from "@angular/router/src/router_module";
+import { RouterModule } from "@angular/router";
 import { SelectivePreloadingStrategy } from "./selective-preloading-strategy";
 import { CanDeactivateGuard } from "./can-deactivate-guard.service";
-import { DocsComponent } from "./docs/docs.component";
+import { DocsComponent } from "./modules/docs/docs.component";
+import { MarkdownComponent } from "./modules/markdown/markdown.component";
 
 const appRoutes: Routes = [
     // {
@@ -17,7 +18,7 @@ const appRoutes: Routes = [
     //     loadChildren: 'app/crisis-center/crisis-center.module#CrisisCenterModule',
     //     data: { preload: true }
     //   },
-    { path: 'doc', component:  },
+    { path: 'doc', component: MarkdownComponent },
     { path: '', component: DocsComponent },
     { path: '**', component: NotFoundComponent }
 ];

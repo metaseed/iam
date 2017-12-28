@@ -1,7 +1,7 @@
 import { Document } from './document';
 
 export class DocsModel {
-    public docs: Document[]
+    public docs = new Array<Document>();
     currentDoc: Document = null;
 
 }

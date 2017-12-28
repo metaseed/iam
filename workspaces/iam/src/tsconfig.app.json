@@ -6,7 +6,7 @@
     "module": "es2015",
     "types": [],
     "paths": {
-      "docs": ["src/app/modules/docs"] // This mapping is relative to "baseUrl"
+      "docs": ["app/modules/docs"] // This mapping is relative to "baseUrl"
     }
   },
   "include": [
