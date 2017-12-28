@@ -4,6 +4,7 @@ import { HotkeysService, Hotkey } from 'angular-hotkey-module';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 import { ConfigService } from './config.service';
+import { ConfigModel } from './index';
 export class Command {
     name: string;
     combo: string;
@@ -15,19 +16,21 @@ export class CommandService {
 
     private subject: Subject<Command>;
     commands: Observable<Command>;
-
+    private config: ConfigModel;
     constructor(private hotkeysService: HotkeysService,
         private configService: ConfigService) {
         this.subject = new Subject<Command>();
         this.commands = this.subject.asObservable();
-        let hotkeys = configService.config.hotkeys;
-        for (const key in hotkeys) {
-            if (!hotkeys.hasOwnProperty(key)) {
-                continue;
+        configService.config$.subscribe(config => {
+            this.config = config;
+            for (const key in config.hotkeys) {
+                if (!config.hotkeys.hasOwnProperty(key)) {
+                    continue;
+                }
+                const commands = config.hotkeys[key];
+                hotkeysService.add(new Hotkey(key, (ev, combo) => this.hotkey(ev, combo, commands)));
             }
-            const commands = hotkeys[key];
-            hotkeysService.add(new Hotkey(key, (ev, combo) => this.hotkey(ev, combo, commands)));
-        }
+        });
     }
 
     hotkey(ev: KeyboardEvent, combo: string, commands: string[]): boolean {
