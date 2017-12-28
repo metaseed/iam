@@ -7,8 +7,9 @@ import { MonacoEditorComponent } from './editor/monaco-editor/monaco-editor.comp
 import { APP_BASE_HREF } from '@angular/common';
 import { timeout } from 'rxjs/operator/timeout';
 import { setTimeout } from 'timers';
-import { DocService } from '../../docs/index';
+import { DocService } from 'docs';
 import { MarkdownEditorService } from './editor/index';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'ms-markdown',
   templateUrl: './markdown.component.html',
@@ -20,10 +21,18 @@ export class MarkdownComponent implements OnInit {
   isFullScreen: boolean;
   fixEditButton = false;
   isEditMode = false;
-  constructor(private _docService: DocService, private _el: ElementRef, private _editorService: MarkdownEditorService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref) {
+  constructor(private _docService: DocService, private _el: ElementRef, private _editorService: MarkdownEditorService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref,
+    private route: ActivatedRoute) {
 
   }
   ngOnInit() {
+    this.route.queryParamMap.map(
+      params => {
+        let title = params.get('title');
+        let id = params.get('id');
+        return this._docService.showDoc(title, id);
+      }
+    ).take(1).subscribe();
   }
 
   @HostListener('window:scroll', ['$event'])

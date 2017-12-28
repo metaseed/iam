@@ -2,6 +2,8 @@ import { Component, Input } from '@angular/core';
 import { Document } from "./models/document";
 import { DocService } from "./services/doc.service";
 import { DocsModel } from './models/docs.model';
+import { Router } from '@angular/router';
+import { NavigationExtras } from '@angular/router/src/router';
 
 @Component({
   selector: 'docs',
@@ -10,7 +12,7 @@ import { DocsModel } from './models/docs.model';
 })
 export class DocsComponent {
 
-  constructor(public _docService: DocService) { }
+  constructor(public _docService: DocService, private router: Router) { }
 
   ngOnInit() {
     this._docService.getAll();
@@ -24,7 +26,14 @@ export class DocsComponent {
   }
 
   showDoc(doc: Document) {
-    this._docService.showDoc(doc);
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+        id: doc.number,
+        title: doc.metaData.title
+      }
+    }
+    this.router.navigate(['/doc'], navigationExtras);
+    // this._docService.showDoc(doc);
   }
 
   deleteDoc(doc: Document) {

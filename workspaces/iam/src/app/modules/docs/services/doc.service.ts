@@ -2,11 +2,11 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Document } from "../models/document";
 import { Observable } from "rxjs/Observable";
 import { HttpClient } from "@angular/common/http";
-import { GithubStorage, UserInfo, EditIssueParams } from '../../storage/github/index';
-import { Repository } from '../../storage/github/repository';
+import { GithubStorage, UserInfo, EditIssueParams } from '../../../storage/github/index';
+import { Repository } from '../../../storage/github/repository';
 import { DocsModel } from '../models/docs.model';
 import { DocMeta } from '../models/doc-meta';
-import { Content } from '../../storage/github/model/content';
+import { Content } from '../../../storage/github/model/content';
 
 @Injectable()
 export class DocService {
@@ -15,7 +15,7 @@ export class DocService {
   public docAdd$ = new EventEmitter();
   public docRemove$ = new EventEmitter();
   public docModify$ = new EventEmitter();
-  public model: DocsModel;
+  public model: DocsModel = new DocsModel();
   private docShow$ = new EventEmitter();
   private _repo: Repository;
   private _repoSub$: Observable<Repository>;
@@ -52,9 +52,11 @@ export class DocService {
     this.model.currentDoc = null;
     this.docShow$.next(doc);
   }
-  showDoc(doc: Document) {
-    this._repo.getContents(`${DocService.FolderName}/${doc.metaData.title}_${doc.number}`).subscribe(
+  showDoc(title: string, id: number | string) {
+    this._repo.getContents(`${DocService.FolderName}/${title}_${id}`).subscribe(
       (content: Content) => {
+        let doc = this.model.docs.find((doc) => doc.number === +id);
+        if (!doc) { doc = <Document>{} }
         doc.content = content;
         this.model.currentDoc = doc;
         this.docShow$.next(doc);
@@ -145,7 +147,7 @@ export class DocService {
             docList.push(d);
           }
         });
-        this.model = new DocsModel(docList);
+        this.model.docs = docList;
       },
       (error) => {
         console.log(error);
