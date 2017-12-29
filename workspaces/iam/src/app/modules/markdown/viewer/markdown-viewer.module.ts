@@ -16,7 +16,7 @@ import { MarkdownViewerService } from './services/markdown.viewer.service';
     ],
 })
 export class MarkdownViewerModule {
-    static forRoot(config?: MarkdownConfig): ModuleWithProviders {
+    static forChild(config?: MarkdownConfig): ModuleWithProviders {
         return {
             ngModule: MarkdownViewerModule,
             providers: [

@@ -16,7 +16,7 @@ import { MarkdownRoutingModule } from './markdown-routing.module';
     HttpModule,
     MarkdownRoutingModule,
     MarkdownEditorModule,
-    MarkdownViewerModule
+    MarkdownViewerModule.forChild()
   ],
   declarations: [
     MarkdownComponent
@@ -30,10 +30,10 @@ import { MarkdownRoutingModule } from './markdown-routing.module';
   ],
 })
 export class MarkdownModule {
-  static forRoot(config?: MarkdownConfig) {
+  static forChild(config?: MarkdownConfig) {
     return {
       ngModule: MarkdownModule,
-      providers: MarkdownViewerModule.forRoot(config).providers
+      providers: MarkdownViewerModule.forChild(config).providers
     }
   }
 }

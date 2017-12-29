@@ -39,7 +39,6 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
     BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
-    MarkdownModule.forRoot(),
     CoreModule,
     DocsModule,
     ServiceWorkerModule.register(`./ngsw-worker.js`, {
