@@ -14,12 +14,14 @@ import deflist from 'markdown-it-deflist';
 import abbr from 'markdown-it-abbr';
 import imsize from 'markdown-it-imsize';
 import anchor from 'markdown-it-anchor';
-import toc from 'markdown-it-table-of-contents';
+import toc from './plugins/markdown-it-table-of-contents';
 import { ContainerPlugin } from './plugins/container';
 import { MarkdownConfig } from '../markdown.config';
 import latex from 'markdown-it-latex';
 import { mergeConf } from '../../../core/index';
+import { Router } from '@angular/router';
 //import latex from 'markdown-it-katex';
+
 @Injectable()
 export class MarkdownViewerService {
   private defaultConfig: MarkdownConfig = {
@@ -35,7 +37,7 @@ export class MarkdownViewerService {
 
   private markdown: MarkdownIt.MarkdownIt;
   private containerPlugin: ContainerPlugin;
-  constructor( @Optional() config?: MarkdownConfig) {
+  constructor(private router: Router, @Optional() config?: MarkdownConfig) {
     config = config || mergeConf(this.defaultConfig, config);
 
     if (!config.markdownIt.highlight) {
@@ -57,7 +59,9 @@ export class MarkdownViewerService {
       .use(deflist)
       .use(abbr)
       .use(anchor)
-      .use(toc)
+      .use(toc, {
+        url: '.' + this.router.url
+      })
       .use(latex)
       .use(imsize, { autofill: true });
 

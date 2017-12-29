@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MarkdownViewerComponent } from './markdown-viewer.component';
 import { MarkdownConfig } from './markdown.config';
 import { MarkdownViewerService } from './services/markdown.viewer.service';
+import { Router } from '@angular/router';
 
 @NgModule({
     declarations: [
@@ -27,7 +28,7 @@ export class MarkdownViewerModule {
                 {
                     provide: MarkdownViewerService,
                     useFactory: configureMarkdownService,
-                    deps: ['MarkdownConfig']
+                    deps: [Router, 'MarkdownConfig']
                 }
             ]
         };
@@ -35,7 +36,7 @@ export class MarkdownViewerModule {
 
 }
 
-export function configureMarkdownService(config: MarkdownConfig) {
-    const service = new MarkdownViewerService(config);
+export function configureMarkdownService(router: Router, config: MarkdownConfig) {
+    const service = new MarkdownViewerService(router, config);
     return service;
 }
