@@ -1,6 +1,5 @@
-import { Route, Routes } from "@angular/router";
+import { Route, Routes, RouterModule } from "@angular/router";
 import { MarkdownComponent } from "./markdown.component";
-import { RouterModule } from "@angular/router/src/router_module";
 import { NgModule } from "@angular/core";
 
 
