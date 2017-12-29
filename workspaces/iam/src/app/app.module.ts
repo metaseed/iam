@@ -11,14 +11,23 @@ import { StoreModule } from '@ngrx/store';
 import { DocsModule } from 'docs';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { APP_BASE_HREF } from '@angular/common';
+import { APP_BASE_HREF, PlatformLocation } from '@angular/common';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-router.module';
-function getBaseHref() {
-  let href = ((<any>(document.getElementById('baseHref'))).href);
-  return href;
+/**
+ * This function is used internal to get a string instance of the `<base href="" />` value from `index.html`.
+ * This is an exported function, instead of a private function or inline lambda, to prevent this error:
+ *
+ * `Error encountered resolving symbol values statically.`
+ * `Function calls are not supported.`
+ * `Consider replacing the function or lambda with a reference to an exported function.`
+ *
+ * @param platformLocation an Angular service used to interact with a browser's URL
+ * @return a string instance of the `<base href="" />` value from `index.html`
+ */
+export function getBaseHref(platformLocation: PlatformLocation): string {
+  return platformLocation.getBaseHrefFromDOM();
 }
-
 @NgModule({
   declarations: [
     NotFoundComponent,
@@ -45,7 +54,11 @@ function getBaseHref() {
     })
   ],
   providers: [
-    { provide: APP_BASE_HREF, useValue: getBaseHref() || '/' },
+    {
+      provide: APP_BASE_HREF,
+      useFactory: getBaseHref,
+      deps: [PlatformLocation]
+    }
   ],
   bootstrap: [AppComponent]
 })
