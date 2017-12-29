@@ -5,7 +5,7 @@ import { NgModule } from "@angular/core";
 
 const documentRoutes: Routes = [
     // { path: 'doc', component: DocumentComponent },
-    { path: 'doc', component: MarkdownComponent }
+    { path: '', component: MarkdownComponent }
 ];
 
 @NgModule({
@@ -16,6 +16,6 @@ const documentRoutes: Routes = [
         RouterModule
     ]
 })
-export class DocumentRoutingModule {
+export class MarkdownRoutingModule {
 
 }

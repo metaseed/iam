@@ -1,7 +1,7 @@
 <div class="md-editor-container" [class.fullscreen]="isFullScreen">
   <editor-toolbar *ngIf="this.isEditMode"></editor-toolbar>
   <div class="editor-container">
-    <div class="editor-panel" #editorDiv style="min-height: 200px;" *ngIf="this.isEditMode">
+    <div class="editor-panel" #editorDiv style="min-height: 200px;" *ngIf="isEditMode">
       <monaco-editor *loadMonacoEditor [options]="editorOptions " [(ngModel)]="markdown "></monaco-editor>
     </div>
     <div class="preview-panel" #viewerDiv style="height: fit-content;" [style.display]="showPreviewPanel ? 'block' : 'none'">

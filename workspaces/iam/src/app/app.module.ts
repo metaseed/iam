@@ -13,7 +13,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { APP_BASE_HREF, PlatformLocation } from '@angular/common';
 import { environment } from '../environments/environment';
-import { AppRoutingModule } from './app-router.module';
+import { AppRoutingModule } from './app-routing.module';
 /**
  * This function is used internal to get a string instance of the `<base href="" />` value from `index.html`.
  * This is an exported function, instead of a private function or inline lambda, to prevent this error:

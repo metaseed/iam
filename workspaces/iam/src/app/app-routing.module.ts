@@ -13,12 +13,11 @@ const appRoutes: Routes = [
     //     loadChildren: 'app/admin/admin.module#AdminModule',
     //     canLoad: [AuthGuard]
     //   },
-    //   {
-    //     path: 'crisis-center',
-    //     loadChildren: 'app/crisis-center/crisis-center.module#CrisisCenterModule',
-    //     data: { preload: true }
-    //   },
-    { path: 'doc', component: MarkdownComponent },
+    {
+        path: 'doc',
+        loadChildren: 'app/modules/markdown/markdown.module#MarkdownModule',
+        data: { preload: true }
+    },
     { path: '', component: DocsComponent },
     { path: '**', component: NotFoundComponent }
 ];

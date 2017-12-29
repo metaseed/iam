@@ -7,16 +7,16 @@ import { MaterialModule } from '../material/material.module';
 import { MarkdownEditorModule } from './editor/markdown-editor.module';
 import { MarkdownViewerModule } from './viewer/index';
 import { MarkdownConfig } from './viewer/markdown.config';
-import { DocumentRoutingModule } from './markdown-routing.module';
+import { MarkdownRoutingModule } from './markdown-routing.module';
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     MaterialModule,
     HttpModule,
+    MarkdownRoutingModule,
     MarkdownEditorModule,
-    MarkdownViewerModule,
-    DocumentRoutingModule
+    MarkdownViewerModule
   ],
   declarations: [
     MarkdownComponent

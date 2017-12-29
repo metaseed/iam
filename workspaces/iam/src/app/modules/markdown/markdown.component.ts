@@ -55,11 +55,13 @@ export class MarkdownComponent implements OnInit {
     });
     this._editorService.contentChanged$.subscribe(([content, editor]) => {
       let me = this;
-      setTimeout(() => { //should be after viewer rendered its contents
+      function refresh() {//should be after viewer rendered its contents
+        if (!me.editorDiv) { setTimeout(() => refresh(), 0); return };
         me.editorDiv.nativeElement.style.height = me.viewerDiv.nativeElement.clientHeight + 'px';
         me.editor.editor.layout();
         me.editor.editor.focus();
-      }, 0)
+      }
+      refresh();
     });
   }
   editorOptions: monaco.editor.IEditorConstructionOptions = {/* theme: 'vs-dark', */ language: 'markdown', wordWrapColumn: 120, wordWrap: 'bounded' };
