@@ -14,6 +14,7 @@ import { MdcSnackbar } from '@angular-mdc/web';
 export class DocService {
   static FolderName = 'documents';
 
+  public docListLoaded = false;
   public docAdd$ = new EventEmitter();
   public docRemove$ = new EventEmitter();
   public docModify$ = new EventEmitter();
@@ -156,9 +157,11 @@ export class DocService {
           }
         });
         this.model.docs = docList;
+        this.docListLoaded = true;
       },
       (error) => {
         console.log(error);
+        this.docListLoaded = true;
       });;
   }
 

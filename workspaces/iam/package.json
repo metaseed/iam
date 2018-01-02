@@ -57,6 +57,7 @@
     "markdown-it-video": "^0.5.1",
     "monaco-editor": "^0.10.1",
     "mousetrap": "^1.6.1",
+    "ng-spin-kit": "^5.1.1",
     "pica": "^4.0.1",
     "prismjs": "^1.8.4",
     "quill": "^1.3.4",

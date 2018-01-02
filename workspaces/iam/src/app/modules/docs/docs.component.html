@@ -1,5 +1,7 @@
 <div>
   <!-- <new-doc (onNewElement)="addNewElement($event)"></new-doc> -->
   <!-- <hr/> -->
-  <doc-list [documents]="_docService.model?.docs" (onShow)="showDoc($event)" (onDelete)="deleteDoc($event)"></doc-list>
+  <doc-list [documents]="docService.model?.docs" (onShow)="showDoc($event)" (onDelete)="deleteDoc($event)"></doc-list>
+  <sk-wave [isRunning]="!docService.docListLoaded"></sk-wave>
+
 </div>

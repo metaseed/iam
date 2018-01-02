@@ -4,6 +4,7 @@ import { DocService } from "./services/doc.service";
 import { DocsModel } from './models/docs.model';
 import { Router } from '@angular/router';
 import { NavigationExtras } from '@angular/router/src/router';
+import { NgSpinKitModule } from 'ng-spin-kit'
 
 @Component({
   selector: 'docs',
@@ -11,15 +12,14 @@ import { NavigationExtras } from '@angular/router/src/router';
   styleUrls: ['./docs.component.css'],
 })
 export class DocsComponent {
-
-  constructor(public _docService: DocService, private router: Router) { }
+  constructor(public docService: DocService, private router: Router) { }
 
   ngOnInit() {
-    this._docService.getAll();
+    this.docService.getAll();
   }
 
   addNewElement(element: string) {
-    this._docService.newDoc();
+    this.docService.newDoc();
     // let todo = { id: this.model.length + 1, text: element, done: false };
     // this._todoListService.store(todo)
     //   .subscribe(t => this.todoList.push(t), alert);
@@ -38,7 +38,7 @@ export class DocsComponent {
 
   deleteDoc(doc: Document) {
     doc.state = 'closed';
-    this._docService.deleteDoc(doc);
+    this.docService.deleteDoc(doc);
   }
 
 }

@@ -9,6 +9,7 @@ import { NewDocComponent } from "./new-doc/new-doc.component";
 import { DocListComponent } from "./doc-list/doc-list.component";
 import { DocService } from './services/doc.service';
 import { MaterialModule } from '../../modules/material/material.module';
+import { NgSpinKitModule } from 'ng-spin-kit';
 const todosRoutes: Routes = [
   {
     path: 'docs', component: DocsComponent
@@ -20,7 +21,8 @@ const todosRoutes: Routes = [
     CommonModule,
     FormsModule,
     MaterialModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    NgSpinKitModule
     //RouterModule.forChild(todosRoutes),
   ],
   declarations: [
