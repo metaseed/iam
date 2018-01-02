@@ -22,7 +22,11 @@ export class MarkdownComponent implements OnInit {
   isFullScreen: boolean;
   fixEditButton = false;
   isEditMode = false;
-
+  showPreviewPanel = true;
+  @ViewChild(MonacoEditorComponent) editor: MonacoEditorComponent;
+  @ViewChild(MarkdownViewerComponent) viewer: MarkdownViewerComponent;
+  @ViewChild('viewerDiv') viewerDiv;
+  @ViewChild('editorDiv') editorDiv;
   constructor(private _docService: DocService, private _el: ElementRef, private _editorService: MarkdownEditorService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref,
     private route: ActivatedRoute) {
 
@@ -66,6 +70,10 @@ export class MarkdownComponent implements OnInit {
   }
   editorOptions: monaco.editor.IEditorConstructionOptions = {/* theme: 'vs-dark', */ language: 'markdown', wordWrapColumn: 120, wordWrap: 'bounded' };
 
+  editModeChange() {
+    this.isEditMode = !this.isEditMode;
+    this.showPreviewPanel = !this.isEditMode;
+  }
   showDemo() {
     this._http.get(`${this.baseHref}assets/markdown.md`, { responseType: 'text' }).subscribe(a => {
       this._text = a;
@@ -78,11 +86,5 @@ export class MarkdownComponent implements OnInit {
     this._text = text;
     this._doc && (this._doc.body = text);
   }
-  showPreviewPanel = true;
-
-  @ViewChild(MonacoEditorComponent) editor: MonacoEditorComponent;
-  @ViewChild(MarkdownViewerComponent) viewer: MarkdownViewerComponent;
-  @ViewChild('viewerDiv') viewerDiv;
-  @ViewChild('editorDiv') editorDiv;
 
 }
