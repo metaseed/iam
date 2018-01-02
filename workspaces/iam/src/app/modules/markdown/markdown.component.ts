@@ -23,6 +23,7 @@ export class MarkdownComponent implements OnInit {
   fixEditButton = false;
   isEditMode = false;
   showPreviewPanel = true;
+  docLoaded = false;
   @ViewChild(MonacoEditorComponent) editor: MonacoEditorComponent;
   @ViewChild(MarkdownViewerComponent) viewer: MarkdownViewerComponent;
   @ViewChild('viewerDiv') viewerDiv;
@@ -56,6 +57,7 @@ export class MarkdownComponent implements OnInit {
       }
       this._text = atob(doc.content.content);
       this._doc = doc;
+      this.docLoaded = true;
     });
     this._editorService.contentChanged$.subscribe(([content, editor]) => {
       let me = this;
