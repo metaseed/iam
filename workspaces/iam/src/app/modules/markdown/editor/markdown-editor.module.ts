@@ -7,6 +7,7 @@ import { MonacoEditorLoaderModule } from './monaco-editor/monaco-editor-loader/m
 import { MarkdownEditorRoutingModule } from './markdown-editor-routing.module';
 import { MarkdownEditorComponent } from './markdown-editor.component';
 import { FormsModule } from '@angular/forms';
+import { NgSpinKitModule } from 'ng-spin-kit';
 
 @NgModule({
     declarations: [
@@ -17,6 +18,7 @@ import { FormsModule } from '@angular/forms';
     imports: [
         CommonModule,
         FormsModule,
+        NgSpinKitModule,
         MonacoEditorLoaderModule,
         MarkdownEditorRoutingModule
     ],

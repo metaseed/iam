@@ -24,14 +24,17 @@ export class MarkdownComponent implements OnInit {
   isEditMode = false;
   showPreviewPanel = true;
   docLoaded = false;
+  editorLoaded = false;
   @ViewChild(MonacoEditorComponent) editor: MonacoEditorComponent;
   @ViewChild(MarkdownViewerComponent) viewer: MarkdownViewerComponent;
   @ViewChild('viewerDiv') viewerDiv;
   @ViewChild('editorDiv') editorDiv;
   constructor(private _docService: DocService, private _el: ElementRef, private _editorService: MarkdownEditorService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref,
     private route: ActivatedRoute) {
-
-  }
+    _editorService.editorLoaded$.subscribe(() => {
+      this.editorLoaded = true;
+    }
+}
   ngOnInit() {
     this.route.queryParamMap.map(
       params => {
@@ -62,7 +65,7 @@ export class MarkdownComponent implements OnInit {
     this._editorService.contentChanged$.subscribe(([content, editor]) => {
       let me = this;
       function refresh() {//should be after viewer rendered its contents
-        if (!me.editorDiv) { setTimeout(() => refresh(), 0); return };
+        if (!me.editorDiv || !me.viewerDiv) { setTimeout(() => refresh(), 0); return; };
         me.editorDiv.nativeElement.style.height = me.viewerDiv.nativeElement.clientHeight + 'px';
         me.editor.editor.layout();
         me.editor.editor.focus();
