@@ -2,7 +2,7 @@
   "configVersion": 1,
   "index": "/iam/index.html",
   "appData": {
-    "name": "i'm",
+    "name": "yes, i'm",
     "description": "i'm writing your professional life"
   },
   "assetGroups": [
@@ -13,9 +13,9 @@
       "urls": [
         "/iam/favicon.ico",
         "/iam/index.html",
-        "/iam/0.09f71262438147adbc5c.chunk.js",
-        "/iam/inline.98631f2bc6704b9eb53d.bundle.js",
-        "/iam/main.ce5724295f522a31e6db.bundle.js",
+        "/iam/0.9cacf48cfd110b11a014.chunk.js",
+        "/iam/inline.5dc77a3bfe729a33347a.bundle.js",
+        "/iam/main.b0d8cb784c89b81ad387.bundle.js",
         "/iam/polyfills.c0d327a73ff807232067.bundle.js",
         "/iam/styles.2548bf6992b507e82658.bundle.css"
       ],
@@ -151,11 +151,11 @@
     }
   ],
   "hashTable": {
-    "/iam/0.09f71262438147adbc5c.chunk.js": "fef6613790803f90992ebe3bd15222812d144f1b",
+    "/iam/0.9cacf48cfd110b11a014.chunk.js": "2a0b86237718efef0e4f07948529841ed02ae1cf",
     "/iam/assets/config.json": "cf1b9a3dc6b5a8d1988470792c8c9d9b58b92f6e",
-    "/iam/inline.98631f2bc6704b9eb53d.bundle.js": "f7340c772f67d64cd09412ac32cfeb80c37a1c78",
+    "/iam/inline.5dc77a3bfe729a33347a.bundle.js": "8990e4378ca744824821e238d6fa011c48843934",
     "/iam/assets/markdown.md": "819e5853cee49d1fa8bc04af7fb606136b46bc39",
-    "/iam/main.ce5724295f522a31e6db.bundle.js": "05b8dd826446d0060ff836de6a7b487bce8022fa",
+    "/iam/main.b0d8cb784c89b81ad387.bundle.js": "79a304de35261fb3ea6f3b5dd77578374a4c1f02",
     "/iam/assets/icons/android-icon-192x192.png": "2a4f79ce3e023275f8463130c6fdfbcb4d90eb85",
     "/iam/polyfills.c0d327a73ff807232067.bundle.js": "7403dfe47d0275cb7cfc3e56e7208a73199a7529",
     "/iam/assets/icons/apple-icon-180x180.png": "95c3f6f7e84edf4e4eaae457ca7281ee09e96da9",
@@ -163,7 +163,7 @@
     "/iam/assets/icons/favicon-16x16.png": "0af74a7cd69409728f0ae6bf366509084be70b63",
     "/iam/favicon.ico": "7fa29ec2415f03fba638317f83a61265d5050d9f",
     "/iam/assets/icons/favicon-32x32.png": "91a82608d88962932b0dd3ea32f01275c5c9c4ce",
-    "/iam/index.html": "662702a92dd638ff99b9d2cbba8e405fc8fab164",
+    "/iam/index.html": "76e0d96edd44cedf6d94784c2c6523b8a498c406",
     "/iam/assets/icons/favicon-96x96.png": "6d45ca36b0788329f6d5564e07b5ccd8001b7df1",
     "/iam/assets/icons/ms-icon-310x310.png": "e26d0159771bf479b7a39f5c62bbb8228df0e4fa",
     "/iam/assets/min-maps/vs/loader.js.map": "da426dbdb06659a7cef10c3f14db8ce86d2b7719",
