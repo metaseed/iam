@@ -20,10 +20,8 @@ export class DocService {
   public docModify$ = new EventEmitter();
   public model: DocsModel = new DocsModel();
   private docShow$ = new EventEmitter();
-
   private _repoSub$ = new ReplaySubject<Repository>();
   private _storage = new GithubStorage(this._http, new UserInfo('metasong', 'metaseed@gmail.com', 'mssong179'));
-
 
   constructor(private _http: HttpClient, private snackBar: MdcSnackbar) {
 
@@ -45,6 +43,7 @@ export class DocService {
       a => console.log(a)
     ));
   }
+
   newDoc() {
     let doc = {
       content: {
@@ -55,6 +54,7 @@ export class DocService {
     this.model.currentDoc = null;
     this.docShow$.next(doc);
   }
+
   showDoc(title: string, id: number | string) {
     this._repoSub$.subscribe(repo => repo.getContents(`${DocService.FolderName}/${title}_${id}`).subscribe(
       (content: Content) => {
@@ -100,16 +100,16 @@ export class DocService {
 
   }
 
-
   save(content) {
     if (this.model.currentDoc) {
       this.edit(content, this.model.currentDoc).subscribe(doc => {
         this.model.currentDoc = doc;
-        let snackBarRef = this.snackBar.show('Saved!');
+        this.snackBar.show('Saved!');
       });
     } else {
       this.saveNew(content).subscribe(doc => {
         this.model.currentDoc = doc;
+        this.snackBar.show('New document saved!')
       });
     }
   }
@@ -149,6 +149,15 @@ export class DocService {
     }).subscribe(
       (docs: Document[]) => {
         let docList = new Array<Document>();
+        docs.sort((a, b) => {
+          if (a.updated_at < b.updated_at) {
+            return 1;
+          } else if (a.updated_at > b.updated_at) {
+            return -1;
+          } else {
+            return 0;
+          }
+        })
         docs.forEach(d => {
           let meta = DocMeta.deSerialize(d.body);
           if (meta) {
