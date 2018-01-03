@@ -32,7 +32,7 @@ export class MarkdownComponent implements OnInit {
   constructor(private _docService: DocService, private _el: ElementRef, private _editorService: MarkdownEditorService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref,
     private route: ActivatedRoute) {
     _editorService.editorLoaded$.subscribe(() => {
-      this.editorLoaded = true;
+      setTimeout(() => this.editorLoaded = true, 0);
     }
 }
   ngOnInit() {
