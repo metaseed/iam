@@ -33,8 +33,9 @@ export class MarkdownComponent implements OnInit {
     private route: ActivatedRoute) {
     _editorService.editorLoaded$.subscribe(() => {
       setTimeout(() => this.editorLoaded = true, 0);
-    }
-}
+    });
+  }
+
   ngOnInit() {
     this.route.queryParamMap.map(
       params => {
