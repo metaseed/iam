@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Repository, } from './storage/github/index';
 import { GithubStorage } from './storage/github/github';
 import { UserInfo } from './storage/github/user-info';
+import { UpdateService } from 'core';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -10,8 +11,8 @@ import { UserInfo } from './storage/github/user-info';
 })
 export class AppComponent {
   title = "I'm";
-  constructor(private _http: HttpClient) {
-
+  constructor(private _http: HttpClient, private _updateService: UpdateService) {
+    this._updateService.checkForUpdate();
   }
   ngOnInit() {
 

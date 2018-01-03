@@ -11,6 +11,18 @@
     "typeRoots": [
       "node_modules/@types"
     ],
+    "baseUrl": "./src/",
+    "paths": {
+      "docs": [
+        "app/modules/docs"
+      ], // This mapping is relative to "baseUrl"
+      "markdown": [
+        "app/modules/markdown"
+      ],
+      "core": [
+        "app/modules/core"
+      ]
+    },
     "lib": [
       "es2017",
       "dom"

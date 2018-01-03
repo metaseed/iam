@@ -4,6 +4,7 @@ import { WindowRef } from './window-ref';
 import { SwUpdate } from '@angular/service-worker';
 import { MdcSnackbar } from '@angular-mdc/web';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/interval';
 
 @Injectable()
 export class UpdateService {
