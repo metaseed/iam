@@ -17,7 +17,8 @@ import {
     MdcIconToggle,
     MdcTabModule,
     MdcThemeModule,
-    MdcToolbarModule
+    MdcToolbarModule,
+    MdcDialogModule
 } from '@angular-mdc/web';
 
 @NgModule({
@@ -31,6 +32,7 @@ import {
         MdcTabModule,
         MdcIconToggleModule,
         MdcThemeModule,
+        MdcDialogModule,
         MdcToolbarModule
     ],
     exports: [
@@ -43,6 +45,7 @@ import {
         MdcTabModule,
         MdcIconToggle,
         MdcThemeModule,
+        MdcDialogModule,
         MdcToolbarModule
     ]
 })

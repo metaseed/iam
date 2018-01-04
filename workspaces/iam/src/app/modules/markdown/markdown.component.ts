@@ -38,22 +38,6 @@ export class MarkdownComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.router.url === '/doc/new') {
-      this.isEditMode = true;
-      this.isNewDoc = true;
-    }
-    this.route.queryParamMap.map(
-      params => {
-        if (this.isNewDoc) {
-          return this._docService.newDoc();
-        } else {
-          let title = params.get('title');
-          let id = params.get('id');
-          return this._docService.showDoc(title, id);
-        }
-      }
-    ).take(1).subscribe();
-
   }
 
   @HostListener('window:scroll', ['$event'])
@@ -83,6 +67,21 @@ export class MarkdownComponent implements OnInit {
       }
       refresh();
     });
+    if (this.router.url === '/doc/new') {
+      this.isEditMode = true;
+      this.isNewDoc = true;
+    }
+    this.route.queryParamMap.map(
+      params => {
+        if (this.isNewDoc) {
+          return this._docService.newDoc();
+        } else {
+          let title = params.get('title');
+          let id = params.get('id');
+          return this._docService.showDoc(title, id);
+        }
+      }, this
+    ).take(1).subscribe();
   }
   editorOptions: monaco.editor.IEditorConstructionOptions = {/* theme: 'vs-dark', */ language: 'markdown', wordWrapColumn: 120, wordWrap: 'bounded' };
 
