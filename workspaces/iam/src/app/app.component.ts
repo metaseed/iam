@@ -4,6 +4,7 @@ import { Repository, } from './storage/github/index';
 import { GithubStorage } from './storage/github/github';
 import { UserInfo } from './storage/github/user-info';
 import { UpdateService } from 'core';
+import { environment } from '../environments/environment';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -12,7 +13,9 @@ import { UpdateService } from 'core';
 export class AppComponent {
   title = "I'm";
   constructor(private _http: HttpClient, private _updateService: UpdateService) {
-    this._updateService.checkForUpdate();
+    if (environment.production) {
+      this._updateService.checkForUpdate();
+    }
   }
   ngOnInit() {
 

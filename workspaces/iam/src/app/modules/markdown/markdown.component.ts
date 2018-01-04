@@ -10,7 +10,7 @@ import 'rxjs/add/operator/take';
 import { setTimeout } from 'timers';
 import { DocService } from 'docs';
 import { MarkdownEditorService } from './editor/index';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'ms-markdown',
   templateUrl: './markdown.component.html',
@@ -22,6 +22,7 @@ export class MarkdownComponent implements OnInit {
   isFullScreen: boolean;
   fixEditButton = false;
   isEditMode = false;
+  isNewDoc = false;
   showPreviewPanel = true;
   docLoaded = false;
   editorLoaded = false;
@@ -30,20 +31,29 @@ export class MarkdownComponent implements OnInit {
   @ViewChild('viewerDiv') viewerDiv;
   @ViewChild('editorDiv') editorDiv;
   constructor(private _docService: DocService, private _el: ElementRef, private _editorService: MarkdownEditorService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute, private router: Router) {
     _editorService.editorLoaded$.subscribe(() => {
       setTimeout(() => this.editorLoaded = true, 0);
     });
   }
 
   ngOnInit() {
+    if (this.router.url === '/doc/new') {
+      this.isEditMode = true;
+      this.isNewDoc = true;
+    }
     this.route.queryParamMap.map(
       params => {
-        let title = params.get('title');
-        let id = params.get('id');
-        return this._docService.showDoc(title, id);
+        if (this.isNewDoc) {
+          return this._docService.newDoc();
+        } else {
+          let title = params.get('title');
+          let id = params.get('id');
+          return this._docService.showDoc(title, id);
+        }
       }
     ).take(1).subscribe();
+
   }
 
   @HostListener('window:scroll', ['$event'])

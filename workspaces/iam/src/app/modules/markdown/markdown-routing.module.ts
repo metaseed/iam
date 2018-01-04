@@ -4,7 +4,7 @@ import { NgModule } from "@angular/core";
 
 
 const documentRoutes: Routes = [
-    // { path: 'doc', component: DocumentComponent },
+    { path: 'new', component: MarkdownComponent },
     { path: '', component: MarkdownComponent }
 ];
 

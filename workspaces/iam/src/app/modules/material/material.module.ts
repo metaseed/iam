@@ -14,7 +14,10 @@ import {
     MdcMenuModule,
     MdcSnackbarModule,
     MdcIconToggleModule,
-    MdcIconToggle
+    MdcIconToggle,
+    MdcTabModule,
+    MdcThemeModule,
+    MdcToolbarModule
 } from '@angular-mdc/web';
 
 @NgModule({
@@ -25,7 +28,10 @@ import {
         MdcButtonModule,
         MdcCardModule,
         MdcSnackbarModule,
-        MdcIconToggleModule
+        MdcTabModule,
+        MdcIconToggleModule,
+        MdcThemeModule,
+        MdcToolbarModule
     ],
     exports: [
         MdcFabModule,
@@ -34,7 +40,10 @@ import {
         MdcButtonModule,
         MdcCardModule,
         MdcSnackbarModule,
-        MdcIconToggle
+        MdcTabModule,
+        MdcIconToggle,
+        MdcThemeModule,
+        MdcToolbarModule
     ]
 })
 export class MaterialModule { }
