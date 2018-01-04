@@ -55,7 +55,7 @@ export class MarkdownComponent implements OnInit {
       }
       this._text = atob(doc.content.content);
       this._doc = doc;
-      this.docLoaded = true;
+      setTimeout(() => this.docLoaded = true, 0);
     });
     this._editorService.contentChanged$.subscribe(([content, editor]) => {
       let me = this;
