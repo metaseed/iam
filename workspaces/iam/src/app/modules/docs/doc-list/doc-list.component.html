@@ -3,7 +3,7 @@
     <div class="doc-card-container" *ngFor="let doc of documents; let i = index">
 
       <mdc-card *ngIf="doc.state!=='closed'" class="doc-card">
-        <mdc-card-horizontal (click)="show(doc)">
+        <mdc-card-horizontal (click)="show(doc)" style="flex-grow:1;">
           <mdc-card-primary>
             <mdc-card-title class="title-truncate">{{doc.metaData.title}}</mdc-card-title>
             <h2 mdc-card-subtitle class="summary-truncate">{{doc.metaData.summary}}</h2>
