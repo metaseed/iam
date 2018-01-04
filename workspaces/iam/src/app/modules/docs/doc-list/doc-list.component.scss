@@ -3,10 +3,15 @@
     color: #CCC;
   }
 
+  .doc-card-container,
   .doc-card {
     width: 100%;
     max-width: 400px;
     height: 250px;
+  }
+
+  .doc-card {
+    justify-content: space-between;
   }
 
   .doc-card:hover {

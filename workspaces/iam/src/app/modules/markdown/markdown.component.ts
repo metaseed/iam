@@ -70,6 +70,7 @@ export class MarkdownComponent implements OnInit {
     if (this.router.url === '/doc/new') {
       this.isEditMode = true;
       this.isNewDoc = true;
+      this.showPreviewPanel = false;
     }
     this.route.queryParamMap.map(
       params => {

@@ -10,6 +10,7 @@ import { DocListComponent } from "./doc-list/doc-list.component";
 import { DocService } from './services/doc.service';
 import { MaterialModule } from '../../modules/material/material.module';
 import { NgSpinKitModule } from 'ng-spin-kit';
+import { DeleteAlertDialog } from 'app/modules/docs/doc-list/dialog.component';
 const todosRoutes: Routes = [
   {
     path: 'docs', component: DocsComponent
@@ -26,6 +27,7 @@ const todosRoutes: Routes = [
     //RouterModule.forChild(todosRoutes),
   ],
   declarations: [
+    DeleteAlertDialog,
     NewDocComponent,
     DocsComponent,
     DocListComponent,
@@ -35,6 +37,9 @@ const todosRoutes: Routes = [
   ],
   providers: [
     DocService
+  ],
+  entryComponents: [
+    DeleteAlertDialog
   ]
 })
 export class DocsModule {

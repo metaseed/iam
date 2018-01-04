@@ -5,8 +5,9 @@ https://material.io/icons/?utm_source=google&utm_medium=cpc&utm_campaign=1001467
 http://fontawesome.io/icons/
 
 for icon name with space, need to change space with '_' to use it in <mat-icon>
-
-https://github.com/trimox/angular-mdc-web
+https://material.io/guidelines/components/
 
 https://github.com/material-components/material-components-web
 https://material.io/components/web/catalog/
+
+https://github.com/trimox/angular-mdc-web

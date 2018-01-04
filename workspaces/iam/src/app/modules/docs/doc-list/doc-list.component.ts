@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Document } from "../models/document";
 import { DocService } from "../services/doc.service";
+import { MdcDialog } from '@angular-mdc/web';
+import { DeleteAlertDialog } from 'app/modules/docs/doc-list/dialog.component';
 
 @Component({
   selector: 'doc-list',
@@ -13,7 +15,7 @@ export class DocListComponent implements OnInit {
   @Output() onDelete = new EventEmitter<Document>();
   @Output() onShow = new EventEmitter<Document>();
 
-  constructor() { }
+  constructor(private dialog: MdcDialog) { }
 
   @Input() set documents(v) {
     this.docs = v;
@@ -31,7 +33,11 @@ export class DocListComponent implements OnInit {
   }
 
   delete(document: Document) {
-    this.onDelete.emit(document);
+    const dialogRef = this.dialog.open(DeleteAlertDialog, { escapeToClose: true, clickOutsideToClose: true })
+    dialogRef.componentInstance.myDialog._accept.subscribe(() => {
+
+      this.onDelete.emit(document);
+    })
   }
 
 }

@@ -1,26 +1,26 @@
 <div class="col-xs-12">
   <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="10px">
-    <div *ngFor="let doc of documents; let i = index">
-      <ng-container *ngIf="doc.state!=='closed'">
+    <div class="doc-card-container" *ngFor="let doc of documents; let i = index">
 
-        <mdc-card class="doc-card">
-          <mdc-card-horizontal (click)="show(doc)">
-            <mdc-card-primary>
-              <mdc-card-title class="title-truncate">{{doc.metaData.title}}</mdc-card-title>
-              <mdc-card-supporting-text class="summary-truncate">{{doc.metaData.summary}}</mdc-card-supporting-text>
-            </mdc-card-primary>
-            <div style="background-position:50% 50%; width:168px;height:158px;margin-top:16px" [style.background-image]="'url('+doc.metaData.imageData+')'"></div>
-          </mdc-card-horizontal>
-          <mdc-card-actions style="position:relative">
+      <mdc-card *ngIf="doc.state!=='closed'" class="doc-card">
+        <mdc-card-horizontal (click)="show(doc)">
+          <mdc-card-primary>
+            <mdc-card-title class="title-truncate">{{doc.metaData.title}}</mdc-card-title>
+            <h2 mdc-card-subtitle class="summary-truncate">{{doc.metaData.summary}}</h2>
+          </mdc-card-primary>
+          <div *ngIf="doc.metaData.imageData" style="background-position:50% 50%; width:168px;height:158px;margin-top:16px" [style.background-image]="'url('+doc.metaData.imageData+')'"></div>
+        </mdc-card-horizontal>
+        <mdc-card-actions style="justify-content:space-between">
+          <div>
             <button mdc-card-button>Action 1</button>
             <button mdc-card-button>Action 2</button>
-            <button mdc-button style="position:absolute; right:0" (click)="delete(doc)">
-              <mdc-icon>delete_forever</mdc-icon>
+          </div>
+          <button mdc-button (click)="delete(doc)">
+            <mdc-icon>delete_forever</mdc-icon>
 
-            </button>
-          </mdc-card-actions>
-        </mdc-card>
-      </ng-container>
+          </button>
+        </mdc-card-actions>
+      </mdc-card>
     </div>
   </div>
 </div>
