@@ -44,7 +44,7 @@ export class MarkdownComponent implements OnInit {
   onScroll(event) {
     var viewportOffset = this._el.nativeElement.getBoundingClientRect();
     // these are relative to the viewport, i.e. the window
-    this.fixEditButton = viewportOffset.top <= 0;
+    this.fixEditButton = viewportOffset.top <= 10;
 
   }
   ngAfterViewInit() {

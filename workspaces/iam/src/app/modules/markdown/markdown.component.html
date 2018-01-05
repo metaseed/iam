@@ -11,9 +11,8 @@
         <markdown-viewer [model]="markdown "></markdown-viewer>
       </div>
     </div>
-    <button [class.edit-button-fix]="fixEditButton" [class.edit-button-static]="!fixEditButton" mdc-fab class="mdc-fab" (click)="editModeChange()"
-      [mini]="false">
-      <mdc-icon-toggle style="color:white;" iconClass="fa" cssClassOn="fa-eye" cssClassOff="fa-pencil" labelOn="show preview mode"
+    <button position="bottom-right" style="bottom:4rem" mdc-fab (click)="editModeChange()" [mini]="false">
+      <mdc-icon-toggle style="color:white;" iconClass="fa" cssClassOn="fa-file-text" cssClassOff="fa-pencil" labelOn="show preview mode"
         labelOff="show edit mode">
       </mdc-icon-toggle>
     </button>

@@ -8,6 +8,7 @@ import { MarkdownEditorRoutingModule } from './markdown-editor-routing.module';
 import { MarkdownEditorComponent } from './markdown-editor.component';
 import { FormsModule } from '@angular/forms';
 import { NgSpinKitModule } from 'ng-spin-kit';
+import { MaterialModule } from 'app/modules/material/material.module';
 
 @NgModule({
     declarations: [
@@ -20,7 +21,8 @@ import { NgSpinKitModule } from 'ng-spin-kit';
         FormsModule,
         NgSpinKitModule,
         MonacoEditorLoaderModule,
-        MarkdownEditorRoutingModule
+        MarkdownEditorRoutingModule,
+        MaterialModule
     ],
     exports: [
         EditorToolbarComponent,
