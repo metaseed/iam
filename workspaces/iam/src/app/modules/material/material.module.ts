@@ -21,32 +21,22 @@ import {
     MdcDialogModule
 } from '@angular-mdc/web';
 
+export const MODULES = [
+    MdcFabModule,
+    MdcMenuModule,
+    MdcIconModule,
+    MdcButtonModule,
+    MdcCardModule,
+    MdcSnackbarModule,
+    MdcTabModule,
+    MdcIconToggleModule,
+    MdcThemeModule,
+    MdcDialogModule,
+    MdcToolbarModule
+];
+
 @NgModule({
-    imports: [
-        MdcFabModule,
-        MdcMenuModule,
-        MdcIconModule,
-        MdcButtonModule,
-        MdcCardModule,
-        MdcSnackbarModule,
-        MdcTabModule,
-        MdcIconToggleModule,
-        MdcThemeModule,
-        MdcDialogModule,
-        MdcToolbarModule
-    ],
-    exports: [
-        MdcFabModule,
-        MdcMenuModule,
-        MdcIconModule,
-        MdcButtonModule,
-        MdcCardModule,
-        MdcSnackbarModule,
-        MdcTabModule,
-        MdcIconToggle,
-        MdcThemeModule,
-        MdcDialogModule,
-        MdcToolbarModule
-    ]
+    imports: MODULES,
+    exports: MODULES
 })
 export class MaterialModule { }

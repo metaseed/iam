@@ -9,6 +9,7 @@ import { DocMeta } from '../models/doc-meta';
 import { Content } from '../../../storage/github/model/content';
 import { ReplaySubject } from 'rxjs';
 import { MdcSnackbar } from '@angular-mdc/web';
+import { base64Encode } from 'core';
 
 @Injectable()
 export class DocService {
@@ -47,7 +48,7 @@ export class DocService {
   newDoc() {
     let doc = {
       content: {
-        content: btoa('# Title\n*summery*\n')
+        content: base64Encode('# Title\n*summery*\n')
       }
 
     }

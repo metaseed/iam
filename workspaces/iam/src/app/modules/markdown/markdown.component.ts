@@ -11,6 +11,7 @@ import { setTimeout } from 'timers';
 import { DocService } from 'docs';
 import { MarkdownEditorService } from './editor/index';
 import { ActivatedRoute, Router } from '@angular/router';
+import { base64Decode } from 'core';
 @Component({
   selector: 'ms-markdown',
   templateUrl: './markdown.component.html',
@@ -53,7 +54,7 @@ export class MarkdownComponent implements OnInit {
         this._text = '';
         return;
       }
-      this._text = atob(doc.content.content);
+      this._text = base64Decode(doc.content.content);
       this._doc = doc;
       setTimeout(() => this.docLoaded = true, 0);
     });

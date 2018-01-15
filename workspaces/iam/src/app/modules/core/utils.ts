@@ -1,3 +1,19 @@
+import base64js from 'base64-js';
+declare var TextDecoder;
+declare var TextEncoder;
+
+export const base64Encode = (str, encoding = 'utf-8') => {
+    let bytes = new TextEncoder(encoding).encode(str);
+    return base64js.fromByteArray(bytes);
+}
+
+// https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding
+export const base64Decode = (str, encoding = 'utf-8') => {
+    // Going backwards: from bytestream, to percent-encoding, to original string.
+    return decodeURIComponent(atob(str).split('').map(function (c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+}
 export const mergeConf = (config, fromConfig: Object): Object => {
     if (!fromConfig) {
         return config;

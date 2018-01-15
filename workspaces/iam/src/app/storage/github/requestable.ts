@@ -4,6 +4,7 @@ import { Const } from './model/const';
 import { Media } from './media';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/filter';
+import { base64Encode } from 'core';
 const METHODS_WITH_NO_BODY = ['GET', 'HEAD', 'DELETE'];
 export class Requestable {
     private _authorizationHeader: string;
@@ -13,7 +14,7 @@ export class Requestable {
         if (_userInfo.token) {
             this._authorizationHeader = 'token ' + _userInfo.token;
         } else {
-            this._authorizationHeader = 'Basic ' + btoa(this._userInfo.name + ':' + this._userInfo.password);
+            this._authorizationHeader = 'Basic ' + base64Encode(this._userInfo.name + ':' + this._userInfo.password);
         }
     }
 

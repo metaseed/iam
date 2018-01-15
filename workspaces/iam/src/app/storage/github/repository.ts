@@ -8,6 +8,7 @@ import { File } from './model/file';
 import { HttpClient } from '@angular/common/http';
 import { Issue } from './issues/issue';
 import { Observable } from 'rxjs/Observable';
+import { base64Encode } from 'core';
 @Injectable()
 export class Repository extends Requestable {
     remoteRepo: any;
@@ -56,7 +57,7 @@ export class Repository extends Requestable {
                     'name': this._userInfo.name,
                     'email': this._userInfo.email
                 },
-                'content': btoa(contents),
+                'content': base64Encode(contents),
                 'sha': sha,
                 branch
             })
@@ -75,7 +76,7 @@ export class Repository extends Requestable {
                     'name': this._userInfo.name,
                     'email': this._userInfo.email
                 },
-                'content': btoa(content)
+                'content': base64Encode(content)
             })
             .do(x => console.log('newFile' + x), e => console.log('newFile' + e))
             .map(x => {
@@ -102,7 +103,7 @@ export class Repository extends Requestable {
                             'name': this._userInfo.name,
                             'email': this._userInfo.email
                         },
-                        'content': btoa('delete file'),
+                        'content': base64Encode('delete file'),
                         'sha': response['sha'],
                         branch
                     });
