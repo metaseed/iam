@@ -1,7 +1,7 @@
 
+import { fromEvent } from 'rxjs/observable/fromEvent';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-
 function _document(): any {
     // return the native document obj
     return document;
@@ -15,7 +15,7 @@ export class DocumentRef {
     }
 
     get scroll$() {
-        const obs = Observable.fromEvent(this.nativeDocument, 'scroll');
+        const obs = fromEvent(this.nativeDocument, 'scroll');
         return obs;
     }
 

@@ -4,7 +4,7 @@ import { AfterViewInit, ViewChild } from '@angular/core';
 import { MdcLinearProgress } from '@angular-mdc/web';
 
 @Component({
-    selector: 'meta-reading-position-indicator',
+    selector: 'ms-reading-position-indicator',
     templateUrl: './reading-position-indicator.component.html',
     styleUrls: ['./reading-position-indicator.component.scss']
 })
@@ -29,7 +29,7 @@ export class ReadingPositionIndicatorComponent implements OnInit, AfterViewInit 
         const length = this.Max;
         const value = position / length;
         this.progressBar.setProgress(value);
-
+        console.log(value);
     }
 
     private get Max() {
