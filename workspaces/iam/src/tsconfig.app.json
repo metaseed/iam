@@ -8,7 +8,11 @@
     "paths": {
       "docs": ["app/modules/docs"],
       "markdown": ["app/modules/markdown"],
-      "core": ["app/modules/core"]
+      "core": ["app/modules/core"],
+      "common": ["app/modules/common"],
+      "material": [
+        "app/modules/material"
+      ]
     }
   },
   "include": [

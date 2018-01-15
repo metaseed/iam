@@ -18,10 +18,12 @@ import {
     MdcTabModule,
     MdcThemeModule,
     MdcToolbarModule,
-    MdcDialogModule
+    MdcDialogModule,
+    MdcLinearProgressModule
 } from '@angular-mdc/web';
 
 export const MODULES = [
+    MdcLinearProgressModule,
     MdcFabModule,
     MdcMenuModule,
     MdcIconModule,

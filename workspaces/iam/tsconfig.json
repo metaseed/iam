@@ -21,6 +21,12 @@
       ],
       "core": [
         "app/modules/core"
+      ],
+      "common": [
+        "app/modules/common"
+      ],
+      "material": [
+        "app/modules/material"
       ]
     },
     "lib": [

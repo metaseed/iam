@@ -4,12 +4,15 @@ import { MarkdownViewerComponent } from './markdown-viewer.component';
 import { MarkdownConfig } from './markdown.config';
 import { MarkdownViewerService } from './services/markdown.viewer.service';
 import { Router } from '@angular/router';
+import { MsCommonModule } from 'common';
 
 @NgModule({
     declarations: [
         MarkdownViewerComponent
     ],
-    imports: [CommonModule],
+    imports: [CommonModule,
+        MsCommonModule
+    ],
     exports: [
         MarkdownViewerComponent
     ],
