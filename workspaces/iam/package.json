@@ -6,7 +6,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --prod -vendor-chunk=true",
-    "copy:monaco": "ncp ../../node_modules/monaco-editor/min/ ./assets/monaco-editor/",
+    "update:monaco": "
+    ncp.. / .. / node_modules / monaco - editor / min / . / assets / monaco - editor / ",
     "deploy": "ng build --prod --base-href /iam/ && angular-cli-ghpages && start http://metaseed.github.io/iam",
     "deploy_doc": "ng build --prod --output-path ../../docs  --base-href /iam/ && cd ../.. && git add . && git commit -am \"deploy\" && git push && start http://metaseed.github.io/iam",
     "test": "ng test",
