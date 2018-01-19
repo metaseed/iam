@@ -12,6 +12,10 @@ import { DocService } from 'docs';
 import { MarkdownEditorService } from './editor/index';
 import { ActivatedRoute, Router } from '@angular/router';
 import { base64Decode } from 'core';
+import { Store, select } from '@ngrx/store';
+import * as fromMarkdown from './reducers';
+import { DocumentMode } from 'app/modules/markdown/reducers/document';
+
 @Component({
   selector: 'ms-markdown',
   templateUrl: './markdown.component.html',
@@ -31,14 +35,31 @@ export class MarkdownComponent implements OnInit {
   @ViewChild(MarkdownViewerComponent) viewer: MarkdownViewerComponent;
   @ViewChild('viewerDiv') viewerDiv;
   @ViewChild('editorDiv') editorDiv;
+
+  docMode$: any;
   constructor(private _docService: DocService, private _el: ElementRef, private _editorService: MarkdownEditorService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref,
-    private route: ActivatedRoute, private router: Router) {
+    private route: ActivatedRoute, private router: Router, private store: Store<fromMarkdown.State>) {
     _editorService.editorLoaded$.subscribe(() => {
       setTimeout(() => this.editorLoaded = true, 0);
     });
   }
 
   ngOnInit() {
+    this.docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
+    this.docMode$.subscribe(mode => {
+      switch (mode) {
+        case DocumentMode.Edit: {
+          this.isEditMode = true;
+          this.showPreviewPanel = false;
+          break;
+        }
+        case DocumentMode.View: {
+          this.isEditMode = false;
+          this.showPreviewPanel = true;
+          break;
+        }
+      }
+    });
   }
 
   @HostListener('window:scroll', ['$event'])
@@ -46,7 +67,6 @@ export class MarkdownComponent implements OnInit {
     var viewportOffset = this._el.nativeElement.getBoundingClientRect();
     // these are relative to the viewport, i.e. the window
     this.fixEditButton = viewportOffset.top <= 10;
-
   }
   ngAfterViewInit() {
     this._docService.onShowDoc((doc) => {

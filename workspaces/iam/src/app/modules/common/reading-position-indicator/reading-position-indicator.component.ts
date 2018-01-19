@@ -18,18 +18,18 @@ export class ReadingPositionIndicatorComponent implements OnInit, AfterViewInit 
 
     }
     ngAfterViewInit() {
-        this._docRef.scroll$.subscribe(() => {
-            this.setProgress()
+        this._docRef.scroll$.subscribe((event) => {
+            this.setProgress(event)
         });
 
-        this._windowRef.resize$.subscribe(() => this.setProgress());
+        this._windowRef.resize$.subscribe((event) => this.setProgress(event));
     }
-    private setProgress() {
+    private setProgress(event) {
         const position = this.Value;
         const length = this.Max;
         const value = position / length;
         this.progressBar.setProgress(value);
-        console.log(value);
+        // console.log(event);
     }
 
     private get Max() {

@@ -14,7 +14,9 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { APP_BASE_HREF, PlatformLocation } from '@angular/common';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
-import { MaterialModule } from 'app/modules/material/material.module';
+import { MaterialModule } from './modules/material/material.module';
+import { metaReducers, reducers } from 'app/reducers';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 /**
  * This function is used internal to get a string instance of the `<base href="" />` value from `index.html`.
  * This is an exported function, instead of a private function or inline lambda, to prevent this error:
@@ -43,10 +45,16 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
     CoreModule,
     DocsModule,
     MaterialModule,
+
     ServiceWorkerModule.register(`./ngsw-worker.js`, {
       enabled: environment.production
     }),
     // StoreModule.forRoot({ a: 'b' });
+    StoreModule.forRoot(reducers, { metaReducers }),
+    StoreDevtoolsModule.instrument({
+      name: 'NgRx Iam DevTools',
+      logOnly: environment.production
+    }),
     HotkeyModule.forRoot({
       disableCheatSheet: false,
       cheatSheetHotkey: 'h',

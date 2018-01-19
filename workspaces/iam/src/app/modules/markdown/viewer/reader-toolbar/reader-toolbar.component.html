@@ -1,0 +1,13 @@
+<mdc-toolbar fixed="true" *ngIf="!isScrollDown">
+  <mdc-toolbar-row>
+    <mdc-toolbar-section alignStart="true">
+      <mdc-icon [routerLink]="['/']" class="mdc-toolbar__icon">arrow_back</mdc-icon>
+      <mdc-toolbar-title>Document</mdc-toolbar-title>
+    </mdc-toolbar-section>
+    <mdc-toolbar-section alignEnd="true">
+      <mdc-icon class="mdc-toolbar__icon" (click)="toEditMode($event)">mode_edit</mdc-icon>
+      <!--visibility_off-->
+    </mdc-toolbar-section>
+  </mdc-toolbar-row>
+</mdc-toolbar>
+<!-- [@show]="!isScrollDown" -->

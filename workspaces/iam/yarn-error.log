@@ -1,8 +1,8 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\yarn\bin\yarn.js add @ngrx/entities
+  C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\yarn\bin\yarn.js add github:ngrx/effects-builds
 
 PATH: 
-  C:\Ruby23-x64\bin;C:\Users\jsong12\dot;C:\Program Files\Docker\Docker\Resources\bin;C:\tfs\Maxwell\7.x\7.x.Release\Build\Scripts\Production\LocalBuild;C:\ProgramData\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit\;C:\Program Files\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Anaconda3;C:\Program Files\Anaconda3\Scripts;C:\Program Files\Anaconda3\Library\bin;C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files\Microsoft SQL Server\110\DTS\Binn\;C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\ManagementStudio\;C:\Program;C:\Program Files\dotnet\;C:\ProgramData\chocolatey\bin;C:\Users\jsong12\Source\Repos\CD;C:\Program Files (x86)\GitExtensions\;C:\Users\jsong12\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\PuTTY\;C:\Program Files\Microsoft Service Fabric\bin\Fabric\Fabric.Code;C:\Program Files\Microsoft SDKs\Service Fabric\Tools\ServiceFabricLocalClusterManager;C:\Ruby23-x64\bin;C:\Program Files\Docker\Docker\Resources\bin;C:\ProgramData\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit\;C:\Program Files\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Anaconda3;C:\Program Files\Anaconda3\Scripts;C:\Program Files\Anaconda3\Library\bin;C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files\Microsoft SQL Server\110\DTS\Binn\;C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\ManagementStudio\;C:\Program;C:\Program Files\Git\bin;C:\Program Files\Git\cmd;C:\Program Files\AutoHotkey\Compiler;C:\Users\jsong12\dot;C:\Users\jsong12\Source\Repos\CD;C:\Users\jsong12\AppData\Local\GitHubDesktop\bin;C:\Users\jsong12\AppData\Roaming\npm;C:\tools\neovim\Neovim\bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin\Roslyn;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\7-Zip;C:\Pipeline\Tools;C:\Program Files (x86)\Microsoft Visual Studio 14.0\Team Tools\Dynamic Code Coverage Tools\amd64;C:\Program Files\Java\jre1.8.0_144\bin;M:\Workspace\metaKeyboard\metaKeyboard\software\cmder;M:\Workspace\metaKeyboard\metaKeyboardsoftware\path;M:\Workspace\metaKeyboard\metaKeyboard\software;C:\Users\jsong12\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Users\jsong12\AppData\Local\Programs\Fiddler
+  C:\Program Files\Docker\Docker\Resources\bin;C:\Ruby23-x64\bin;C:\Users\jsong12\dot;C:\tfs\Maxwell\7.x\7.x.Release\Build\Scripts\Production\LocalBuild;C:\ProgramData\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit\;C:\Program Files\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Anaconda3;C:\Program Files\Anaconda3\Scripts;C:\Program Files\Anaconda3\Library\bin;C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files\Microsoft SQL Server\110\DTS\Binn\;C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\ManagementStudio\;C:\Program;C:\Program Files\dotnet\;C:\ProgramData\chocolatey\bin;C:\Users\jsong12\Source\Repos\CD;C:\Program Files (x86)\GitExtensions\;C:\Users\jsong12\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\PuTTY\;C:\Program Files\Microsoft Service Fabric\bin\Fabric\Fabric.Code;C:\Program Files\Microsoft SDKs\Service Fabric\Tools\ServiceFabricLocalClusterManager;C:\Ruby23-x64\bin;C:\Program Files\Docker\Docker\Resources\bin;C:\ProgramData\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit\;C:\Program Files\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Anaconda3;C:\Program Files\Anaconda3\Scripts;C:\Program Files\Anaconda3\Library\bin;C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files\Microsoft SQL Server\110\DTS\Binn\;C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\ManagementStudio\;C:\Program;C:\Program Files\Git\bin;C:\Program Files\Git\cmd;C:\Program Files\AutoHotkey\Compiler;C:\Users\jsong12\dot;C:\Users\jsong12\Source\Repos\CD;C:\Users\jsong12\AppData\Local\GitHubDesktop\bin;C:\Users\jsong12\AppData\Roaming\npm;C:\tools\neovim\Neovim\bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin\Roslyn;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\7-Zip;C:\Pipeline\Tools;C:\Program Files (x86)\Microsoft Visual Studio 14.0\Team Tools\Dynamic Code Coverage Tools\amd64;C:\Program Files\Java\jre1.8.0_144\bin;M:\Workspace\metaKeyboard\metaKeyboard\software\cmder;M:\Workspace\metaKeyboard\metaKeyboardsoftware\path;M:\Workspace\metaKeyboard\metaKeyboard\software;C:\Users\jsong12\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Users\jsong12\AppData\Local\Programs\Fiddler
 
 Yarn version: 
   1.3.2
@@ -22,7 +22,7 @@ npm manifest:
       "ng": "ng",
       "start": "ng serve",
       "build": "ng build --prod -vendor-chunk=true",
-      "copy:monaco": "ncp ../../node_modules/monaco-editor/min/ ./assets/monaco-editor/",
+      "update:monaco": "ncp ../../node_modules/monaco-editor/min/ ./assets/monaco-editor/",
       "deploy": "ng build --prod --base-href /iam/ && angular-cli-ghpages && start http://metaseed.github.io/iam",
       "deploy_doc": "ng build --prod --output-path ../../docs  --base-href /iam/ && cd ../.. && git add . && git commit -am \"deploy\" && git push && start http://metaseed.github.io/iam",
       "test": "ng test",
@@ -46,8 +46,10 @@ npm manifest:
       "@angular/platform-browser-dynamic": "^5.0.1",
       "@angular/router": "^5.0.1",
       "@ngrx/effects": "^4.1.1",
-      "@ngrx/store": "^4.1.1",
+      "@ngrx/store": "github:ngrx/store-builds",
+      "@ngrx/store-devtools": "github:ngrx/store-devtools-builds",
       "angular-hotkey-module": "^1.0.0",
+      "base64-js": "^1.2.1",
       "bootstrap": "v4.0.0-beta.2",
       "core-js": "^2.5.1",
       "font-awesome": "^4.7.0",
@@ -104,6 +106,7 @@ npm manifest:
       "karma-jasmine": "~1.1.0",
       "karma-jasmine-html-reporter": "^0.2.2",
       "ncp": "^2.0.0",
+      "ngrx-store-freeze": "^0.2.0",
       "protractor": "~5.2.1",
       "ts-node": "~3.3.0",
       "tslint": "~5.8.0",
@@ -576,9 +579,17 @@ Lockfile:
     version "4.1.1"
     resolved "https://registry.yarnpkg.com/@ngrx/effects/-/effects-4.1.1.tgz#cb758b8527964b258ea41951f59aa144e3ef9fae"
   
-  "@ngrx/store@^4.1.1":
+  "@ngrx/store-devtools@^4.1.1":
     version "4.1.1"
-    resolved "https://registry.yarnpkg.com/@ngrx/store/-/store-4.1.1.tgz#680e34df2775e8852754ed777ffac95bd81b7de0"
+    resolved "https://registry.yarnpkg.com/@ngrx/store-devtools/-/store-devtools-4.1.1.tgz#20745c39c7560fdc05fa4f22638442a7ec7dd676"
+  
+  "@ngrx/store-devtools@github:ngrx/store-devtools-builds":
+    version "5.0.0-alpha.0"
+    resolved "https://codeload.github.com/ngrx/store-devtools-builds/tar.gz/8c6fbaeec1531f133808a85350908192e54bbd0b"
+  
+  "@ngrx/store@github:ngrx/store-builds":
+    version "5.0.0-alpha.0"
+    resolved "https://codeload.github.com/ngrx/store-builds/tar.gz/c44ae339796cd5a6bb0f078205bbefed91d2c56e"
   
   "@ngtools/json-schema@1.1.0", "@ngtools/json-schema@^1.1.0":
     version "1.1.0"
@@ -1033,7 +1044,7 @@ Lockfile:
     version "0.1.5"
     resolved "https://registry.yarnpkg.com/base64-arraybuffer/-/base64-arraybuffer-0.1.5.tgz#73926771923b5a19747ad666aa5cd4bf9c6e9ce8"
   
-  base64-js@^1.0.2:
+  base64-js@^1.0.2, base64-js@^1.2.1:
     version "1.2.1"
     resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.2.1.tgz#a91947da1f4a516ea38e5b4ec0ec3773675e0886"
   
@@ -1939,6 +1950,10 @@ Lockfile:
   deep-extend@~0.4.0:
     version "0.4.2"
     resolved "https://registry.yarnpkg.com/deep-extend/-/deep-extend-0.4.2.tgz#48b699c27e334bf89f10892be432f6e4c7d34a7f"
+  
+  deep-freeze-strict@^1.1.1:
+    version "1.1.1"
+    resolved "https://registry.yarnpkg.com/deep-freeze-strict/-/deep-freeze-strict-1.1.1.tgz#77d0583ca24a69be4bbd9ac2fae415d55523e5b0"
   
   default-require-extensions@^1.0.0:
     version "1.0.0"
@@ -4428,6 +4443,12 @@ Lockfile:
   ng-spin-kit@^5.1.1:
     version "5.1.1"
     resolved "https://registry.yarnpkg.com/ng-spin-kit/-/ng-spin-kit-5.1.1.tgz#ecad9709c77ff4dde79eb532ba0db4650a8800a8"
+  
+  ngrx-store-freeze@^0.2.0:
+    version "0.2.0"
+    resolved "https://registry.yarnpkg.com/ngrx-store-freeze/-/ngrx-store-freeze-0.2.0.tgz#74c231947bbe1938af722f6a72624dc69788d39f"
+    dependencies:
+      deep-freeze-strict "^1.1.1"
   
   no-case@^2.2.0:
     version "2.3.2"
@@ -7159,14 +7180,4 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.8.19.tgz#a4b522cd9e8b7b616a638c297d720d4c7f292f71"
 
 Trace: 
-  Error: https://registry.yarnpkg.com/@ngrx%2fentities: Not found
-      at Request.params.callback [as _callback] (C:\Users\jsong12\AppData\Roaming\nvm\v8.6.0\node_modules\yarn\lib\cli.js:62098:18)
-      at Request.self.callback (C:\Users\jsong12\AppData\Roaming\nvm\v8.6.0\node_modules\yarn\lib\cli.js:123085:22)
-      at emitTwo (events.js:125:13)
-      at Request.emit (events.js:213:7)
-      at Request.<anonymous> (C:\Users\jsong12\AppData\Roaming\nvm\v8.6.0\node_modules\yarn\lib\cli.js:124068:10)
-      at emitOne (events.js:115:13)
-      at Request.emit (events.js:210:7)
-      at IncomingMessage.<anonymous> (C:\Users\jsong12\AppData\Roaming\nvm\v8.6.0\node_modules\yarn\lib\cli.js:123988:12)
-      at Object.onceWrapper (events.js:314:30)
-      at emitNone (events.js:110:20)
+  Error: EPERM: operation not permitted, unlink 'M:\Workspace\i'm\workspaces\iam\node_modules\@ngrx\store-devtools\src'

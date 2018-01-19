@@ -6,7 +6,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Subscription } from 'rxjs/Subscription';
 import { DocService } from 'docs';
 import { MarkdownEditorService } from '../../editor/index';
-import { CommandService, Command } from '../../../core/index';
+import { CommandService, Command, DocumentRef } from '../../../core/index';
 @Component({
   selector: 'editor-toolbar',
   templateUrl: './markdown.editor-toolbar.component.html',
@@ -41,6 +41,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     private _docService: DocService,
     private _renderer: Renderer,
     private _commandService: CommandService,
+    private _docRef: DocumentRef,
     private _domSanitizer: DomSanitizer) {
     this._subscription = _commandService.commands.subscribe(c => this.handleCommand(c));
   }

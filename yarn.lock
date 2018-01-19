@@ -458,9 +458,17 @@
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/@ngrx/effects/-/effects-4.1.1.tgz#cb758b8527964b258ea41951f59aa144e3ef9fae"
 
-"@ngrx/store@^4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@ngrx/store/-/store-4.1.1.tgz#680e34df2775e8852754ed777ffac95bd81b7de0"
+"@ngrx/effects@github:ngrx/effects-builds":
+  version "5.0.0-alpha.0"
+  resolved "https://codeload.github.com/ngrx/effects-builds/tar.gz/e4f2452f0d6919b47efbf8d63b6f192437541373"
+
+"@ngrx/store-devtools@github:ngrx/store-devtools-builds":
+  version "5.0.0-alpha.0"
+  resolved "https://codeload.github.com/ngrx/store-devtools-builds/tar.gz/8c6fbaeec1531f133808a85350908192e54bbd0b"
+
+"@ngrx/store@github:ngrx/store-builds":
+  version "5.0.0-alpha.0"
+  resolved "https://codeload.github.com/ngrx/store-builds/tar.gz/c44ae339796cd5a6bb0f078205bbefed91d2c56e"
 
 "@ngtools/json-schema@1.1.0", "@ngtools/json-schema@^1.1.0":
   version "1.1.0"
@@ -1821,6 +1829,10 @@ deep-equal@^1.0.1:
 deep-extend@~0.4.0:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/deep-extend/-/deep-extend-0.4.2.tgz#48b699c27e334bf89f10892be432f6e4c7d34a7f"
+
+deep-freeze-strict@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/deep-freeze-strict/-/deep-freeze-strict-1.1.1.tgz#77d0583ca24a69be4bbd9ac2fae415d55523e5b0"
 
 default-require-extensions@^1.0.0:
   version "1.0.0"
@@ -4310,6 +4322,12 @@ negotiator@0.6.1:
 ng-spin-kit@^5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/ng-spin-kit/-/ng-spin-kit-5.1.1.tgz#ecad9709c77ff4dde79eb532ba0db4650a8800a8"
+
+ngrx-store-freeze@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/ngrx-store-freeze/-/ngrx-store-freeze-0.2.0.tgz#74c231947bbe1938af722f6a72624dc69788d39f"
+  dependencies:
+    deep-freeze-strict "^1.1.1"
 
 no-case@^2.2.0:
   version "2.3.2"

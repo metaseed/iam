@@ -2,6 +2,7 @@
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { getCurrentDebugContext } from '@angular/core/src/view/services';
 function _document(): any {
     // return the native document obj
     return document;
@@ -17,6 +18,19 @@ export class DocumentRef {
     get scroll$() {
         const obs = fromEvent(this.nativeDocument, 'scroll');
         return obs;
+    }
+
+    get isScrollDown$() {
+        let lastValue = this.nativeDocument.documentElement.scrollTop;
+        return this.scroll$.map((event) => {
+            const currentValue = this.nativeDocument.documentElement.scrollTop;
+            if (currentValue > lastValue) {
+                lastValue = currentValue;
+                return true;
+            }
+            lastValue = currentValue;
+            return false;
+        }, this);
     }
 
     get height() {

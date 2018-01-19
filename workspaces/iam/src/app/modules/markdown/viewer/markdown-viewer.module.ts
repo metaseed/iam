@@ -5,13 +5,20 @@ import { MarkdownConfig } from './markdown.config';
 import { MarkdownViewerService } from './services/markdown.viewer.service';
 import { Router } from '@angular/router';
 import { MsCommonModule } from 'common';
+import { ReaderToolbarComponent } from './reader-toolbar/reader-toolbar.component';
+import { MaterialModule } from 'material';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
     declarations: [
-        MarkdownViewerComponent
+        MarkdownViewerComponent,
+        ReaderToolbarComponent
     ],
     imports: [CommonModule,
-        MsCommonModule
+        MsCommonModule,
+        CommonModule,
+        MaterialModule,
+        RouterModule
     ],
     exports: [
         MarkdownViewerComponent

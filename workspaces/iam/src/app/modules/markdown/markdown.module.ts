@@ -9,6 +9,9 @@ import { MarkdownViewerModule } from './viewer/index';
 import { MarkdownConfig } from './viewer/markdown.config';
 import { MarkdownRoutingModule } from './markdown-routing.module';
 import { NgSpinKitModule } from 'ng-spin-kit';
+import { StoreModule } from '@ngrx/store';
+import { reducers } from './reducers';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -18,6 +21,7 @@ import { NgSpinKitModule } from 'ng-spin-kit';
     NgSpinKitModule,
     MarkdownRoutingModule,
     MarkdownEditorModule,
+    StoreModule.forFeature('markdown', reducers),
     MarkdownViewerModule.forChild()
   ],
   declarations: [

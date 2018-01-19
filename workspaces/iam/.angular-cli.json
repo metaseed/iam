@@ -27,7 +27,7 @@
     "test": "test.ts",
     "tsconfig": "tsconfig.app.json",
     "testTsconfig": "tsconfig.spec.json",
-    "prefix": "meta",
+    "prefix": "ms",
     "serviceWorker": true,
     "styles": [
       "styles.scss"
