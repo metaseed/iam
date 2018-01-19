@@ -10,8 +10,8 @@ import { MarkdownConfig } from './viewer/markdown.config';
 import { MarkdownRoutingModule } from './markdown-routing.module';
 import { NgSpinKitModule } from 'ng-spin-kit';
 import { StoreModule } from '@ngrx/store';
-import { reducers } from './reducers';
-
+import * as fromReducers from './reducers';
+import { MarkdownEditorComponent } from 'app/modules/markdown/editor/markdown-editor.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -21,8 +21,9 @@ import { reducers } from './reducers';
     NgSpinKitModule,
     MarkdownRoutingModule,
     MarkdownEditorModule,
-    StoreModule.forFeature('markdown', reducers),
-    MarkdownViewerModule.forChild()
+    StoreModule.forFeature('markdown', fromReducers.reducers),
+    MarkdownViewerModule.forChild(),
+
   ],
   declarations: [
     MarkdownComponent

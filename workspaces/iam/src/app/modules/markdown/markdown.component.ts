@@ -36,7 +36,7 @@ export class MarkdownComponent implements OnInit {
   @ViewChild('viewerDiv') viewerDiv;
   @ViewChild('editorDiv') editorDiv;
 
-  docMode$: any;
+  docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
   constructor(private _docService: DocService, private _el: ElementRef, private _editorService: MarkdownEditorService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref,
     private route: ActivatedRoute, private router: Router, private store: Store<fromMarkdown.State>) {
     _editorService.editorLoaded$.subscribe(() => {
@@ -45,7 +45,6 @@ export class MarkdownComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
     this.docMode$.subscribe(mode => {
       switch (mode) {
         case DocumentMode.Edit: {

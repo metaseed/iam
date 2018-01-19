@@ -27,6 +27,7 @@ import { MaterialModule } from 'app/modules/material/material.module';
     exports: [
         EditorToolbarComponent,
         MonacoEditorComponent,
+        MarkdownEditorComponent,
         MonacoEditorLoaderModule
     ],
     providers: [

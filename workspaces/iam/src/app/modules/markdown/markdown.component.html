@@ -1,21 +1,19 @@
 <sk-three-bounce [isRunning]="!docLoaded"></sk-three-bounce>
 <div class="md-editor-container" [class.fullscreen]="isFullScreen">
-  <editor-toolbar *ngIf="this.isEditMode"></editor-toolbar>
   <div class="editor-container">
     <div class="editor-panel" #editorDiv style="min-height: 200px;" *ngIf="isEditMode">
-      <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>
-      <monaco-editor *loadMonacoEditor [options]="editorOptions " [(ngModel)]="markdown "></monaco-editor>
+      <ms-markdown-editor [markdown]="markdown" [options]="editorOptions" [editorLoaded]="editorLoaded"></ms-markdown-editor>
     </div>
     <div class="preview-panel" #viewerDiv style="height: fit-content;" *ngIf="showPreviewPanel">
       <div style="position:relative">
         <markdown-viewer [model]="markdown "></markdown-viewer>
       </div>
     </div>
-    <button position="bottom-right" style="bottom:4rem" mdc-fab (click)="editModeChange()" [mini]="false">
+    <!-- <button position="bottom-right" style="bottom:4rem" mdc-fab (click)="editModeChange()" [mini]="false">
       <mdc-icon-toggle style="color:white;" iconClass="fa" cssClassOn="fa-file-text" cssClassOff="fa-pencil" labelOn="show preview mode"
         labelOff="show edit mode">
       </mdc-icon-toggle>
-    </button>
+    </button> -->
 
   </div>
 </div>

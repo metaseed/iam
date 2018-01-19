@@ -1,14 +1,14 @@
 <mdc-toolbar fixed="true">
   <mdc-toolbar-row>
     <mdc-toolbar-section alignStart="true">
-      <a href="#" class="material-icons mdc-toolbar__icon">arrow_back</a>
+      <mdc-icon [routerLink]="['/']" class="mdc-toolbar__icon">arrow_back</mdc-icon>
       <mdc-toolbar-title>Edit</mdc-toolbar-title>
     </mdc-toolbar-section>
     <mdc-toolbar-section alignEnd="true">
-      <a href="#/toolbar-demo" class="material-icons mdc-toolbar__icon">save</a>
-      <a href="#/toolbar-demo" class="material-icons mdc-toolbar__icon">visibility</a>
       <!--visibility_off-->
+      <mdc-icon class="mdc-toolbar__icon" (click)="save()">save</mdc-icon>
       <a href="#/toolbar-demo" class="material-icons mdc-toolbar__icon">fullscreen</a>
+      <mdc-icon class="mdc-toolbar__icon" (click)="toViewMode($event)">visibility</mdc-icon>
     </mdc-toolbar-section>
   </mdc-toolbar-row>
 </mdc-toolbar>

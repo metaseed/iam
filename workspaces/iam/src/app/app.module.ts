@@ -51,16 +51,16 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
     }),
     // StoreModule.forRoot({ a: 'b' });
     StoreModule.forRoot(reducers, { metaReducers }),
-    StoreDevtoolsModule.instrument({
-      name: 'NgRx Iam DevTools',
-      logOnly: environment.production
-    }),
     HotkeyModule.forRoot({
       disableCheatSheet: false,
       cheatSheetHotkey: 'h',
       cheatSheetCloseEsc: true,
       cheatSheetDescription: 'shortcuts'
     })
+    // StoreDevtoolsModule.instrument({
+    //   name: 'NgRx Iam DevTools',
+    //   logOnly: environment.production
+    // })
   ],
   providers: [
     {

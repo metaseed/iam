@@ -57,13 +57,17 @@ export class DocService {
   }
 
   showDoc(title: string, id: number | string) {
+    let me = this;
     this._repoSub$.subscribe(repo => repo.getContents(`${DocService.FolderName}/${title}_${id}`).subscribe(
       (content: Content) => {
-        let doc = this.model.docs.find((doc) => doc.number === +id);
-        if (!doc) { doc = <Document>{} }
-        doc.content = content;
-        this.model.currentDoc = doc;
-        this.docShow$.next(doc);
+        let doc = me.model.docs.find((doc) => doc.number === +id);
+        if (!doc) {
+          me.get(+id).subscribe(doc => {
+            doc.content = content;
+            me.model.currentDoc = doc;
+            me.docShow$.next(doc);
+          });
+        }
       }
     ));
   }
@@ -175,6 +179,13 @@ export class DocService {
       });;
   }
 
+  get(id: number) {
+    return this._repoSub$.flatMap(repo => {
+      return repo.issue.get(id).map((doc: Document) => {
+        doc.metaData = DocMeta.deSerialize(doc.body);
+        return doc;
+      })
+    }
   // update(todo: Document) {
   //   console.log('Update');
 

@@ -7,6 +7,11 @@ import { Subscription } from 'rxjs/Subscription';
 import { DocService } from 'docs';
 import { MarkdownEditorService } from '../../editor/index';
 import { CommandService, Command, DocumentRef } from '../../../core/index';
+import { Store, select } from '@ngrx/store';
+import { MarkdownState } from 'app/modules/markdown/reducers';
+import * as markdown from '../../actions/document';
+import * as edit from '../../actions/edit';
+
 @Component({
   selector: 'editor-toolbar',
   templateUrl: './markdown.editor-toolbar.component.html',
@@ -36,25 +41,33 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // documentMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
+
   constructor(private markdown: MarkdownComponent,
     private _editorService: MarkdownEditorService,
     private _docService: DocService,
     private _renderer: Renderer,
     private _commandService: CommandService,
     private _docRef: DocumentRef,
-    private _domSanitizer: DomSanitizer) {
+    private _domSanitizer: DomSanitizer,
+    private store: Store<MarkdownState>) {
+
     this._subscription = _commandService.commands.subscribe(c => this.handleCommand(c));
+  }
+
+  toViewMode(event) {
+    this.store.dispatch(new markdown.ReadMode());
   }
 
   handleCommand(command: Command) {
     this.insertContent(command.name);
   }
   ngOnInit() {
+
   }
 
   ngAfterViewInit() {
-    const me = this;
-
+    let me = this;
     this._editorService.editorLoaded$.subscribe((editor: monaco.editor.IStandaloneCodeEditor) => {
       if (!EditorToolbarComponent.COMMANDS_CONFIG) {
         EditorToolbarComponent.COMMANDS_CONFIG = {
@@ -70,16 +83,16 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
           Save: { command: 'Save', func: me.save, startSize: 0, hotKey: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S] },
         };
       }
-      this.editor = editor;
+      me.editor = editor;
       const configs = EditorToolbarComponent.COMMANDS_CONFIG;
       for (let key in configs) {
         if (configs.hasOwnProperty(key)) {
           var config = configs[key];
 
-          this.editor.addAction({
+          me.editor.addAction({
             id: key,
             label: key,
-            contextMenuGroupId: 'navigation',
+            //contextMenuGroupId: 'navigation',
             keybindings: config.hotKey,
             run: function (editor) {
               me.insertContent(key);
@@ -92,6 +105,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   }
 
   save = () => {
+    this.store.dispatch(new edit.Save());
     const content = this.editor.getValue();
     this._docService.save(content);
   }

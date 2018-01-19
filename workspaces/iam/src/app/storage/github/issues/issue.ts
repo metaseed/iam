@@ -59,5 +59,8 @@ export class Issue extends Requestable {
     edit(number, params: EditIssueParams) {
         return this.request('PATCH', `/repos/${this._userInfo.name}/${this.repository}/issues/${number}`, params);
     }
+    get(issueNumber: number) {
+        return this.request('GET', `/repos/${this._userInfo.name}/${this.repository}/issues/${issueNumber}`);
+    }
 
 }
