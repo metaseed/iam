@@ -61,12 +61,17 @@ export class DocService {
     this._repoSub$.subscribe(repo => repo.getContents(`${DocService.FolderName}/${title}_${id}`).subscribe(
       (content: Content) => {
         let doc = me.model.docs.find((doc) => doc.number === +id);
+        function showContent(doc) {
+          doc.content = content;
+          me.model.currentDoc = doc;
+          me.docShow$.next(doc);
+        }
         if (!doc) {
           me.get(+id).subscribe(doc => {
-            doc.content = content;
-            me.model.currentDoc = doc;
-            me.docShow$.next(doc);
+            showContent(doc);
           });
+        } else {
+          showContent(doc);
         }
       }
     ));
@@ -176,7 +181,7 @@ export class DocService {
       (error) => {
         console.log(error);
         this.docListLoaded = true;
-      });;
+      });
   }
 
   get(id: number) {
@@ -185,7 +190,8 @@ export class DocService {
         doc.metaData = DocMeta.deSerialize(doc.body);
         return doc;
       })
-    }
+    });
+  }
   // update(todo: Document) {
   //   console.log('Update');
 

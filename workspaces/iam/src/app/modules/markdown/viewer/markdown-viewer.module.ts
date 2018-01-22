@@ -16,7 +16,6 @@ import { RouterModule } from '@angular/router';
     ],
     imports: [CommonModule,
         MsCommonModule,
-        CommonModule,
         MaterialModule,
         RouterModule
     ],
