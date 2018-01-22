@@ -101,7 +101,6 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     });
   }
   toViewMode = (event) => {
-    this.store.dispatch(new doc.EditMode());
     this.store.dispatch(new doc.ViewMode());
   }
 

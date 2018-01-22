@@ -1,6 +1,7 @@
 import { DocumentActions, DocumentActionTypes } from "../actions/document";
 
 export enum DocumentMode {
+    Init,
     View, Edit
 }
 
@@ -9,7 +10,7 @@ export interface State {
 }
 
 const initialState: State = {
-    mode: DocumentMode.View,
+    mode: DocumentMode.Init,
 }
 
 export function reducer(
