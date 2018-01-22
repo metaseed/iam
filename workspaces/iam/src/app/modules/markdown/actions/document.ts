@@ -2,15 +2,15 @@ import { Action } from "@ngrx/store";
 
 export enum DocumentActionTypes {
     editMode = '[Document] edit mode',
-    viewMode = '[Document] reader mode'
+    viewMode = '[Document] view mode'
 }
 
 export class EditMode implements Action {
     readonly type = DocumentActionTypes.editMode;
 }
 
-export class ReadMode implements Action {
+export class ViewMode implements Action {
     readonly type = DocumentActionTypes.viewMode;
 }
 
-export type DocumentActions = EditMode | ReadMode;
+export type DocumentActions = EditMode | ViewMode;

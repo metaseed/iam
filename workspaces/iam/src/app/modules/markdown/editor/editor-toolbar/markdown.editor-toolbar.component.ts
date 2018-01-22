@@ -9,7 +9,7 @@ import { MarkdownEditorService } from '../../editor/index';
 import { CommandService, Command, DocumentRef } from '../../../core/index';
 import { Store, select } from '@ngrx/store';
 import { MarkdownState } from 'app/modules/markdown/reducers';
-import * as markdown from '../../actions/document';
+import * as doc from '../../actions/document';
 import * as edit from '../../actions/edit';
 
 @Component({
@@ -43,7 +43,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
 
   // documentMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
 
-  constructor(private markdown: MarkdownComponent,
+  constructor(public markdown: MarkdownComponent,
     private _editorService: MarkdownEditorService,
     private _docService: DocService,
     private _renderer: Renderer,
@@ -55,9 +55,6 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     this._subscription = _commandService.commands.subscribe(c => this.handleCommand(c));
   }
 
-  toViewMode(event) {
-    this.store.dispatch(new markdown.ReadMode());
-  }
 
   handleCommand(command: Command) {
     this.insertContent(command.name);
@@ -102,6 +99,10 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
       }
 
     });
+  }
+  toViewMode = (event) => {
+    this.store.dispatch(new doc.EditMode());
+    this.store.dispatch(new doc.ViewMode());
   }
 
   save = () => {

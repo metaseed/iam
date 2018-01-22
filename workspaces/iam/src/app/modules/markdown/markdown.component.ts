@@ -60,9 +60,11 @@ export class MarkdownComponent implements OnInit {
       }
     });
   }
+
   ngAfterViewChecked() {
     this.changeDetecorRef.detectChanges();
   }
+
   @HostListener('window:scroll', ['$event'])
   onScroll(event) {
     var viewportOffset = this._el.nativeElement.getBoundingClientRect();
@@ -77,6 +79,9 @@ export class MarkdownComponent implements OnInit {
       }
       this._text = base64Decode(doc.content.content);
       this._doc = doc;
+      if (this.isNewDoc) {
+        this.editModeChange(true, false)
+      }
       setTimeout(() => this.docLoaded = true, 0);
     });
     this._editorService.contentChanged$.subscribe(([content, editor]) => {
@@ -90,7 +95,7 @@ export class MarkdownComponent implements OnInit {
       refresh();
     });
     if (this.router.url === '/doc/new') {
-      this.editModeChange(true, false);
+      //this.editModeChange(true, false);
       this.isNewDoc = true;
     }
     this.route.queryParamMap.pipe(
@@ -110,10 +115,8 @@ export class MarkdownComponent implements OnInit {
   editorOptions: monaco.editor.IEditorConstructionOptions = {/* theme: 'vs-dark', */ language: 'markdown', wordWrapColumn: 120, wordWrap: 'bounded' };
 
   editModeChange(edit = false, preview = false) {
-    setTimeout(() => {
-      this.isEditMode = edit;
-      this.showPreviewPanel = preview;
-    }, 0);
+    this.isEditMode = edit;
+    this.showPreviewPanel = preview;
   }
   showDemo() {
     this._http.get(`${this.baseHref}assets/markdown.md`, { responseType: 'text' }).subscribe(a => {

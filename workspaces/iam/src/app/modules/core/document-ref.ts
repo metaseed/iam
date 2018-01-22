@@ -33,8 +33,8 @@ export class DocumentRef {
                 }
                 lastValue = currentValue;
                 return false;
-            }, this),
-            debounceTime(300)
+            }, this)
+            // debounceTime(300)
         );
     }
 

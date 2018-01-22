@@ -47,9 +47,9 @@
     </button>
   </div>
   <div class="btn-group">
-    <button class="btn btn-sm btn-default" type="button" [attr.title]="showPreviewPanel ? 'Hide Preview' : 'Show Preview'" (click)="togglePreview()"
-      *ngIf="!_hideIcons.TogglePreview">
-      <i class="fa" [class.fa-eye]="!showPreviewPanel" [class.fa-eye-slash]="showPreviewPanel"></i>
+    <button class="btn btn-sm btn-default" type="button" [attr.title]="markdown.showPreviewPanel ? 'Hide Preview' : 'Show Preview'"
+      (click)="togglePreview()" *ngIf="!_hideIcons.TogglePreview">
+      <i class="fa" [class.fa-eye]="!showPreviewPanel" [class.fa-eye-slash]="markdown.showPreviewPanel"></i>
     </button>
   </div>
   <div class="btn-group hide-split">
