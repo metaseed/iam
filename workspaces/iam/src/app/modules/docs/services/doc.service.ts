@@ -10,7 +10,7 @@ import { Content } from '../../../storage/github/model/content';
 import { ReplaySubject } from 'rxjs';
 import { MdcSnackbar } from '@angular-mdc/web';
 import { base64Encode } from 'core';
-import { map } from 'rxjs/operators';
+import { map, flatMap } from 'rxjs/operators';
 @Injectable()
 export class DocService {
   static FolderName = 'documents';
@@ -90,23 +90,23 @@ export class DocService {
   saveNew = (content: string) => {
     let title = DocMeta.getTitle(content);
     if (!title) throw 'must have title';
-    return this._repoSub$.flatMap(repo =>
-      repo.issue.create({ title }).flatMap((issue) => {
+    return this._repoSub$.pipe(flatMap(repo =>
+      repo.issue.create({ title }).pipe(flatMap((issue) => {
         let id = issue.number;
-        return repo.newFile(`${DocService.FolderName}/${title}_${id}`, content).flatMap((file) => {
+        return repo.newFile(`${DocService.FolderName}/${title}_${id}`, content).pipe(flatMap((file) => {
           let url = this.getContentUrl(id);
-          return DocMeta.serializeContent(content, file.content.sha, url).flatMap(([metaString, metaData]) => {
+          return DocMeta.serializeContent(content, file.content.sha, url).pipe(flatMap(([metaString, metaData]) => {
             let data: EditIssueParams = { title: title, body: <string>metaString };
-            return repo.issue.edit(id, data).map((doc: Document) => {
+            return repo.issue.edit(id, data).pipe(map((doc: Document) => {
               doc.metaData = <DocMeta>metaData;
               this.model.docs.unshift(doc);
               return doc;
-            });
+            }));
 
-          })
-        })
-      })
-    );
+          }))
+        }))
+      }))
+    ));
 
   }
 
@@ -129,14 +129,14 @@ export class DocService {
     if (!title) throw 'must have title';
 
     const changeTitle = doc.metaData ? title !== doc.metaData.title : true;
-    return this._repoSub$.flatMap(repo =>
+    return this._repoSub$.pipe(flatMap(repo =>
       repo.updateFile(`${DocService.FolderName}/${title}_${doc.number}`, content, doc.metaData.contentId).flatMap(
         file => {
           let url = this.getContentUrl(doc.number);
-          return DocMeta.serializeContent(content, file.content.sha, url).flatMap(
+          return DocMeta.serializeContent(content, file.content.sha, url).pipe(flatMap(
             ([metaString, metaData]) => {
               let data: EditIssueParams = { title: title, body: <string>metaString };
-              return repo.issue.edit(doc.number, data).map(
+              return repo.issue.edit(doc.number, data).pipe(map(
                 (a) => {
                   if (changeTitle) {
                     repo.delFileViaSha(`${DocService.FolderName}/${doc.metaData.title}_${doc.number}`, doc.metaData.contentId).subscribe();
@@ -144,19 +144,19 @@ export class DocService {
                   doc.metaData = <DocMeta>metaData;
                   return doc;
                 }
-              );
+              ));
             }
-          );
+          ));
 
         }
       )
-    );
+    ));
   }
 
   getAll() {
-    return this._repoSub$.flatMap(repo => {
+    return this._repoSub$.pipe(flatMap(repo => {
       return repo.issue.list('open');
-    }).subscribe(
+    })).subscribe(
       (docs: Document[]) => {
         let docList = new Array<Document>();
         docs.sort((a, b) => {
@@ -185,11 +185,11 @@ export class DocService {
   }
 
   get(id: number) {
-    return this._repoSub$.flatMap(repo => {
+    return this._repoSub$.pipe(flatMap(repo => {
       return repo.issue.get(id).pipe(map((doc: Document) => {
         doc.metaData = DocMeta.deSerialize(doc.body);
         return doc;
-      })
+      }))
     }));
   }
   // update(todo: Document) {
