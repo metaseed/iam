@@ -3,7 +3,7 @@ import { UserInfo } from './index';
 import { Const } from './model/const';
 import { Media } from './media';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/filter';
+import { filter } from 'rxjs/operators';
 import { base64Encode } from 'core';
 const METHODS_WITH_NO_BODY = ['GET', 'HEAD', 'DELETE'];
 export class Requestable {
@@ -47,7 +47,7 @@ export class Requestable {
         } else if (method === 'DELETE') {
             return this._http.delete<Object>(url, { headers: headers, params: data, responseType: 'json' })
         }
-        return <Observable<HttpResponse<any>>>this._http.request(request).filter(r => r instanceof HttpResponseBase);
+        return <Observable<HttpResponse<any>>>this._http.request(request).pipe(filter(r => r instanceof HttpResponseBase));
     }
 
     private methodHasNoBody(method: string) {

@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { MonacoEditorComponent } from './editor/monaco-editor/monaco-editor.component';
 import { APP_BASE_HREF } from '@angular/common';
 import { timeout } from 'rxjs/operator/timeout';
-import 'rxjs/add/operator/take';
+import { take, map } from 'rxjs/operators';
 import { setTimeout } from 'timers';
 import { DocService } from 'docs';
 import { MarkdownEditorService } from './editor/index';
@@ -93,8 +93,8 @@ export class MarkdownComponent implements OnInit {
       this.editModeChange(true, false);
       this.isNewDoc = true;
     }
-    this.route.queryParamMap.map(
-      params => {
+    this.route.queryParamMap.pipe(
+      map(params => {
         if (this.isNewDoc) {
           return this._docService.newDoc();
         } else {
@@ -103,7 +103,9 @@ export class MarkdownComponent implements OnInit {
           return this._docService.showDoc(title, id);
         }
       }, this
-    ).take(1).subscribe();
+      ),
+      take(1))
+      .subscribe();
   }
   editorOptions: monaco.editor.IEditorConstructionOptions = {/* theme: 'vs-dark', */ language: 'markdown', wordWrapColumn: 120, wordWrap: 'bounded' };
 

@@ -32,7 +32,7 @@ export class ReaderToolbarComponent implements OnInit {
 
   isScrollDown = false;
   ngOnInit() {
-    this.docRef.isScrollDown$.subscribe((e) => { this.isScrollDown = e; });
+    this.docRef.isScrollDown$.subscribe((e) => { this.isScrollDown = e; /*console.log(e)*/ });
   }
 
   toEditMode(event) {

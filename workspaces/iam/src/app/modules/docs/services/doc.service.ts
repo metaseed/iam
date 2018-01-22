@@ -10,7 +10,7 @@ import { Content } from '../../../storage/github/model/content';
 import { ReplaySubject } from 'rxjs';
 import { MdcSnackbar } from '@angular-mdc/web';
 import { base64Encode } from 'core';
-
+import { map } from 'rxjs/operators';
 @Injectable()
 export class DocService {
   static FolderName = 'documents';
@@ -186,11 +186,11 @@ export class DocService {
 
   get(id: number) {
     return this._repoSub$.flatMap(repo => {
-      return repo.issue.get(id).map((doc: Document) => {
+      return repo.issue.get(id).pipe(map((doc: Document) => {
         doc.metaData = DocMeta.deSerialize(doc.body);
         return doc;
       })
-    });
+    }));
   }
   // update(todo: Document) {
   //   console.log('Update');

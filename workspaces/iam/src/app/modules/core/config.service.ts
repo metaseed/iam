@@ -1,4 +1,3 @@
-import 'rxjs/add/operator/toPromise';
 import { HttpClient } from '@angular/common/http';
 import { APP_BASE_HREF } from '@angular/common';
 import { Injectable, Inject } from '@angular/core';

@@ -9,6 +9,7 @@ import { HttpClient } from '@angular/common/http';
 import { Issue } from './issues/issue';
 import { Observable } from 'rxjs/Observable';
 import { base64Encode } from 'core';
+import { map, flatMap, tap, catchError } from 'rxjs/operators';
 @Injectable()
 export class Repository extends Requestable {
     remoteRepo: any;
@@ -31,19 +32,19 @@ export class Repository extends Requestable {
     // https://developer.github.com/v3/repos/contents/
     file(path: string, contents: string, branch: string = 'master') {
         let getShaSuccess = false;
-        return this.getSha(path, branch)
-            .do(x => console.log('getSha' + x), e => console.log('getSha' + e))
-            .flatMap(resp => {
+        return this.getSha(path, branch).pipe(
+            tap(x => console.log('getSha' + x), e => console.log('getSha' + e)),
+            flatMap(resp => {
                 getShaSuccess = true;
                 return this.updateFile(path, contents, resp['sha']);
-            })
-            .catch((error, ca) => {
+            }),
+            catchError((error, ca) => {
                 if (getShaSuccess) {
                     throw error;
                 }
                 const err = error;
                 return this.newFile(path, contents);
-            });
+            }));
     }
     //https://developer.github.com/v3/repos/contents/#update-a-file
     updateFile(path, contents, sha, branch = 'master') {
@@ -60,11 +61,11 @@ export class Repository extends Requestable {
                 'content': base64Encode(contents),
                 'sha': sha,
                 branch
-            })
-            .do(x => console.log(x), e => console.log(e))
-            .map(x => {
+            }).pipe(
+            tap(x => console.log(x), e => console.log(e)),
+            map(x => {
                 return <File>x;
-            });
+            }));
     }
 
     //https://developer.github.com/v3/repos/contents/#create-a-file
@@ -77,12 +78,12 @@ export class Repository extends Requestable {
                     'email': this._userInfo.email
                 },
                 'content': base64Encode(content)
-            })
-            .do(x => console.log('newFile' + x), e => console.log('newFile' + e))
-            .map(x => {
+            }).pipe(
+            tap(x => console.log('newFile' + x), e => console.log('newFile' + e)),
+            map(x => {
                 console.log(x);
                 return <File>x;
-            });
+            }));
     }
 
     /**
@@ -92,9 +93,9 @@ export class Repository extends Requestable {
      */
     delFile(path: string, branch: string = 'master') {
         const filePath = path ? encodeURI(path) : '';
-        return this.getSha(path, branch)
-            .do(x => console.log(x), e => console.log(e))
-            .flatMap(response => {
+        return this.getSha(path, branch).pipe(
+            tap(x => console.log(x), e => console.log(e)),
+            flatMap(response => {
                 return this.request('DELETE',
                     `/repos/${this.fullName}/contents/${filePath}`,
                     {
@@ -107,9 +108,9 @@ export class Repository extends Requestable {
                         'sha': response['sha'],
                         branch
                     });
-            })
-            .do(x => console.log(x), e => console.log(e))
-            .map(x => <File>x);
+            }),
+            tap(x => console.log(x), e => console.log(e)),
+            map(x => <File>x));
     }
 
     delFileViaSha(path: string, sha: string, branch: string = 'master') {
@@ -124,21 +125,21 @@ export class Repository extends Requestable {
                 },
                 'sha': sha,
                 branch
-            })
-            .do(x => console.log(x), e => console.log(e))
-            .map(x => <File>x);
+            }).pipe(
+            tap(x => console.log(x), e => console.log(e)),
+            map(x => <File>x));
     }
 
     // https://developer.github.com/v3/repos/contents/#get-contents
     getContents(path: string, branch: string = 'master') {
         path = path ? encodeURI(path) : '';
-        return this.request('GET', `/repos/${this.fullName}/contents/${path}`)
-            .map(x => <Content | Array<Content>>x);
+        return this.request('GET', `/repos/${this.fullName}/contents/${path}`).pipe(
+            map(x => <Content | Array<Content>>x));
     }
 
     getReadme(branch: string = 'master') {
         return this.request('GET', `/repos/${this.fullName}/readme`)
-            .map(x => <Content | Array<Content>>x);
+            .pipe(map(x => <Content | Array<Content>>x));
     }
 
     /**

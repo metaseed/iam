@@ -1,11 +1,6 @@
 import { IStorage } from '../storage';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/observable/throw';
+import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Const } from './model/const';
@@ -30,28 +25,28 @@ export class GithubStorage extends Requestable {
 
     repos(name: string): Observable<Repository> {
         return this.getRepos(name)
-            .catch((err) => {
+            .pipe(catchError((err) => {
                 if (err.id === 404) {
                     return this.newRepos(name);
                 } else {
                     return Observable.throw(err);
                 }
-            });
+            }));
     }
 
     getRepos(name: string): Observable<Repository> {
         return this.request('GET', `/repos/${this._userInfo.name}/${name}`, null)
-            .map(resp => {
+            .pipe(map(resp => {
                 return new Repository(this._http, this._userInfo, name, this.gh);
-            })
-            .catch(error => {
+            }),
+            catchError(error => {
                 return Observable.throw(
                     {
                         id: error.status,
                         message: `get repository error: ${name}, message:${error.message}`
                     }
                 );
-            });
+            }));
     }
 
     newRepos(name: string) {
@@ -67,9 +62,9 @@ export class GithubStorage extends Requestable {
                 'has_projects': true,
                 'has_wiki': true
             }
-        ).map(value => {
+        ).pipe(map(value => {
             return new Repository(this._http, this._userInfo, name, this.gh);
-        });
+        }));
     }
 
 }
