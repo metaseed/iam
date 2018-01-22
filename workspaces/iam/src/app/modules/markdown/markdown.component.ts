@@ -15,6 +15,7 @@ import { base64Decode } from 'core';
 import { Store, select } from '@ngrx/store';
 import * as fromMarkdown from './reducers';
 import { DocumentMode } from 'app/modules/markdown/reducers/document';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'ms-markdown',
@@ -37,7 +38,7 @@ export class MarkdownComponent implements OnInit {
   @ViewChild('editorDiv') editorDiv;
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
-  constructor(private _docService: DocService, private _el: ElementRef, private _editorService: MarkdownEditorService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref,
+  constructor(private _docService: DocService, private _el: ElementRef, private _editorService: MarkdownEditorService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref, private changeDetecorRef: ChangeDetectorRef,
     private route: ActivatedRoute, private router: Router, private store: Store<fromMarkdown.State>) {
     _editorService.editorLoaded$.subscribe(() => {
       setTimeout(() => this.editorLoaded = true, 0);
@@ -59,7 +60,9 @@ export class MarkdownComponent implements OnInit {
       }
     });
   }
-
+  ngAfterViewChecked() {
+    this.changeDetecorRef.detectChanges();
+  }
   @HostListener('window:scroll', ['$event'])
   onScroll(event) {
     var viewportOffset = this._el.nativeElement.getBoundingClientRect();
