@@ -5,31 +5,5 @@
     <router-outlet></router-outlet>
   </div>
   <hotkeys-cheatsheet></hotkeys-cheatsheet>
-  <mdc-toolbar style="position:fixed; bottom:0;">
-    <mdc-toolbar-row style="min-height:inherit">
-      <mdc-toolbar-section [alignStart]="true">
-        <mdc-tab-bar style="height:inherit;text-transform:capitalize;" [primary]="false" [secondary]="true" [mdc-theme-dark]="false">
-          <mdc-tab routerLinkActive #rla="routerLinkActive" [active]="rla.isActive" [routerLink]="['/']">
-            <mdc-icon>home</mdc-icon>
-            <mdc-tab-icon-text>home</mdc-tab-icon-text>
-          </mdc-tab>
-          <mdc-tab>
-            <mdc-icon>explore</mdc-icon>
-            <mdc-tab-icon-text>explore</mdc-tab-icon-text>
-          </mdc-tab>
-          <mdc-tab routerLinkActive #rla1="routerLinkActive" [active]="rla1.isActive" [routerLink]="['/doc','new']">
-            <mdc-icon [fontSize]="48">add_circle</mdc-icon>
-          </mdc-tab>
-          <mdc-tab>
-            <mdc-icon>message</mdc-icon>
-            <mdc-tab-icon-text>message</mdc-tab-icon-text>
-          </mdc-tab>
-          <mdc-tab>
-            <mdc-icon>person</mdc-icon>
-            <mdc-tab-icon-text>me</mdc-tab-icon-text>
-          </mdc-tab>
-        </mdc-tab-bar>
-      </mdc-toolbar-section>
-    </mdc-toolbar-row>
-  </mdc-toolbar>
+  <ms-bottom-navigation></ms-bottom-navigation>
 </div>

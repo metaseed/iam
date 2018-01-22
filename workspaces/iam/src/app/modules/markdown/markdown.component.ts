@@ -48,14 +48,13 @@ export class MarkdownComponent implements OnInit {
     this.docMode$.subscribe(mode => {
       switch (mode) {
         case DocumentMode.Edit: {
-          this.isEditMode = true;
-          this.showPreviewPanel = false;
+          this.editModeChange(true, false)
           break;
         }
         case DocumentMode.View: {
-          this.isEditMode = false;
-          this.showPreviewPanel = true;
+          this.editModeChange(false, true);
           break;
+
         }
       }
     });
@@ -88,9 +87,8 @@ export class MarkdownComponent implements OnInit {
       refresh();
     });
     if (this.router.url === '/doc/new') {
-      this.isEditMode = true;
+      this.editModeChange(true, false);
       this.isNewDoc = true;
-      this.showPreviewPanel = false;
     }
     this.route.queryParamMap.map(
       params => {
@@ -106,9 +104,11 @@ export class MarkdownComponent implements OnInit {
   }
   editorOptions: monaco.editor.IEditorConstructionOptions = {/* theme: 'vs-dark', */ language: 'markdown', wordWrapColumn: 120, wordWrap: 'bounded' };
 
-  editModeChange() {
-    this.isEditMode = !this.isEditMode;
-    this.showPreviewPanel = !this.isEditMode;
+  editModeChange(edit = false, preview = false) {
+    setTimeout(() => {
+      this.isEditMode = edit;
+      this.showPreviewPanel = preview;
+    }, 0);
   }
   showDemo() {
     this._http.get(`${this.baseHref}assets/markdown.md`, { responseType: 'text' }).subscribe(a => {
