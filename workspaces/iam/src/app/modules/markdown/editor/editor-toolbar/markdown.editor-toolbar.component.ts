@@ -11,13 +11,14 @@ import { Store, select } from '@ngrx/store';
 import { MarkdownState } from 'app/modules/markdown/reducers';
 import * as doc from '../../actions/document';
 import * as edit from '../../actions/edit';
+import { OnDestroy } from '@angular/core';
 
 @Component({
   selector: 'editor-toolbar',
   templateUrl: './markdown.editor-toolbar.component.html',
   styleUrls: ['./markdown.editor-toolbar.component.scss']
 })
-export class EditorToolbarComponent implements OnInit, AfterViewInit {
+export class EditorToolbarComponent implements OnInit, AfterViewInit, OnDestroy {
   private static COMMANDS_CONFIG;
 
   isFullScreen: boolean;
@@ -53,19 +54,8 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     private store: Store<MarkdownState>) {
 
     this._subscription = _commandService.commands.subscribe(c => this.handleCommand(c));
-  }
-
-
-  handleCommand(command: Command) {
-    this.insertContent(command.name);
-  }
-  ngOnInit() {
-
-  }
-
-  ngAfterViewInit() {
     let me = this;
-    this._editorService.editorLoaded$.subscribe((editor: monaco.editor.IStandaloneCodeEditor) => {
+    this.editorLoadedSubscription = this._editorService.editorLoaded$.subscribe((editor: monaco.editor.IStandaloneCodeEditor) => {
       if (!EditorToolbarComponent.COMMANDS_CONFIG) {
         EditorToolbarComponent.COMMANDS_CONFIG = {
           Bold: { command: 'Bold', func: (selectedText, defaultText) => `**${selectedText || defaultText}**`, startSize: 2, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_B)] },
@@ -100,10 +90,24 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
 
     });
   }
+
+  handleCommand(command: Command) {
+    this.insertContent(command.name);
+  }
+  ngOnInit() {
+
+  }
+  editorLoadedSubscription: Subscription;
+  ngAfterViewInit() {
+
+  }
   toViewMode = (event) => {
     this.store.dispatch(new doc.ViewMode());
   }
-
+  ngOnDestroy() {
+    if (this.editorLoadedSubscription)
+      this.editorLoadedSubscription.unsubscribe();
+  }
   save = () => {
     this.store.dispatch(new edit.Save());
     const content = this.editor.getValue();
