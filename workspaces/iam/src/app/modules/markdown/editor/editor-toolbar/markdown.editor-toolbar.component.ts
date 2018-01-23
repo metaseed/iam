@@ -44,7 +44,8 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit, OnDestroy 
 
   // documentMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
 
-  constructor(public markdown: MarkdownComponent,
+  constructor(
+    public markdown: MarkdownComponent,
     private _editorService: MarkdownEditorService,
     private _docService: DocService,
     private _renderer: Renderer,

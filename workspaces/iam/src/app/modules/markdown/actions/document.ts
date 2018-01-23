@@ -1,16 +1,25 @@
 import { Action } from "@ngrx/store";
 
 export enum DocumentActionTypes {
-    editMode = '[Document] edit mode',
-    viewMode = '[Document] view mode'
+    EditMode = '[Document] edit mode',
+    ViewMode = '[Document] view mode',
+    ShowPreview = '[Document] show preview',
+    HidePreview = '[Document] hide preview'
 }
 
 export class EditMode implements Action {
-    readonly type = DocumentActionTypes.editMode;
+    readonly type = DocumentActionTypes.EditMode;
 }
 
 export class ViewMode implements Action {
-    readonly type = DocumentActionTypes.viewMode;
+    readonly type = DocumentActionTypes.ViewMode;
 }
 
-export type DocumentActions = EditMode | ViewMode;
+export class ShowPreview implements Action {
+    readonly type = DocumentActionTypes.ShowPreview;
+}
+export class HidePreview implements Action {
+    readonly type = DocumentActionTypes.HidePreview;
+}
+
+export type DocumentActions = EditMode | ViewMode | ShowPreview | HidePreview;

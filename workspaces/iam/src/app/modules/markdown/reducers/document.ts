@@ -7,10 +7,12 @@ export enum DocumentMode {
 
 export interface State {
     mode: DocumentMode;
+    showPreview: boolean;
 }
 
 const initialState: State = {
     mode: DocumentMode.Init,
+    showPreview: false
 }
 
 export function reducer(
@@ -18,17 +20,30 @@ export function reducer(
     action: DocumentActions
 ): State {
     switch (action.type) {
-        case DocumentActionTypes.editMode: {
+        case DocumentActionTypes.EditMode: {
             return {
                 ...state,
                 mode: DocumentMode.Edit
             };
         }
 
-        case DocumentActionTypes.viewMode: {
+        case DocumentActionTypes.ViewMode: {
             return {
                 ...state,
                 mode: DocumentMode.View
+            };
+        }
+
+        case DocumentActionTypes.ShowPreview: {
+            return {
+                ...state,
+                showPreview: true
+            };
+        }
+        case DocumentActionTypes.HidePreview: {
+            return {
+                ...state,
+                showPreview: false
             };
         }
 

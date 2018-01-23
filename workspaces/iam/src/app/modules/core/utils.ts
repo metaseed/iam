@@ -1,10 +1,10 @@
-import base64js from 'base64-js';
+import { fromByteArray } from 'base64-js';
 declare var TextDecoder;
 declare var TextEncoder;
 
 export const base64Encode = (str, encoding = 'utf-8') => {
     let bytes = new TextEncoder(encoding).encode(str);
-    return base64js.fromByteArray(bytes);
+    return fromByteArray(bytes);
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding

@@ -7,7 +7,7 @@ import { Const } from './model/const';
 import { UserInfo } from './user-info';
 import { Repository } from './repository';
 import { Requestable } from './requestable';
-import GitHub from 'github-api';
+import * as GitHub from 'github-api';
 
 @Injectable()
 export class GithubStorage extends Requestable {

@@ -20,7 +20,8 @@ import { RouterModule } from '@angular/router';
         RouterModule
     ],
     exports: [
-        MarkdownViewerComponent
+        MarkdownViewerComponent,
+        ReaderToolbarComponent
     ],
     providers: [
     ],

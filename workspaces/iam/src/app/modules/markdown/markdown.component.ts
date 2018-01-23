@@ -11,12 +11,14 @@ import { setTimeout } from 'timers';
 import { DocService } from 'docs';
 import { MarkdownEditorService } from './editor/index';
 import { ActivatedRoute, Router } from '@angular/router';
-import { base64Decode } from 'core';
+import { base64Decode, DocumentRef } from 'core';
 import { Store, select } from '@ngrx/store';
 import * as fromMarkdown from './reducers';
 import { DocumentMode } from './reducers/document';
 import { ChangeDetectorRef } from '@angular/core';
 import { MarkdownEditorComponent } from './editor/markdown-editor.component';
+import { ObservableMedia, MediaChange } from '@angular/flex-layout';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'ms-markdown',
@@ -33,14 +35,31 @@ export class MarkdownComponent implements OnInit {
   showPreviewPanel = true;
   docLoaded = false;
   editorLoaded = false;
+  mediaChangeSubscription: Subscription;
   @ViewChild(MarkdownEditorComponent) editor: MarkdownEditorComponent;
   @ViewChild(MarkdownViewerComponent) viewer: MarkdownViewerComponent;
   @ViewChild('viewerDiv') viewerDiv;
   @ViewChild('editorDiv') editorDiv;
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
-  constructor(private _docService: DocService, private _el: ElementRef, private _editorService: MarkdownEditorService, private _http: HttpClient, @Inject(APP_BASE_HREF) private baseHref, private changeDetecorRef: ChangeDetectorRef,
-    private route: ActivatedRoute, private router: Router, private store: Store<fromMarkdown.State>) {
+
+  constructor(private _docService: DocService,
+    private _el: ElementRef,
+    private _editorService: MarkdownEditorService,
+    private _http: HttpClient,
+    @Inject(APP_BASE_HREF) private baseHref,
+    private changeDetecorRef: ChangeDetectorRef,
+    private route: ActivatedRoute,
+    private router: Router,
+    private store: Store<fromMarkdown.State>,
+    private media: ObservableMedia,
+    private docRef: DocumentRef) {
+    this.mediaChangeSubscription = media.subscribe((change: MediaChange) => {
+      if (!['xs', 'sm'].includes(change.mqAlias)) {
+
+      }
+
+    });
     _editorService.editorLoaded$.subscribe(() => {
       setTimeout(() => this.editorLoaded = true, 0);
     });
@@ -50,11 +69,11 @@ export class MarkdownComponent implements OnInit {
     this.docMode$.subscribe(mode => {
       switch (mode) {
         case DocumentMode.Edit: {
-          this.editModeChange(true, false)
+          this.modeChange(true, false)
           break;
         }
         case DocumentMode.View: {
-          this.editModeChange(false, true);
+          this.modeChange(false, true);
           break;
 
         }
@@ -72,6 +91,7 @@ export class MarkdownComponent implements OnInit {
     // these are relative to the viewport, i.e. the window
     this.fixEditButton = viewportOffset.top <= 10;
   }
+
   ngAfterViewInit() {
     this._docService.onShowDoc((doc) => {
       if (doc === null) {
@@ -81,7 +101,7 @@ export class MarkdownComponent implements OnInit {
       this._text = base64Decode(doc.content.content);
       this._doc = doc;
       if (this.isNewDoc) {
-        this.editModeChange(true, false)
+        this.modeChange(true, false)
       }
       setTimeout(() => this.docLoaded = true, 0);
     });
@@ -115,15 +135,22 @@ export class MarkdownComponent implements OnInit {
   }
   editorOptions: monaco.editor.IEditorConstructionOptions = {/* theme: 'vs-dark', */ language: 'markdown', wordWrapColumn: 120, wordWrap: 'bounded' };
 
-  editModeChange(edit = false, preview = false) {
+  modeChange(edit = false, preview = false) {
     this.isEditMode = edit;
+    if (edit && this.docRef.nativeDocument.documentElement.clientWidth > 960) {
+      this.showPreviewPanel = true;
+      return;
+    }
     this.showPreviewPanel = preview;
+
   }
+
   showDemo() {
     this._http.get(`${this.baseHref}assets/markdown.md`, { responseType: 'text' }).subscribe(a => {
       this._text = a;
     });
   }
+
   public get markdown(): string {
     return this._text;
   }
