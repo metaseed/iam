@@ -130,7 +130,7 @@ export class DocService {
 
     const changeTitle = doc.metaData ? title !== doc.metaData.title : true;
     return this._repoSub$.pipe(flatMap(repo =>
-      repo.updateFile(`${DocService.FolderName}/${title}_${doc.number}`, content, doc.metaData.contentId).flatMap(
+      repo.updateFile(`${DocService.FolderName}/${title}_${doc.number}`, content, doc.metaData.contentId).pipe(flatMap(
         file => {
           let url = this.getContentUrl(doc.number);
           return DocMeta.serializeContent(content, file.content.sha, url).pipe(flatMap(
@@ -149,7 +149,7 @@ export class DocService {
           ));
 
         }
-      )
+      ))
     ));
   }
 
