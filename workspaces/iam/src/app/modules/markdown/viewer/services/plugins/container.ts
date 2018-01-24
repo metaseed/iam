@@ -1,5 +1,5 @@
 import * as MarkdownIt from 'markdown-it';
-import markdownContainer from 'markdown-it-container';
+import * as markdownContainer from 'markdown-it-container';
 
 export class ContainerPlugin {
     constructor(private markdown: MarkdownIt.MarkdownIt, name: string,

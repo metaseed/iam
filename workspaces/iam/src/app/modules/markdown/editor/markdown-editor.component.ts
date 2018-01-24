@@ -1,14 +1,15 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output } from '@angular/core';
 import { MarkdownEditorService } from './index';
 import { setTimeout } from 'timers';
 import { ViewChild } from '@angular/core';
 import { MonacoEditorComponent } from './monaco-editor/monaco-editor.component';
+import { EventEmitter } from '@angular/core';
 
 @Component({
     selector: 'ms-markdown-editor',
     template: `
     <editor-toolbar></editor-toolbar>
-    <monaco-editor *loadMonacoEditor [options]="editorOptions " [(ngModel)]="markdown "></monaco-editor>
+    <monaco-editor *loadMonacoEditor [options]="editorOptions " [(ngModel)]="markdown"></monaco-editor>
     <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>
                `,
     styles: ['']
@@ -16,10 +17,24 @@ import { MonacoEditorComponent } from './monaco-editor/monaco-editor.component';
 export class MarkdownEditorComponent implements OnInit {
     @Input()
     editorLoaded = false;
+
+    @Output()
+    markdownChange = new EventEmitter();
+
+    _markdown: string;
     @Input()
-    markdown: string;
+    get markdown(): string {
+        return this._markdown;
+    }
+
+    set markdown(value) {
+        this._markdown = value;
+        this.markdownChange.emit(value);
+    }
+
     @Input()
     options: any;
+
     @ViewChild(MonacoEditorComponent)
     editor: MonacoEditorComponent;
 
