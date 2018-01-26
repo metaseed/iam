@@ -75,6 +75,7 @@ export class MonacoEditorComponent implements AfterViewInit, ControlValueAccesso
   }
 
   private initMonaco(options) {
+    const me = this;
     // monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
     //   noSemanticValidation: true,
     //   noSyntaxValidation: false
@@ -102,8 +103,8 @@ export class MonacoEditorComponent implements AfterViewInit, ControlValueAccesso
     }
 
     this._service._editorRefresh$.subscribe(() => {
-      this.editor.layout();
-      this.editor.focus();
+      me.editor.layout();
+      me.editor.focus();
     });
     this.editor.onDidChangeModelContent((e: any) => {
       let value = this.editor.getValue();

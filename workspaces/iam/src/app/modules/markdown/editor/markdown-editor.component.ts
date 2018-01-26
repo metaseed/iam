@@ -8,8 +8,8 @@ import { EventEmitter } from '@angular/core';
 @Component({
     selector: 'ms-markdown-editor',
     template: `
-    <editor-toolbar></editor-toolbar>
-    <monaco-editor *loadMonacoEditor [options]="editorOptions " [(ngModel)]="markdown"></monaco-editor>
+
+    <monaco-editor *loadMonacoEditor [options]="editorOptions " [(ngModel)]="markdown" sytle="margin-bottom0:20px"></monaco-editor>
     <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>
                `,
     styles: ['']

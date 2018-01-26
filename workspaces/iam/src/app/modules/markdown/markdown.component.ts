@@ -19,13 +19,14 @@ import { ChangeDetectorRef } from '@angular/core';
 import { MarkdownEditorComponent } from './editor/markdown-editor.component';
 import { ObservableMedia, MediaChange } from '@angular/flex-layout';
 import { Subscription } from 'rxjs/Subscription';
+import { OnDestroy } from '@angular/core';
 
 @Component({
   selector: 'ms-markdown',
   templateUrl: './markdown.component.html',
   styleUrls: ['./markdown.component.scss']
 })
-export class MarkdownComponent implements OnInit {
+export class MarkdownComponent implements OnInit, OnDestroy {
   private _text: string;
   private _doc: any;
   isFullScreen: boolean;
@@ -42,7 +43,7 @@ export class MarkdownComponent implements OnInit {
   @ViewChild('editorDiv') editorDiv;
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
-
+  gtsmBreakPoint = false;
   constructor(private _docService: DocService,
     private _el: ElementRef,
     private _editorService: MarkdownEditorService,
@@ -56,7 +57,9 @@ export class MarkdownComponent implements OnInit {
     private docRef: DocumentRef) {
     this.mediaChangeSubscription = media.subscribe((change: MediaChange) => {
       if (!['xs', 'sm'].includes(change.mqAlias)) {
-
+        this.showPreviewPanel = this.gtsmBreakPoint = true;
+      } else {
+        this.showPreviewPanel = this.gtsmBreakPoint = false;
       }
 
     });
@@ -79,6 +82,13 @@ export class MarkdownComponent implements OnInit {
         }
       }
     });
+  }
+
+  ngOnDestroy() {
+    if (this.mediaChangeSubscription) {
+      this.mediaChangeSubscription.unsubscribe();
+      this.mediaChangeSubscription = null;
+    }
   }
 
   ngAfterViewChecked() {
@@ -137,7 +147,7 @@ export class MarkdownComponent implements OnInit {
 
   modeChange(edit = false, preview = false) {
     this.isEditMode = edit;
-    if (edit && this.docRef.nativeDocument.documentElement.clientWidth > 960) {
+    if (edit && this.gtsmBreakPoint) {
       this.showPreviewPanel = true;
       return;
     }

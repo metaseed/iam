@@ -12,6 +12,7 @@ import { MarkdownState } from 'app/modules/markdown/reducers';
 import * as doc from '../../actions/document';
 import * as edit from '../../actions/edit';
 import { OnDestroy } from '@angular/core';
+import { ObservableMedia } from '@angular/flex-layout';
 
 @Component({
   selector: 'editor-toolbar',
@@ -42,9 +43,11 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit, OnDestroy 
     });
   }
 
+  gtsmBreakpoint = false;
   // documentMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
-
+  mediaChangeSubscription: Subscription;
   constructor(
+    private media: ObservableMedia,
     public markdown: MarkdownComponent,
     private _editorService: MarkdownEditorService,
     private _docService: DocService,
@@ -54,6 +57,13 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit, OnDestroy 
     private _domSanitizer: DomSanitizer,
     private store: Store<MarkdownState>) {
 
+    this.mediaChangeSubscription = media.subscribe(change => {
+      if (!['xs', 'sm'].includes(change.mqAlias)) {
+        this.gtsmBreakpoint = false;
+      } else {
+        this.gtsmBreakpoint = true;
+      }
+    });
     this._subscription = _commandService.commands.subscribe(c => this.handleCommand(c));
     let me = this;
     this.editorLoadedSubscription = this._editorService.editorLoaded$.subscribe((editor: monaco.editor.IStandaloneCodeEditor) => {
@@ -92,6 +102,17 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit, OnDestroy 
     });
   }
 
+  save = () => {
+    this.store.dispatch(new edit.Save());
+    const content = this.editor.getValue();
+    this._docService.save(content);
+  }
+
+
+  togglePreview() {
+    this.markdown.showPreviewPanel = !this.markdown.showPreviewPanel;
+    this.editorResize();
+  }
   handleCommand(command: Command) {
     this.insertContent(command.name);
   }
@@ -108,20 +129,16 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit, OnDestroy 
   ngOnDestroy() {
     if (this.editorLoadedSubscription)
       this.editorLoadedSubscription.unsubscribe();
+    if (this.mediaChangeSubscription) {
+      this.mediaChangeSubscription.unsubscribe();
+      this.mediaChangeSubscription = null;
+    }
   }
-  save = () => {
-    this.store.dispatch(new edit.Save());
-    const content = this.editor.getValue();
-    this._docService.save(content);
-  }
+
   new = () => {
     this._docService.newDoc();
   }
 
-  togglePreview() {
-    this.markdown.showPreviewPanel = !this.markdown.showPreviewPanel;
-    this.editorResize();
-  }
 
   previewPanelClick(event: Event) {
     event.preventDefault();

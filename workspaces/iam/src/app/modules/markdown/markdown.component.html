@@ -1,5 +1,6 @@
 <sk-three-bounce [isRunning]="!docLoaded"></sk-three-bounce>
-<ms-reader-toolbar *ngIf="!(isEditMode && showPeviewPanel)"></ms-reader-toolbar>
+<ms-reader-toolbar *ngIf="!(isEditMode && showPreviewPanel)"></ms-reader-toolbar>
+<editor-toolbar *ngIf="isEditMode"></editor-toolbar>
 <div class="md-editor-container" [class.fullscreen]="isFullScreen">
   <div class="editor-container">
     <div class="editor-panel" #editorDiv style="min-height: 200px;" *ngIf="isEditMode">
