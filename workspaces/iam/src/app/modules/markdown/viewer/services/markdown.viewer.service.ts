@@ -1,6 +1,6 @@
 import { Injectable, Optional } from '@angular/core';
 // import highlightjs from 'highlight.js/lib/highlight';
-import prismjs from 'prismjs';
+import * as prismjs from 'prismjs';
 import * as MarkdownIt from 'markdown-it';
 import * as markdownVideoPlugin from 'markdown-it-video';
 import * as tasklists from 'markdown-it-task-lists';

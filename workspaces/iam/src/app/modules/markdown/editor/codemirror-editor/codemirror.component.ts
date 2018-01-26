@@ -8,10 +8,10 @@ import {
     forwardRef
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import 'codemirror/mode/markdown/markdown';
 import * as CodeMirror from 'codemirror';
 import 'codemirror/addon/scroll/simplescrollbars';
 import 'codemirror/addon/display/fullscreen';
+import 'codemirror/mode/gfm/gfm';
 /**
  * Usage : <codemirror [(ngModel)]="markdown" [config]="{...}"></codemirror>
  */
@@ -29,7 +29,8 @@ import 'codemirror/addon/display/fullscreen';
     template: `<textarea #host></textarea>`,
 })
 export class CodemirrorComponent {
-
+    //    var map = {"Alt-Space": function(cm){...}}
+    //    editor.addKeyMap(map);
     @Input() config;
     @Output() change = new EventEmitter();
     @Output() focus = new EventEmitter();

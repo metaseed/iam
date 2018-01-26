@@ -31,9 +31,10 @@ export class MarkdownEditorComponent implements OnInit {
         this.markdownChange.emit(value);
     }
     options = {
-        mode: 'markdown',
+        mode: 'gfm',
         lineNumbers: true,
         scrollbarStyle: 'simple',
+        lineWrapping: true,
         extraKeys: {
             "F11": function (cm) {
                 cm.setOption("fullScreen", !cm.getOption("fullScreen"));
