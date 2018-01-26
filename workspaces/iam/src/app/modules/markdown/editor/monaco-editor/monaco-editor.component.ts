@@ -4,7 +4,11 @@ import { Subscription } from 'rxjs';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { MarkdownEditorService } from '../index';
-
+/* usage:
+    <monaco-editor *loadMonacoEditor [options]="editorOptions " [(ngModel)]="markdown" sytle="margin-bottom0:20px"></monaco-editor>
+      
+    editorOptions: monaco.editor.IEditorConstructionOptions = { language: 'markdown', wordWrapColumn: 120, wordWrap: 'bounded' };
+* //* theme: 'vs-dark', */
 @Component({
   selector: 'monaco-editor',
   templateUrl: './monaco-editor.component.html',

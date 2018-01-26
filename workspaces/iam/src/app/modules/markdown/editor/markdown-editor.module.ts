@@ -9,10 +9,12 @@ import { MarkdownEditorComponent } from './markdown-editor.component';
 import { FormsModule } from '@angular/forms';
 import { NgSpinKitModule } from 'ng-spin-kit';
 import { MaterialModule } from 'app/modules/material/material.module';
+import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
 
 @NgModule({
     declarations: [
         EditorToolbarComponent,
+        CodemirrorComponent,
         MonacoEditorComponent,
         MarkdownEditorComponent
     ],
@@ -28,6 +30,7 @@ import { MaterialModule } from 'app/modules/material/material.module';
         EditorToolbarComponent,
         MonacoEditorComponent,
         MarkdownEditorComponent,
+        CodemirrorComponent,
         MonacoEditorLoaderModule
     ],
     providers: [

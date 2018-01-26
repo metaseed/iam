@@ -1,4 +1,4 @@
-/// <reference path="../../../../../../../../node_modules/monaco-editor/monaco.d.ts" />
+
 import { Component, OnInit, AfterViewInit, Input, Renderer } from '@angular/core';
 import { MarkdownComponent } from '../../markdown.component';
 import { DomSanitizer } from '@angular/platform-browser';

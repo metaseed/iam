@@ -143,7 +143,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
       take(1))
       .subscribe();
   }
-  editorOptions: monaco.editor.IEditorConstructionOptions = {/* theme: 'vs-dark', */ language: 'markdown', wordWrapColumn: 120, wordWrap: 'bounded' };
+
 
   modeChange(edit = false, preview = false) {
     this.isEditMode = edit;

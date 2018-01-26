@@ -8,8 +8,7 @@ import { EventEmitter } from '@angular/core';
 @Component({
     selector: 'ms-markdown-editor',
     template: `
-
-    <monaco-editor *loadMonacoEditor [options]="editorOptions " [(ngModel)]="markdown" sytle="margin-bottom0:20px"></monaco-editor>
+    <codemirror [(ngModel)]="markdown" [config]="options"></codemirror>
     <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>
                `,
     styles: ['']
@@ -31,9 +30,19 @@ export class MarkdownEditorComponent implements OnInit {
         this._markdown = value;
         this.markdownChange.emit(value);
     }
-
-    @Input()
-    options: any;
+    options = {
+        mode: 'markdown',
+        lineNumbers: true,
+        scrollbarStyle: 'simple',
+        extraKeys: {
+            "F11": function (cm) {
+                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+            },
+            "Esc": function (cm) {
+                if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+            }
+        }
+    };
 
     @ViewChild(MonacoEditorComponent)
     editor: MonacoEditorComponent;

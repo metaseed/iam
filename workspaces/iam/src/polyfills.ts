@@ -70,3 +70,5 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
  * Need to import at least one locale-data with intl.
  */
 // import 'intl/locale-data/jsonp/en';
+
+//import '@webcomponents/webcomponentsjs/webcomponents-sd-ce.js';// codemirror https://stackoverflow.com/questions/47211542/how-to-make-my-angular-4-code-compatible-with-firefox

@@ -27,3 +27,7 @@
   list-style: none;
   margin-left: -20px;
 }
+
+@import "~codemirror/lib/codemirror";
+@import '~codemirror/addon/scroll/simplescrollbars';
+@import '~codemirror/addon/display/fullscreen';
