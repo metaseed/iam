@@ -12,6 +12,7 @@ import * as CodeMirror from 'codemirror';
 import 'codemirror/addon/scroll/simplescrollbars';
 import 'codemirror/addon/display/fullscreen';
 import 'codemirror/mode/gfm/gfm';
+import { MarkdownEditorService } from '../services/markdown.editor.service';
 /**
  * Usage : <codemirror [(ngModel)]="markdown" [config]="{...}"></codemirror>
  */
@@ -45,7 +46,7 @@ export class CodemirrorComponent {
     /**
      * Constructor
      */
-    constructor() { }
+    constructor(private service: MarkdownEditorService) { }
 
     get value() {
         return this._value;
@@ -69,6 +70,7 @@ export class CodemirrorComponent {
     ngAfterViewInit() {
         this.config = this.config || {};
         this.codemirrorInit(this.config);
+        this.service.editorLoaded$.next(this.instance);
     }
 
     /**

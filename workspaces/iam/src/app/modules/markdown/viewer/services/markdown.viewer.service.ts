@@ -21,6 +21,7 @@ import latex from 'markdown-it-latex';
 import { mergeConf } from '../../../core/index';
 import { Router } from '@angular/router';
 //import latex from 'markdown-it-katex';
+import { Mermaid } from './plugins/mermaid';
 
 @Injectable()
 export class MarkdownViewerService {
@@ -37,6 +38,7 @@ export class MarkdownViewerService {
 
   private markdown: MarkdownIt.MarkdownIt;
   private containerPlugin: ContainerPlugin;
+  private mermaidPlugin: Mermaid;
   constructor(private router: Router, @Optional() config?: MarkdownConfig) {
     config = config || mergeConf(this.defaultConfig, config);
 
@@ -64,6 +66,8 @@ export class MarkdownViewerService {
       })
       .use(latex)
       .use(imsize, { autofill: true });
+
+    this.mermaidPlugin = new Mermaid(this.markdown);
 
     this.containerPlugin = new ContainerPlugin(this.markdown, 'warning');
     // Beautify output of parser for html content
