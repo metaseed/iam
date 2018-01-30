@@ -1,4 +1,4 @@
-import { EditActions, EditActionTypes } from "app/modules/markdown/actions/edit";
+import { EditActions, EditActionTypes } from "../actions/edit";
 
 export interface State {
     save: boolean;

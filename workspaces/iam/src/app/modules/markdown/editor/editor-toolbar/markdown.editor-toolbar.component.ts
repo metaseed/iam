@@ -8,12 +8,12 @@ import { DocService } from 'docs';
 import { MarkdownEditorService } from '../../editor/index';
 import { CommandService, Command, DocumentRef } from '../../../core/index';
 import { Store, select } from '@ngrx/store';
-import { MarkdownState } from 'app/modules/markdown/reducers';
+import { State } from '../../reducers';
 import * as doc from '../../actions/document';
 import * as edit from '../../actions/edit';
 import { OnDestroy } from '@angular/core';
 import { ObservableMedia } from '@angular/flex-layout';
-
+import * as fromMarkdown from '../../reducers';
 @Component({
   selector: 'editor-toolbar',
   templateUrl: './markdown.editor-toolbar.component.html',
@@ -44,7 +44,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   gtsmBreakpoint = false;
-  // documentMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
+  documentMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
   mediaChangeSubscription: Subscription;
   constructor(
     private media: ObservableMedia,
@@ -55,7 +55,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit, OnDestroy 
     private _commandService: CommandService,
     private _docRef: DocumentRef,
     private _domSanitizer: DomSanitizer,
-    private store: Store<MarkdownState>) {
+    private store: Store<State>) {
 
     this.mediaChangeSubscription = media.subscribe(change => {
       if (!['xs', 'sm'].includes(change.mqAlias)) {

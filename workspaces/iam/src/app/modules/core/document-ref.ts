@@ -10,32 +10,40 @@ function _document(): any {
     return document;
 }
 
-@Injectable()
-export class DocumentRef {
 
-    get nativeDocument(): Document {
-        return _document();
-    }
+@Injectable()
+export class Scrollable {
+    constructor(protected element) { }
 
     get scroll$() {
-        const obs = fromEvent(this.nativeDocument, 'scroll');
-        return obs;
+        return fromEvent(this.element, 'scroll');
     }
 
     get isScrollDown$() {
-        let lastValue = this.nativeDocument.documentElement.scrollTop;
+        let lastValue = this.element.scrollTop;
         return this.scroll$.pipe(
-            map((event) => {
-                const currentValue = this.nativeDocument.documentElement.scrollTop;
+            map(event => {
+                const currentValue = this.element.scrollTop;
                 if (currentValue > lastValue) {
                     lastValue = currentValue;
                     return true;
                 }
                 lastValue = currentValue;
                 return false;
-            }, this)
-            // debounceTime(300)
+            })
         );
+    }
+}
+
+@Injectable()
+export class DocumentRef extends Scrollable {
+
+    constructor() {
+        super(_document().documentElement);
+    }
+
+    get nativeDocument(): Document {
+        return _document();
     }
 
     get height() {

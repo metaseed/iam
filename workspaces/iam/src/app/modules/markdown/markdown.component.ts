@@ -11,9 +11,10 @@ import { setTimeout } from 'timers';
 import { DocService } from 'docs';
 import { MarkdownEditorService } from './editor/index';
 import { ActivatedRoute, Router } from '@angular/router';
-import { base64Decode, DocumentRef } from 'core';
+import { base64Decode, DocumentRef, Scrollable } from 'core';
 import { Store, select } from '@ngrx/store';
 import * as fromMarkdown from './reducers';
+import * as fromView from './actions/view'
 import { DocumentMode } from './reducers/document';
 import { ChangeDetectorRef } from '@angular/core';
 import { MarkdownEditorComponent } from './editor/markdown-editor.component';
@@ -101,8 +102,15 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     // these are relative to the viewport, i.e. the window
     this.fixEditButton = viewportOffset.top <= 10;
   }
-
+  isScrollDown = false;
   ngAfterViewInit() {
+    new Scrollable(this.viewerDiv.nativeElement).
+      isScrollDown$.subscribe((e) => {
+        this.isScrollDown = e;
+        this.store.dispatch(new fromView.ScrollDown(e));
+        // console.log(e)
+      });
+
     this._docService.onShowDoc((doc) => {
       if (doc === null) {
         this._text = '';
