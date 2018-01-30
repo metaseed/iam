@@ -1,5 +1,5 @@
 import { fromByteArray } from 'base64-js';
-// import { cl_Map } from 'lodash';
+import { map } from 'lodash';
 declare var TextDecoder;
 declare var TextEncoder;
 
@@ -52,10 +52,10 @@ const crypto = window.crypto || (<any>window).msCrypto;
 const alphabet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const radix = alphabet.length;
 const array = new Uint32Array(uidLength);
-// export function uid() {
-//     crypto.getRandomValues(array);
-//     return array.cl_Map(value => alphabet[value % radix]).join('');
-// }
+export function uid() {
+    crypto.getRandomValues(array);
+    return map(array, value => alphabet[value % radix]).join('');
+}
 export function hash(str) {
     let hash = 0;
     if (!str) return hash;

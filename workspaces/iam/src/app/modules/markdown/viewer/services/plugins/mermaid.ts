@@ -1,7 +1,7 @@
 import * as MarkdownIt from 'markdown-it';
 import * as mermaid from 'mermaid'
 import { setTimeout } from 'timers';
-
+import { uid } from 'core';
 export class Mermaid {
     constructor(private markdownIt: MarkdownIt.MarkdownIt) {
         this.markdownIt.use(this.MermaidPlugin, 'mermaid');
@@ -18,12 +18,12 @@ export class Mermaid {
             }
         })
     }
-
     mermaidChart = (code) => {
         try {
             mermaid.parse(code)
-            setTimeout(() => mermaid.init(), 0);
-            return `<div class="mermaid">${code}</div>`
+            let id = 'id' + uid();
+            setTimeout(() => mermaid.init(undefined, `#${id}`), 0);
+            return `<div class="mermaid" id="${id}">${code}</div>`
         } catch ({ str, hash }) {
             return `<pre>${str}</pre>`
         }
