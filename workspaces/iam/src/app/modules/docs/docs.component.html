@@ -1,7 +1,8 @@
-<div style="margin-bottom:55px">
-  <!-- <new-doc (onNewElement)="addNewElement($event)"></new-doc> -->
-  <!-- <hr/> -->
-  <doc-list [documents]="docService.model?.docs" (onShow)="showDoc($event)" (onDelete)="deleteDoc($event)"></doc-list>
-  <sk-wave [isRunning]="!docService.docListLoaded"></sk-wave>
-
+<div style="height:100vh;overflow-y:auto;">
+  <div style="margin-bottom:55px">
+    <!-- <new-doc (onNewElement)="addNewElement($event)"></new-doc> -->
+    <!-- <hr/> -->
+    <doc-list [documents]="docService.model?.docs" (onShow)="showDoc($event)" (onDelete)="deleteDoc($event)"></doc-list>
+    <sk-wave [isRunning]="!docService.docListLoaded"></sk-wave>
+  </div>
 </div>
