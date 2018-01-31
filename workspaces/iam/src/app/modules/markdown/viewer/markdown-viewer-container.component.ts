@@ -8,6 +8,7 @@ import { Store } from "@ngrx/store";
 @Component({
     selector: 'markdown-viewer-container',
     template: `
+    <ms-reading-position-indicator [element]="viewContainerDiv"></ms-reading-position-indicator>
     <div style="position:absolute">
         <div class="viewer-container" #viewContainerDiv>
             <markdown-viewer [model]="markdown"></markdown-viewer>

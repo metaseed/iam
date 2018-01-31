@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { DocumentRef, WindowRef } from 'core';
+import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
+import { DocumentRef, WindowRef, Scrollable } from 'core';
 import { AfterViewInit, ViewChild } from '@angular/core';
 import { MdcLinearProgress } from '@angular-mdc/web';
 
@@ -17,8 +17,12 @@ export class ReadingPositionIndicatorComponent implements OnInit, AfterViewInit 
     ngOnInit() {
 
     }
+
+    @Input()
+    element: HTMLElement;
+
     ngAfterViewInit() {
-        this._docRef.scroll$.subscribe((event) => {
+        new Scrollable(this.element).scroll$.subscribe((event) => {
             this.setProgress(event)
         });
 
@@ -33,11 +37,11 @@ export class ReadingPositionIndicatorComponent implements OnInit, AfterViewInit 
     }
 
     private get Max() {
-        return this._docRef.height - this._windowRef.nativeWindow.innerHeight;
+        return this.element.scrollHeight - this.element.clientHeight;
     }
 
     private get Value() {
-        return this._windowRef.nativeWindow.scrollY;
+        return this.element.scrollTop;
     }
 
 }

@@ -13,7 +13,7 @@ function _document(): any {
 
 @Injectable()
 export class Scrollable {
-    constructor(protected element) { }
+    constructor(protected element: HTMLElement) { }
 
     get scroll$() {
         return fromEvent(this.element, 'scroll');
