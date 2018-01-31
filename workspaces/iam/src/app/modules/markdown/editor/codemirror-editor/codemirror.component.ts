@@ -13,6 +13,10 @@ import 'codemirror/addon/scroll/simplescrollbars';
 import 'codemirror/addon/display/fullscreen';
 import 'codemirror/mode/gfm/gfm';
 import { MarkdownEditorService } from '../services/markdown.editor.service';
+import { Scrollable } from 'core';
+import { Store } from '@ngrx/store';
+import * as markdown from '../../reducers';
+import * as fromEdit from '../../actions/edit';
 /**
  * Usage : <codemirror [(ngModel)]="markdown" [config]="{...}"></codemirror>
  */
@@ -29,7 +33,9 @@ import { MarkdownEditorService } from '../services/markdown.editor.service';
     ],
     template: `
     <ms-codemirror-toolbar></ms-codemirror-toolbar>
+    <div #scroll>
     <textarea #host></textarea>
+    </div>
     `,
 })
 export class CodemirrorComponent {
@@ -49,7 +55,7 @@ export class CodemirrorComponent {
     /**
      * Constructor
      */
-    constructor(private service: MarkdownEditorService) { }
+    constructor(private service: MarkdownEditorService, private store: Store<markdown.State>) { }
 
     get value() {
         return this._value;
@@ -66,14 +72,22 @@ export class CodemirrorComponent {
      * On component destroy
      */
     ngOnDestroy() { }
-
+    @ViewChild('scroll')
+    scroll;
     /**
      * On component view init
      */
     ngAfterViewInit() {
+
+
         this.config = this.config || {};
         this.codemirrorInit(this.config);
         this.service.editorLoaded$.next(this.instance);
+        new Scrollable(this.scroll.nativeElement.children[1].lastChild).
+            isScrollDown$.subscribe((e) => {
+                this.store.dispatch(new fromEdit.ScrollDown(e));
+                // console.log(e)
+            });
     }
 
     /**

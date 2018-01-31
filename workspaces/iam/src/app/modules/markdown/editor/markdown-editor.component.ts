@@ -4,15 +4,20 @@ import { setTimeout } from 'timers';
 import { ViewChild } from '@angular/core';
 import { MonacoEditorComponent } from './monaco-editor/monaco-editor.component';
 import { EventEmitter } from '@angular/core';
-
+import { Scrollable } from 'core';
+import { Store } from '@ngrx/store';
+import * as markdown from '../reducers';
+import * as fromEdit from '../actions/edit';
 @Component({
     selector: 'ms-markdown-editor',
     template: `
     <editor-toolbar></editor-toolbar>
+
     <codemirror [(ngModel)]="markdown" [config]="options"></codemirror>
+       ,
     <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>
-               `,
-    styles: ['']
+    `,
+    styles: []
 })
 export class MarkdownEditorComponent implements OnInit {
     @Input()
@@ -26,6 +31,8 @@ export class MarkdownEditorComponent implements OnInit {
     get markdown(): string {
         return this._markdown;
     }
+
+
 
     set markdown(value) {
         this._markdown = value;
@@ -49,7 +56,7 @@ export class MarkdownEditorComponent implements OnInit {
     @ViewChild(MonacoEditorComponent)
     editor: MonacoEditorComponent;
 
-    constructor(private _service: MarkdownEditorService) {
+    constructor(private _service: MarkdownEditorService, private store: Store<markdown.State>) {
         _service.editorLoaded$.subscribe(() => {
             setTimeout(() => this.editorLoaded = true, 0);
         });

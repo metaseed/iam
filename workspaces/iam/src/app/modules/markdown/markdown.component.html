@@ -1,7 +1,7 @@
 <sk-three-bounce [isRunning]="!docLoaded"></sk-three-bounce>
 <div class="md-editor-container" [class.fullscreen]="isFullScreen">
   <div class="editor-container">
-    <div class="editor-panel" #editorDiv style="min-height: 200px;" *ngIf="isEditMode">
+    <div class="editor-panel" #editorDiv *ngIf="isEditMode">
       <ms-markdown-editor [(markdown)]="markdown" [editorLoaded]="editorLoaded"></ms-markdown-editor>
     </div>
     <div class="preview-panel" #viewerDiv *ngIf="!isEditMode || showPreviewPanel">

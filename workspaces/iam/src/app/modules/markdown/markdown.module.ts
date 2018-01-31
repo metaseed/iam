@@ -20,8 +20,8 @@ import { MarkdownEditorComponent } from './editor/markdown-editor.component';
     HttpModule,
     NgSpinKitModule,
     MarkdownRoutingModule,
-    MarkdownEditorModule,
     StoreModule.forFeature('markdown', fromReducers.reducers),
+    MarkdownEditorModule,
     MarkdownViewerModule.forChild(),
 
   ],

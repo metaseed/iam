@@ -1,11 +1,13 @@
 import { EditActions, EditActionTypes } from "../actions/edit";
 
 export interface State {
-    content: string;
+    save: string;
+    scrollDown: boolean;
 }
 
 export const initialState: State = {
-    content: ''
+    save: '',
+    scrollDown: false
 }
 
 export function reducer(state = initialState, action: EditActions) {
@@ -13,7 +15,13 @@ export function reducer(state = initialState, action: EditActions) {
         case EditActionTypes.Save: {
             return {
                 ...state,
-                content: action.payload
+                save: action.payload
+            }
+        }
+        case EditActionTypes.ScrollDown: {
+            return {
+                ...state,
+                scrollDown: action.payload
             }
         }
         default:
@@ -21,4 +29,5 @@ export function reducer(state = initialState, action: EditActions) {
     }
 }
 
-export const getSave = (state: State) => state.content;
+export const getSave = (state: State) => state.save;
+export const getScrollDown = (state: State) => state.scrollDown;

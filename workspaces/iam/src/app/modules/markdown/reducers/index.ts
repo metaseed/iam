@@ -26,7 +26,9 @@ export const selectDocumentState = createSelector(selectMarkdownState, state => 
 export const selectDocumentModeState = createSelector(selectDocumentState, fromDocument.getMode);
 
 export const selectEditState = createSelector(selectMarkdownState, state => state.edit);
+export const selectEditScrollDownState = createSelector(selectEditState, fromEdit.getScrollDown);
 export const selectEditSaveState = createSelector(selectEditState, fromEdit.getSave);
+
 
 export const selectViewState = createSelector(selectMarkdownState, state => state.view);
 export const selectViewScrollDownState = createSelector(selectViewState, fromView.getScrollDown);
