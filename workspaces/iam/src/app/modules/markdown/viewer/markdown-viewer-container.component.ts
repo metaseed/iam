@@ -20,6 +20,7 @@ import { Store } from "@ngrx/store";
             width:100vw;
             height:100vh;
             overflow-y:auto;
+            overflow-x:auto;
         }
     `]
 })
