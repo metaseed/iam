@@ -6,7 +6,7 @@
     <div class="editor-panel" #editorDiv style="min-height: 200px;" *ngIf="isEditMode">
       <ms-markdown-editor [(markdown)]="markdown" [editorLoaded]="editorLoaded"></ms-markdown-editor>
     </div>
-    <div class="preview-panel" #viewerDiv>
+    <div class="preview-panel" #viewerDiv *ngIf="!isEditMode || showPreviewPanel">
       <!-- <markdown-viewer [model]="markdown"></markdown-viewer> *ngIf="!isEditMode || showPreviewPanel"-->
       <markdown-viewer-container [markdown]="markdown"></markdown-viewer-container>
     </div>

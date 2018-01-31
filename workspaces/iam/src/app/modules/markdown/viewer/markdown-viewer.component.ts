@@ -31,3 +31,6 @@ export class MarkdownViewerComponent {
   }
 
 }
+
+// https://jsfiddle.net/axtn/a91fsar3/
+// scroll sync
