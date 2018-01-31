@@ -6,8 +6,9 @@
     <div class="editor-panel" #editorDiv style="min-height: 200px;" *ngIf="isEditMode">
       <ms-markdown-editor [(markdown)]="markdown" [editorLoaded]="editorLoaded"></ms-markdown-editor>
     </div>
-    <div class="preview-panel" #viewerDiv *ngIf="!isEditMode || showPreviewPanel">
-      <markdown-viewer [model]="markdown"></markdown-viewer>
+    <div class="preview-panel" #viewerDiv>
+      <!-- <markdown-viewer [model]="markdown"></markdown-viewer> *ngIf="!isEditMode || showPreviewPanel"-->
+      <markdown-viewer-container [markdown]="markdown"></markdown-viewer-container>
     </div>
     <!-- <button position="bottom-right" style="bottom:4rem" mdc-fab (click)="editModeChange()" [mini]="false">
       <mdc-icon-toggle style="color:white;" iconClass="fa" cssClassOn="fa-file-text" cssClassOff="fa-pencil" labelOn="show preview mode"

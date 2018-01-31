@@ -8,11 +8,13 @@ import { MsCommonModule } from 'common';
 import { ReaderToolbarComponent } from './reader-toolbar/reader-toolbar.component';
 import { MaterialModule } from 'material';
 import { RouterModule } from '@angular/router';
+import { MarkdownViewerContainerComponent } from 'app/modules/markdown/viewer/markdown-viewer-container.component';
 
 @NgModule({
     declarations: [
         MarkdownViewerComponent,
-        ReaderToolbarComponent
+        ReaderToolbarComponent,
+        MarkdownViewerContainerComponent
     ],
     imports: [CommonModule,
         MsCommonModule,
@@ -21,7 +23,8 @@ import { RouterModule } from '@angular/router';
     ],
     exports: [
         MarkdownViewerComponent,
-        ReaderToolbarComponent
+        ReaderToolbarComponent,
+        MarkdownViewerContainerComponent
     ],
     providers: [
     ],

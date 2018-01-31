@@ -45,6 +45,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
   gtsmBreakPoint = false;
+
   constructor(private _docService: DocService,
     private _el: ElementRef,
     private _editorService: MarkdownEditorService,
@@ -102,15 +103,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     // these are relative to the viewport, i.e. the window
     this.fixEditButton = viewportOffset.top <= 10;
   }
-  isScrollDown = false;
   ngAfterViewInit() {
-    new Scrollable(this.viewerDiv.nativeElement).
-      isScrollDown$.subscribe((e) => {
-        this.isScrollDown = e;
-        this.store.dispatch(new fromView.ScrollDown(e));
-        // console.log(e)
-      });
-
     this._docService.onShowDoc((doc) => {
       if (doc === null) {
         this._text = '';

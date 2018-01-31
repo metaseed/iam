@@ -11,7 +11,7 @@ import { MarkdownRoutingModule } from './markdown-routing.module';
 import { NgSpinKitModule } from 'ng-spin-kit';
 import { StoreModule } from '@ngrx/store';
 import * as fromReducers from './reducers';
-import { MarkdownEditorComponent } from 'app/modules/markdown/editor/markdown-editor.component';
+import { MarkdownEditorComponent } from './editor/markdown-editor.component';
 @NgModule({
   imports: [
     CommonModule,
