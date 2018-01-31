@@ -8,6 +8,7 @@ import { EventEmitter } from '@angular/core';
 @Component({
     selector: 'ms-markdown-editor',
     template: `
+    <editor-toolbar></editor-toolbar>
     <codemirror [(ngModel)]="markdown" [config]="options"></codemirror>
     <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>
                `,

@@ -8,6 +8,7 @@ import { Store } from "@ngrx/store";
 @Component({
     selector: 'markdown-viewer-container',
     template: `
+    <ms-reader-toolbar *ngIf="!hideToolbar"></ms-reader-toolbar>
     <ms-reading-position-indicator [element]="viewContainerDiv"></ms-reading-position-indicator>
     <div style="position:absolute;width:100%">
         <div class="viewer-container" #viewContainerDiv>
@@ -28,7 +29,8 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
 
     @Input()
     markdown: string;
-
+    @Input()
+    hideToolbar: false;
     @ViewChild('viewContainerDiv')
     viewerContainerDiv;
 

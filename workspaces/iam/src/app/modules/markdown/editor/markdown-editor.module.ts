@@ -10,13 +10,15 @@ import { FormsModule } from '@angular/forms';
 import { NgSpinKitModule } from 'ng-spin-kit';
 import { MaterialModule } from 'app/modules/material/material.module';
 import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
+import { CodemirrorToolbarComponent } from './codemirror-editor/codemirror-toolbar/codemirror-toolbar.component';
 
 @NgModule({
     declarations: [
         EditorToolbarComponent,
         CodemirrorComponent,
         MonacoEditorComponent,
-        MarkdownEditorComponent
+        MarkdownEditorComponent,
+        CodemirrorToolbarComponent
     ],
     imports: [
         CommonModule,

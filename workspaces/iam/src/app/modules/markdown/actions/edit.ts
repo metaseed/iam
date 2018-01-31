@@ -7,6 +7,7 @@ export enum EditActionTypes {
 
 export class Save implements Action {
     readonly type = EditActionTypes.Save;
+    constructor(public payload: string) { }
 }
 
 export type EditActions =

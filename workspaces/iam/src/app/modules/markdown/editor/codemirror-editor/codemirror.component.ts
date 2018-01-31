@@ -27,7 +27,10 @@ import { MarkdownEditorService } from '../services/markdown.editor.service';
             multi: true
         }
     ],
-    template: `<textarea #host></textarea>`,
+    template: `
+    <ms-codemirror-toolbar></ms-codemirror-toolbar>
+    <textarea #host></textarea>
+    `,
 })
 export class CodemirrorComponent {
     //    var map = {"Alt-Space": function(cm){...}}

@@ -1,11 +1,11 @@
 import { EditActions, EditActionTypes } from "../actions/edit";
 
 export interface State {
-    save: boolean;
+    content: string;
 }
 
 export const initialState: State = {
-    save: false
+    content: ''
 }
 
 export function reducer(state = initialState, action: EditActions) {
@@ -13,7 +13,7 @@ export function reducer(state = initialState, action: EditActions) {
         case EditActionTypes.Save: {
             return {
                 ...state,
-                save: true
+                content: action.payload
             }
         }
         default:
@@ -21,4 +21,4 @@ export function reducer(state = initialState, action: EditActions) {
     }
 }
 
-export const getSave = (state: State) => state.save;
+export const getSave = (state: State) => state.content;
