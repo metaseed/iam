@@ -19,8 +19,8 @@ import { Observable } from 'rxjs/Observable';
 @Component({
   selector: 'ms-reader-toolbar',
   templateUrl: './reader-toolbar.component.html',
-  styleUrls: ['./reader-toolbar.component.scss'],
-  animations: [
+  styleUrls: ['./reader-toolbar.component.scss']
+  , animations: [
     trigger('show', [
       state('true', style({ height: '*' })),
       transition('* => void', [

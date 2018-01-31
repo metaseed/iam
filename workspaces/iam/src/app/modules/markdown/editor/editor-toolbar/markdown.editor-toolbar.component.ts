@@ -1,5 +1,5 @@
 
-import { Component, OnInit, AfterViewInit, Input, Renderer } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, Renderer, ViewChild } from '@angular/core';
 import { MarkdownComponent } from '../../markdown.component';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -41,7 +41,8 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
       this.editor = editor;
     });
   }
-
+  @ViewChild('toolbar')
+  toolbar;
   save = () => {
     const content = this.editor.getValue();
     this.store.dispatch(new edit.Save(content));
@@ -58,8 +59,12 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
 
   }
 
+
   ngAfterViewInit() {
 
+
+    // setTimeout(() =>
+    //   this._docRef.nativeDocument.body.style['margin-top'] = '64px', 0);
   }
   toViewMode = (event) => {
     this.store.dispatch(new doc.ViewMode());
