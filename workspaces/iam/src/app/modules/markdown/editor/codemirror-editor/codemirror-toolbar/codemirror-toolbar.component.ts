@@ -13,19 +13,22 @@ import * as edit from '../../../actions/edit';
 import { OnDestroy } from '@angular/core';
 import { ObservableMedia } from '@angular/flex-layout';
 import * as fromMarkdown from '../../../reducers';
+import * as CodeMirror from 'codemirror';
 @Component({
   selector: 'ms-codemirror-toolbar',
   templateUrl: './codemirror-toolbar.component.html',
   styleUrls: ['./codemirror-toolbar.component.scss']
 })
+
 export class CodemirrorToolbarComponent implements OnInit {
   private static COMMANDS_CONFIG;
-  editor: monaco.editor.IStandaloneCodeEditor;
   editorLoadedSubscription: Subscription;
   mediaChangeSubscription: Subscription;
   _subscription: Subscription;
   _options: any;
   gtsmBreakpoint = false;
+  editor: CodeMirror.Editor;
+  doc: CodeMirror.Doc;
   constructor(
     private media: ObservableMedia,
     public markdown: MarkdownComponent,
@@ -46,40 +49,43 @@ export class CodemirrorToolbarComponent implements OnInit {
     });
     this._subscription = _commandService.commands.subscribe(c => this.handleCommand(c));
     let me = this;
-    this.editorLoadedSubscription = this._editorService.editorLoaded$.subscribe((editor: monaco.editor.IStandaloneCodeEditor) => {
+    this.editorLoadedSubscription = this._editorService.editorLoaded$.subscribe((editor: CodeMirror.Editor) => {
       if (!CodemirrorToolbarComponent.COMMANDS_CONFIG) {
-        // EditorToolbarComponent.COMMANDS_CONFIG = {
-        //   Bold: { command: 'Bold', func: (selectedText, defaultText) => `**${selectedText || defaultText}**`, startSize: 2, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_B)] },
-        //   Italic: { command: 'Italic', func: (selectedText, defaultText) => `*${selectedText || defaultText}*`, startSize: 1, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_I)] },
-        //   Heading: { command: 'Heading', func: (selectedText, defaultText) => `# ${selectedText || defaultText}`, startSize: 2, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_H)] },
-        //   Reference: { command: 'Reference', func: (selectedText, defaultText) => `> ${selectedText || defaultText}`, startSize: 2, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_R)] },
-        //   Link: { command: 'Link', func: (selectedText, defaultText) => `[${selectedText || defaultText}](http://)`, startSize: 1, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_L)] },
-        //   Image: { command: 'Image', func: (selectedText, defaultText) => `![${selectedText || defaultText}](http://)`, startSize: 2, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_M)] },
-        //   Ul: { command: 'Ul', func: (selectedText, defaultText) => `- ${selectedText || defaultText}`, startSize: 2, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_U)] },
-        //   Ol: { command: 'Ol', func: (selectedText, defaultText) => `1 ${selectedText || defaultText}`, startSize: 2, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_O)] },
-        //   Code: { command: 'Code', func: (selectedText, defaultText) => '```lang\r\n' + (selectedText || defaultText) + '\r\n```', startSize: 3, hotKey: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M, monaco.KeyCode.KEY_C)] },
-        //   Save: { command: 'Save', func: me.save, startSize: 0, hotKey: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S] },
-        //};
+        CodemirrorToolbarComponent.COMMANDS_CONFIG = {
+          Bold: { command: 'Bold', func: (selectedText, defaultText) => `**${selectedText || defaultText}**`, startSize: 2, hotKey: 'Ctrl-M B' },
+          Italic: { command: 'Italic', func: (selectedText, defaultText) => `*${selectedText || defaultText}*`, startSize: 1, hotKey: 'Ctrl-M I' },
+          Heading: { command: 'Heading', func: (selectedText, defaultText) => `# ${selectedText || defaultText}`, startSize: 2, hotKey: 'Ctrl-M H' },
+          Reference: { command: 'Reference', func: (selectedText, defaultText) => `> ${selectedText || defaultText}`, startSize: 2, hotKey: 'Ctrl-M R' },
+          Link: { command: 'Link', func: (selectedText, defaultText) => `[${selectedText || defaultText}](http://)`, startSize: 1, hotKey: 'Ctrl-M L' },
+          Image: { command: 'Image', func: (selectedText, defaultText) => `![${selectedText || defaultText}](http://)`, startSize: 2, hotKey: 'Ctrl-M M' },
+          Ul: { command: 'Ul', func: (selectedText, defaultText) => `- ${selectedText || defaultText}`, startSize: 2, hotKey: 'Ctrl-M U' },
+          Ol: { command: 'Ol', func: (selectedText, defaultText) => `1 ${selectedText || defaultText}`, startSize: 2, hotKey: 'Ctrl-M O' },
+          Code: { command: 'Code', func: (selectedText, defaultText) => '```lang\r\n' + (selectedText || defaultText) + '\r\n```', startSize: 3, hotKey: 'Ctrl-M C' },
+
+        };
       }
       me.editor = editor;
+      me.doc = <any>editor;
       const configs = CodemirrorToolbarComponent.COMMANDS_CONFIG;
+      let option = {};
       for (let key in configs) {
         if (configs.hasOwnProperty(key)) {
           var config = configs[key];
-
-          me.editor.addAction({
-            id: key,
-            label: key,
-            //contextMenuGroupId: 'navigation',
-            keybindings: config.hotKey,
-            run: function (editor) {
-              me.insertContent(key);
-            }
-          });
+          option[config.hotKey] = function (editor) {
+            me.insertContent(key);
+          };
         }
       }
-
+      me.editor.setOption("extraKeys", (<any>CodeMirror).normalizeKeyMap(option));
     });
+  }
+
+  command(command: string) {
+    if (command === 'Undo') {
+      this.editor.execCommand('undo');
+    } else if (command === 'Redo') {
+      this.editor.execCommand('redo');
+    }
   }
 
   @Input()
@@ -104,18 +110,21 @@ export class CodemirrorToolbarComponent implements OnInit {
     if (!this.editor) {
       return;
     }
-    let selection = this.editor.getSelection();
+    let selectionText = this.doc.getSelection();
 
     const config = CodemirrorToolbarComponent.COMMANDS_CONFIG[type];
     let startSize = config.startSize;
-    let selectionText: string = this.editor.getModel().getValueInRange(selection);
+    // let selectionText: string = this.editor.getModel().getValueInRange(selection);
     selectionText = config.func(selectionText, config.command);
-    this.editor.executeEdits('', [{ identifier: null, range: selection, text: selectionText, forceMoveMarkers: true }]);
-    if (selection.startColumn == selection.endColumn && selection.startLineNumber == selection.endLineNumber) {
-      selection = new monaco.Selection(selection.startLineNumber, selection.startColumn + startSize, selection.endLineNumber, selection.startColumn + startSize + config.command.length);
-      this.editor.setSelection(selection);
-    }
-    this.editor.layout();
+    this.doc.replaceSelection(selectionText, 'around');
+    // let p = this.doc.getCursor();
+    // this.doc.extendSelection(<any>{ line: p.line, ch: p.ch + 2 })
+    // this.editor.executeEdits('', [{ identifier: null, range: selection, text: selectionText, forceMoveMarkers: true }]);
+    // if (selection.startColumn == selection.endColumn && selection.startLineNumber == selection.endLineNumber) {
+    //   selection = new monaco.Selection(selection.startLineNumber, selection.startColumn + startSize, selection.endLineNumber, selection.startColumn + startSize + config.command.length);
+    //   this.editor.setSelection(selection);
+    // }
+    // this.editor.layout();
   }
   ngOnInit() {
   }
