@@ -86,6 +86,9 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     this._renderer.setElementStyle(document.body, 'overflowY', this.isFullScreen ? 'hidden' : 'auto');
     this.editorResize();
   }
+  more(event: Event) {
+
+  }
   editorResize(timeOut: number = 100) {
     setTimeout(() => {
       this._editorService.refresh();

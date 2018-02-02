@@ -14,7 +14,6 @@ import * as fromEdit from '../actions/edit';
     <editor-toolbar></editor-toolbar>
 
     <codemirror [(ngModel)]="markdown" [config]="options"></codemirror>
-       ,
     <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>
     `,
     styles: []

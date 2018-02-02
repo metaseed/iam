@@ -10,7 +10,7 @@ import { Store } from "@ngrx/store";
     template: `
     <ms-reader-toolbar *ngIf="!hideToolbar"></ms-reader-toolbar>
     <ms-reading-position-indicator [element]="viewContainerDiv"></ms-reading-position-indicator>
-    <div style="position:absolute;width:100%">
+    <div style="position:relative;height:100%;">
         <div class="viewer-container" #viewContainerDiv>
             <markdown-viewer [model]="markdown"></markdown-viewer>
         </div>
@@ -18,10 +18,9 @@ import { Store } from "@ngrx/store";
     `,
     styles: [`
         .viewer-container {
-            width:100%;
-            height:100vh;
             overflow-y:auto;
             overflow-x:auto;
+            height:100%;
         }
     `]
 })

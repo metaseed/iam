@@ -4,6 +4,31 @@
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+.md-edit-view-panel {
+  display: flex;
+  height: 100%;
+  align-items: stretch;
+}
+
+.md-edit-view-panel .md-edit-panel {
+  flex-basis: 50%;
+  flex-grow: 1;
+}
+
+.md-edit-view-panel .md-view-panel {
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  flex-basis: 50%;
+  flex-grow: 1;
+}
+
+.md-editor-container .md-footer {
+  padding: 2px;
+  background-color: #f0f0f0;
+  font-size: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
 .md-editor-container.fullscreen {
   margin: 0;
   position: fixed;
@@ -16,20 +41,12 @@
 }
 
 //http://jsfiddle.net/5n5MA/2/
-.md-editor-container.fullscreen .editor-panel {
+.md-editor-container.fullscreen .md-editor-panel {
   height: calc(100vh - 40px) !important;
 }
 
-.md-editor-container.fullscreen .preview-panel {
+.md-editor-container.fullscreen .md-view-panel {
   height: calc(100vh - 40px) !important;
-}
-
-.md-editor-container .ace-editor {
-  height: 100%;
-}
-
-.md-editor-container .tool-bar .btn-group {
-  padding: 6px;
 }
 
 .md-editor-container .tool-bar .btn-group>.btn:first-child::before {
@@ -62,17 +79,4 @@
   flex: 1 1 0;
   width: 0;
   min-height: 200px;
-}
-
-.md-editor-container .preview-panel {
-  border-left: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: white;
-  overflow-y: auto;
-}
-
-.md-editor-container .md-footer {
-  padding: 2px;
-  background-color: #f0f0f0;
-  font-size: 12px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
 }

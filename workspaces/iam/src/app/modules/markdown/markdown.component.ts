@@ -97,12 +97,12 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     this.changeDetecorRef.detectChanges();
   }
 
-  @HostListener('window:scroll', ['$event'])
-  onScroll(event) {
-    var viewportOffset = this._el.nativeElement.getBoundingClientRect();
-    // these are relative to the viewport, i.e. the window
-    this.fixEditButton = viewportOffset.top <= 10;
-  }
+  // @HostListener('window:scroll', ['$event'])
+  // onScroll(event) {
+  //   var viewportOffset = this._el.nativeElement.getBoundingClientRect();
+  //   // these are relative to the viewport, i.e. the window
+  //   this.fixEditButton = viewportOffset.top <= 10;
+  // }
   ngAfterViewInit() {
     this._docService.onShowDoc((doc) => {
       if (doc === null) {
@@ -118,13 +118,13 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     });
     this._editorService.contentChanged$.subscribe(([content, editor]) => {
       let me = this;
-      function refresh() {//should be after viewer rendered its contents
-        if (!me.editorDiv || !me.viewerDiv || !me.editor) { setTimeout(() => refresh(), 0); return; };
-        me.editorDiv.nativeElement.style.height = me.viewerDiv.nativeElement.clientHeight + 'px';
-        me.editor.editor.editor.layout();
-        me.editor.editor.editor.focus();
-      }
-      refresh();
+      // function refresh() {//should be after viewer rendered its contents
+      //   if (!me.editorDiv || !me.viewerDiv || !me.editor) { setTimeout(() => refresh(), 0); return; };
+      //   me.editorDiv.nativeElement.style.height = me.viewerDiv.nativeElement.clientHeight + 'px';
+      //   me.editor.editor.editor.layout();
+      //   me.editor.editor.editor.focus();
+      // }
+      // refresh();
     });
     if (this.router.url === '/doc/new') {
       //this.editModeChange(true, false);
