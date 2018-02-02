@@ -15,6 +15,13 @@
   flex-grow: 1;
 }
 
+.md-splitter {
+  width: 5px;
+  background-color: #eeeeee;
+  cursor: col-resize;
+  flex: 0 0 auto;
+}
+
 .md-edit-view-panel .md-view-panel {
   border-left: 1px solid rgba(0, 0, 0, 0.1);
   overflow-y: auto;

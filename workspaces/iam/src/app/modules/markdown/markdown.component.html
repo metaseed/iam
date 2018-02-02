@@ -4,6 +4,7 @@
     <div class="md-edit-panel" #editorDiv *ngIf="isEditMode">
       <ms-markdown-editor [(markdown)]="markdown" [editorLoaded]="editorLoaded"></ms-markdown-editor>
     </div>
+    <div class="md-splitter" *ngIf="isEditMode && showPreviewPanel"></div>
     <div class="md-view-panel" #viewerDiv *ngIf="!isEditMode || showPreviewPanel">
       <markdown-viewer-container [markdown]="markdown" [hideToolbar]="isEditMode&&showPreviewPanel"></markdown-viewer-container>
     </div>
