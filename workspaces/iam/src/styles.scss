@@ -104,3 +104,7 @@
 .CodeMirror {
   height: 100vh;
 }
+
+.CodeMirror {
+  height: calc(100vh - 38px);
+}
