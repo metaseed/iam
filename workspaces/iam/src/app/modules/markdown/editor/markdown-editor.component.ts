@@ -1,11 +1,9 @@
 import { Component, OnInit, Input, Output, ViewChild } from '@angular/core';
 import { MarkdownEditorService } from './index';
 import { setTimeout } from 'timers';
-import { ViewChild } from '@angular/core';
 import { MonacoEditorComponent } from './monaco-editor/monaco-editor.component';
 import { EventEmitter } from '@angular/core';
 import { Scrollable } from 'core';
-import { Store } from '@ngrx/store';
 import * as markdown from '../reducers';
 import * as fromEdit from '../actions/edit';
 import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
