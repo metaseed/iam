@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, Renderer } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, Renderer, ViewChild } from '@angular/core';
 import { MarkdownComponent } from '../../../markdown.component';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -14,6 +14,7 @@ import { OnDestroy } from '@angular/core';
 import { ObservableMedia } from '@angular/flex-layout';
 import * as fromMarkdown from '../../../reducers';
 import * as CodeMirror from 'codemirror';
+import { HtmlParser } from '@angular/compiler';
 @Component({
   selector: 'ms-codemirror-toolbar',
   templateUrl: './codemirror-toolbar.component.html',
@@ -29,6 +30,7 @@ export class CodemirrorToolbarComponent implements OnInit {
   gtsmBreakpoint = false;
   editor: CodeMirror.Editor;
   doc: CodeMirror.Doc;
+
   constructor(
     private media: ObservableMedia,
     public markdown: MarkdownComponent,
@@ -75,6 +77,12 @@ export class CodemirrorToolbarComponent implements OnInit {
             me.insertContent(key);
           };
         }
+      }
+
+      option['Ctrl-M Q'] = function (editor) {
+        //(<HTMLElement>(me.div.nativeElement)).click();
+        //document.activeElement.blur();
+        editor.display.input.textarea.blur();
       }
       me.editor.setOption("extraKeys", (<any>CodeMirror).normalizeKeyMap(option));
     });
