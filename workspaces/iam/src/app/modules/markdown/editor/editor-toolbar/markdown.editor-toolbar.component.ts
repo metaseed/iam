@@ -7,6 +7,8 @@ import { Subscription } from 'rxjs/Subscription';
 import { DocService } from 'docs';
 import { MarkdownEditorService } from '../../editor/index';
 import { CommandService, Command, DocumentRef } from '../../../core/index';
+import * as fromMarkdown from './../../reducers';
+import { DocumentMode } from './../../reducers/document';
 import { Store, select } from '@ngrx/store';
 import * as doc from '../../actions/document';
 import * as edit from '../../actions/edit';
@@ -22,11 +24,13 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   isFullScreen: boolean;
   editor: any;
 
+  docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
   documentMode$ = this.store.pipe(select(reducers.selectDocumentModeState));
   isScrollDown: boolean;
+  isFixed = false;
   isScrollDown$;
   isScrollDown_edit$;
-
+  isEditMode = false;
   ngOnInit() {
     this.isScrollDown$ = this.store.pipe(select(reducers.selectEditScrollDownState));
     this.isScrollDown$.subscribe(value => {
@@ -36,6 +40,19 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     this.isScrollDown_edit$.subscribe(value => {
       this.isScrollDown = value;
     })
+    this.docMode$.subscribe(mode => {
+      switch (mode) {
+        case DocumentMode.Edit: {
+          this.isEditMode = true;
+          break;
+        }
+        case DocumentMode.View: {
+          this.isEditMode = false;
+          break;
+
+        }
+      }
+    });
   }
   constructor(
     private media: ObservableMedia,

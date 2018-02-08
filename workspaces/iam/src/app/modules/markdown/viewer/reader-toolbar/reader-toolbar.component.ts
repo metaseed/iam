@@ -41,6 +41,7 @@ export class ReaderToolbarComponent {
     this.isScrollDown$ = this.store.pipe(select(reducers.selectViewScrollDownState));
     this.isScrollDown$.subscribe(value => {
       this.isScrollDown = value;
+
     })
 
   }

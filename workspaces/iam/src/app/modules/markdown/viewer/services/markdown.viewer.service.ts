@@ -1,6 +1,29 @@
 import { Injectable, Optional } from '@angular/core';
 // import highlightjs from 'highlight.js/lib/highlight';
 import * as prismjs from 'prismjs';
+// import 'prismjs/components/prism-core';
+import 'prismjs/components/prism-clike';
+import 'prismjs/components/prism-c';
+
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-cpp';
+import 'prismjs/components/prism-csharp';
+import 'prismjs/components/prism-css';
+import 'prismjs/components/prism-docker';
+import 'prismjs/components/prism-git';
+import 'prismjs/components/prism-graphql';
+import 'prismjs/components/prism-java';
+import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-makefile';
+import 'prismjs/components/prism-markdown';
+import 'prismjs/components/prism-php';
+import 'prismjs/components/prism-powershell';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-sass';
+import 'prismjs/components/prism-sql';
+import 'prismjs/components/prism-vim';
+import 'prismjs/components/prism-yaml';
 import * as MarkdownIt from 'markdown-it';
 import * as markdownVideoPlugin from 'markdown-it-video';
 import * as tasklists from 'markdown-it-task-lists';
@@ -91,7 +114,7 @@ export class MarkdownViewerService {
         return `<pre class="language-${lang}"><code> ${prismjs.highlight(str, language)} </code></pre>`;
       } catch (__) { }
     }
-    return '<pre class="highlight"><code>' + this.markdown.utils.escapeHtml(str) + '</code></pre>';
+    return `<pre class="highlight"><code>${this.markdown.utils.escapeHtml(str)} </code></pre>`;
   }
   // private DEFAULT_HIGHLIGHT_FUNCTION = (str, lang) => {
   //   if (lang && highlightjs.getLanguage(lang)) {

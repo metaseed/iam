@@ -4,12 +4,15 @@ import { ViewChild } from "@angular/core";
 import * as markdown from '../reducers';
 import * as fromView from '../actions/view';
 import { Store } from "@ngrx/store";
+import { DocService } from "docs";
 
 @Component({
     selector: 'markdown-viewer-container',
     template: `
     <ms-reader-toolbar *ngIf="!hideToolbar"></ms-reader-toolbar>
-    <ms-reading-position-indicator [element]="viewContainerDiv"></ms-reading-position-indicator>
+    <ms-reading-position-indicator *ngIf="isScrollDown" [element]="viewContainerDiv"></ms-reading-position-indicator>
+    <sk-three-bounce [isRunning]="!docLoaded"></sk-three-bounce>
+    
     <div style="position:relative;height:100%;">
         <div class="viewer-container" #viewContainerDiv>
             <markdown-viewer [model]="markdown"></markdown-viewer>
@@ -32,17 +35,22 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
     hideToolbar: false;
     @ViewChild('viewContainerDiv')
     viewerContainerDiv;
+    docLoaded = false;
 
-    constructor(private store: Store<markdown.State>) {
+    constructor(private store: Store<markdown.State>, private _docService: DocService) {
 
 
     }
-
+    isScrollDown = false;
     ngAfterViewInit() {
-        new Scrollable(this.viewerContainerDiv.nativeElement).
-            isScrollDown$.subscribe((e) => {
-                this.store.dispatch(new fromView.ScrollDown(e));
-                // console.log(e)
-            });
+        this._docService.onShowDoc(doc => {
+            this.docLoaded = true;
+            new Scrollable(this.viewerContainerDiv.nativeElement).
+                isScrollDown$.subscribe((e) => {
+                    this.store.dispatch(new fromView.ScrollDown(e));
+                    // console.log(e)
+                    this.isScrollDown = e;
+                });
+        });
     }
 }

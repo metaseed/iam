@@ -40,8 +40,8 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   mediaChangeSubscription: Subscription;
   @ViewChild(MarkdownEditorComponent) editor: MarkdownEditorComponent;
   @ViewChild(MarkdownViewerComponent) viewer: MarkdownViewerComponent;
-  @ViewChild('viewerDiv') viewerDiv;
-  @ViewChild('editorDiv') editorDiv;
+  // @ViewChild('viewerDiv') viewerDiv;
+  // @ViewChild('editorDiv') editorDiv;
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
   gtsmBreakPoint = false;

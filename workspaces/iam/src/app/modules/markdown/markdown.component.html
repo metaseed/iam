@@ -1,6 +1,6 @@
-<sk-three-bounce [isRunning]="!docLoaded"></sk-three-bounce>
+<!-- <sk-three-bounce [isRunning]="!docLoaded"></sk-three-bounce> -->
 <div class="md-editor-container" [class.fullscreen]="isFullScreen">
-  <div class="md-edit-view-panel">
+  <!-- <div class="md-edit-view-panel">
     <div class="md-edit-panel" #editorDiv *ngIf="isEditMode">
       <ms-markdown-editor [(markdown)]="markdown" [editorLoaded]="editorLoaded"></ms-markdown-editor>
     </div>
@@ -8,13 +8,29 @@
     <div class="md-view-panel" #viewerDiv *ngIf="!isEditMode || showPreviewPanel">
       <markdown-viewer-container [markdown]="markdown" [hideToolbar]="isEditMode&&showPreviewPanel"></markdown-viewer-container>
     </div>
-    <!-- <button position="bottom-right" style="bottom:4rem" mdc-fab (click)="editModeChange()" [mini]="false">
-      <mdc-icon-toggle style="color:white;" iconClass="fa" cssClassOn="fa-file-text" cssClassOff="fa-pencil" labelOn="show preview mode"
-        labelOff="show edit mode">
+  </div> -->
+  <editor-toolbar></editor-toolbar>
+  <vertical-split-pane primary-component-minsize="350" secondary-component-minsize="200" [primary-component-toggled-off]="!isEditMode"
+    [secondary-component-toggled-off]="isEditMode && !showPreviewPanel " local-storage-key="iam-md-split-pane
+    " primary-component-initialratio="0.5 ">
+    <div class="split-pane-content-primary ">
+
+      <ms-markdown-editor [(markdown)]="markdown " [editorLoaded]="editorLoaded "></ms-markdown-editor>
+    </div>
+
+    <div class="split-pane-content-secondary " style="height: 100% ">
+      <markdown-viewer-container [markdown]="markdown " [hideToolbar]="isEditMode&&showPreviewPanel ">
+
+      </markdown-viewer-container>
+
+    </div>
+  </vertical-split-pane>
+  <div class="md-footer ">words:</div>
+</div>
+<!-- <button position="bottom-right " style="bottom:4rem " mdc-fab (click)="editModeChange() " [mini]="false ">
+      <mdc-icon-toggle style="color:white; " iconClass="fa " cssClassOn="fa-file-text " cssClassOff="fa-pencil
+    " labelOn="show preview mode "
+        labelOff="show edit mode ">
       </mdc-icon-toggle>
     </button> -->
-
-  </div>
-  <div class="md-footer">words:</div>
-</div>
 <!-- <button (click)="showDemo() ">demo</button> -->

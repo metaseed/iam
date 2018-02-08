@@ -12,6 +12,7 @@ import { NgSpinKitModule } from 'ng-spin-kit';
 import { StoreModule } from '@ngrx/store';
 import * as fromReducers from './reducers';
 import { MarkdownEditorComponent } from './editor/markdown-editor.component';
+import { SplitPaneModule } from 'app/modules/common/split-pane/ng2-split-pane';
 @NgModule({
   imports: [
     CommonModule,
@@ -22,8 +23,8 @@ import { MarkdownEditorComponent } from './editor/markdown-editor.component';
     MarkdownRoutingModule,
     StoreModule.forFeature('markdown', fromReducers.reducers),
     MarkdownEditorModule,
-    MarkdownViewerModule.forChild(),
-
+    SplitPaneModule,
+    MarkdownViewerModule.forChild()
   ],
   declarations: [
     MarkdownComponent

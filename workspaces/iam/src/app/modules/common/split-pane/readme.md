@@ -1,0 +1,1 @@
+https://github.com/wannabegeek/ng2-split-pane

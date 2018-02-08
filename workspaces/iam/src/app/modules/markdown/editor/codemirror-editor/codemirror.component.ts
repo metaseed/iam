@@ -12,6 +12,7 @@ import * as CodeMirror from 'codemirror';
 import 'codemirror/addon/scroll/simplescrollbars';
 import 'codemirror/addon/display/fullscreen';
 import 'codemirror/mode/gfm/gfm';
+import 'codemirror/mode/javascript/javascript'
 import { MarkdownEditorService } from '../services/markdown.editor.service';
 import { Scrollable } from 'core';
 import { Store } from '@ngrx/store';
@@ -108,6 +109,10 @@ export class CodemirrorComponent {
         this.instance.on('blur', () => {
             this.blur.emit();
         });
+    }
+
+    refresh() {
+        this.instance.refresh();
     }
 
     /**

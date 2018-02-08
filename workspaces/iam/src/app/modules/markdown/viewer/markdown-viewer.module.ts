@@ -9,6 +9,7 @@ import { ReaderToolbarComponent } from './reader-toolbar/reader-toolbar.componen
 import { MaterialModule } from 'material';
 import { RouterModule } from '@angular/router';
 import { MarkdownViewerContainerComponent } from 'app/modules/markdown/viewer/markdown-viewer-container.component';
+import { NgSpinKitModule } from 'ng-spin-kit';
 
 @NgModule({
     declarations: [
@@ -17,6 +18,7 @@ import { MarkdownViewerContainerComponent } from 'app/modules/markdown/viewer/ma
         MarkdownViewerContainerComponent
     ],
     imports: [CommonModule,
+        NgSpinKitModule,
         MsCommonModule,
         MaterialModule,
         RouterModule

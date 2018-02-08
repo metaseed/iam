@@ -4,15 +4,21 @@ import { ReadingPositionIndicatorComponent } from './reading-position-indicator/
 import { MaterialModule } from 'material';
 import { BottomNavigationComponent } from './bottom-navigation/bottom-navigation.component';
 import { RouterModule } from '@angular/router';
+import { SplitPaneModule } from './split-pane/ng2-split-pane';
 
 @NgModule({
     imports: [
         cm,
         MaterialModule,
-        RouterModule
+        RouterModule,
+        SplitPaneModule
     ],
     declarations: [ReadingPositionIndicatorComponent, BottomNavigationComponent],
-    exports: [ReadingPositionIndicatorComponent, BottomNavigationComponent]
+    exports: [
+        ReadingPositionIndicatorComponent,
+        BottomNavigationComponent,
+        SplitPaneModule
+    ]
 
 })
 export class MsCommonModule { }

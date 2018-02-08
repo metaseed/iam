@@ -108,3 +108,7 @@
 .CodeMirror {
   height: calc(100vh - 38px);
 }
+
+.cm-s-default .cm-formatting {
+  opacity: .48;
+}

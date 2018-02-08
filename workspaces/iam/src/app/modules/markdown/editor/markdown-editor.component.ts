@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output } from '@angular/core';
+import { Component, OnInit, Input, Output, ViewChild } from '@angular/core';
 import { MarkdownEditorService } from './index';
 import { setTimeout } from 'timers';
 import { ViewChild } from '@angular/core';
@@ -8,10 +8,14 @@ import { Scrollable } from 'core';
 import { Store } from '@ngrx/store';
 import * as markdown from '../reducers';
 import * as fromEdit from '../actions/edit';
+import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
+import * as fromMarkdown from './../reducers';
+import { DocumentMode } from './../reducers/document';
+import { Store, select } from '@ngrx/store';
 @Component({
     selector: 'ms-markdown-editor',
     template: `
-    <editor-toolbar></editor-toolbar>
+
 
     <codemirror [(ngModel)]="markdown" [config]="options"></codemirror>
     <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>
@@ -25,20 +29,26 @@ export class MarkdownEditorComponent implements OnInit {
     @Output()
     markdownChange = new EventEmitter();
 
+    @ViewChild(CodemirrorComponent)
+    codeMirrorComponent;
+
     _markdown: string;
     @Input()
     get markdown(): string {
         return this._markdown;
     }
 
-
+    docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
 
     set markdown(value) {
         this._markdown = value;
         this.markdownChange.emit(value);
     }
     options = {
-        mode: 'gfm',
+        mode: {
+            name: 'gfm',
+            highlightFormatting: true
+        },
         lineNumbers: true,
         scrollbarStyle: 'simple',
         lineWrapping: true,
@@ -57,10 +67,22 @@ export class MarkdownEditorComponent implements OnInit {
 
     constructor(private _service: MarkdownEditorService, private store: Store<markdown.State>) {
         _service.editorLoaded$.subscribe(() => {
+
             setTimeout(() => this.editorLoaded = true, 0);
         });
-    }
 
+        this.docMode$.subscribe(mode => {
+            switch (mode) {
+                case DocumentMode.Edit: {
+                    setTimeout(() => this.codeMirrorComponent.refresh(), 0);
+
+                    break;
+                }
+
+            }
+        }
+        )
+    }
 
     ngOnInit() { }
 }

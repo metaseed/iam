@@ -1,34 +1,29 @@
 .md-editor-container {
   margin-bottom: 15px;
   height: 100vh;
-  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.md-edit-view-panel {
-  display: flex;
-  height: 100%;
-  align-items: stretch;
-}
-
-.md-edit-view-panel .md-edit-panel {
-  flex-basis: 50%;
-  flex-grow: 1;
-}
-
-.md-splitter {
-  width: 5px;
-  background-color: #eeeeee;
-  cursor: col-resize;
-  flex: 0 0 auto;
-}
-
-.md-edit-view-panel .md-view-panel {
-  border-left: 1px solid rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-  flex-basis: 50%;
-  flex-grow: 1;
-}
-
+// .md-edit-view-panel {
+//   display: flex;
+//   height: 100%;
+//   align-items: stretch;
+// }
+// .md-edit-view-panel .md-edit-panel {
+//   flex-basis: 50%;
+//   flex-grow: 1;
+// }
+// .md-splitter {
+//   width: 5px;
+//   background-color: #eeeeee;
+//   cursor: col-resize;
+//   flex: 0 0 auto;
+// }
+// .md-edit-view-panel .md-view-panel {
+//   border-left: 1px solid rgba(0, 0, 0, 0.1);
+//   overflow-y: auto;
+//   flex-basis: 50%;
+//   flex-grow: 1;
+// }
 .md-editor-container .md-footer {
   padding: 2px;
   background-color: #f0f0f0;
