@@ -101,7 +101,7 @@ export class CodemirrorToolbarComponent implements OnInit {
     return this._options;
   }
 
-  _hideIcons: any = {};
+  _hideIcons: any = { Ol: true, Italic: true, Link: true };
   set options(value: any) {
     this._options = value || {
       hideIcons: []
@@ -123,8 +123,33 @@ export class CodemirrorToolbarComponent implements OnInit {
     const config = CodemirrorToolbarComponent.COMMANDS_CONFIG[type];
     let startSize = config.startSize;
     // let selectionText: string = this.editor.getModel().getValueInRange(selection);
-    selectionText = config.func(selectionText, config.command);
+    selectionText = config.func(selectionText, '');
     this.doc.replaceSelection(selectionText, 'around');
+    if (config.command === 'Ul') {
+      this._hideIcons.Ul = true;
+      this._hideIcons.Ol = false;
+    } else if (config.command === 'Ol') {
+      this._hideIcons.Ul = false;
+      this._hideIcons.Ol = true;
+    }
+
+    else if (config.command === 'Bold') {
+      this._hideIcons.Bold = true;
+      this._hideIcons.Italic = false;
+    }
+    else if (config.command === 'Italic') {
+      this._hideIcons.Bold = false;
+      this._hideIcons.Italic = true;
+    }
+    else if (config.command === 'Link') {
+      this._hideIcons.Link = true;
+      this._hideIcons.Image = false;
+    }
+    else if (config.command === 'Image') {
+      this._hideIcons.Link = false;
+      this._hideIcons.Image = true;
+    }
+
     // let p = this.doc.getCursor();
     // this.doc.extendSelection(<any>{ line: p.line, ch: p.ch + 2 })
     // this.editor.executeEdits('', [{ identifier: null, range: selection, text: selectionText, forceMoveMarkers: true }]);
