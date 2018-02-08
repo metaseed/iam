@@ -24,7 +24,8 @@ export class SplitPaneComponent implements OnChanges {
   @Output('on-begin-resizing') notifyBeginResizing: EventEmitter<any> = new EventEmitter<any>();
   @Output('on-ended-resizing') notifyEndedResizing: EventEmitter<any> = new EventEmitter<any>();
 
-  primarySizeRatioBeforeTogglingOff: number;
+  primarySizeBeforeTogglingOff: number;
+  secondarySizeBeforTogglingOff: number;
   dividerSize: number = 8.0;
   isResizing: boolean = false;
 
@@ -50,17 +51,20 @@ export class SplitPaneComponent implements OnChanges {
 
     if (changes['primaryToggledOff']) {
       if (changes['primaryToggledOff'].currentValue === true) {
-        this.primarySizeRatioBeforeTogglingOff = this.getPrimarySize() / this.getAvailableSize();
+        this.primarySizeBeforeTogglingOff = this.getPrimarySize();
+        this.secondarySizeBeforTogglingOff = this.getSecondarySize();
         this.applySizeChange(0);
       } else {
-        this.applySizeChange(this.primarySizeRatioBeforeTogglingOff);
+        this.applySizeChange(this.primarySizeBeforeTogglingOff);
       }
     } else if (changes['secondaryToggledOff']) {
       if (changes['secondaryToggledOff'].currentValue === true) {
-        this.primarySizeRatioBeforeTogglingOff = this.getPrimarySize() / this.getAvailableSize();
+        this.primarySizeBeforeTogglingOff = this.getPrimarySize();
+        this.secondarySizeBeforTogglingOff = this.getSecondarySize();
         this.applySizeChange(this.getTotalSize());
       } else {
-        this.applySizeChange(this.primarySizeRatioBeforeTogglingOff);
+        let size = this.getAvailableSize() * this.primarySizeBeforeTogglingOff / (this.primarySizeBeforeTogglingOff + this.secondarySizeBeforTogglingOff);
+        this.applySizeChange(size);
       }
     }
   }
@@ -85,10 +89,9 @@ export class SplitPaneComponent implements OnChanges {
     return this.getTotalSize() - this.dividerSize;
   }
 
-  applySizeChange(primarySizeRatio: number) {
-    primarySizeRatio = this.getAvailableSize() * primarySizeRatio;
+  applySizeChange(size: number) {
     let primarySize = this.checkValidBounds(
-      primarySizeRatio, this.primaryMinSize,
+      size, this.primaryMinSize,
       this.getAvailableSize() - this.secondaryMinSize);
 
     if (this.primaryToggledOff) {
@@ -98,7 +101,7 @@ export class SplitPaneComponent implements OnChanges {
     }
 
     this.dividerPosition(primarySize);
-    this.notifySizeDidChange.emit({ 'primary': primarySizeRatio, 'availableTotal': this.getAvailableSize() });
+    this.notifySizeDidChange.emit({ 'primary': this.getPrimarySize(), 'secondary': this.getSecondarySize() });
   }
 
   notifyWillChangeSize(resizing: boolean) {
