@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import * as CodeMirror from 'codemirror';
-import 'codemirror/addon/scroll/simplescrollbars';
+// import 'codemirror/addon/scroll/simplescrollbars';
 import 'codemirror/addon/display/fullscreen';
 import 'codemirror/mode/gfm/gfm';
 import 'codemirror/mode/javascript/javascript'

@@ -48,7 +48,7 @@ export class MarkdownEditorComponent implements OnInit {
             highlightFormatting: true
         },
         lineNumbers: true,
-        scrollbarStyle: 'simple',
+        // scrollbarStyle: 'simple',
         lineWrapping: true,
         extraKeys: {
             "F11": function (cm) {
