@@ -1,5 +1,5 @@
 <div [ngClass]="{'tool-bar':gtsmBreakpoint}" style="width: 100%;background:#eeeeee">
-  <div class="btn-group" style="margin-left: 2px;">
+  <div class="btn-group">
     <!-- pull-right  -->
 
     <button class="btn btn-default" type="button" title="Bold" (click)="insertContent('Bold')" *ngIf="!_hideIcons.Bold">
@@ -35,13 +35,17 @@
   </div>
 
   <div class="btn-group" style="float: right">
-    <button class="btn btn-default" type="button" title="Undo" (click)="command('Undo')" *ngIf="!_hideIcons.Undo">
-      <!-- <i class="fa fa-undo"></i> -->
+    <button class="btn btn-default" style="width: 40px" type="button" title="More" (click)="more()" *ngIf="!_hideIcons.More">
+      <!-- <i class="material-icons md-18">more_vert</i> -->
+      <i class="fa fa-ellipsis-v"></i>
+    </button>
+    <!-- <button class="btn btn-default" type="button" title="Undo" (click)="command('Undo')" *ngIf="!_hideIcons.Undo">
+
       <i class="material-icons md-18">undo</i>
     </button>
     <button class="btn btn-default" type="button" title="Redo" (click)="command('Redo')" *ngIf="!_hideIcons.Redo">
-      <!-- <i class="fa fa-redo"></i> -->
+
       <i class="material-icons md-18">redo</i>
-    </button>
+    </button> -->
   </div>
 </div>

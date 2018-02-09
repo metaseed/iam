@@ -31,6 +31,8 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   isScrollDown$;
   isScrollDown_edit$;
   isEditMode = false;
+  gtsmBreakpoint = false;
+  mediaChangeSubscription: Subscription;
   ngOnInit() {
     this.isScrollDown$ = this.store.pipe(select(reducers.selectEditScrollDownState));
     this.isScrollDown$.subscribe(value => {
@@ -67,6 +69,17 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     this._editorService.editorLoaded$.subscribe((editor: monaco.editor.IStandaloneCodeEditor) => {
       this.editor = editor;
     });
+    this.mediaChangeSubscription = media.subscribe(change => {
+      if (!['xs', 'sm'].includes(change.mqAlias)) {
+        this.gtsmBreakpoint = false;
+      } else {
+        this.gtsmBreakpoint = true;
+      }
+    });
+  }
+
+  ngDestroy() {
+    this.mediaChangeSubscription.unsubscribe();
   }
   @ViewChild('toolbar')
   toolbar;
@@ -76,6 +89,14 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     this._docService.save(content);
   }
 
+  undo = () => {
+    if (!this.editor) return;
+    this.editor.undo();
+  }
+  redo = () => {
+    if (!this.editor) return;
+    this.editor.redo();
+  }
 
   togglePreview() {
     this.markdown.showPreviewPanel = !this.markdown.showPreviewPanel;

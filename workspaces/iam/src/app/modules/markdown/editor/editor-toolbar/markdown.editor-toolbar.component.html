@@ -8,9 +8,11 @@
       <mdc-toolbar-title>Edit</mdc-toolbar-title>
     </mdc-toolbar-section>
     <mdc-toolbar-section alignEnd="true">
+      <mdc-icon class="mdc-toolbar__icon" (click)="undo()">undo</mdc-icon>
+      <mdc-icon class="mdc-toolbar__icon" (click)="redo()">redo</mdc-icon>
       <!--visibility_off-->
       <mdc-icon class="mdc-toolbar__icon" (click)="save()">save</mdc-icon>
-      <mdc-icon class="mdc-toolbar__icon" (click)="togglePreview()">{{markdown.showPreviewPanel?'visibility_off':'visibility'}}</mdc-icon>
+      <mdc-icon class="mdc-toolbar__icon" *ngIf="!gtsmBreakpoint" (click)="togglePreview()">{{markdown.showPreviewPanel?'visibility_off':'visibility'}}</mdc-icon>
       <!-- <a href="#/toolbar-demo" class="material-icons mdc-toolbar__icon">fullscreen</a> -->
       <mdc-icon class="mdc-toolbar__icon" (click)="toViewMode($event)">content_paste</mdc-icon>
       <mdc-icon class="mdc-toolbar__icon" (click)="menu.open()">more_vert</mdc-icon>

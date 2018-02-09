@@ -87,14 +87,17 @@ export class CodemirrorToolbarComponent implements OnInit {
       me.editor.setOption("extraKeys", (<any>CodeMirror).normalizeKeyMap(option));
     });
   }
+  more = () => {
 
-  command(command: string) {
-    if (command === 'Undo') {
-      this.editor.execCommand('undo');
-    } else if (command === 'Redo') {
-      this.editor.execCommand('redo');
-    }
   }
+
+  // command(command: string) {
+  //   if (command === 'Undo') {
+  //     this.editor.execCommand('undo');
+  //   } else if (command === 'Redo') {
+  //     this.editor.execCommand('redo');
+  //   }
+  // }
 
   @Input()
   get options(): any {
