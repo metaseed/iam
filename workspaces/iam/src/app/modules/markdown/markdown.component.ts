@@ -21,6 +21,8 @@ import { MarkdownEditorComponent } from './editor/markdown-editor.component';
 import { ObservableMedia, MediaChange } from '@angular/flex-layout';
 import { Subscription } from 'rxjs/Subscription';
 import { OnDestroy } from '@angular/core';
+import { MarkdownViewerContainerComponent } from './viewer/markdown-viewer-container.component';
+import { HasElementRef } from '@angular/material/core/typings/common-behaviors/color';
 
 @Component({
   selector: 'ms-markdown',
@@ -39,13 +41,14 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   editorLoaded = false;
   mediaChangeSubscription: Subscription;
   @ViewChild(MarkdownEditorComponent) editor: MarkdownEditorComponent;
-  @ViewChild(MarkdownViewerComponent) viewer: MarkdownViewerComponent;
-  // @ViewChild('viewerDiv') viewerDiv;
-  // @ViewChild('editorDiv') editorDiv;
+  @ViewChild(MarkdownViewerContainerComponent) viewer: MarkdownViewerContainerComponent;
+  @ViewChild('viewerDiv') viewerDiv: ElementRef;
+  @ViewChild('editorDiv') editorDiv: ElementRef;
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
   gtsmBreakPoint = false;
-
+  // isSyncingLeftScroll = false;
+  // isSyncingRightScroll = false;
   constructor(private _docService: DocService,
     private _el: ElementRef,
     private _editorService: MarkdownEditorService,
@@ -71,6 +74,23 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    let me = this;
+    // this.editorDiv.nativeElement.onscroll = function () {
+    //   if (!me.isSyncingLeftScroll) {
+    //     me.isSyncingRightScroll = true;
+    //     me.viewerDiv.nativeElement.scrollTop = this.scrollTop;
+    //   }
+    //   me.isSyncingLeftScroll = false;
+    // }
+
+    // this.viewerDiv.nativeElement.onscroll = function () {
+    //   if (!me.isSyncingRightScroll) {
+    //     me.isSyncingLeftScroll = true;
+    //     me.editorDiv.nativeElement.scrollTop = this.scrollTop;
+    //   }
+    //   me.isSyncingRightScroll = false;
+    // }
+
     this.docMode$.subscribe(mode => {
       switch (mode) {
         case DocumentMode.Edit: {

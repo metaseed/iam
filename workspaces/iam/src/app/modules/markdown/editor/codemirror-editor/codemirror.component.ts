@@ -68,16 +68,13 @@ export class CodemirrorComponent {
             this.onChange(v);
         }
     }
-
     /**
      * On component destroy
      */
     ngOnDestroy() { }
     @ViewChild('scroll')
     scroll;
-    /**
-     * On component view init
-     */
+
     ngAfterViewInit() {
 
 

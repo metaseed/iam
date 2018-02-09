@@ -40,7 +40,7 @@ export class ReaderToolbarComponent {
   ngOnInit() {
     this.isScrollDown$ = this.store.pipe(select(reducers.selectViewScrollDownState));
     this.isScrollDown$.subscribe(value => {
-      this.isScrollDown = value;
+      this.isScrollDown = value.isDown;
 
     })
 

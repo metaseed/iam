@@ -13,7 +13,7 @@ export class Save implements Action {
 }
 export class ScrollDown implements Action {
     readonly type = EditActionTypes.ScrollDown;
-    constructor(public payload: boolean) { }
+    constructor(public payload: { scroll: any, isDown: boolean }) { }
 }
 export type EditActions =
     | Save

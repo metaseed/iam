@@ -3,8 +3,9 @@ import { Scrollable } from "core";
 import { ViewChild } from "@angular/core";
 import * as markdown from '../reducers';
 import * as fromView from '../actions/view';
-import { Store } from "@ngrx/store";
+import { Store, select } from "@ngrx/store";
 import { DocService } from "docs";
+import { ElementRef } from "@angular/core";
 
 @Component({
     selector: 'markdown-viewer-container',
@@ -34,8 +35,9 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
     @Input()
     hideToolbar: false;
     @ViewChild('viewContainerDiv')
-    viewerContainerDiv;
+    viewerContainerDiv: ElementRef;
     docLoaded = false;
+    isEditorScrollDown$;
 
     constructor(private store: Store<markdown.State>, private _docService: DocService) {
 
@@ -43,13 +45,27 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
     }
     isScrollDown = false;
     ngAfterViewInit() {
+        this.isEditorScrollDown$ = this.store.pipe(select(markdown.selectEditScrollDownState));
+        let me = this;
+        let v_per_last = 0;
+        this.isEditorScrollDown$.subscribe(value => {
+            if (value.scroll) {
+                let edit_div = value.scroll.target;
+                let v_per = edit_div.scrollTop / (edit_div.scrollHeight - edit_div.clientHeight);
+                let delta_per = v_per - v_per_last;
+                v_per_last = v_per;
+                let view_div = me.viewerContainerDiv.nativeElement;
+                let delta_v_view = (view_div.scrollHeight - view_div.clientHeight) * delta_per;
+                me.viewerContainerDiv.nativeElement.scrollTop += delta_v_view;
+            }
+        })
         this._docService.onShowDoc(doc => {
             this.docLoaded = true;
             new Scrollable(this.viewerContainerDiv.nativeElement).
                 isScrollDown$.subscribe((e) => {
                     this.store.dispatch(new fromView.ScrollDown(e));
                     // console.log(e)
-                    this.isScrollDown = e;
+                    this.isScrollDown = e.isDown;
                 });
         });
     }

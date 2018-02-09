@@ -36,11 +36,11 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.isScrollDown$ = this.store.pipe(select(reducers.selectEditScrollDownState));
     this.isScrollDown$.subscribe(value => {
-      this.isScrollDown = value;
+      this.isScrollDown = value.isDown;
     })
     this.isScrollDown_edit$ = this.store.pipe(select(reducers.selectViewScrollDownState));
     this.isScrollDown_edit$.subscribe(value => {
-      this.isScrollDown = value;
+      this.isScrollDown = value.isDown;
     })
     this.docMode$.subscribe(mode => {
       switch (mode) {

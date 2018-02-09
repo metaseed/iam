@@ -2,12 +2,12 @@ import { EditActions, EditActionTypes } from "../actions/edit";
 
 export interface State {
     save: string;
-    scrollDown: boolean;
+    scrollDown: { scroll: any, isDown: boolean };
 }
 
 export const initialState: State = {
     save: '',
-    scrollDown: false
+    scrollDown: { scroll: null, isDown: false }
 }
 
 export function reducer(state = initialState, action: EditActions) {

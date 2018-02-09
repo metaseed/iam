@@ -26,10 +26,10 @@ export class Scrollable {
                 const currentValue = this.element.scrollTop;
                 if (currentValue > lastValue) {
                     lastValue = currentValue;
-                    return true;
+                    return { scroll: event, isDown: true };
                 }
                 lastValue = currentValue;
-                return false;
+                return { scroll: event, isDown: false };
             })
         );
     }

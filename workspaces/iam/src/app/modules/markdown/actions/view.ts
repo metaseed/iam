@@ -6,7 +6,7 @@ export enum ViewActionTypes {
 
 export class ScrollDown implements Action {
     readonly type = ViewActionTypes.ScrollDown;
-    constructor(public payload: boolean) { }
+    constructor(public payload: { scroll: any, isDown: boolean }) { }
 }
 
 export type ViewActions =
