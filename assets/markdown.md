@@ -1,4 +1,6 @@
-test supported markdown
+# Markdown Feature Support Demo
+
+this document show supported markdown features, by reading it, you could know what you can used in writing, and by modifying it, you could learn how to write.
 
 ---
 __Advertisement :)__
@@ -11,6 +13,7 @@ __Advertisement :)__
 You will like those projects!
 
 ---
+table of content:
 [[toc]]
 # h1 Heading 8-)
 ## h2 Heading
@@ -30,8 +33,6 @@ ___
 
 
 ## Typographic replacements
-
-Enable typographer option to see result.
 
 (c) (C) (r) (R) (tm) (TM) (p) (P) +-
 
@@ -59,8 +60,8 @@ _This is italic text_
 
 
 > Blockquotes can also be nested...
->> ...by using additional greater-than signs right next to each other...
-> > > ...or with spaces between arrows.
+>> by using additional greater-than signs right next to each other...
+> > > or with spaces between arrows.
 
 
 ## Lists
@@ -123,8 +124,9 @@ var foo = function (bar) {
 console.log(foo(5));
 ```
 ## supports KaTex and AsciiMath.
+Katex:
 `$E = mc^2$`
-
+AsciiMath:
 `@(1/2[1-(1/2)^n])/(1-(1/2))=s_n@`
 
 ```math
@@ -158,7 +160,7 @@ Right aligned columns
 
 [link with title](http://nodeca.github.io/pica/demo/ "title text!")
 
-Autoconverted link https://github.com/nodeca/pica (enable linkify to see)
+Autoconverted link https://github.com/nodeca/pica
 
 
 ## Images
@@ -174,12 +176,6 @@ Like links, Images also have a footnote style syntax
 With a reference later in the document defining the URL location:
 
 [id]: https://octodex.github.com/images/dojocat.jpg  "The Dojocat"
-
-
-## Plugins
-
-The killer feature of `markdown-it` is very effective support of
-[syntax plugins](https://www.npmjs.org/browse/keyword/markdown-it-plugin).
 
 
 ### [Emojies](https://github.com/markdown-it/markdown-it-emoji)
