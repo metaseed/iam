@@ -16,6 +16,7 @@ import { Store, select } from '@ngrx/store';
 import * as fromMarkdown from './reducers';
 import * as fromView from './actions/view'
 import { DocumentMode } from './reducers/document';
+import * as document from './actions/document';
 import { ChangeDetectorRef } from '@angular/core';
 import { MarkdownEditorComponent } from './editor/markdown-editor.component';
 import { ObservableMedia, MediaChange } from '@angular/flex-layout';
@@ -30,6 +31,7 @@ import { HasElementRef } from '@angular/material/core/typings/common-behaviors/c
   styleUrls: ['./markdown.component.scss']
 })
 export class MarkdownComponent implements OnInit, OnDestroy {
+  private docShowSub: any;
   private _text: string;
   private _doc: any;
   isFullScreen: boolean;
@@ -111,6 +113,10 @@ export class MarkdownComponent implements OnInit, OnDestroy {
       this.mediaChangeSubscription.unsubscribe();
       this.mediaChangeSubscription = null;
     }
+    if (this.docShowSub) {
+      this.docShowSub.unsubscribe();
+      this.docShowSub = null;
+    }
   }
 
   ngAfterViewChecked() {
@@ -124,7 +130,11 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   //   this.fixEditButton = viewportOffset.top <= 10;
   // }
   ngAfterViewInit() {
-    this._docService.onShowDoc((doc) => {
+    if (this.router.url === '/doc/new') {
+      //this.editModeChange(true, false);
+      this.isNewDoc = true;
+    }
+    this.docShowSub = this._docService.docShow$.subscribe((doc) => {
       if (doc === null) {
         this._text = '';
         return;
@@ -132,7 +142,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
       this._text = base64Decode(doc.content.content);
       this._doc = doc;
       if (this.isNewDoc) {
-        this.modeChange(true, false)
+        this.store.dispatch(new document.EditMode());
       }
       setTimeout(() => this.docLoaded = true, 0);
     });
@@ -146,10 +156,6 @@ export class MarkdownComponent implements OnInit, OnDestroy {
       // }
       // refresh();
     });
-    if (this.router.url === '/doc/new') {
-      //this.editModeChange(true, false);
-      this.isNewDoc = true;
-    }
     this.route.queryParamMap.pipe(
       map(params => {
         if (this.isNewDoc) {

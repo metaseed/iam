@@ -6,6 +6,7 @@ import * as fromView from '../actions/view';
 import { Store, select } from "@ngrx/store";
 import { DocService } from "docs";
 import { ElementRef } from "@angular/core";
+import { Subscription } from "rxjs/Subscription";
 
 @Component({
     selector: 'markdown-viewer-container',
@@ -29,6 +30,7 @@ import { ElementRef } from "@angular/core";
     `]
 })
 export class MarkdownViewerContainerComponent implements AfterViewInit {
+    showDocSubscription: Subscription;
 
     @Input()
     markdown: string;
@@ -59,7 +61,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
                 me.viewerContainerDiv.nativeElement.scrollTop += delta_v_view;
             }
         })
-        this._docService.onShowDoc(doc => {
+        this.showDocSubscription = this._docService.docShow$.subscribe(doc => {
             this.docLoaded = true;
             new Scrollable(this.viewerContainerDiv.nativeElement).
                 isScrollDown$.subscribe((e) => {
@@ -68,5 +70,11 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
                     this.isScrollDown = e.isDown;
                 });
         });
+    }
+
+    ngOnDestroy() {
+        if (this.showDocSubscription) {
+            this.showDocSubscription.unsubscribe();
+        }
     }
 }

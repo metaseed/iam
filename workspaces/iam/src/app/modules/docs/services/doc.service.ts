@@ -20,7 +20,7 @@ export class DocService {
   public docRemove$ = new EventEmitter();
   public docModify$ = new EventEmitter();
   public model: DocsModel = new DocsModel();
-  private docShow$ = new EventEmitter();
+  public docShow$ = new EventEmitter();
   private _repoSub$ = new ReplaySubject<Repository>();
   private _storage = new GithubStorage(this._http, new UserInfo('metasong', 'metaseed@gmail.com', 'mssong179'));
 
@@ -77,11 +77,6 @@ export class DocService {
     ));
   }
 
-  onShowDoc(fun: (doc: Document) => void) {
-    this.docShow$.subscribe(doc => {
-      fun(doc);
-    });
-  }
 
   getContentUrl(issueNum) {
     return `https://metaseed.github.io/iam/${issueNum}`;
