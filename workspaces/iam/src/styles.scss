@@ -37,6 +37,12 @@
   cursor: pointer;
 }
 
+.copy-button:hover,
+.lang-bash .copy-button,
+.lang-sh .copy-button {
+  color: #6e6e6e;
+}
+
 .material-icons {
   font-family: 'Material Icons';
   font-weight: normal;

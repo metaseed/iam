@@ -42,10 +42,12 @@ import * as toc from './plugins/markdown-it-table-of-contents';
 import { ContainerPlugin } from './plugins/container';
 import { MarkdownConfig } from '../markdown.config';
 import latex from 'markdown-it-latex';
-import { mergeConf } from '../../../core/index';
+import { mergeConf, DocumentRef, base64Encode, base64Decode } from 'core';
 import { Router } from '@angular/router';
 //import latex from 'markdown-it-katex';
 import { Mermaid } from './plugins/mermaid';
+import { CopierService } from 'core';
+var document;
 
 @Injectable()
 export class MarkdownViewerService {
@@ -63,6 +65,7 @@ export class MarkdownViewerService {
   private markdown: MarkdownIt.MarkdownIt;
   private containerPlugin: ContainerPlugin;
   private mermaidPlugin: Mermaid;
+  private docRef = new DocumentRef();
   constructor(private router: Router, @Optional() config?: MarkdownConfig) {
     config = config || mergeConf(this.defaultConfig, config);
 
@@ -101,24 +104,24 @@ export class MarkdownViewerService {
     this.markdown.renderer.rules.blockquote_open = function () {
       return '<blockquote class="blockquote">\n';
     };
-
+    this.docRef.nativeDocument.copier = new CopierService();
   }
 
   public render(raw: string): string {
     return `${this.markdown.render(raw)}`;
+
   }
 
   private DEFAULT_HIGHLIGHT_FUNCTION = (str, lang) => {
     let language = prismjs.languages[lang];
     if (lang && language) {
       try {
-        return `<pre class="language-${lang}" style="position:relative">
-        <button class="material-icons copy-button no-print"
+        return `<pre class="language-${lang}" style="position:relative"><button class="material-icons copy-button no-print"
         title="Copy code snippet"
-        (click)="doCopy()">
+        originalstr=${base64Encode(str)}
+        onclick="document.copier.copyText(this.attributes.originalstr.value,true)">
         <span aria-hidden="true">content_copy</span>
-      </button>
-        <code> ${prismjs.highlight(str, language)} </code></pre>`;
+      </button><code> ${prismjs.highlight(str, language)} </code></pre>`;
       } catch (__) { }
     }
     return `<pre class="highlight"><code>${this.markdown.utils.escapeHtml(str)} </code></pre>`;

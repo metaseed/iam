@@ -1,3 +1,5 @@
+import { base64Decode } from "app/modules/core/utils";
+
 
 export class CopierService {
     private fakeElem: HTMLTextAreaElement | null;
@@ -44,9 +46,9 @@ export class CopierService {
         }
     }
 
-    copyText(text: string) {
+    copyText(text: string, base64: boolean) {
         try {
-            this.createFake(text);
+            this.createFake(base64 ? base64Decode(text) : text);
             return document.execCommand('copy');
         } catch (err) {
             return false;
