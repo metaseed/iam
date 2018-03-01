@@ -12,7 +12,7 @@
 @import '~prismjs/themes/prism';
 /* Rules for sizing the icon. */
 
-@media all and (max-width: 960px) {
+@media all and (min-width: 960px) {
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
