@@ -112,7 +112,13 @@ export class MarkdownViewerService {
     let language = prismjs.languages[lang];
     if (lang && language) {
       try {
-        return `<pre class="language-${lang}"><code> ${prismjs.highlight(str, language)} </code></pre>`;
+        return `<pre class="language-${lang}" style="position:relative">
+        <button class="material-icons copy-button no-print"
+        title="Copy code snippet"
+        (click)="doCopy()">
+        <span aria-hidden="true">content_copy</span>
+      </button>
+        <code> ${prismjs.highlight(str, language)} </code></pre>`;
       } catch (__) { }
     }
     return `<pre class="highlight"><code>${this.markdown.utils.escapeHtml(str)} </code></pre>`;

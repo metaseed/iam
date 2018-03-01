@@ -6,6 +6,8 @@ import { HotkeyModule } from 'angular-hotkey-module';
 import { CommandService } from './command.service';
 import { UpdateService } from './update.service';
 import { ConfigService, DocumentRef } from './index';
+import { Logger } from './logger.service';
+import { CopierService } from 'app/modules/core/copier.service';
 
 @NgModule({
   imports: [
@@ -19,7 +21,9 @@ import { ConfigService, DocumentRef } from './index';
     CommandService,
     WindowRef,
     DocumentRef,
-    UpdateService
+    UpdateService,
+    Logger,
+    CopierService
   ]
 })
 export class CoreModule { }
