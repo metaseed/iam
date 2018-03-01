@@ -156,7 +156,8 @@
   opacity: .48;
 }
 
-.CodeMirror-gutter-filler {
+.CodeMirror-gutter-filler,
+.CodeMirror-vscrollbar {
   z-index: 0;
 }
 

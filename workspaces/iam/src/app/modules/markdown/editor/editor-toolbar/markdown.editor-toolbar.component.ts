@@ -135,12 +135,6 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     if (event.index === 0) {
       this.lockScrollWithView = !this.lockScrollWithView;
       this.store.dispatch(new edit.LockScrollWithView(this.lockScrollWithView));
-      if (this.lockScrollWithView) {
-        event.item.innerText = 'Unlock Scroll';
-      } else {
-        event.item.innerText = 'Lock Scroll';
-      }
-
     }
   }
   editorResize(timeOut: number = 100) {
