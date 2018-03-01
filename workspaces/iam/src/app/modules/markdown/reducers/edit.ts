@@ -3,11 +3,13 @@ import { EditActions, EditActionTypes } from "../actions/edit";
 export interface State {
     save: string;
     scrollDown: { scroll: any, isDown: boolean };
+    lockScrollWithView: boolean;
 }
 
 export const initialState: State = {
     save: '',
-    scrollDown: { scroll: null, isDown: false }
+    scrollDown: { scroll: null, isDown: false },
+    lockScrollWithView: false
 }
 
 export function reducer(state = initialState, action: EditActions) {
@@ -22,6 +24,12 @@ export function reducer(state = initialState, action: EditActions) {
             return {
                 ...state,
                 scrollDown: action.payload
+            }
+        }
+        case EditActionTypes.LockScrollWithView: {
+            return {
+                ...state,
+                lockScrollWithView: action.payload;
             }
         }
         default:

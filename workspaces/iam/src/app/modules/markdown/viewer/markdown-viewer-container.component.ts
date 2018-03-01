@@ -31,6 +31,7 @@ import { Subscription } from "rxjs/Subscription";
 })
 export class MarkdownViewerContainerComponent implements AfterViewInit {
     showDocSubscription: Subscription;
+    isLockScrollWithViewSubscription: Subscription;
 
     @Input()
     markdown: string;
@@ -40,7 +41,9 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
     viewerContainerDiv: ElementRef;
     docLoaded = false;
     isEditorScrollDown$;
-
+    isEditorScrollDownSubscription;
+    isLockScrollWithView$;
+    isLockScrollWithView;
     constructor(private store: Store<markdown.State>, private _docService: DocService) {
 
 
@@ -50,8 +53,12 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
         this.isEditorScrollDown$ = this.store.pipe(select(markdown.selectEditScrollDownState));
         let me = this;
         let v_per_last = 0;
-        this.isEditorScrollDown$.subscribe(value => {
-            if (value.scroll) {
+        this.isLockScrollWithView$ = this.store.pipe(select(markdown.selectEditLockScrollWithViewState));
+        this.isLockScrollWithViewSubscription = this.isLockScrollWithView$.subscribe(isLock => {
+            this.isLockScrollWithView = isLock;
+        })
+        this.isEditorScrollDownSubscription = this.isEditorScrollDown$.subscribe(value => {
+            if (this.isLockScrollWithView && value.scroll) {
                 let edit_div = value.scroll.target;
                 let v_per = edit_div.scrollTop / (edit_div.scrollHeight - edit_div.clientHeight);
                 let delta_per = v_per - v_per_last;
@@ -75,6 +82,15 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
     ngOnDestroy() {
         if (this.showDocSubscription) {
             this.showDocSubscription.unsubscribe();
+            this.showDocSubscription = null;
+        }
+        if (this.isLockScrollWithViewSubscription) {
+            this.isLockScrollWithViewSubscription.unsubscribe();
+            this.isLockScrollWithViewSubscription = null;
+        }
+        if (this.isEditorScrollDownSubscription) {
+            this.isEditorScrollDownSubscription.unsubscribe();
+            this.isEditorScrollDownSubscription = null;
         }
     }
 }
