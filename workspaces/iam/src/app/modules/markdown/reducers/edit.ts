@@ -29,7 +29,7 @@ export function reducer(state = initialState, action: EditActions) {
         case EditActionTypes.LockScrollWithView: {
             return {
                 ...state,
-                lockScrollWithView: action.payload;
+                lockScrollWithView: action.payload
             }
         }
         default:

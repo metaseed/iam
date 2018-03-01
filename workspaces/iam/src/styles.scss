@@ -155,3 +155,11 @@
 .cm-s-default .cm-formatting {
   opacity: .48;
 }
+
+.CodeMirror-gutter-filler {
+  z-index: 0;
+}
+
+.CodeMirror pre {
+  z-index: 0;
+}
