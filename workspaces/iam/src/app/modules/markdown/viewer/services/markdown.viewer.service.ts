@@ -47,7 +47,6 @@ import { Router } from '@angular/router';
 //import latex from 'markdown-it-katex';
 import { Mermaid } from './plugins/mermaid';
 import { CopierService } from 'core';
-var document;
 
 @Injectable()
 export class MarkdownViewerService {
@@ -104,7 +103,7 @@ export class MarkdownViewerService {
     this.markdown.renderer.rules.blockquote_open = function () {
       return '<blockquote class="blockquote">\n';
     };
-    this.docRef.nativeDocument.copier = new CopierService();
+    (<any>(this.docRef.nativeDocument)).copier = new CopierService();
   }
 
   public render(raw: string): string {
@@ -121,7 +120,7 @@ export class MarkdownViewerService {
         originalstr=${base64Encode(str)}
         onclick="document.copier.copyText(this.attributes.originalstr.value,true)">
         <span aria-hidden="true">content_copy</span>
-      </button><code> ${prismjs.highlight(str, language)} </code></pre>`;
+      </button><code>${prismjs.highlight(str, language)}</code></pre>`;
       } catch (__) { }
     }
     return `<pre class="highlight"><code>${this.markdown.utils.escapeHtml(str)} </code></pre>`;
