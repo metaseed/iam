@@ -156,11 +156,13 @@
   opacity: .48;
 }
 
-.CodeMirror-gutter-filler,
-.CodeMirror-vscrollbar {
-  z-index: 0;
-}
-
-.CodeMirror pre {
-  z-index: 0;
+// .CodeMirror-gutter-filler,
+// .CodeMirror-vscrollbar {
+//   z-index: 0;
+// }
+// .CodeMirror pre {
+//   z-index: 0;
+// }
+.mdc-snackbar {
+  z-index: 9;
 }
