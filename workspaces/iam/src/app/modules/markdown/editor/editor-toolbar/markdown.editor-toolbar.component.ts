@@ -15,6 +15,7 @@ import * as edit from '../../actions/edit';
 import { OnDestroy } from '@angular/core';
 import { ObservableMedia } from '@angular/flex-layout';
 import * as reducers from '../../reducers';
+import * as CodeMirror from 'codemirror';
 @Component({
   selector: 'editor-toolbar',
   templateUrl: './markdown.editor-toolbar.component.html',
@@ -76,6 +77,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
         this.gtsmBreakpoint = true;
       }
     });
+    (<any>CodeMirror).commands.save = this.save;
   }
 
   ngDestroy() {
