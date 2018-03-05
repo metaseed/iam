@@ -4,6 +4,11 @@
 // $mdc-theme-secondary: #388e3c; // change secondary color example
 @import "~@angular-mdc/theme";
 // @import '~@angular/material/prebuilt-themes/indigo-pink';
+:root {
+  --mdc-theme-text-primary-on-background: #fff;
+  --mdc-theme-text-secondary-on-background: rgba(255, 255, 255, .74);
+}
+
 @import '~markdown-it-latex/src/katex.css';
 @import 'variables';
 @import '~font-awesome/scss/font-awesome';
@@ -164,5 +169,9 @@
 //   z-index: 0;
 // }
 .mdc-snackbar {
+  z-index: 9;
+}
+
+.mdc-simple-menu--open {
   z-index: 9;
 }

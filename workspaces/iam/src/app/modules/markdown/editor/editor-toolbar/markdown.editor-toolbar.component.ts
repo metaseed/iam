@@ -16,6 +16,8 @@ import { OnDestroy } from '@angular/core';
 import { ObservableMedia } from '@angular/flex-layout';
 import * as reducers from '../../reducers';
 import * as CodeMirror from 'codemirror';
+import { KeyMapSelectionDialog } from './dialog.component';
+import { MdcDialog } from '@angular-mdc/web';
 @Component({
   selector: 'editor-toolbar',
   templateUrl: './markdown.editor-toolbar.component.html',
@@ -58,6 +60,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     });
   }
   constructor(
+    private dialog: MdcDialog,
     private media: ObservableMedia,
     public markdown: MarkdownComponent,
     private _editorService: MarkdownEditorService,
@@ -78,6 +81,26 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
       }
     });
     (<any>CodeMirror).commands.save = this.save;
+    let cmds = (<any>CodeMirror).commands;
+    cmds.scrollLineUp = function (cm) {
+      var info = cm.getScrollInfo();
+      if (!cm.somethingSelected()) {
+        var visibleBottomLine = cm.lineAtHeight(info.top + info.clientHeight, "local");
+        if (cm.getCursor().line >= visibleBottomLine)
+          cm.execCommand("goLineUp");
+      }
+      cm.scrollTo(null, info.top - cm.defaultTextHeight());
+    };
+    cmds.scrollLineDown = function (cm) {
+      var info = cm.getScrollInfo();
+      if (!cm.somethingSelected()) {
+        var visibleTopLine = cm.lineAtHeight(info.top, "local") + 1;
+        if (cm.getCursor().line <= visibleTopLine)
+          cm.execCommand("goLineDown");
+      }
+      cm.scrollTo(null, info.top + cm.defaultTextHeight());
+    };
+
   }
 
   ngDestroy() {
@@ -134,9 +157,14 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
 
   private lockScrollWithView = false;
   more(event: { index: number, item: HTMLElement }) {
-    if (event.index === 0) {
+    if (event.item.id === '0') {
       this.lockScrollWithView = !this.lockScrollWithView;
       this.store.dispatch(new edit.LockScrollWithView(this.lockScrollWithView));
+    } else if (event.item.id === '1') {
+      const dialogRef = this.dialog.open(KeyMapSelectionDialog, { escapeToClose: true, clickOutsideToClose: true })
+      dialogRef.componentInstance.myDialog._accept.subscribe(() => {
+
+      })
     }
   }
   editorResize(timeOut: number = 100) {

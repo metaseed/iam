@@ -5,7 +5,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Subscription } from 'rxjs/Subscription';
 import { DocService } from 'docs';
 import { MarkdownEditorService } from '../../../editor/index';
-import { CommandService, Command, DocumentRef } from '../../../../core/index';
+import { CommandService, Command, DocumentRef } from 'core';
 import { Store, select } from '@ngrx/store';
 import { State } from '../../../reducers';
 import * as doc from '../../../actions/document';
@@ -83,9 +83,12 @@ export class CodemirrorToolbarComponent implements OnInit {
         //(<HTMLElement>(me.div.nativeElement)).click();
         //document.activeElement.blur();
         editor.display.input.textarea.blur();
-      }
+      };
+      option['Ctrl-Up'] = 'scrollLineUp';
+      option['Ctrl-Down'] = 'scrollLineDown';
       me.editor.setOption("extraKeys", (<any>CodeMirror).normalizeKeyMap(option));
     });
+
   }
   more = () => {
 
@@ -122,6 +125,11 @@ export class CodemirrorToolbarComponent implements OnInit {
       return;
     }
     let selectionText = this.doc.getSelection();
+
+    if (type === 'Focus') {
+      this.editor.focus();
+      return;
+    }
 
     const config = CodemirrorToolbarComponent.COMMANDS_CONFIG[type];
     let startSize = config.startSize;

@@ -15,7 +15,7 @@ import { Store, select } from '@ngrx/store';
     template: `
 
 
-    <codemirror [(ngModel)]="markdown" [config]="options"></codemirror>
+    <codemirror [(ngModel)]="markdown"></codemirror>
     <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>
     `,
     styles: []
@@ -42,23 +42,6 @@ export class MarkdownEditorComponent implements OnInit {
         this._markdown = value;
         this.markdownChange.emit(value);
     }
-    options = {
-        mode: {
-            name: 'gfm',
-            highlightFormatting: true
-        },
-        lineNumbers: true,
-        // scrollbarStyle: 'simple',
-        lineWrapping: true,
-        extraKeys: {
-            "F11": function (cm) {
-                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
-            },
-            "Esc": function (cm) {
-                if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
-            }
-        }
-    };
 
     @ViewChild(MonacoEditorComponent)
     editor: MonacoEditorComponent;

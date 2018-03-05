@@ -18,6 +18,7 @@ import { Scrollable } from 'core';
 import { Store } from '@ngrx/store';
 import * as markdown from '../../reducers';
 import * as fromEdit from '../../actions/edit';
+import { KeyMap } from '../editor-toolbar/keymap';
 /**
  * Usage : <codemirror [(ngModel)]="markdown" [config]="{...}"></codemirror>
  */
@@ -76,9 +77,23 @@ export class CodemirrorComponent {
     scroll;
 
     ngAfterViewInit() {
-
-
-        this.config = this.config || {};
+        this.config = this.config || {
+            mode: {
+                name: 'gfm',
+                highlightFormatting: true
+            },
+            lineNumbers: true,
+            // scrollbarStyle: 'simple',
+            lineWrapping: true,
+            extraKeys: {
+                "F11": function (cm) {
+                    cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                },
+                "Esc": function (cm) {
+                    if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+                }
+            }
+        };
         this.codemirrorInit(this.config);
         this.service.editorLoaded$.next(this.instance);
         new Scrollable(this.scroll.nativeElement.children[1].lastChild).
@@ -106,6 +121,7 @@ export class CodemirrorComponent {
         this.instance.on('blur', () => {
             this.blur.emit();
         });
+        new KeyMap(this.instance);
     }
 
     refresh() {

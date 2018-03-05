@@ -1,60 +1,76 @@
-  .done-true {
-    text-decoration: line-through;
-    color: #CCC;
-  }
+@import "~@angular-mdc/theme/material";
+.done-true {
+  text-decoration: line-through;
+  color: #CCC;
+}
 
-  .doc-card-container,
-  .doc-card {
-    width: 100%;
-    max-width: 400px;
-    height: 250px;
-  }
+.doc-card-container,
+.doc-card {
+  width: 100%;
+  max-width: 400px;
+  height: 250px;
+}
 
-  .doc-card:hover {
-    left: .1em;
-    background-color: #DDD;
+.doc-card__row {
+  display: flex;
+  border-top-left-radius: inherit;
+  @include mdc-rtl {
+    border-top-left-radius: 0;
+    border-top-right-radius: inherit;
   }
+}
 
-  .doc-header-image {
-    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
-    background-size: cover;
-  }
+.doc-card__info {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 16px;
+}
 
-  $font-size: 1.5rem;
-  $line-height: 1.2;
-  $lines-to-show: 3;
-  .title-truncate {
-    display: block;
-    /* Fallback for non-webkit */
-    display: -webkit-box;
-    max-width: 400px;
-    max-height: $font-size*$line-height*$lines-to-show;
-    /* Fallback for non-webkit */
-    margin: 0 auto;
-    font-size: $font-size;
-    line-height: $line-height;
-    -webkit-line-clamp: $lines-to-show;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+.doc-card:hover {
+  left: .1em;
+  background-color: #DDD;
+}
 
-  $font-size-s: 0.875rem;
-  $line-height-s: 1.2;
-  $lines-to-show-s:6;
-  .summary-truncate {
-    display: block;
-    padding-left: 8px;
-    /* Fallback for non-webkit */
-    display: -webkit-box;
-    max-width: 400px;
-    max-height: $font-size-s*$line-height-s*$lines-to-show-s;
-    /* Fallback for non-webkit */
-    margin: 0 auto;
-    font-size: $font-size-s;
-    line-height: $line-height-s;
-    -webkit-line-clamp: $lines-to-show-s;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+.doc-header-image {
+  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-size: cover;
+}
+
+$font-size: 1.5rem;
+$line-height: 1.2;
+$lines-to-show: 3;
+.title-truncate {
+  display: block;
+  /* Fallback for non-webkit */
+  display: -webkit-box;
+  max-width: 400px;
+  max-height: $font-size*$line-height*$lines-to-show;
+  /* Fallback for non-webkit */
+  margin: 0 auto;
+  font-size: $font-size;
+  line-height: $line-height;
+  -webkit-line-clamp: $lines-to-show;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+$font-size-s: 0.875rem;
+$line-height-s: 1.2;
+$lines-to-show-s:6;
+.summary-truncate {
+  display: block;
+  padding-left: 8px;
+  /* Fallback for non-webkit */
+  display: -webkit-box;
+  max-width: 400px;
+  max-height: $font-size-s*$line-height-s*$lines-to-show-s;
+  /* Fallback for non-webkit */
+  margin: 0 auto;
+  font-size: $font-size-s;
+  line-height: $line-height-s;
+  -webkit-line-clamp: $lines-to-show-s;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

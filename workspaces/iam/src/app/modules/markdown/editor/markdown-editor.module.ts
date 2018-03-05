@@ -11,6 +11,7 @@ import { NgSpinKitModule } from 'ng-spin-kit';
 import { MaterialModule } from 'app/modules/material/material.module';
 import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
 import { CodemirrorToolbarComponent } from './codemirror-editor/codemirror-toolbar/codemirror-toolbar.component';
+import { KeyMapSelectionDialog } from './editor-toolbar/dialog.component';
 
 @NgModule({
     declarations: [
@@ -18,7 +19,8 @@ import { CodemirrorToolbarComponent } from './codemirror-editor/codemirror-toolb
         CodemirrorComponent,
         MonacoEditorComponent,
         MarkdownEditorComponent,
-        CodemirrorToolbarComponent
+        CodemirrorToolbarComponent,
+        KeyMapSelectionDialog
     ],
     imports: [
         CommonModule,
@@ -37,6 +39,9 @@ import { CodemirrorToolbarComponent } from './codemirror-editor/codemirror-toolb
     ],
     providers: [
         MarkdownEditorService
+    ],
+    entryComponents: [
+        KeyMapSelectionDialog
     ]
 })
 export class MarkdownEditorModule { }

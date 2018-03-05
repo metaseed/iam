@@ -18,8 +18,8 @@
       <mdc-icon class="mdc-toolbar__icon" (click)="menu.open()">more_vert</mdc-icon>
       <mdc-menu #menu (select)="more($event)" [anchorCorner]="top-start">
         <mdc-menu-item id="0" *ngIf="!gtsmBreakpoint">{{lockScrollWithView?'UnLock Scroll':'Lock Scroll'}}</mdc-menu-item>
-        <mdc-menu-item id="1" [disabled]="true">Item 2</mdc-menu-item>
-        <mdc-menu-item id="2">Item 3</mdc-menu-item>
+        <mdc-menu-item id="1">Key Map</mdc-menu-item>
+        <mdc-menu-item id="2" [disabled]="true">Item 2</mdc-menu-item>
         <mdc-menu-divider></mdc-menu-divider>
         <mdc-menu-item id="3">Item 4</mdc-menu-item>
       </mdc-menu>

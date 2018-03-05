@@ -5,6 +5,7 @@ import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 import { ConfigService } from './config.service';
 import { ConfigModel } from './index';
+
 export class Command {
     name: string;
     combo: string;
@@ -17,8 +18,10 @@ export class CommandService {
     private subject: Subject<Command>;
     commands: Observable<Command>;
     private config: ConfigModel;
+
     constructor(private hotkeysService: HotkeysService,
         private configService: ConfigService) {
+
         this.subject = new Subject<Command>();
         this.commands = this.subject.asObservable();
         configService.config$.subscribe(config => {

@@ -9,6 +9,7 @@ import { NgModule } from '@angular/core';
 import {
     MdcCardModule,
     MdcIconModule,
+    MdcRippleModule,
     MdcFabModule,
     MdcButtonModule,
     MdcMenuModule,
@@ -19,7 +20,8 @@ import {
     MdcThemeModule,
     MdcToolbarModule,
     MdcDialogModule,
-    MdcLinearProgressModule
+    MdcLinearProgressModule,
+    MdcListModule
 } from '@angular-mdc/web';
 
 export const MODULES = [
@@ -27,6 +29,7 @@ export const MODULES = [
     MdcFabModule,
     MdcMenuModule,
     MdcIconModule,
+    MdcRippleModule,
     MdcButtonModule,
     MdcCardModule,
     MdcSnackbarModule,
@@ -34,7 +37,8 @@ export const MODULES = [
     MdcIconToggleModule,
     MdcThemeModule,
     MdcDialogModule,
-    MdcToolbarModule
+    MdcToolbarModule,
+    MdcListModule
 ];
 
 @NgModule({

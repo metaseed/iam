@@ -35,10 +35,16 @@
   </div>
 
   <div class="btn-group" style="float: right">
-    <button class="btn btn-default" style="width: 40px" type="button" title="More" (click)="more()" *ngIf="!_hideIcons.More">
+    <button class="btn btn-default" style="width: 40px" type="button" title="More" (click)="menu.open()" *ngIf="!_hideIcons.More">
       <!-- <i class="material-icons md-18">more_vert</i> -->
       <i class="fa fa-ellipsis-v"></i>
     </button>
+    <mdc-menu #menu (select)="more($event)" [anchorCorner]="top-start">
+      <mdc-menu-item id="1" [disabled]="true">Item 2</mdc-menu-item>
+      <mdc-menu-item id="2">Item 3</mdc-menu-item>
+      <mdc-menu-divider></mdc-menu-divider>
+      <mdc-menu-item id="3">Item 4</mdc-menu-item>
+    </mdc-menu>
     <!-- <button class="btn btn-default" type="button" title="Undo" (click)="command('Undo')" *ngIf="!_hideIcons.Undo">
 
       <i class="material-icons md-18">undo</i>
