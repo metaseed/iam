@@ -41,7 +41,13 @@ export class DocService {
 
   deleteDoc(doc) {
     this._repoSub$.subscribe(repo => repo.issue.edit(doc.number, { state: 'closed' }).subscribe(
-      a => console.log(a)
+
+
+      a => {
+        const index = this.model.docs.indexOf(doc);
+        if (index !== -1) this.model.docs.splice(index, 1);
+        console.log(a)
+      }
     ));
   }
 
