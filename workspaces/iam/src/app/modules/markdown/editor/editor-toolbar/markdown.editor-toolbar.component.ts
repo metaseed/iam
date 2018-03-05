@@ -134,8 +134,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   ngDestroy() {
     this.mediaChangeSubscription.unsubscribe();
   }
-  @ViewChild('toolbar')
-  toolbar;
+  ;
   save = () => {
     const content = this.editor.getValue();
     this.store.dispatch(new edit.Save(content));
