@@ -172,6 +172,10 @@
   z-index: 9;
 }
 
-.mdc-simple-menu--open {
+.mdc-menu--open {
   z-index: 9;
+}
+
+.mdc-menu--open>.mdc-menu__items {
+  color: black;
 }

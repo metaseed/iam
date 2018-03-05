@@ -90,7 +90,7 @@ export class CodemirrorToolbarComponent implements OnInit {
     });
 
   }
-  more = () => {
+  more = (event) => {
 
   }
 
