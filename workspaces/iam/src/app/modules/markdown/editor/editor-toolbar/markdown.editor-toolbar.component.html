@@ -2,20 +2,20 @@
   <!-- [fixed]="!isScrollDown" -->
   <mdc-toolbar-row>
     <mdc-toolbar-section alignStart="true">
-      <mdc-icon tabindex="1" routerLinkActive [routerLink]="['/']" class="mdc-toolbar__icon">
+      <a tabindex="1" routerLinkActive [routerLink]="['/']" mdc-toolbar-icon material-icon>
         arrow_back
-      </mdc-icon>
+      </a>
       <mdc-toolbar-title>Edit</mdc-toolbar-title>
     </mdc-toolbar-section>
     <mdc-toolbar-section alignEnd="true">
-      <mdc-icon class="mdc-toolbar__icon" (click)="undo()">undo</mdc-icon>
-      <mdc-icon class="mdc-toolbar__icon" (click)="redo()">redo</mdc-icon>
+      <a mdc-toolbar-icon material-icon (click)="undo()">undo</a>
+      <a mdc-toolbar-icon material-icon (click)="redo()">redo</a>
       <!--visibility_off-->
-      <mdc-icon class="mdc-toolbar__icon" (click)="save()">save</mdc-icon>
-      <mdc-icon class="mdc-toolbar__icon" *ngIf="!gtsmBreakpoint" (click)="togglePreview()">{{markdown.showPreviewPanel?'chrome_reader_mode':'chrome_reader_mode'}}</mdc-icon>
+      <a mdc-toolbar-icon material-icon (click)="save()">save</a>
+      <a mdc-toolbar-icon material-icon *ngIf="!gtsmBreakpoint" (click)="togglePreview()">{{markdown.showPreviewPanel?'chrome_reader_mode':'chrome_reader_mode'}}</a>
       <!-- <a href="#/toolbar-demo" class="material-icons mdc-toolbar__icon">fullscreen</a> -->
-      <mdc-icon class="mdc-toolbar__icon" (click)="toViewMode($event)">visibility</mdc-icon>
-      <mdc-icon class="mdc-toolbar__icon" (click)="menu.open()">more_vert</mdc-icon>
+      <a mdc-toolbar-icon material-icon (click)="toViewMode($event)">visibility</a>
+      <a mdc-toolbar-icon material-icon (click)="menu.open()">more_vert</a>
       <mdc-menu #menu (select)="more($event)" [anchorCorner]="top-start">
         <mdc-menu-item id="0" *ngIf="!gtsmBreakpoint">{{lockScrollWithView?'UnLock Scroll':'Lock Scroll'}}</mdc-menu-item>
         <mdc-menu-item id="1">Key Map</mdc-menu-item>
