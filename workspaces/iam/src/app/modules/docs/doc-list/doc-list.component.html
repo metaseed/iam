@@ -3,7 +3,7 @@
     <div class="doc-card-container" *ngFor="let doc of documents; let i = index">
 
       <mdc-card *ngIf="doc.state!=='closed'" class="doc-card">
-        <mdc-ripple style="flex-grow:1;">
+        <mdc-ripple style="flex-grow:1; display:flex;">
           <mdc-card-primary-action (click)="show(doc)" style="flex-grow:1;">
             <div class="doc-card__row">
               <div class="doc-card__info">

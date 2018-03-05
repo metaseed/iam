@@ -40,13 +40,15 @@ $font-size: 1.5rem;
 $line-height: 1.2;
 $lines-to-show: 3;
 .title-truncate {
+  font-family: Roboto, sans-serif;
   display: block;
   /* Fallback for non-webkit */
   display: -webkit-box;
   max-width: 400px;
   max-height: $font-size*$line-height*$lines-to-show;
   /* Fallback for non-webkit */
-  margin: 0 auto;
+  margin-left: 0;
+  font-weight: 400;
   font-size: $font-size;
   line-height: $line-height;
   -webkit-line-clamp: $lines-to-show;
@@ -59,6 +61,7 @@ $font-size-s: 0.875rem;
 $line-height-s: 1.2;
 $lines-to-show-s:6;
 .summary-truncate {
+  font-family: Roboto, sans-serif;
   display: block;
   padding-left: 8px;
   /* Fallback for non-webkit */
@@ -66,11 +69,12 @@ $lines-to-show-s:6;
   max-width: 400px;
   max-height: $font-size-s*$line-height-s*$lines-to-show-s;
   /* Fallback for non-webkit */
-  margin: 0 auto;
+  margin-left: 0;
   font-size: $font-size-s;
   line-height: $line-height-s;
   -webkit-line-clamp: $lines-to-show-s;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--mdc-theme-text-secondary-on-light, rgba(0, 0, 0, .54));
 }
