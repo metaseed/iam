@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input } from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { DocumentRef, Scrollable } from 'core';
 import { Store } from '@ngrx/store';
 import * as fromDocument from '../../reducers/document';
@@ -15,6 +15,7 @@ import {
 import { MarkdownViewerComponent } from '../markdown-viewer.component';
 import { select } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
+import { MdcToolbar } from '@angular-mdc/web';
 
 @Component({
   selector: 'ms-reader-toolbar',
@@ -33,7 +34,10 @@ import { Observable } from 'rxjs/Observable';
 })
 export class ReaderToolbarComponent {
 
+  @ViewChild('toolbar')
+  toolbar: MdcToolbar;
   isScrollDown: boolean;
+  isPositionFixed: boolean;
   constructor(private store: Store<reducers.State>) {
   }
   isScrollDown$;
@@ -41,7 +45,8 @@ export class ReaderToolbarComponent {
     this.isScrollDown$ = this.store.pipe(select(reducers.selectViewScrollDownState));
     this.isScrollDown$.subscribe(value => {
       this.isScrollDown = value.isDown;
-
+      if (this.toolbar)
+        this.isPositionFixed = value.scroll.target.scrollTop > this.toolbar.elementRef.nativeElement.offsetHeight;
     })
 
   }

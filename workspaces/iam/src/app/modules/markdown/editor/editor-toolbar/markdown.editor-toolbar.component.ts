@@ -17,7 +17,7 @@ import { ObservableMedia } from '@angular/flex-layout';
 import * as reducers from '../../reducers';
 import * as CodeMirror from 'codemirror';
 import { KeyMapSelectionDialog } from './dialog.component';
-import { MdcDialog } from '@angular-mdc/web';
+import { MdcDialog, MdcToolbar } from '@angular-mdc/web';
 @Component({
   selector: 'editor-toolbar',
   templateUrl: './markdown.editor-toolbar.component.html',
@@ -26,25 +26,28 @@ import { MdcDialog } from '@angular-mdc/web';
 export class EditorToolbarComponent implements OnInit, AfterViewInit {
   isFullScreen: boolean;
   editor: any;
+  @ViewChild('toolbar')
+  toolbar: MdcToolbar;
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
   documentMode$ = this.store.pipe(select(reducers.selectDocumentModeState));
   isScrollDown: boolean;
-  isFixed = false;
+  isPositionFixed: boolean;
   isScrollDown$;
   isScrollDown_edit$;
   isEditMode = false;
   gtsmBreakpoint = false;
   mediaChangeSubscription: Subscription;
   ngOnInit() {
+    const scrollHandler = value => {
+      this.isScrollDown = value.isDown;
+      if (this.toolbar)
+        this.isPositionFixed = value.scroll.target.scrollTop > this.toolbar.elementRef.nativeElement.offsetHeight;
+    }
     this.isScrollDown$ = this.store.pipe(select(reducers.selectEditScrollDownState));
-    this.isScrollDown$.subscribe(value => {
-      this.isScrollDown = value.isDown;
-    })
+    this.isScrollDown$.subscribe(scrollHandler);
     this.isScrollDown_edit$ = this.store.pipe(select(reducers.selectViewScrollDownState));
-    this.isScrollDown_edit$.subscribe(value => {
-      this.isScrollDown = value.isDown;
-    })
+    this.isScrollDown_edit$.subscribe(scrollHandler);
     this.docMode$.subscribe(mode => {
       switch (mode) {
         case DocumentMode.Edit: {

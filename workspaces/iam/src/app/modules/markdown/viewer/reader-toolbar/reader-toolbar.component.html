@@ -1,4 +1,4 @@
-<mdc-toolbar *ngIf="!isScrollDown">
+<mdc-toolbar #toolbar *ngIf="!isScrollDown" [style.position]="isPositionFixed?'fixed':'relative'" style="z-index:20;">
   <mdc-toolbar-row>
     <mdc-toolbar-section alignStart="true">
       <a onclick="0" [routerLink]="['/']" mdc-toolbar-icon material-icon>arrow_back</a>
