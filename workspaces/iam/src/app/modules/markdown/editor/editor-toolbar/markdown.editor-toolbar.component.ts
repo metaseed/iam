@@ -18,10 +18,35 @@ import * as reducers from '../../reducers';
 import * as CodeMirror from 'codemirror';
 import { KeyMapSelectionDialog } from './dialog.component';
 import { MdcDialog, MdcToolbar } from '@angular-mdc/web';
+import {
+  trigger,
+  state,
+  style,
+  animate,
+  transition
+} from '@angular/animations';
 @Component({
   selector: 'editor-toolbar',
   templateUrl: './markdown.editor-toolbar.component.html',
   styleUrls: ['./markdown.editor-toolbar.component.scss']
+  , animations: [
+    trigger('show', [
+      state('true', style({ opacity: 1, transform: 'translateY(0)' })),
+      transition('void => *', [
+        style({
+          opacity: 0,
+          transform: 'translateY(-100%)'
+        }),
+        animate('0.2s ease-in')
+      ]),
+      transition('* => void', [
+        animate('0.2s ease-out', style({
+          opacity: 0,
+          transform: 'translateY(-100%)'
+        }))
+      ])
+    ])
+  ]
 })
 export class EditorToolbarComponent implements OnInit, AfterViewInit {
   isFullScreen: boolean;

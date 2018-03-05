@@ -1,5 +1,5 @@
-<mdc-toolbar *ngIf="!isScrollDown && isEditMode" [style.position]="isPositionFixed?'fixed':'relative'" style="z-index: 20;"
-  #toolbar>
+<mdc-toolbar [@show]="!isScrollDown" *ngIf="!isScrollDown && isEditMode" [style.position]="isPositionFixed?'fixed':'relative'"
+  style="z-index: 20;" #toolbar>
   <!-- [fixed]="!isScrollDown" -->
   <mdc-toolbar-row>
     <mdc-toolbar-section alignStart="true">

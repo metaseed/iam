@@ -23,10 +23,19 @@ import { MdcToolbar } from '@angular-mdc/web';
   styleUrls: ['./reader-toolbar.component.scss']
   , animations: [
     trigger('show', [
-      state('true', style({ height: '*' })),
+      state('true', style({ opacity: 1, transform: 'translateY(0)' })),
+      transition('void => *', [
+        style({
+          opacity: 0,
+          transform: 'translateY(-100%)'
+        }),
+        animate('0.2s ease-in')
+      ]),
       transition('* => void', [
-        style({ height: '*' }),
-        animate(250, style({ height: 0 }))
+        animate('0.2s ease-out', style({
+          opacity: 0,
+          transform: 'translateY(-100%)'
+        }))
       ])
     ])
   ]
