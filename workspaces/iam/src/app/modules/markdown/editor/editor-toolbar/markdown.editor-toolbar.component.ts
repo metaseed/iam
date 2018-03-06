@@ -31,15 +31,15 @@ import {
   styleUrls: ['./markdown.editor-toolbar.component.scss']
   , animations: [
     trigger('show', [
-      state('false', style({ opacity: 1, transform: 'translateY(0)' })),
-      transition('void => *', [
+      state('true', style({ opacity: 1, transform: 'translateY(0)' })),
+      transition('void => true', [
         style({
           opacity: 0,
           transform: 'translateY(-100%)'
         }),
         animate('0.2s ease-in')
       ]),
-      transition('* => void', [
+      transition('true => void', [
         animate('0.2s ease-out', style({
           opacity: 0,
           transform: 'translateY(-100%)'
@@ -56,7 +56,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
   documentMode$ = this.store.pipe(select(reducers.selectDocumentModeState));
-  isScrollDown: boolean;
+  isScrollDown = null;
   isPositionFixed: boolean;
   isScrollDown$;
   isScrollDown_edit$;
@@ -155,12 +155,12 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     this.editorResize();
   }
 
-  ngAfterViewInit() {
-    this.isScrollDown = true;
-    setTimeout(() => {
-      this.isScrollDown = false;
-    }, 0);
-  }
+  // ngAfterViewInit() {
+  //   this.isScrollDown = true;
+  //   setTimeout(() => {
+  //     this.isScrollDown = false;
+  //   }, 0);
+  // }
   toViewMode = (event) => {
     this.store.dispatch(new doc.ViewMode());
   }

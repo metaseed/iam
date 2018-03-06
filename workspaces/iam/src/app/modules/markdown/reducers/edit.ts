@@ -2,13 +2,13 @@ import { EditActions, EditActionTypes } from "../actions/edit";
 
 export interface State {
     save: string;
-    scrollDown: { scroll: any, isDown: boolean };
+    scrollDown: { scroll: any, isDown: boolean | null };
     lockScrollWithView: boolean;
 }
 
 export const initialState: State = {
     save: '',
-    scrollDown: { scroll: null, isDown: false },
+    scrollDown: { scroll: null, isDown: null },
     lockScrollWithView: false
 }
 

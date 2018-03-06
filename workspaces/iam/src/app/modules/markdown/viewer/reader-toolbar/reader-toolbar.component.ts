@@ -24,14 +24,14 @@ import { MdcToolbar } from '@angular-mdc/web';
   , animations: [
     trigger('show', [
       state('true', style({ opacity: 1, transform: 'translateY(0)' })),
-      transition('void => *', [
+      transition('void => true', [
         style({
           opacity: 0,
           transform: 'translateY(-100%)'
         }),
         animate('0.2s ease-in')
       ]),
-      transition('* => void', [
+      transition('true => void', [
         animate('0.2s ease-out', style({
           opacity: 0,
           transform: 'translateY(-100%)'
@@ -45,7 +45,7 @@ export class ReaderToolbarComponent {
 
   @ViewChild('toolbar')
   toolbar: MdcToolbar;
-  isScrollDown: boolean;
+  isScrollDown: boolean | null = null;
   isPositionFixed: boolean;
   constructor(private store: Store<reducers.State>) {
   }
