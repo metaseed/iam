@@ -8,11 +8,21 @@ import {
     forwardRef
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
+// import 'codemirror/addon/dialog/dialog.css'
+
+
 import * as CodeMirror from 'codemirror';
 // import 'codemirror/addon/scroll/simplescrollbars';
 import 'codemirror/addon/display/fullscreen';
 import 'codemirror/mode/gfm/gfm';
+import 'codemirror/addon/dialog/dialog';
 import 'codemirror/mode/javascript/javascript'
+import 'codemirror/addon/search/searchcursor';
+import 'codemirror/addon/search/search';
+import 'codemirror/addon/scroll/annotatescrollbar';
+import 'codemirror/addon/search/matchesonscrollbar';
+import 'codemirror/addon/search/jump-to-line';
+
 import { MarkdownEditorService } from '../services/markdown.editor.service';
 import { Scrollable } from 'core';
 import { Store } from '@ngrx/store';
@@ -91,7 +101,8 @@ export class CodemirrorComponent {
                 },
                 "Esc": function (cm) {
                     if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
-                }
+                },
+                // "Ctrl-F": "findPersistent"
             }
         };
         this.codemirrorInit(this.config);

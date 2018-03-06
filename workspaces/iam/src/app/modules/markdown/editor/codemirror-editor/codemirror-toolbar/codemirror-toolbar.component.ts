@@ -86,6 +86,22 @@ export class CodemirrorToolbarComponent implements OnInit {
       };
       option['Ctrl-Up'] = 'scrollLineUp';
       option['Ctrl-Down'] = 'scrollLineDown';
+      option['Alt-F'] = 'findPersistent';
+      /*
+      Ctrl-F / Cmd-F
+Start searching
+Ctrl-G / Cmd-G
+Find next
+Shift-Ctrl-G / Shift-Cmd-G
+Find previous
+Shift-Ctrl-F / Cmd-Option-F
+Replace
+Shift-Ctrl-R / Shift-Cmd-Option-F
+Replace all
+Alt-F
+Persistent search (dialog doesn't autoclose, enter to find next, Shift-Enter to find previous)
+Alt-G
+Jump to line*/
       me.editor.setOption("extraKeys", (<any>CodeMirror).normalizeKeyMap(option));
     });
 

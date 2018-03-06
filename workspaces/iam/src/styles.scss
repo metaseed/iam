@@ -123,8 +123,10 @@
 }
 
 @import "~codemirror/lib/codemirror";
-@import '~codemirror/addon/scroll/simplescrollbars';
+// @import '~codemirror/addon/scroll/simplescrollbars';
 @import '~codemirror/addon/display/fullscreen';
+@import '~codemirror/addon/dialog/dialog';
+@import '~codemirror/addon/search/matchesonscrollbar';
 .cm-header-1 {
   @extend h1;
 }

@@ -155,12 +155,12 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     this.editorResize();
   }
 
-  // ngAfterViewInit() {
-  //   this.isScrollDown = true;
-  //   setTimeout(() => {
-  //     this.isScrollDown = false;
-  //   }, 0);
-  // }
+  ngAfterViewInit() {
+    //   this.isScrollDown = true;
+    //   setTimeout(() => {
+    //     this.isScrollDown = false;
+    //   }, 0);
+  }
   toViewMode = (event) => {
     this.store.dispatch(new doc.ViewMode());
   }
