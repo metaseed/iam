@@ -24,7 +24,7 @@ export class Scrollable {
         return this.scroll$.pipe(
             map(event => {
                 const currentValue = this.element.scrollTop;
-                if (currentValue > lastValue) {
+                if (currentValue - lastValue > 0) {
                     lastValue = currentValue;
                     return { scroll: event, isDown: true };
                 }

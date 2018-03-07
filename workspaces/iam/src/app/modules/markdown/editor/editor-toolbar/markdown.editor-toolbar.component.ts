@@ -162,6 +162,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     //   }, 0);
   }
   toViewMode = (event) => {
+    this.isScrollDown = null;
     this.store.dispatch(new doc.ViewMode());
   }
 

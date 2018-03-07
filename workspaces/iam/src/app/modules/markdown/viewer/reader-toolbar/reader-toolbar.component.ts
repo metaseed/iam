@@ -61,6 +61,7 @@ export class ReaderToolbarComponent {
   }
 
   toEditMode(event) {
+    this.isScrollDown = null;
     this.store.dispatch(new document.EditMode());
   }
 }

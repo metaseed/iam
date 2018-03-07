@@ -2,7 +2,8 @@ import { DocumentActions, DocumentActionTypes } from "../actions/document";
 
 export enum DocumentMode {
     Init,
-    View, Edit
+    View,
+    Edit
 }
 
 export interface State {
