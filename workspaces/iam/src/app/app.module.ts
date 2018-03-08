@@ -59,10 +59,10 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
       cheatSheetCloseEsc: true,
       cheatSheetDescription: 'shortcuts'
     })
-    // , StoreDevtoolsModule.instrument({
-    //   name: 'NgRx Iam DevTools',
-    //   logOnly: environment.production
-    // })
+    , StoreDevtoolsModule.instrument({
+      name: 'NgRx Iam DevTools',
+      logOnly: environment.production
+    })
   ],
   providers: [
     {

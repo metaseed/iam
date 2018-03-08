@@ -95,7 +95,7 @@ export class DocService {
     if (!title) throw 'must have title';
     return this._repoSub$.pipe(flatMap(repo =>
       repo.issue.create({ title }).pipe(flatMap((issue) => {
-        let id = issu.number;
+        let id = issue.number;
         return repo.newFile(`${DocService.FolderName}/${title}_${id}`, content).pipe(flatMap((file) => {
           let url = this.getContentUrl(id);
           return DocMeta.serializeContent(content, file.content.sha, url).pipe(flatMap(([metaString, metaData]) => {

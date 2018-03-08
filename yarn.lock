@@ -192,9 +192,9 @@
   dependencies:
     tslib "^1.7.1"
 
-"@angular/service-worker@5.1.0":
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/@angular/service-worker/-/service-worker-5.1.0.tgz#bf998e094ef37c13d50b7e32a91d2921f73316d3"
+"@angular/service-worker@^5.1.0":
+  version "5.2.8"
+  resolved "https://registry.yarnpkg.com/@angular/service-worker/-/service-worker-5.2.8.tgz#4bd57edc560b7a1b7a33c391a5f3771e18c851a7"
   dependencies:
     tslib "^1.7.1"
 
@@ -202,9 +202,9 @@
   version "5.0.1"
   resolved "https://codeload.github.com/ngrx/effects-builds/tar.gz/3e78c1ddac59cf715a7561bdabe323900e513900"
 
-"@ngrx/store-devtools@github:ngrx/store-devtools-builds":
-  version "5.0.1"
-  resolved "https://codeload.github.com/ngrx/store-devtools-builds/tar.gz/c153f8e79076ebc7f82fcfba46a3469dfd61e9f9"
+"@ngrx/store-devtools@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@ngrx/store-devtools/-/store-devtools-4.1.1.tgz#20745c39c7560fdc05fa4f22638442a7ec7dd676"
 
 "@ngrx/store@github:ngrx/store-builds":
   version "5.0.0"
