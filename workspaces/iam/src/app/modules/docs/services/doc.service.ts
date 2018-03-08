@@ -1,4 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { Document } from "../models/document";
 import { Observable } from "rxjs/Observable";
 import { HttpClient } from "@angular/common/http";
@@ -11,6 +12,7 @@ import { ReplaySubject } from 'rxjs';
 import { MdcSnackbar } from '@angular-mdc/web';
 import { base64Encode } from 'core';
 import { map, flatMap } from 'rxjs/operators';
+import { Location } from '@angular/common';
 @Injectable()
 export class DocService {
   static FolderName = 'documents';
@@ -24,7 +26,7 @@ export class DocService {
   private _repoSub$ = new ReplaySubject<Repository>();
   private _storage = new GithubStorage(this._http, new UserInfo('metasong', 'metaseed@gmail.com', 'mssong179'));
 
-  constructor(private _http: HttpClient, private snackBar: MdcSnackbar) {
+  constructor(private _http: HttpClient, private snackBar: MdcSnackbar, private location: Location, private router: Router, private activedRoute: ActivatedRoute) {
 
     this._storage.repos('test2').subscribe(repo => this._repoSub$.next(repo));
   }
@@ -93,7 +95,7 @@ export class DocService {
     if (!title) throw 'must have title';
     return this._repoSub$.pipe(flatMap(repo =>
       repo.issue.create({ title }).pipe(flatMap((issue) => {
-        let id = issue.number;
+        let id = issu.number;
         return repo.newFile(`${DocService.FolderName}/${title}_${id}`, content).pipe(flatMap((file) => {
           let url = this.getContentUrl(id);
           return DocMeta.serializeContent(content, file.content.sha, url).pipe(flatMap(([metaString, metaData]) => {
@@ -115,6 +117,12 @@ export class DocService {
     if (this.model.currentDoc) {
       this.edit(content, this.model.currentDoc).subscribe(doc => {
         this.model.currentDoc = doc;
+        const url = this
+          .router
+          .createUrlTree([], { relativeTo: this.activedRoute, queryParams: { id: doc.number, title: DocMeta.getTitle(content) } })
+          .toString();
+
+        this.location.go(url);
         this.snackBar.show('Saved!');
       });
     } else {
