@@ -24,6 +24,7 @@ export const selectMarkdownState = createFeatureSelector<MarkdownState>('markdow
 
 export const selectDocumentState = createSelector(selectMarkdownState, state => state.document);
 export const selectDocumentModeState = createSelector(selectDocumentState, fromDocument.getMode);
+export const selectDocumentShowPreviewState = createSelector(selectDocumentState, fromDocument.getShowPreview);
 
 export const selectEditState = createSelector(selectMarkdownState, state => state.edit);
 export const selectEditScrollDownState = createSelector(selectEditState, fromEdit.getScrollDown);

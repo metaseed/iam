@@ -1,5 +1,5 @@
-<mdc-toolbar #toolbar [@show]="isScrollDown===false" *ngIf="!isScrollDown" [style.position]="isPositionFixed?'fixed':'relative'"
-  style="z-index:20;">
+<mdc-toolbar #toolbar *ngIf="!isScrollDown && !isEditMode" [style.position]="isPositionFixed?'fixed':'relative'" style="z-index:20;">
+  <!-- [@show]="isScrollDown===false" -->
   <mdc-toolbar-row>
     <mdc-toolbar-section alignStart="true">
       <a onclick="0" [routerLink]="['/']" mdc-toolbar-icon material-icon>arrow_back</a>

@@ -16,7 +16,8 @@ import { MarkdownViewerComponent } from '../markdown-viewer.component';
 import { select } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { MdcToolbar } from '@angular-mdc/web';
-
+import * as fromMarkdown from './../../reducers';
+import { DocumentMode } from './../../reducers/document'
 @Component({
   selector: 'ms-reader-toolbar',
   templateUrl: './reader-toolbar.component.html',
@@ -47,9 +48,14 @@ export class ReaderToolbarComponent {
   toolbar: MdcToolbar;
   isScrollDown: boolean | null = null;
   isPositionFixed: boolean;
+  isEditMode: boolean;
   constructor(private store: Store<reducers.State>) {
   }
+
   isScrollDown$;
+  docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
+  editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState));
+  editWithView: boolean;
   ngOnInit() {
     this.isScrollDown$ = this.store.pipe(select(reducers.selectViewScrollDownState));
     this.isScrollDown$.subscribe(value => {
@@ -57,7 +63,23 @@ export class ReaderToolbarComponent {
       if (this.toolbar)
         this.isPositionFixed = value.scroll.target.scrollTop > this.toolbar.elementRef.nativeElement.offsetHeight;
     })
+    this.editWithView$.subscribe(mode => {
+      this.editWithView = mode;
 
+    })
+    this.docMode$.subscribe(mode => {
+      switch (mode) {
+        case DocumentMode.Edit: {
+          this.isEditMode = true;
+          break;
+        }
+        case DocumentMode.View: {
+          this.isEditMode = false;
+          break;
+
+        }
+      }
+    });
   }
 
   toEditMode(event) {

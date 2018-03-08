@@ -1,6 +1,6 @@
-<mdc-toolbar [@show]="isScrollDown===false" *ngIf="!isScrollDown && isEditMode" [style.position]="isPositionFixed?'fixed':'relative'"
-  style="z-index: 20;" #toolbar>
-  <!-- [fixed]="!isScrollDown" -->
+<mdc-toolbar *ngIf="!isScrollDown && isEditMode" [style.position]="isPositionFixed?'fixed':'relative'" style="z-index: 20;"
+  #toolbar>
+  <!-- [@show]="isScrollDown===false" -->
   <mdc-toolbar-row>
     <mdc-toolbar-section alignStart="true">
       <a tabindex="1" routerLinkActive [routerLink]="['/']" mdc-toolbar-icon material-icon>

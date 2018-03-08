@@ -1,4 +1,5 @@
 /// <reference path="../../../../../../node_modules/monaco-editor/monaco.d.ts" />
+import * as doc from './actions/document';
 import { Component, OnInit, ViewChild, Inject, HostListener, ElementRef } from '@angular/core';
 // import { AceEditorDirective } from './editor/markdown-editor.directive';
 import { MarkdownViewerComponent } from './viewer/markdown-viewer.component';
@@ -48,7 +49,9 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   @ViewChild('editorDiv') editorDiv: ElementRef;
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
+  editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState));
   gtsmBreakPoint = false;
+  editWithView: boolean | null;
   // isSyncingLeftScroll = false;
   // isSyncingRightScroll = false;
   constructor(private _docService: DocService,
@@ -64,9 +67,12 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     private docRef: DocumentRef) {
     this.mediaChangeSubscription = media.subscribe((change: MediaChange) => {
       if (!['xs', 'sm'].includes(change.mqAlias)) {
-        this.showPreviewPanel = this.gtsmBreakPoint = true;
+        this.gtsmBreakPoint = true;
+        if (this.editWithView === null || this.editWithView === undefined) {
+          this.store.dispatch(new doc.ShowPreview());
+        }
       } else {
-        this.showPreviewPanel = this.gtsmBreakPoint = false;
+        this.gtsmBreakPoint = false;
       }
 
     });
@@ -74,6 +80,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
       setTimeout(() => this.editorLoaded = true, 0);
     });
   }
+
 
   ngOnInit() {
     let me = this;
@@ -96,16 +103,21 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     this.docMode$.subscribe(mode => {
       switch (mode) {
         case DocumentMode.Edit: {
-          this.modeChange(true, false)
+          this.isEditMode = true;
           break;
         }
         case DocumentMode.View: {
-          this.modeChange(false, true);
+          this.isEditMode = false;
           break;
 
         }
       }
     });
+
+    this.editWithView$.subscribe(mode => {
+      this.editWithView = mode;
+
+    })
   }
 
   ngOnDestroy() {
@@ -172,15 +184,15 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   }
 
 
-  modeChange(edit = false, preview = false) {
-    this.isEditMode = edit;
-    if (edit && this.gtsmBreakPoint) {
-      this.showPreviewPanel = true;
-      return;
-    }
-    this.showPreviewPanel = preview;
+  // modeChange(edit = false, view = false) {
+  //   this.isEditMode = edit;
+  //   if (edit && this.gtsmBreakPoint) {
+  //     this.showPreviewPanel = true;
+  //     return;
+  //   }
+  //   this.showPreviewPanel = view;
 
-  }
+  // }
 
   showDemo() {
     this._http.get(`${this.baseHref}assets/markdown.md`, { responseType: 'text' }).subscribe(a => {

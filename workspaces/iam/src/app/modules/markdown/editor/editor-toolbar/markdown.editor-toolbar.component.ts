@@ -9,7 +9,7 @@ import { MarkdownEditorService } from '../../editor/index';
 import { CommandService, Command, DocumentRef } from '../../../core/index';
 import * as fromMarkdown from './../../reducers';
 import { DocumentMode } from './../../reducers/document';
-import { Store, select } from '@ngrx/store';
+import { Store, select, State } from '@ngrx/store';
 import * as doc from '../../actions/document';
 import * as edit from '../../actions/edit';
 import { OnDestroy } from '@angular/core';
@@ -59,7 +59,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   isScrollDown = null;
   isPositionFixed: boolean;
   isScrollDown$;
-  isScrollDown_edit$;
+  isScrollDown_view$;
   isEditMode = false;
   gtsmBreakpoint = false;
   mediaChangeSubscription: Subscription;
@@ -71,8 +71,8 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     }
     this.isScrollDown$ = this.store.pipe(select(reducers.selectEditScrollDownState));
     this.isScrollDown$.subscribe(scrollHandler);
-    this.isScrollDown_edit$ = this.store.pipe(select(reducers.selectViewScrollDownState));
-    this.isScrollDown_edit$.subscribe(scrollHandler);
+    this.isScrollDown_view$ = this.store.pipe(select(reducers.selectViewScrollDownState));
+    this.isScrollDown_view$.subscribe(scrollHandler);
     this.docMode$.subscribe(mode => {
       switch (mode) {
         case DocumentMode.Edit: {
@@ -97,7 +97,8 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     private _commandService: CommandService,
     private _docRef: DocumentRef,
     private _domSanitizer: DomSanitizer,
-    private store: Store<reducers.State>) {
+    private store: Store<reducers.State>,
+    private state: State<reducers.State>) {
     this._editorService.editorLoaded$.subscribe((editor: monaco.editor.IStandaloneCodeEditor) => {
       this.editor = editor;
     });
@@ -153,6 +154,12 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   togglePreview() {
     this.markdown.showPreviewPanel = !this.markdown.showPreviewPanel;
     this.editorResize();
+    const markdownState: fromMarkdown.MarkdownState = this.state.getValue().markdown;
+    if (markdownState.document.showPreview) {
+      this.store.dispatch(new doc.HidePreview());
+    } else {
+      this.store.dispatch(new doc.ShowPreview());
+    }
   }
 
   ngAfterViewInit() {

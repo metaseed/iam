@@ -11,7 +11,7 @@ import { Subscription } from "rxjs/Subscription";
 @Component({
     selector: 'markdown-viewer-container',
     template: `
-    <ms-reader-toolbar *ngIf="!hideToolbar"></ms-reader-toolbar>
+    <ms-reader-toolbar></ms-reader-toolbar>
     <ms-reading-position-indicator *ngIf="isScrollDown" [element]="viewContainerDiv"></ms-reading-position-indicator>
     <sk-three-bounce [isRunning]="!docLoaded"></sk-three-bounce>
     

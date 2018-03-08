@@ -8,12 +8,12 @@ export enum DocumentMode {
 
 export interface State {
     mode: DocumentMode;
-    showPreview: boolean;
+    showPreview: boolean | null;
 }
 
 const initialState: State = {
     mode: DocumentMode.Init,
-    showPreview: false
+    showPreview: null
 }
 
 export function reducer(
@@ -54,3 +54,4 @@ export function reducer(
 }
 
 export const getMode = (state: State) => state.mode;
+export const getShowPreview = (state: State) => state.showPreview;
