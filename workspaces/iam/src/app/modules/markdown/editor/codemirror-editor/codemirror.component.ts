@@ -156,10 +156,10 @@ export class CodemirrorComponent {
    * Implements ControlValueAccessor
    */
   writeValue(value) {
-    this._value = value || "";
-    if (this.instance) {
-      if (value) this.service.docLoaded$.next(this.instance);
+    if (value !== undefined && this.instance) {
+      this._value = value || "";
       this.instance.setValue(this._value);
+      if (value) this.service.docLoaded$.next(this.instance);
     }
   }
   onChange(_) {}

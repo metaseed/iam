@@ -33,6 +33,7 @@ export class DocSaveCoordinateService {
     this.docService.model.currentDoc.contentGeneration = editor
       .getDoc()
       .changeGeneration();
+    this.checkDirty(editor);
   }
 
   private docSavedHandler(editor: CodeMirror.Editor) {
@@ -40,12 +41,14 @@ export class DocSaveCoordinateService {
       this.docService.model.currentDoc.contentGeneration = editor
         .getDoc()
         .changeGeneration();
+      this.checkDirty(editor);
     }
   }
 
   private checkDirty(editor) {
-    this.isDirty = !editor
-      .getDoc()
-      .isClean(this.docService.model.currentDoc.contentGeneration);
+    if (this.docService)
+      this.isDirty = !editor
+        .getDoc()
+        .isClean(this.docService.model.currentDoc.contentGeneration);
   }
 }
