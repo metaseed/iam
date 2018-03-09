@@ -25,6 +25,7 @@ export class DocService {
   public docAdd$ = new EventEmitter();
   public docRemove$ = new EventEmitter();
   public docSaved$ = new EventEmitter();
+  public docSaving$ = new EventEmitter();
   public model: DocsModel = new DocsModel();
   public docShow$ = new EventEmitter();
   private _repoSub$ = new ReplaySubject<Repository>();
@@ -143,6 +144,7 @@ export class DocService {
   };
 
   save(content) {
+    this.docSaving$.next(this.model.currentDoc);
     if (this.model.currentDoc) {
       this.edit(content, this.model.currentDoc).subscribe(doc => {
         this.model.currentDoc = doc;
@@ -154,17 +156,16 @@ export class DocService {
           .toString();
 
         this.location.go(url);
-        doc.contentGeneration = this.editor.getDoc().changeGeneration();
-        this.snackBar.show("Saved!");
+        this.snackBar.show("Saved!", "OK");
+        this.docSaved$.next(this.model.currentDoc);
       });
     } else {
       this.saveNew(content).subscribe(doc => {
         this.model.currentDoc = doc;
-        doc.contentGeneration = this.editor.getDoc().changeGeneration();
-        this.snackBar.show("New document saved!");
+        this.snackBar.show("New document saved!", "OK");
+        this.docSaved$.next(this.model.currentDoc);
       });
     }
-    this.docSaved$.next(this.model.currentDoc);
   }
 
   edit = (content: string, doc: Document) => {

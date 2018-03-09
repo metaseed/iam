@@ -7,6 +7,7 @@ import { DocService } from "docs";
 export class DocSaveCoordinateService {
   isDirty: boolean;
   editor: CodeMirror.Editor;
+  isSaving: boolean;
 
   constructor(
     private editorService: MarkdownEditorService,
@@ -26,6 +27,11 @@ export class DocSaveCoordinateService {
 
     this.docService.docSaved$.subscribe((doc: Document) => {
       this.docSavedHandler(this.editor);
+      this.isSaving = false;
+    });
+
+    this.docService.docSaving$.subscribe((doc: Document) => {
+      this.isSaving = true;
     });
   }
 

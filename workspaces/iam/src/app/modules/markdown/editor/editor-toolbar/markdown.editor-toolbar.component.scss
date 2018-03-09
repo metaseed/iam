@@ -11,3 +11,36 @@ a:hover {
   margin-left: 1.2em;
   display: inherit;
 }
+
+.saving:after {
+  margin-top: -1em;
+  margin-left: 0.4em;
+  content: "";
+  display: inherit;
+  border: 3px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 3px solid #3498db;
+  width: 13px;
+  height: 13px;
+  -webkit-animation: spin 1.8s linear infinite;
+  animation: spin 1.8s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -113,7 +113,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     private _domSanitizer: DomSanitizer,
     private store: Store<reducers.State>,
     private state: State<reducers.State>,
-    private docSaver: DocSaveCoordinateService
+    public docSaver: DocSaveCoordinateService
   ) {
     this._editorService.editorLoaded$.subscribe(
       (editor: monaco.editor.IStandaloneCodeEditor) => {
