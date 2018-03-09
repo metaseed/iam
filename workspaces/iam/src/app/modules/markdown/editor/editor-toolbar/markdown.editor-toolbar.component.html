@@ -12,7 +12,7 @@
       <a mdc-toolbar-icon material-icon (click)="undo()">undo</a>
       <a mdc-toolbar-icon material-icon (click)="redo()">redo</a>
       <!--visibility_off-->
-      <a mdc-toolbar-icon material-icon [class.save-button]="docService?.isDocDirty" (click)="save()">save</a>
+      <a mdc-toolbar-icon material-icon [class.save-button]="docSaver.isDirty" (click)="save()">save</a>
       <a mdc-toolbar-icon material-icon *ngIf="!gtsmBreakpoint" (click)="togglePreview()">{{markdown.showPreviewPanel?'chrome_reader_mode':'chrome_reader_mode'}}</a>
       <!-- <a href="#/toolbar-demo" class="material-icons mdc-toolbar__icon">fullscreen</a> -->
       <a mdc-toolbar-icon material-icon (click)="toViewMode($event)">visibility</a>

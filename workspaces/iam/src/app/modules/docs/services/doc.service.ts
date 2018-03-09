@@ -24,7 +24,7 @@ export class DocService {
   public docListLoaded = false;
   public docAdd$ = new EventEmitter();
   public docRemove$ = new EventEmitter();
-  public docModify$ = new EventEmitter();
+  public docSaved$ = new EventEmitter();
   public model: DocsModel = new DocsModel();
   public docShow$ = new EventEmitter();
   private _repoSub$ = new ReplaySubject<Repository>();
@@ -34,6 +34,7 @@ export class DocService {
   );
   private editor: CodeMirror.Editor;
   public isDocDirty = false;
+
   constructor(
     private _http: HttpClient,
     private snackBar: MdcSnackbar,
@@ -163,6 +164,7 @@ export class DocService {
         this.snackBar.show("New document saved!");
       });
     }
+    this.docSaved$.next(this.model.currentDoc);
   }
 
   edit = (content: string, doc: Document) => {

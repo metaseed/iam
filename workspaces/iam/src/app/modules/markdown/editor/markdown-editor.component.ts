@@ -10,6 +10,7 @@ import { CodemirrorComponent } from "./codemirror-editor/codemirror.component";
 import * as fromMarkdown from "./../reducers";
 import { DocumentMode } from "./../reducers/document";
 import { Store, select } from "@ngrx/store";
+import { DocSaveCoordinateService } from "./services/doc-save-coordinate-service";
 @Component({
   selector: "ms-markdown-editor",
   template: `
@@ -19,7 +20,7 @@ import { Store, select } from "@ngrx/store";
   styles: []
 })
 export class MarkdownEditorComponent implements OnInit {
-  @Input() editorLoaded = false;
+  editorLoaded = false;
 
   @Output() markdownChange = new EventEmitter();
 
@@ -41,6 +42,7 @@ export class MarkdownEditorComponent implements OnInit {
 
   constructor(
     private _service: MarkdownEditorService,
+    private docSaveCoordinater: DocSaveCoordinateService,
     private store: Store<markdown.State>
   ) {
     _service.editorLoaded$.subscribe(() => {
