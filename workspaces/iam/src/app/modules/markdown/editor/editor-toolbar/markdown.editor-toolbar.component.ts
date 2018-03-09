@@ -92,7 +92,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     private media: ObservableMedia,
     public markdown: MarkdownComponent,
     private _editorService: MarkdownEditorService,
-    private _docService: DocService,
+    public docService: DocService,
     private _renderer: Renderer,
     private _commandService: CommandService,
     private _docRef: DocumentRef,
@@ -139,7 +139,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   save = () => {
     const content = this.editor.getValue();
     this.store.dispatch(new edit.Save(content));
-    this._docService.save(content);
+    this.docService.save(content);
   }
 
   undo = () => {
@@ -175,7 +175,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
 
 
   new = () => {
-    this._docService.newDoc();
+    this.docService.newDoc();
   }
 
 

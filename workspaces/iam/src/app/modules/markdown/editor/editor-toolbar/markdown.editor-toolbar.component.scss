@@ -2,3 +2,16 @@ a:hover {
   color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
 }
+
+.save-button:after {
+  content: '';
+  display: inline-block;
+  width: 0.2em;
+  height: 0.2em;
+  border-top: 0.2em solid red;
+  border-right: 0.2em solid red;
+  -webkit-transform: rotate(135deg);
+  transform: rotate(135deg);
+  margin-left: -0.35em;
+  margin-bottom: 0.65em;
+}

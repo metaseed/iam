@@ -1,69 +1,62 @@
-import { Component, OnInit, Input, Output, ViewChild } from '@angular/core';
-import { MarkdownEditorService } from './index';
-import { setTimeout } from 'timers';
-import { MonacoEditorComponent } from './monaco-editor/monaco-editor.component';
-import { EventEmitter } from '@angular/core';
-import { Scrollable } from 'core';
-import * as markdown from '../reducers';
-import * as fromEdit from '../actions/edit';
-import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
-import * as fromMarkdown from './../reducers';
-import { DocumentMode } from './../reducers/document';
-import { Store, select } from '@ngrx/store';
+import { Component, OnInit, Input, Output, ViewChild } from "@angular/core";
+import { MarkdownEditorService } from "./index";
+import { setTimeout } from "timers";
+import { MonacoEditorComponent } from "./monaco-editor/monaco-editor.component";
+import { EventEmitter } from "@angular/core";
+import { Scrollable } from "core";
+import * as markdown from "../reducers";
+import * as fromEdit from "../actions/edit";
+import { CodemirrorComponent } from "./codemirror-editor/codemirror.component";
+import * as fromMarkdown from "./../reducers";
+import { DocumentMode } from "./../reducers/document";
+import { Store, select } from "@ngrx/store";
 @Component({
-    selector: 'ms-markdown-editor',
-    template: `
-
-
+  selector: "ms-markdown-editor",
+  template: `
     <codemirror [(ngModel)]="markdown"></codemirror>
     <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>
     `,
-    styles: []
+  styles: []
 })
 export class MarkdownEditorComponent implements OnInit {
-    @Input()
-    editorLoaded = false;
+  @Input() editorLoaded = false;
 
-    @Output()
-    markdownChange = new EventEmitter();
+  @Output() markdownChange = new EventEmitter();
 
-    @ViewChild(CodemirrorComponent)
-    codeMirrorComponent;
+  @ViewChild(CodemirrorComponent) codeMirrorComponent;
 
-    _markdown: string;
-    @Input()
-    get markdown(): string {
-        return this._markdown;
-    }
+  docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
 
-    docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
+  _markdown: string;
+  @Input()
+  get markdown(): string {
+    return this._markdown;
+  }
+  set markdown(value) {
+    this._markdown = value;
+    this.markdownChange.emit(value);
+  }
 
-    set markdown(value) {
-        this._markdown = value;
-        this.markdownChange.emit(value);
-    }
+  @ViewChild(MonacoEditorComponent) editor: MonacoEditorComponent;
 
-    @ViewChild(MonacoEditorComponent)
-    editor: MonacoEditorComponent;
+  constructor(
+    private _service: MarkdownEditorService,
+    private store: Store<markdown.State>
+  ) {
+    _service.editorLoaded$.subscribe(() => {
+      setTimeout(() => (this.editorLoaded = true), 0);
+    });
 
-    constructor(private _service: MarkdownEditorService, private store: Store<markdown.State>) {
-        _service.editorLoaded$.subscribe(() => {
+    this.docMode$.subscribe(mode => {
+      switch (mode) {
+        case DocumentMode.Edit: {
+          setTimeout(() => this.codeMirrorComponent.refresh(), 0);
 
-            setTimeout(() => this.editorLoaded = true, 0);
-        });
-
-        this.docMode$.subscribe(mode => {
-            switch (mode) {
-                case DocumentMode.Edit: {
-                    setTimeout(() => this.codeMirrorComponent.refresh(), 0);
-
-                    break;
-                }
-
-            }
+          break;
         }
-        )
-    }
+      }
+    });
+  }
 
-    ngOnInit() { }
+  ngOnInit() {}
 }

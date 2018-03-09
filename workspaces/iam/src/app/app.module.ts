@@ -1,23 +1,23 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AppComponent } from './app.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MarkdownModule } from './modules';
-import { HotkeyModule } from 'angular-hotkey-module';
-import { CoreModule } from './modules/core/core.module';
-import { HttpClientModule } from '@angular/common/http';
-import { StoreModule } from '@ngrx/store';
-import { DocsModule } from 'docs';
-import { NotFoundComponent } from './not-found/not-found.component';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { APP_BASE_HREF, PlatformLocation } from '@angular/common';
-import { environment } from '../environments/environment';
-import { AppRoutingModule } from './app-routing.module';
-import { MaterialModule } from './modules/material/material.module';
-import { metaReducers, reducers } from 'app/reducers';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { MsCommonModule } from 'common';
+import { BrowserModule } from "@angular/platform-browser";
+import { NgModule } from "@angular/core";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { AppComponent } from "./app.component";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { MarkdownModule } from "./modules";
+import { HotkeyModule } from "angular-hotkey-module";
+import { CoreModule } from "./modules/core/core.module";
+import { HttpClientModule } from "@angular/common/http";
+import { StoreModule } from "@ngrx/store";
+import { DocsModule } from "docs";
+import { NotFoundComponent } from "./not-found/not-found.component";
+import { ServiceWorkerModule } from "@angular/service-worker";
+import { APP_BASE_HREF, PlatformLocation } from "@angular/common";
+import { environment } from "../environments/environment";
+import { AppRoutingModule } from "./app-routing.module";
+import { MaterialModule } from "./modules/material/material.module";
+import { metaReducers, reducers } from "app/reducers";
+import { StoreDevtoolsModule } from "@ngrx/store-devtools";
+import { MsCommonModule } from "common";
 /**
  * This function is used internal to get a string instance of the `<base href="" />` value from `index.html`.
  * This is an exported function, instead of a private function or inline lambda, to prevent this error:
@@ -33,10 +33,7 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
   return platformLocation.getBaseHrefFromDOM();
 }
 @NgModule({
-  declarations: [
-    NotFoundComponent,
-    AppComponent
-  ],
+  declarations: [NotFoundComponent, AppComponent],
   imports: [
     AppRoutingModule,
     BrowserModule,
@@ -55,14 +52,17 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
     StoreModule.forRoot(reducers, { metaReducers }),
     HotkeyModule.forRoot({
       disableCheatSheet: false,
-      cheatSheetHotkey: 'h',
+      cheatSheetHotkey: "h",
       cheatSheetCloseEsc: true,
-      cheatSheetDescription: 'shortcuts'
-    })
-    , StoreDevtoolsModule.instrument({
-      name: 'NgRx Iam DevTools',
-      logOnly: environment.production
-    })
+      cheatSheetDescription: "shortcuts"
+    }),
+    StoreDevtoolsModule
+      .instrument
+      //   {
+      //   name: 'NgRx Iam DevTools',
+      //   logOnly: environment.production
+      // }
+      ()
   ],
   providers: [
     {
@@ -73,6 +73,4 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {
-
-}
+export class AppModule {}

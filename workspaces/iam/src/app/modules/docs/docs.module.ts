@@ -1,19 +1,20 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule, Routes } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { FlexLayoutModule } from '@angular/flex-layout';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { RouterModule, Routes } from "@angular/router";
+import { FormsModule } from "@angular/forms";
+import { FlexLayoutModule } from "@angular/flex-layout";
 
 import { DocsComponent } from "./docs.component";
 import { NewDocComponent } from "./new-doc/new-doc.component";
 import { DocListComponent } from "./doc-list/doc-list.component";
-import { DocService } from './services/doc.service';
-import { MaterialModule } from '../../modules/material/material.module';
-import { NgSpinKitModule } from 'ng-spin-kit';
-import { DeleteAlertDialog } from 'app/modules/docs/doc-list/dialog.component';
+import { DocService } from "./services/doc.service";
+import { MaterialModule } from "../../modules/material/material.module";
+import { NgSpinKitModule } from "ng-spin-kit";
+import { DeleteAlertDialog } from "app/modules/docs/doc-list/dialog.component";
 const todosRoutes: Routes = [
   {
-    path: 'docs', component: DocsComponent
+    path: "docs",
+    component: DocsComponent
   }
 ];
 
@@ -30,17 +31,10 @@ const todosRoutes: Routes = [
     DeleteAlertDialog,
     NewDocComponent,
     DocsComponent,
-    DocListComponent,
+    DocListComponent
   ],
-  exports: [
-    DocsComponent
-  ],
-  providers: [
-    DocService
-  ],
-  entryComponents: [
-    DeleteAlertDialog
-  ]
+  exports: [DocsComponent],
+  providers: [DocService],
+  entryComponents: [DeleteAlertDialog]
 })
-export class DocsModule {
-}
+export class DocsModule {}
