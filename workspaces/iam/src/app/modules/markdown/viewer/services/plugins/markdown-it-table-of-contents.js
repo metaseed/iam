@@ -1,5 +1,5 @@
-// reference this to implement popup toc: https://codepad.co/snippet/J4F52QsF
 "use strict";
+// reference this to implement popup toc: https://codepad.co/snippet/J4F52QsF
 var string = require("string");
 var assign = require("lodash.assign");
 var defaults = {
