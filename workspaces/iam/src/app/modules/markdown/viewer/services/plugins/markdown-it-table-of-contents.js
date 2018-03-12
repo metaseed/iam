@@ -1,11 +1,14 @@
+// reference this to implement popup toc: https://codepad.co/snippet/J4F52QsF
 "use strict";
 var string = require("string");
 var assign = require("lodash.assign");
 var defaults = {
   includeLevel: [1, 2],
   containerClass: "table-of-contents",
-  slugify: function (str) {
-    return string(str).slugify().toString();
+  slugify: function(str) {
+    return string(str)
+      .slugify()
+      .toString();
   },
   markerPattern: /^\[\[toc\]\]/im,
   listType: "ul",
@@ -13,7 +16,7 @@ var defaults = {
   format: undefined
 };
 
-module.exports = function (md, options) {
+module.exports = function(md, options) {
   var options = assign({}, defaults, options);
   var tocRegexp = options.markerPattern;
   var gstate;
@@ -23,7 +26,7 @@ module.exports = function (md, options) {
     var match;
 
     // Reject if the token does not start with [
-    if (state.src.charCodeAt(state.pos) !== 0x5B /* [ */ ) {
+    if (state.src.charCodeAt(state.pos) !== 0x5b /* [ */) {
       return false;
     }
     // Don't run any pairs in validation mode
@@ -33,9 +36,11 @@ module.exports = function (md, options) {
 
     // Detect TOC markdown
     match = tocRegexp.exec(state.src);
-    match = !match ? [] : match.filter(function (m) {
-      return m;
-    });
+    match = !match
+      ? []
+      : match.filter(function(m) {
+          return m;
+        });
     if (match.length < 1) {
       return false;
     }
@@ -57,21 +62,21 @@ module.exports = function (md, options) {
     return true;
   }
 
-  md.renderer.rules.toc_open = function (tokens, index) {
+  md.renderer.rules.toc_open = function(tokens, index) {
     return '<div class="' + options.containerClass + '">';
   };
 
-  md.renderer.rules.toc_close = function (tokens, index) {
+  md.renderer.rules.toc_close = function(tokens, index) {
     return "</div>";
   };
 
-  md.renderer.rules.toc_body = function (tokens, index) {
+  md.renderer.rules.toc_body = function(tokens, index) {
     return renderChildsTokens(0, gstate.tokens)[1];
   };
 
   function renderChildsTokens(pos, tokens) {
     var headings = [],
-      buffer = '',
+      buffer = "",
       currentLevel,
       subHeadings,
       size = tokens.length,
@@ -80,7 +85,11 @@ module.exports = function (md, options) {
       var token = tokens[i];
       var heading = tokens[i - 1];
       var level = token.tag && parseInt(token.tag.substr(1, 1));
-      if (token.type !== "heading_close" || options.includeLevel.indexOf(level) == -1 || heading.type !== "inline") {
+      if (
+        token.type !== "heading_close" ||
+        options.includeLevel.indexOf(level) == -1 ||
+        heading.type !== "inline"
+      ) {
         i++;
         continue; // Skip if not matching criteria
       }
@@ -97,7 +106,16 @@ module.exports = function (md, options) {
           // Finishing the sub headings
           buffer += "</li>";
           headings.push(buffer);
-          return [i, "<" + options.listType + ">" + headings.join("") + "</" + options.listType + ">"];
+          return [
+            i,
+            "<" +
+              options.listType +
+              ">" +
+              headings.join("") +
+              "</" +
+              options.listType +
+              ">"
+          ];
         }
         if (level == currentLevel) {
           // Finishing the sub headings
@@ -105,18 +123,35 @@ module.exports = function (md, options) {
           headings.push(buffer);
         }
       }
-      buffer = "<li><a href=\"" + options.url + "#" + options.slugify(heading.content) + "\">";
-      buffer += typeof options.format === "function" ? options.format(heading.content) : heading.content;
+      buffer =
+        '<li><a href="' +
+        options.url +
+        "#" +
+        options.slugify(heading.content) +
+        '">';
+      buffer +=
+        typeof options.format === "function"
+          ? options.format(heading.content)
+          : heading.content;
       buffer += "</a>";
       i++;
     }
     buffer += buffer === "" ? "" : "</li>";
     headings.push(buffer);
-    return [i, "<" + options.listType + ">" + headings.join("") + "</" + options.listType + ">"];
+    return [
+      i,
+      "<" +
+        options.listType +
+        ">" +
+        headings.join("") +
+        "</" +
+        options.listType +
+        ">"
+    ];
   }
 
   // Catch all the tokens for iteration later
-  md.core.ruler.push("grab_state", function (state) {
+  md.core.ruler.push("grab_state", function(state) {
     gstate = state;
   });
 
