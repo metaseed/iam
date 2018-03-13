@@ -2,10 +2,12 @@ import { Injectable } from "@angular/core";
 import { Document } from "../../../docs/models/document";
 import { MarkdownEditorService } from "./markdown.editor.service";
 import { DocService } from "docs";
+import { Observable } from "rxjs/Observable";
+import { Subject } from "rxjs";
 
 @Injectable()
 export class DocSaveCoordinateService {
-  isDirty: boolean;
+  isDirty: Subject<boolean>;
   editor: CodeMirror.Editor;
   isSaving: boolean;
 
@@ -52,9 +54,12 @@ export class DocSaveCoordinateService {
   }
 
   private checkDirty(editor) {
-    if (this.docService)
-      this.isDirty = !editor
-        .getDoc()
-        .isClean(this.docService.model.currentDoc.contentGeneration);
+    if (this.docService) {
+      this.isDirty.next(
+        !editor
+          .getDoc()
+          .isClean(this.docService.model.currentDoc.contentGeneration)
+      );
+    }
   }
 }
