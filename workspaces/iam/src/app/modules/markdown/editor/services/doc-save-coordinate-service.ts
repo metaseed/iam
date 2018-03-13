@@ -7,7 +7,7 @@ import { Subject } from "rxjs";
 
 @Injectable()
 export class DocSaveCoordinateService {
-  isDirty: Subject<boolean>;
+  isDirty: Subject<boolean> = new Subject();
   editor: CodeMirror.Editor;
   isSaving: boolean;
 
