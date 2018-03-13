@@ -25,6 +25,7 @@ import { Subscription } from "rxjs/Subscription";
         .viewer-container {
             overflow-y:auto;
             overflow-x:auto;
+            padding:0px 2px 0px;
             height:100%;
         }
     `]
