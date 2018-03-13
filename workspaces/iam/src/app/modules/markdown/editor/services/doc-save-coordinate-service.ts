@@ -8,7 +8,7 @@ import { filter, debounceTime } from "rxjs/operators";
 
 @Injectable()
 export class DocSaveCoordinateService {
-  isDirty: Subject<boolean> = new Subject();
+  isDirty$: Subject<boolean> = new Subject();
   editor: CodeMirror.Editor;
   isSaving: boolean;
   private currentContent: string;
@@ -18,7 +18,7 @@ export class DocSaveCoordinateService {
     private editorService: MarkdownEditorService,
     private docService: DocService
   ) {
-    this.isDirty
+    this.isDirty$
       .pipe(debounceTime(DocSaveCoordinateService.autoSaveDelayAfterEdit))
       .subscribe(value => {
         if (this.currentContent && value)
@@ -68,7 +68,7 @@ export class DocSaveCoordinateService {
 
   private checkDirty(editor) {
     if (this.docService) {
-      this.isDirty.next(
+      this.isDirty$.next(
         !editor
           .getDoc()
           .isClean(this.docService.model.currentDoc.contentGeneration)
