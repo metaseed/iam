@@ -148,7 +148,7 @@ export class CodemirrorComponent {
   updateValue(value) {
     this.value = value;
     this.onTouched();
-    this.service.contentChanged$.next(this.instance);
+    this.service.contentChanged$.next([value, this.instance]);
     this.change.emit(value);
   }
 
