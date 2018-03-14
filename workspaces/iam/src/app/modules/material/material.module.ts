@@ -1,48 +1,55 @@
+import { NgModule } from "@angular/core";
 
-// import { MatButtonModule, MatCheckboxModule, MatIconModule, MatCardModule } from '@angular/material';
-import { NgModule } from '@angular/core';
-
-// @NgModule({
-//     imports: [MatIconModule, MatButtonModule, MatCheckboxModule, MatCardModule],
-//     exports: [MatIconModule, MatButtonModule, MatCheckboxModule, MatCardModule]
-// })
 import {
-    MdcCardModule,
-    MdcIconModule,
-    MdcRippleModule,
-    MdcFabModule,
-    MdcButtonModule,
-    MdcMenuModule,
-    MdcSnackbarModule,
-    MdcIconToggleModule,
-    MdcIconToggle,
-    MdcTabModule,
-    MdcThemeModule,
-    MdcToolbarModule,
-    MdcDialogModule,
-    MdcLinearProgressModule,
-    MdcListModule
-} from '@angular-mdc/web';
+  MatButtonModule,
+  MatCheckboxModule,
+  MatIconModule,
+  MatCardModule
+} from "@angular/material";
+import {
+  MdcCardModule,
+  MdcIconModule,
+  MdcRippleModule,
+  MdcFabModule,
+  MdcButtonModule,
+  MdcMenuModule,
+  MdcSnackbarModule,
+  MdcIconToggleModule,
+  MdcIconToggle,
+  MdcTabModule,
+  MdcThemeModule,
+  MdcToolbarModule,
+  MdcDialogModule,
+  MdcLinearProgressModule,
+  MdcListModule
+} from "@angular-mdc/web";
+
+export const MatModules = [
+  MatIconModule,
+  MatButtonModule,
+  MatCheckboxModule,
+  MatCardModule
+];
 
 export const MODULES = [
-    MdcLinearProgressModule,
-    MdcFabModule,
-    MdcMenuModule,
-    MdcIconModule,
-    MdcRippleModule,
-    MdcButtonModule,
-    MdcCardModule,
-    MdcSnackbarModule,
-    MdcTabModule,
-    MdcIconToggleModule,
-    MdcThemeModule,
-    MdcDialogModule,
-    MdcToolbarModule,
-    MdcListModule
+  MdcLinearProgressModule,
+  MdcFabModule,
+  MdcMenuModule,
+  MdcIconModule,
+  MdcRippleModule,
+  MdcButtonModule,
+  MdcCardModule,
+  MdcSnackbarModule,
+  MdcTabModule,
+  MdcIconToggleModule,
+  MdcThemeModule,
+  MdcDialogModule,
+  MdcToolbarModule,
+  MdcListModule
 ];
 
 @NgModule({
-    imports: MODULES,
-    exports: MODULES
+  imports: [...MatModules, ...MODULES],
+  exports: [...MatModules, ...MODULES]
 })
-export class MaterialModule { }
+export class MaterialModule {}

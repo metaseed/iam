@@ -3,18 +3,18 @@
 // $mdc-theme-primary: #1565c0; // change primary color example
 // $mdc-theme-secondary: #388e3c; // change secondary color example
 @import "~@angular-mdc/theme";
-// @import '~@angular/material/prebuilt-themes/indigo-pink';
+@import "~@angular/material/prebuilt-themes/indigo-pink";
 :root {
   --mdc-theme-text-primary-on-background: #fff;
-  --mdc-theme-text-secondary-on-background: rgba(255, 255, 255, .74);
+  --mdc-theme-text-secondary-on-background: rgba(255, 255, 255, 0.74);
 }
 
-@import '~markdown-it-latex/src/katex.css';
-@import 'variables';
-@import '~font-awesome/scss/font-awesome';
-@import '~bootstrap/scss/bootstrap';
+@import "~markdown-it-latex/src/katex.css";
+@import "variables";
+@import "~font-awesome/scss/font-awesome";
+@import "~bootstrap/scss/bootstrap";
 // @import '~highlight.js/styles/github';
-@import '~prismjs/themes/prism';
+@import "~prismjs/themes/prism";
 /* Rules for sizing the icon. */
 
 @media all and (min-width: 960px) {
@@ -49,7 +49,7 @@
 }
 
 .material-icons {
-  font-family: 'Material Icons';
+  font-family: "Material Icons";
   font-weight: normal;
   font-style: normal;
   font-size: 24px;
@@ -60,7 +60,7 @@
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
-  -webkit-font-feature-settings: 'liga';
+  -webkit-font-feature-settings: "liga";
   -webkit-font-smoothing: antialiased;
 }
 
@@ -101,14 +101,14 @@
 }
 
 .orange600 {
-  color: #FB8C00;
+  color: #fb8c00;
 }
 
 .blockquote {
-  padding: .5rem 1rem;
+  padding: 0.5rem 1rem;
   margin-bottom: 1rem;
   font-size: 1.25rem;
-  border-left: .25rem solid #eceeef;
+  border-left: 0.25rem solid #eceeef;
 }
 
 .warning {
@@ -124,9 +124,9 @@
 
 @import "~codemirror/lib/codemirror";
 // @import '~codemirror/addon/scroll/simplescrollbars';
-@import '~codemirror/addon/display/fullscreen';
-@import '~codemirror/addon/dialog/dialog';
-@import '~codemirror/addon/search/matchesonscrollbar';
+@import "~codemirror/addon/display/fullscreen";
+@import "~codemirror/addon/dialog/dialog";
+@import "~codemirror/addon/search/matchesonscrollbar";
 .cm-header-1 {
   @extend h1;
 }
@@ -160,7 +160,7 @@
 }
 
 .cm-s-default .cm-formatting {
-  opacity: .48;
+  opacity: 0.48;
 }
 
 // .CodeMirror-gutter-filler,
@@ -178,6 +178,6 @@
   z-index: 9;
 }
 
-.mdc-menu--open>.mdc-menu__items {
+.mdc-menu--open > .mdc-menu__items {
   color: black;
 }
