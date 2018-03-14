@@ -11,6 +11,12 @@ import * as fromMarkdown from "./../reducers";
 import { DocumentMode } from "./../reducers/document";
 import { Store, select } from "@ngrx/store";
 import { DocSaveCoordinateService } from "./services/doc-save-coordinate-service";
+import { Observable } from "rxjs/Observable";
+import { DialogService } from "common";
+import { DocService } from "docs";
+import { map, filter } from "rxjs/Operators";
+import { pipe } from "rxjs";
+import { switchMap } from "rxjs/operators";
 @Component({
   selector: "ms-markdown-editor",
   template: `
@@ -24,7 +30,7 @@ export class MarkdownEditorComponent implements OnInit {
 
   @Output() markdownChange = new EventEmitter();
 
-  @ViewChild(CodemirrorComponent) codeMirrorComponent;
+  @ViewChild(CodemirrorComponent) codeMirrorComponent: CodemirrorComponent;
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
 
@@ -38,12 +44,12 @@ export class MarkdownEditorComponent implements OnInit {
     this.markdownChange.emit(value);
   }
 
-  @ViewChild(MonacoEditorComponent) editor: MonacoEditorComponent;
-
   constructor(
+    private _dialogService: DialogService,
     private _service: MarkdownEditorService,
     private docSaveCoordinater: DocSaveCoordinateService,
-    private store: Store<markdown.State>
+    private store: Store<markdown.State>,
+    private docSerivce: DocService
   ) {
     _service.editorLoaded$.subscribe(() => {
       setTimeout(() => (this.editorLoaded = true), 0);
@@ -61,4 +67,26 @@ export class MarkdownEditorComponent implements OnInit {
   }
 
   ngOnInit() {}
+
+  canDeactivate(): Observable<boolean> | boolean {
+    return this.docSaveCoordinater.isDirty$.pipe(
+      switchMap(value => {
+        // if (value) {
+        //   return this._dialogService
+        //     .confirm("document is modified, do you want to save?")
+        //     .pipe(
+        //       map(value => {
+        //         if (value) {
+        //           this.docSerivce.save(this.codeMirrorComponent.value);
+        //           return false;
+        //         } else {
+        //           return true;
+        //         }
+        //       })
+        //     );
+        // }
+        return Observable.of(true);
+      })
+    );
+  }
 }

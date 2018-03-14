@@ -3,12 +3,12 @@ import { Document } from "../../../docs/models/document";
 import { MarkdownEditorService } from "./markdown.editor.service";
 import { DocService } from "docs";
 import { Observable } from "rxjs/Observable";
-import { Subject } from "rxjs";
+import { Subject, BehaviorSubject } from "rxjs";
 import { filter, debounceTime } from "rxjs/operators";
 
 @Injectable()
 export class DocSaveCoordinateService {
-  isDirty$: Subject<boolean> = new Subject();
+  isDirty$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   editor: CodeMirror.Editor;
   isSaving: boolean;
   private currentContent: string;

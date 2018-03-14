@@ -32,6 +32,8 @@ import { Subscription } from "rxjs/Subscription";
 import { OnDestroy } from "@angular/core";
 import { MarkdownViewerContainerComponent } from "./viewer/markdown-viewer-container.component";
 import { HasElementRef } from "@angular/material/core/typings/common-behaviors/color";
+import { Observable } from "rxjs/Observable";
+import { DocSaveCoordinateService } from "./editor/services/doc-save-coordinate-service";
 
 @Component({
   selector: "ms-markdown",
@@ -68,6 +70,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     private _docService: DocService,
     private _el: ElementRef,
     private _editorService: MarkdownEditorService,
+    private docSaveCoodinator: DocSaveCoordinateService,
     private _http: HttpClient,
     @Inject(APP_BASE_HREF) private baseHref,
     private changeDetecorRef: ChangeDetectorRef,
@@ -137,6 +140,10 @@ export class MarkdownComponent implements OnInit, OnDestroy {
       this.docShowSub.unsubscribe();
       this.docShowSub = null;
     }
+  }
+
+  canDeactivate(): Observable<boolean> | boolean {
+    return this.editor.canDeactivate();
   }
 
   ngAfterViewChecked() {
