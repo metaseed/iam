@@ -36,7 +36,7 @@ import * as mark from "markdown-it-mark";
 import * as footnote from "./plugins/markdown-it-footnote";
 import * as deflist from "markdown-it-deflist";
 import * as abbr from "markdown-it-abbr";
-import * as imsize from "markdown-it-imsize";
+import * as imsize from "./plugins/markdown-it-imsize";
 import * as anchor from "markdown-it-anchor";
 import * as toc from "./plugins/markdown-it-table-of-contents";
 import { ContainerPlugin } from "./plugins/container";
