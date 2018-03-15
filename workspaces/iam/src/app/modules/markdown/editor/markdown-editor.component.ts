@@ -17,6 +17,7 @@ import { DocService } from "docs";
 import { map, filter } from "rxjs/Operators";
 import { pipe } from "rxjs";
 import { switchMap } from "rxjs/operators";
+import { DocDirtyNotifyDialog } from "./doc-dirty-notify-dialog";
 @Component({
   selector: "ms-markdown-editor",
   template: `
@@ -71,20 +72,18 @@ export class MarkdownEditorComponent implements OnInit {
   canDeactivate(): Observable<boolean> | boolean {
     return this.docSaveCoordinater.isDirty$.pipe(
       switchMap(value => {
-        // if (value) {
-        //   return this._dialogService
-        //     .confirm("document is modified, do you want to save?")
-        //     .pipe(
-        //       map(value => {
-        //         if (value) {
-        //           this.docSerivce.save(this.codeMirrorComponent.value);
-        //           return false;
-        //         } else {
-        //           return true;
-        //         }
-        //       })
-        //     );
-        // }
+        if (value) {
+          return this._dialogService.confirm(DocDirtyNotifyDialog).pipe(
+            map(value => {
+              if (value) {
+                this.docSerivce.save(this.codeMirrorComponent.value);
+                return false;
+              } else {
+                return true;
+              }
+            })
+          );
+        }
         return Observable.of(true);
       })
     );

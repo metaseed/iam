@@ -1,10 +1,11 @@
 import { NgModule } from "@angular/core";
 
 import {
-  MatButtonModule,
-  MatCheckboxModule,
-  MatIconModule,
-  MatCardModule
+  // MatButtonModule,
+  // MatCheckboxModule,
+  // MatIconModule,
+  // MatCardModule,
+  MatDialogModule
 } from "@angular/material";
 import {
   MdcCardModule,
@@ -25,10 +26,11 @@ import {
 } from "@angular-mdc/web";
 
 export const MatModules = [
-  MatIconModule,
-  MatButtonModule,
-  MatCheckboxModule,
-  MatCardModule
+  // MatIconModule,
+  // MatButtonModule,
+  // MatCheckboxModule,
+  // MatCardModule,
+  MatDialogModule
 ];
 
 export const MODULES = [

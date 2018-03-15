@@ -3,7 +3,7 @@ import { MdcDialogRef, MdcDialogComponent } from "@angular-mdc/web";
 
 @Component({
   template: `
-    <mdc-dialog #myDialog>
+    <mdc-dialog #dialog>
       <mdc-dialog-header>
         <mdc-dialog-header-title>
           Select Key Map
@@ -18,11 +18,11 @@ import { MdcDialogRef, MdcDialogComponent } from "@angular-mdc/web";
     </mdc-list>
       </mdc-dialog-body>
     </mdc-dialog>
-    `,
+    `
 })
 export class KeyMapSelectionDialog {
-  @ViewChild('myDialog') myDialog: MdcDialogComponent;
-  constructor(public dialogRef: MdcDialogRef<KeyMapSelectionDialog>) { }
+  @ViewChild("myDialog") myDialog: MdcDialogComponent;
+  constructor(public dialogRef: MdcDialogRef<KeyMapSelectionDialog>) {}
 
   selectionChanged(change) {
     console.log(change);

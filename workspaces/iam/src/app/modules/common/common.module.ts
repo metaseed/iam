@@ -6,21 +6,15 @@ import { BottomNavigationComponent } from "./bottom-navigation/bottom-navigation
 import { RouterModule } from "@angular/router";
 import { SplitPaneModule } from "./split-pane/ng2-split-pane";
 import { DialogService } from "./services/dialog/dialog.service";
-import { SimpleDialog } from "./services/dialog/simple-dialog";
 
 @NgModule({
   imports: [cm, MaterialModule, RouterModule, SplitPaneModule],
-  declarations: [
-    ReadingPositionIndicatorComponent,
-    BottomNavigationComponent,
-    SimpleDialog
-  ],
+  declarations: [ReadingPositionIndicatorComponent, BottomNavigationComponent],
   exports: [
     ReadingPositionIndicatorComponent,
     BottomNavigationComponent,
     SplitPaneModule
   ],
-  entryComponents: [SimpleDialog],
   providers: [DialogService]
 })
 export class MsCommonModule {}

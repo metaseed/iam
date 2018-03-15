@@ -14,6 +14,7 @@ import { CodemirrorToolbarComponent } from "./codemirror-editor/codemirror-toolb
 import { KeyMapSelectionDialog } from "./editor-toolbar/dialog.component";
 import { DocSaveCoordinateService } from "./services/doc-save-coordinate-service";
 import { CanDeactivateGuard } from "./services/can-deactive-guard.service";
+import { DocDirtyNotifyDialog } from "./doc-dirty-notify-dialog";
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { CanDeactivateGuard } from "./services/can-deactive-guard.service";
     MonacoEditorComponent,
     MarkdownEditorComponent,
     CodemirrorToolbarComponent,
-    KeyMapSelectionDialog
+    KeyMapSelectionDialog,
+    DocDirtyNotifyDialog
   ],
   imports: [
     CommonModule,
@@ -44,6 +46,6 @@ import { CanDeactivateGuard } from "./services/can-deactive-guard.service";
     DocSaveCoordinateService,
     CanDeactivateGuard
   ],
-  entryComponents: [KeyMapSelectionDialog]
+  entryComponents: [KeyMapSelectionDialog, DocDirtyNotifyDialog]
 })
 export class MarkdownEditorModule {}
