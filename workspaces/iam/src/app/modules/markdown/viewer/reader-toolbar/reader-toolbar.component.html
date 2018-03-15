@@ -2,13 +2,13 @@
   <!-- [@show]="isScrollDown===false" -->
   <mdc-toolbar-row>
     <mdc-toolbar-section alignStart="true">
-      <a onclick="0" [routerLink]="['/']" mdc-toolbar-icon material-icon>arrow_back</a>
+      <a routerLinkActive [routerLink]="['/']" mdc-toolbar-icon material-icon>arrow_back</a>
 
       <mdc-toolbar-title>Document</mdc-toolbar-title>
     </mdc-toolbar-section>
     <mdc-toolbar-section alignEnd="true">
-      <a mdc-toolbar-icon material-icon (click)="toEditMode($event)">mode_edit</a>
-      <a mdc-toolbar-icon material-icon (click)="menu.open()">more_vert</a>
+      <a tabindex="1" mdc-toolbar-icon material-icon (click)="toEditMode($event)">mode_edit</a>
+      <a tabindex="1" mdc-toolbar-icon material-icon (click)="menu.open()">more_vert</a>
       <mdc-menu #menu (select)="more($event)" [anchorCorner]="top-start">
         <mdc-menu-item id="0">Item 1</mdc-menu-item>
         <mdc-menu-item id="1" [disabled]="true">Item 2</mdc-menu-item>
