@@ -116,15 +116,18 @@ export class MarkdownViewerService {
     let language = prismjs.languages[lang];
     if (lang && language) {
       try {
-        return `<div style="position:relative"><button class="material-icons copy-button no-print"
+        return `<div style="position:relative">
+        <button class="material-icons copy-button no-print"
         title="Copy code snippet"
         originalstr=${base64Encode(str)}
         onclick="document.copier.copyText(this.attributes.originalstr.value,true)">
         <span aria-hidden="true">content_copy</span>
-      </button><pre class="language-${lang}" style="position:relative"><code>${prismjs.highlight(
+      </button>
+      <pre class="language-${lang}" style="position:relative"><code>${prismjs.highlight(
           str,
           language
-        )}</code></pre></div>`;
+        )}</code></pre>
+        </div>`;
       } catch (__) {}
     }
     return `<pre class="highlight"><code>${this.markdown.utils.escapeHtml(
