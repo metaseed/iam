@@ -136,51 +136,52 @@
 @import "~codemirror/addon/display/fullscreen";
 @import "~codemirror/addon/dialog/dialog";
 @import "~codemirror/addon/search/matchesonscrollbar";
+.markdown-container {
+  h1 {
+    padding-bottom: 0.3em;
+    font-size: 2em;
+    border-bottom: 1px solid #eaecef;
+  }
 
-.markdown-container h1 {
-  padding-bottom: 0.3em;
-  font-size: 2em;
-  border-bottom: 1px solid #eaecef;
-}
+  h2 {
+    padding-bottom: 0.3em;
+    font-size: 1.5em;
+    border-bottom: 1px solid #eaecef;
+  }
 
-.markdown-container h2 {
-  padding-bottom: 0.3em;
-  font-size: 1.5em;
-  border-bottom: 1px solid #eaecef;
-}
+  h3 {
+    font-size: 1.25em;
+  }
 
-.markdown-container h3 {
-  font-size: 1.25em;
-}
+  h4 {
+    font-size: 1em;
+  }
 
-.markdown-container h4 {
-  font-size: 1em;
-}
+  h5 {
+    font-size: 0.875em;
+  }
 
-.markdown-container h5 {
-  font-size: 0.875em;
-}
+  h6 {
+    font-size: 0.85em;
+    color: #6a737d;
+  }
 
-.markdown-container h6 {
-  font-size: 0.85em;
-  color: #6a737d;
-}
-
-.markdown-container h1 {
-  padding-bottom: 0.3em;
-  font-size: 2em;
-  border-bottom: 1px solid #eaecef;
-}
-.markdown-container h1,
-.markdown-container h2,
-.markdown-container h3,
-.markdown-container h4,
-.markdown-container h5,
-.markdown-container h6 {
-  margin-top: 24px;
-  margin-bottom: 16px;
-  font-weight: 600;
-  line-height: 1.25;
+  h1 {
+    padding-bottom: 0.3em;
+    font-size: 2em;
+    border-bottom: 1px solid #eaecef;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
 }
 .cm-header-1 {
   @extend h1;
@@ -205,7 +206,6 @@
 .cm-header-6 {
   @extend h4;
 }
-
 .CodeMirror {
   height: 100vh;
 }
