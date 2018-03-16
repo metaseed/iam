@@ -76,12 +76,14 @@ export class DocService {
     this.docShow$.next(doc);
   }
 
-  showDoc(title: string, id: number | string) {
+  showDoc(title: string, id: number | string, hasSufix: boolean = true) {
     let me = this;
+    let content = `${DocService.FolderName}/${title}_${id}${
+      hasSufix ? "md" : ""
+    }`;
     this._repoSub$.subscribe(repo =>
-      repo
-        .getContents(`${DocService.FolderName}/${title}_${id}`)
-        .subscribe((content: Content) => {
+      repo.getContents(content).subscribe(
+        (content: Content) => {
           let doc = me.model.docs.find(doc => doc.number === +id);
           function showContent(doc: Document) {
             doc.content = content;
@@ -95,7 +97,11 @@ export class DocService {
           } else {
             showContent(doc);
           }
-        })
+        },
+        error => {
+          if (hasSufix) this.showDoc(title, id, false);
+        }
+      )
     );
   }
 
@@ -112,7 +118,7 @@ export class DocService {
           flatMap(issue => {
             let id = issue.number;
             return repo
-              .newFile(`${DocService.FolderName}/${title}_${id}`, content)
+              .newFile(`${DocService.FolderName}/${title}_${id}.md`, content)
               .pipe(
                 flatMap(file => {
                   let url = this.getContentUrl(id);
@@ -177,7 +183,7 @@ export class DocService {
       flatMap(repo =>
         repo
           .updateFile(
-            `${DocService.FolderName}/${title}_${doc.number}`,
+            `${DocService.FolderName}/${title}_${doc.number}.md`,
             content,
             doc.metaData.contentId
           )
@@ -201,7 +207,7 @@ export class DocService {
                           .delFileViaSha(
                             `${DocService.FolderName}/${doc.metaData.title}_${
                               doc.number
-                            }`,
+                            }.md`,
                             doc.metaData.contentId
                           )
                           .subscribe();

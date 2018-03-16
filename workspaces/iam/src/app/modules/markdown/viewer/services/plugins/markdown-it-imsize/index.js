@@ -36,7 +36,33 @@ function image_with_size(md, options) {
 
     labelStart = state.pos + 2;
     labelEnd = md.helpers.parseLinkLabel(state, state.pos + 1, false);
+    var sizeStart = -1;
+    var sizeEnd = labelEnd;
+    var codeNext = 0;
+    // [link  =WidthxHeight](  <href>  "title"  )
+    //        ^^ find this position
+    for (pos = labelEnd; pos >= labelStart - 1; pos--) {
+      code = state.src.charCodeAt(pos);
+      codeNext = state.src.charCodeAt(pos + 1);
 
+      if (code >= 0x30 /* 0 */ && code <= 0x39 /* 9 */ && codeNext === 0x20) {
+        sizeEnd = pos;
+      }
+      if (
+        (code === 0x20 || code === 0x5b) /* [ */ &&
+        codeNext === 0x3d /* = */
+      ) {
+        sizeStart = pos + 1;
+        break;
+      }
+    }
+    if (sizeStart !== -1) {
+      res = parseImageSize(state.src, sizeStart, sizeEnd + 1);
+      if (res.ok) {
+        width = res.width;
+        height = res.height;
+      }
+    }
     // parser failed to find ']', so it's not a valid link
     if (labelEnd < 0) {
       return false;
@@ -113,8 +139,12 @@ function image_with_size(md, options) {
         if (code === 0x20) {
           res = parseImageSize(state.src, pos, state.posMax);
           if (res.ok) {
-            width = res.width;
-            height = res.height;
+            if (!width) {
+              width = res.width;
+            }
+            if (!height) {
+              height = res.height;
+            }
             pos = res.pos;
 
             // [link](  <href>  "title" =WxH  )
@@ -216,8 +246,6 @@ function image_with_size(md, options) {
 
       if (width !== "") {
         attrs.push(["width", width]);
-      } else {
-        attrs.push(["width", "100%"]);
       }
 
       if (height !== "") {

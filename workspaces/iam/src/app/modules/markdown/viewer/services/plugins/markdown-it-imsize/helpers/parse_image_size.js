@@ -1,19 +1,22 @@
 // Parse image size
 //
-'use strict';
+"use strict";
 
 function parseNextNumber(str, pos, max) {
   var code,
-  start = pos,
-  result = {
-    ok: false,
-    pos: pos,
-    value: ''
-  };
+    start = pos,
+    result = {
+      ok: false,
+      pos: pos,
+      value: ""
+    };
 
   code = str.charCodeAt(pos);
 
-  while (pos < max && (code >= 0x30 /* 0 */ && code <= 0x39 /* 9 */) || code === 0x25 /* % */) {
+  while (
+    (pos < max && (code >= 0x30 /* 0 */ && code <= 0x39)) /* 9 */ ||
+    code === 0x25 /* % */
+  ) {
     code = str.charCodeAt(++pos);
   }
 
@@ -26,18 +29,22 @@ function parseNextNumber(str, pos, max) {
 
 module.exports = function parseImageSize(str, pos, max) {
   var code,
-  result = {
-    ok: false,
-    pos: 0,
-    width: '',
-    height: ''
-  };
+    result = {
+      ok: false,
+      pos: 0,
+      width: "",
+      height: ""
+    };
 
-  if (pos >= max) { return result; }
+  if (pos >= max) {
+    return result;
+  }
 
   code = str.charCodeAt(pos);
 
-  if (code !== 0x3d /* = */) { return result; }
+  if (code !== 0x3d /* = */) {
+    return result;
+  }
 
   pos++;
 
@@ -46,7 +53,11 @@ module.exports = function parseImageSize(str, pos, max) {
   // (2) =300x
   // (3) =x200
   code = str.charCodeAt(pos);
-  if (code !== 0x78 /* x */ && (code < 0x30 || code  > 0x39) /* [0-9] */) {
+  if (
+    code !== 0x78 /* x */ &&
+    code !== 0x2a /* * */ &&
+    (code < 0x30 || code > 0x39) /* [0-9] */
+  ) {
     return result;
   }
 
@@ -56,7 +67,9 @@ module.exports = function parseImageSize(str, pos, max) {
 
   // next charactor must be 'x'
   code = str.charCodeAt(pos);
-  if (code !== 0x78 /* x */) { return result; }
+  if (code !== 0x78 /* x */ && code !== 0x2a /* * */) {
+    return result;
+  }
 
   pos++;
 
