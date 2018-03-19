@@ -59,9 +59,14 @@ export class DocService {
   deleteDoc(doc) {
     this._repoSub$.subscribe(repo =>
       repo.issue.edit(doc.number, { state: "closed" }).subscribe(a => {
-        const index = this.model.docs.indexOf(doc);
-        if (index !== -1) this.model.docs.splice(index, 1);
-        console.log(a);
+        let title = doc.metaData.title;
+        repo
+          .delFile(`${DocService.FolderName}/${title}_${doc.number}.md`)
+          .subscribe(_ => {
+            const index = this.model.docs.indexOf(doc);
+            if (index !== -1) this.model.docs.splice(index, 1);
+            // console.log(a);
+          });
       })
     );
   }
@@ -79,7 +84,7 @@ export class DocService {
   showDoc(title: string, id: number | string, hasSufix: boolean = true) {
     let me = this;
     let content = `${DocService.FolderName}/${title}_${id}${
-      hasSufix ? "md" : ""
+      hasSufix ? ".md" : ""
     }`;
     this._repoSub$.subscribe(repo =>
       repo.getContents(content).subscribe(
@@ -105,8 +110,10 @@ export class DocService {
     );
   }
 
-  getContentUrl(issueNum) {
-    return `https://metaseed.github.io/iam/${issueNum}`;
+  getContentUrl(issueNum, title) {
+    return `https://metaseed.github.io/iam/doc?id=${issueNum}&title=${encodeURIComponent(
+      title
+    )}`;
   }
   // http://reactivex.io/documentation/operators/replay.html
   saveNew = (content: string) => {
@@ -121,7 +128,7 @@ export class DocService {
               .newFile(`${DocService.FolderName}/${title}_${id}.md`, content)
               .pipe(
                 flatMap(file => {
-                  let url = this.getContentUrl(id);
+                  let url = this.getContentUrl(id, title);
                   return DocMeta.serializeContent(
                     content,
                     file.content.sha,
@@ -189,7 +196,7 @@ export class DocService {
           )
           .pipe(
             flatMap(file => {
-              let url = this.getContentUrl(doc.number);
+              let url = this.getContentUrl(doc.number, title);
               return DocMeta.serializeContent(
                 content,
                 file.content.sha,
