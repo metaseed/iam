@@ -9,15 +9,14 @@ import * as fromEdit from "../actions/edit";
 import { CodemirrorComponent } from "./codemirror-editor/codemirror.component";
 import * as fromMarkdown from "./../reducers";
 import { DocumentMode } from "./../reducers/document";
-import { Store, select } from "@ngrx/store";
 import { DocSaveCoordinateService } from "./services/doc-save-coordinate-service";
 import { Observable } from "rxjs/Observable";
+import { map, filter, switchMap } from "rxjs/Operators";
+import { Store, select } from "@ngrx/store";
 import { DialogService } from "common";
 import { DocService } from "docs";
-import { map, filter } from "rxjs/Operators";
-import { pipe } from "rxjs";
-import { switchMap } from "rxjs/operators";
 import { DocDirtyNotifyDialog } from "./doc-dirty-notify-dialog";
+
 @Component({
   selector: "ms-markdown-editor",
   template: `
