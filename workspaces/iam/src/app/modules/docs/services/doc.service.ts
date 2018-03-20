@@ -155,27 +155,34 @@ export class DocService {
       )
     );
   };
+  private modifyUrlAfterSaved(doc: Document) {
+    const url = this.router
+      .createUrlTree(["/doc"], {
+        // relativeTo: this.activedRoute,
+        queryParams: {
+          id: doc.number,
+          title: doc.metaData.title
+        }
+      })
+      .toString();
 
+    this.location.go(url);
+  }
   save(content) {
     this.docSaving$.next(this.model.currentDoc);
     if (this.model.currentDoc) {
       this.edit(content, this.model.currentDoc).subscribe(doc => {
         this.model.currentDoc = doc;
-        const url = this.router
-          .createUrlTree([], {
-            relativeTo: this.activedRoute,
-            queryParams: { id: doc.number, title: DocMeta.getTitle(content) }
-          })
-          .toString();
 
-        this.location.go(url);
         this.snackBar.show("Saved!", "OK");
+        this.modifyUrlAfterSaved(doc);
         this.docSaved$.next(this.model.currentDoc);
       });
     } else {
       this.saveNew(content).subscribe(doc => {
         this.model.currentDoc = doc;
         this.snackBar.show("New document saved!", "OK");
+        this.modifyUrlAfterSaved(doc);
         this.docSaved$.next(this.model.currentDoc);
       });
     }
