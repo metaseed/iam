@@ -5,7 +5,6 @@ import { MaterialModule } from "material";
 import { BottomNavigationComponent } from "./bottom-navigation/bottom-navigation.component";
 import { RouterModule } from "@angular/router";
 import { SplitPaneModule } from "./split-pane/ng2-split-pane";
-import { DialogService } from "./services/dialog/dialog.service";
 import { FormsModule } from "@angular/forms";
 
 @NgModule({
@@ -19,6 +18,8 @@ import { FormsModule } from "@angular/forms";
     CommonModule,
     FormsModule
   ],
-  providers: [/*should have no provides in shared module*/ DialogService]
+  providers: [
+    /*should have no provides in shared module*/
+  ]
 })
 export class SharedModule {}
