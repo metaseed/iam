@@ -9,20 +9,13 @@
       "docs": ["app/modules/docs"],
       "markdown": ["app/modules/markdown"],
       "core": ["app/modules/core"],
-      "common": ["app/modules/common"],
-      "material": [
-        "app/modules/material"
-      ]
+      "shared": ["app/modules/shared"],
+      "material": ["app/modules/material"]
     }
   },
-  "include": [
-    "../../../workspaces"
-  ],
+  "include": ["../../../workspaces"],
   "angularCompilerOptions": {
     "preserveWhitespaces": false
   },
-  "exclude": [
-    "test.ts",
-    "**/*.spec.ts"
-  ]
+  "exclude": ["test.ts", "**/*.spec.ts"]
 }

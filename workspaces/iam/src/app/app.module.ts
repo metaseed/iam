@@ -17,7 +17,7 @@ import { AppRoutingModule } from "./app-routing.module";
 import { MaterialModule } from "./modules/material/material.module";
 import { metaReducers, reducers } from "app/reducers";
 import { StoreDevtoolsModule } from "@ngrx/store-devtools";
-import { MsCommonModule } from "common";
+import { SharedModule } from "shared";
 /**
  * This function is used internal to get a string instance of the `<base href="" />` value from `index.html`.
  * This is an exported function, instead of a private function or inline lambda, to prevent this error:
@@ -42,9 +42,8 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
     FormsModule,
     CoreModule,
     DocsModule,
-    MsCommonModule,
+    SharedModule,
     MaterialModule,
-
     ServiceWorkerModule.register(`./ngsw-worker.js`, {
       enabled: environment.production
     }),

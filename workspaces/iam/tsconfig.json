@@ -8,30 +8,15 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es5",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
+    "typeRoots": ["node_modules/@types"],
     "baseUrl": "./src/",
     "paths": {
-      "docs": [
-        "app/modules/docs"
-      ], // This mapping is relative to "baseUrl"
-      "markdown": [
-        "app/modules/markdown"
-      ],
-      "core": [
-        "app/modules/core"
-      ],
-      "common": [
-        "app/modules/common"
-      ],
-      "material": [
-        "app/modules/material"
-      ]
+      "docs": ["app/modules/docs"], // This mapping is relative to "baseUrl"
+      "markdown": ["app/modules/markdown"],
+      "core": ["app/modules/core"],
+      "shared": ["app/modules/shared"],
+      "material": ["app/modules/material"]
     },
-    "lib": [
-      "es2017",
-      "dom"
-    ]
+    "lib": ["es2017", "dom"]
   }
 }

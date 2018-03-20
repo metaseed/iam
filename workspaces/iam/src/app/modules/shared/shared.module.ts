@@ -21,4 +21,4 @@ import { FormsModule } from "@angular/forms";
   ],
   providers: [/*should have no provides in shared module*/ DialogService]
 })
-export class MsCommonModule {}
+export class SharedModule {}

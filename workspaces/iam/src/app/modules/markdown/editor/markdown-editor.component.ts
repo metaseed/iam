@@ -13,7 +13,7 @@ import { DocSaveCoordinateService } from "./services/doc-save-coordinate-service
 import { Observable } from "rxjs/Observable";
 import { map, filter, switchMap } from "rxjs/Operators";
 import { Store, select } from "@ngrx/store";
-import { DialogService } from "common";
+import { DialogService } from "shared";
 import { DocService } from "docs";
 import { DocDirtyNotifyDialog } from "./doc-dirty-notify-dialog";
 
