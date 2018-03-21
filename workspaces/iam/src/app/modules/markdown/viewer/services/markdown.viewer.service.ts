@@ -54,6 +54,8 @@ import { Router } from "@angular/router";
 //import latex from 'markdown-it-katex';
 import { Mermaid } from "./plugins/mermaid";
 import { CopierService } from "core";
+import { ObservableMedia, MediaChange } from "@angular/flex-layout";
+import { Subscription } from "rxjs";
 
 @Injectable()
 export class MarkdownViewerService {
@@ -76,7 +78,7 @@ export class MarkdownViewerService {
   }
 
   public showCodeLineNumber = true;
-
+  mediaChangeSubscription: Subscription;
   private markdown: MarkdownIt.MarkdownIt;
   private containerPlugin: ContainerPlugin;
   private mermaidPlugin: Mermaid;
@@ -84,8 +86,16 @@ export class MarkdownViewerService {
   constructor(
     private router: Router,
     private document: DocumentRef,
+    private media: ObservableMedia,
     @Optional() config?: MarkdownConfig
   ) {
+    this.mediaChangeSubscription = media.subscribe((change: MediaChange) => {
+      if (!["xs", "sm"].includes(change.mqAlias)) {
+        this.showCodeLineNumber = true;
+      } else {
+        this.showCodeLineNumber = false;
+      }
+    });
     config = config || mergeConf(this.defaultConfig, config);
 
     if (!config.markdownIt.highlight) {
