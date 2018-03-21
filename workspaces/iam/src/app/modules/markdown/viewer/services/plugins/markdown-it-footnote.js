@@ -76,7 +76,7 @@ module.exports = function footnote_plugin(md, conf) {
 
     return (
       '<sup class="footnote-ref"><a href="' +
-      config.url +
+      config.getUrl() +
       "#fn" +
       id +
       '" id="fnref' +
@@ -106,7 +106,7 @@ module.exports = function footnote_plugin(md, conf) {
     /* ↩ with escape code to prevent display as Apple Emoji on iOS */
     return (
       ' <a href="' +
-      config.url +
+      config.getUrl() +
       "#fnref" +
       id +
       '" class="footnote-backref">\u21a9\uFE0E</a>'

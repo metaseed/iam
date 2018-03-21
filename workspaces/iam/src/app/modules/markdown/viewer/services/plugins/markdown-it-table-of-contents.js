@@ -12,7 +12,7 @@ var defaults = {
   },
   markerPattern: /^\[\[toc\]\]/im,
   listType: "ul",
-  url: "",
+  getHref: (slug, state) => `#${slug}`,
   format: undefined
 };
 
@@ -123,16 +123,14 @@ module.exports = function(md, options) {
           headings.push(buffer);
         }
       }
-      buffer =
-        '<li><a href="' +
-        options.url +
-        "#" +
-        options.slugify(heading.content) +
-        '">';
+      var title = heading.children
+        .filter(token => token.type === "text" || token.type === "code_inline")
+        .reduce((acc, t) => acc + t.content, "");
+      buffer = '<li><a href="' + options.getHref(options.slugify(title)) + '">';
       buffer +=
         typeof options.format === "function"
           ? options.format(heading.content)
-          : heading.content;
+          : title;
       buffer += "</a>";
       i++;
     }
