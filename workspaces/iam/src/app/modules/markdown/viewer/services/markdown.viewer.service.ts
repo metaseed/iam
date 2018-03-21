@@ -1,6 +1,12 @@
-import { Injectable, Optional } from "@angular/core";
+import {
+  Injectable,
+  Optional,
+  Renderer2,
+  RendererFactory2
+} from "@angular/core";
 // import highlightjs from 'highlight.js/lib/highlight';
 import * as prismjs from "prismjs";
+
 // import 'prismjs/components/prism-core';
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-c";
@@ -24,6 +30,7 @@ import "prismjs/components/prism-sass";
 import "prismjs/components/prism-sql";
 import "prismjs/components/prism-vim";
 import "prismjs/components/prism-yaml";
+import "prismjs/plugins/line-numbers/prism-line-numbers";
 import * as MarkdownIt from "markdown-it";
 import * as markdownVideoPlugin from "markdown-it-video";
 import * as tasklists from "markdown-it-task-lists";
@@ -61,11 +68,17 @@ export class MarkdownViewerService {
     }
   };
 
+  public showCodeLineNumber = true;
+
   private markdown: MarkdownIt.MarkdownIt;
   private containerPlugin: ContainerPlugin;
   private mermaidPlugin: Mermaid;
   private docRef = new DocumentRef();
-  constructor(private router: Router, @Optional() config?: MarkdownConfig) {
+  constructor(
+    private router: Router,
+    private document: DocumentRef,
+    @Optional() config?: MarkdownConfig
+  ) {
     config = config || mergeConf(this.defaultConfig, config);
 
     if (!config.markdownIt.highlight) {
@@ -115,28 +128,25 @@ export class MarkdownViewerService {
   private DEFAULT_HIGHLIGHT_FUNCTION = (str, lang) => {
     let language = prismjs.languages[lang];
     if (lang && language) {
+      let preNode: Element = this.document.nativeDocument.createElement("pre");
+      let codeNode = this.document.nativeDocument.createElement("code");
+      preNode.className =
+        (this.showCodeLineNumber ? "line-numbers" : "") + " language-" + lang;
+      preNode.appendChild(codeNode);
+      codeNode.textContent = str;
       try {
+        prismjs.highlightElement(codeNode);
+
         return `<div style="position:relative"><button class="material-icons copy-button no-print"
         title="Copy code snippet"
         originalstr=${base64Encode(str)}
         onclick="document.copier.copyText(this.attributes.originalstr.value,true)">
         <span aria-hidden="true">content_copy</span>
-      </button><pre class="language-${lang}" style="position:relative"><code>${prismjs.highlight(
-          str,
-          language
-        )}</code></pre></div>`;
+      </button>${preNode.outerHTML}</div>`;
       } catch (__) {}
     }
     return `<pre class="highlight"><code>${this.markdown.utils.escapeHtml(
       str
     )} </code></pre>`;
   };
-  // private DEFAULT_HIGHLIGHT_FUNCTION = (str, lang) => {
-  //   if (lang && highlightjs.getLanguage(lang)) {
-  //     try {
-  //       return '<pre class="hljs"><code>' + highlightjs.highlight(lang, str, true).value + '</code></pre>';
-  //     } catch (__) { }
-  //   }
-  //   return '<pre class="hljs"><code>' + this.markdown.utils.escapeHtml(str) + '</code></pre>';
-  // }
 }

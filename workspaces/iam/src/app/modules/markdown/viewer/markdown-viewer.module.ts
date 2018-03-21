@@ -10,6 +10,7 @@ import { MaterialModule } from "material";
 import { RouterModule } from "@angular/router";
 import { MarkdownViewerContainerComponent } from "app/modules/markdown/viewer/markdown-viewer-container.component";
 import { NgSpinKitModule } from "ng-spin-kit";
+import { DocumentRef } from "core";
 
 @NgModule({
   declarations: [
@@ -43,7 +44,7 @@ export class MarkdownViewerModule {
         {
           provide: MarkdownViewerService,
           useFactory: configureMarkdownService,
-          deps: [Router, "MarkdownConfig"]
+          deps: [Router, DocumentRef, "MarkdownConfig"]
         }
       ]
     };
@@ -52,8 +53,8 @@ export class MarkdownViewerModule {
 
 export function configureMarkdownService(
   router: Router,
+  document: DocumentRef,
   config: MarkdownConfig
 ) {
-  const service = new MarkdownViewerService(router, config);
-  return service;
+  return new MarkdownViewerService(router, document, config);
 }
