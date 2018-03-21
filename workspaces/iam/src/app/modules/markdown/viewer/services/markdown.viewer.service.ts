@@ -137,7 +137,7 @@ export class MarkdownViewerService {
       try {
         prismjs.highlightElement(codeNode);
 
-        return `<div style="position:relative"><button class="material-icons copy-button no-print"
+        return `<div class="markdown-code" style="position:relative"><button class="material-icons copy-button no-print"
         title="Copy code snippet"
         originalstr=${base64Encode(str)}
         onclick="document.copier.copyText(this.attributes.originalstr.value,true)">
