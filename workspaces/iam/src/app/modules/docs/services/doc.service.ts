@@ -43,7 +43,9 @@ export class DocService {
     private router: Router,
     private activedRoute: ActivatedRoute
   ) {
-    this._storage.repos("test2").subscribe(repo => this._repoSub$.next(repo));
+    this._storage
+      .repos("iam-data")
+      .subscribe(repo => this._repoSub$.next(repo));
   }
 
   // store(todo: Document) {
