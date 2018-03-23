@@ -238,7 +238,12 @@ function image_with_size(md, options) {
       }
 
       token = state.push("image", "img", 0);
-      token.attrs = attrs = [["src", href], ["alt", ""]];
+      if (document.iamMarkdownIsPureViewMode) {
+        token.attrs = attrs = [["data-src", href], ["alt", ""]];
+      } else {
+        token.attrs = attrs = [["src", href], ["alt", ""]];
+      }
+
       token.children = tokens;
       if (title) {
         attrs.push(["title", title]);

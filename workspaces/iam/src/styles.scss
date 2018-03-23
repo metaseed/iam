@@ -263,6 +263,14 @@ div.markdown-code:hover > button {
     border-radius: 3px;
     box-shadow: inset 0 -1px 0 #959da5;
   }
+  ins:before {
+    content: "\21b1";
+    font-size: 0.3rem;
+  }
+  ins:after {
+    content: "\21b0";
+    font-size: 0.3rem;
+  }
 }
 
 // .CodeMirror-gutter-filler,

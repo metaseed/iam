@@ -56,7 +56,6 @@ import { Mermaid } from "./plugins/mermaid";
 import { CopierService } from "core";
 import { ObservableMedia, MediaChange } from "@angular/flex-layout";
 import { Subscription } from "rxjs";
-
 @Injectable()
 export class MarkdownViewerService {
   private defaultConfig: MarkdownConfig = {
@@ -132,7 +131,8 @@ export class MarkdownViewerService {
       .use(toc, {
         getHref: (slug, state) => {
           return `${this.getAddr()}#${slug}`;
-        }
+        },
+        includeLevel: [2, 3, 4]
       })
       .use(latex)
       .use(imsize, { autofill: true });
@@ -151,7 +151,8 @@ export class MarkdownViewerService {
   }
 
   public render(raw: string): string {
-    return `${this.markdown.render(raw)}`;
+    const r = `${this.markdown.render(raw)}`;
+    return r;
   }
 
   private DEFAULT_HIGHLIGHT_FUNCTION = (str, lang) => {

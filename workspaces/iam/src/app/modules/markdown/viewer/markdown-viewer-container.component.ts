@@ -7,7 +7,6 @@ import { Store, select } from "@ngrx/store";
 import { DocService } from "docs";
 import { ElementRef } from "@angular/core";
 import { Subscription } from "rxjs/Subscription";
-
 @Component({
   selector: "markdown-viewer-container",
   template: `
@@ -86,6 +85,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
     );
     this.showDocSubscription = this._docService.docShow$.subscribe(doc => {
       this.docLoaded = true;
+
       new Scrollable(
         this.viewerContainerDiv.nativeElement
       ).isScrollDown$.subscribe(e => {
