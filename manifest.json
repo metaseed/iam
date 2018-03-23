@@ -8,11 +8,12 @@
   "short_name": "i'm",
   "theme_color": "#1976D2",
   "description": "i'm writing your professional life",
-  "orientation": "portrait-primary",
+  "orientation": "natural",
   "background_color": "#1976D2",
   "related_applications": [],
   "prefer_related_applications": false,
-  "icons": [{
+  "icons": [
+    {
       "src": "./assets/icons/android-icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
