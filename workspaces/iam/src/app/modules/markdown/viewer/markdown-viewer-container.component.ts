@@ -26,8 +26,13 @@ import { Subscription } from "rxjs/Subscription";
         .viewer-container {
             overflow-y:auto;
             overflow-x:auto;
-            padding:0px 16px 0px;
+            padding:0px 3px 0px;
             height:100%;
+        }
+        @media all and (min-width: 960px) {
+          .viewer-container{
+            padding:0px 16px 0px
+          }
         }
     `
   ]
