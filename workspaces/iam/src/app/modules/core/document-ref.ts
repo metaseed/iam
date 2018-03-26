@@ -9,7 +9,7 @@ function _document(): any {
   return document;
 }
 
-@Injectable()
+// @Injectable()
 export class Scrollable {
   constructor(protected element: HTMLElement) {}
 
