@@ -1,25 +1,22 @@
 import { Component, Inject, ViewChild } from "@angular/core";
-import { MdcDialogRef, MdcDialogComponent } from "@angular-mdc/web";
+import { MatDialogRef } from "@angular/material";
 
 @Component({
   template: `
-  <mdc-dialog style="z-index:1000;" #myDialog>
-    <mdc-dialog-header>
-      <mdc-dialog-header-title>
-        Save?
-      </mdc-dialog-header-title>
-    </mdc-dialog-header>
-    <mdc-dialog-body>
-      Docuemnt modified, are you want to save?
-    </mdc-dialog-body>
-    <mdc-dialog-footer>
-      <button mdc-dialog-button [cancel]="true">No</button>
-      <button mdc-dialog-button [accept]="true">Yes</button>
-    </mdc-dialog-footer>
-  </mdc-dialog>
+  <div style="z-index:1000">
+  <h1 mat-dialog-title>Save?</h1>
+<div mat-dialog-content>
+  <p>
+  Docuemnt modified, are you want to save?
+  </p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="'No'">No</button>
+  <button mat-button [mat-dialog-close]="'Yes'" cdkFocusInitial>Yes</button>
+</div>
+</div>
   `
 })
 export class DocDirtyNotifyDialog {
-  @ViewChild("myDialog") dialog: MdcDialogComponent;
-  constructor(public dialogRef: MdcDialogRef<DocDirtyNotifyDialog>) {}
+  constructor(public dialogRef: MatDialogRef<DocDirtyNotifyDialog>) {}
 }

@@ -114,19 +114,13 @@
   optionalDependencies:
     node-sass "^4.7.2"
 
-"@angular/common@^5.2.8":
-  version "5.2.8"
-  resolved "https://registry.yarnpkg.com/@angular/common/-/common-5.2.8.tgz#25c81609305e4cee6734d90c8ff1132ab35f81bf"
-  dependencies:
-    tslib "^1.7.1"
-
 "@angular/common@^5.2.9":
   version "5.2.9"
   resolved "https://registry.yarnpkg.com/@angular/common/-/common-5.2.9.tgz#beb25d4434498abae56bd8dc2c01ade3f6c45e81"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/compiler-cli@^5.2.8", "@angular/compiler-cli@^5.2.9":
+"@angular/compiler-cli@^5.2.9":
   version "5.2.9"
   resolved "https://registry.yarnpkg.com/@angular/compiler-cli/-/compiler-cli-5.2.9.tgz#36a069937d50a8a294eda233b5b1b2c71139751f"
   dependencies:
@@ -135,21 +129,9 @@
     reflect-metadata "^0.1.2"
     tsickle "^0.27.2"
 
-"@angular/compiler@^5.2.8":
-  version "5.2.8"
-  resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-5.2.8.tgz#534315d0c700d57c2eb7cc7fff4f180213c8633f"
-  dependencies:
-    tslib "^1.7.1"
-
 "@angular/compiler@^5.2.9":
   version "5.2.9"
   resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-5.2.9.tgz#1d03bc1e8b38c259bc58114d691c2140d244f8f5"
-  dependencies:
-    tslib "^1.7.1"
-
-"@angular/core@^5.2.8":
-  version "5.2.8"
-  resolved "https://registry.yarnpkg.com/@angular/core/-/core-5.2.8.tgz#d2e7657f2c5ce7f050e8f438dcc420c9bebca10a"
   dependencies:
     tslib "^1.7.1"
 

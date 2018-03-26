@@ -46,6 +46,6 @@ import { DocDirtyNotifyDialog } from "./doc-dirty-notify-dialog";
     DocSaveCoordinateService,
     CanDeactivateGuard
   ],
-  entryComponents: [KeyMapSelectionDialog, DocDirtyNotifyDialog]
+  entryComponents: [DocDirtyNotifyDialog, KeyMapSelectionDialog]
 })
 export class MarkdownEditorModule {}

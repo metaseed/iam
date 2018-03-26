@@ -11,11 +11,13 @@ import * as fromMarkdown from "./../reducers";
 import { DocumentMode } from "./../reducers/document";
 import { DocSaveCoordinateService } from "./services/doc-save-coordinate-service";
 import { Observable } from "rxjs/Observable";
-import { map, filter, switchMap } from "rxjs/Operators";
+import { map, filter, switchMap, debounceTime, take } from "rxjs/Operators";
 import { Store, select } from "@ngrx/store";
 import { DialogService } from "core";
 import { DocService } from "docs";
 import { DocDirtyNotifyDialog } from "./doc-dirty-notify-dialog";
+import { MatDialog } from "@angular/material";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "ms-markdown-editor",
@@ -26,6 +28,8 @@ import { DocDirtyNotifyDialog } from "./doc-dirty-notify-dialog";
   styles: []
 })
 export class MarkdownEditorComponent implements OnInit {
+  docModeSubs: Subscription;
+  editorLoadedSubs: Subscription;
   editorLoaded = false;
 
   @Output() markdownChange = new EventEmitter();
@@ -45,17 +49,17 @@ export class MarkdownEditorComponent implements OnInit {
   }
 
   constructor(
-    private _dialogService: DialogService,
-    private _service: MarkdownEditorService,
+    private dialog: MatDialog,
+    private editorService: MarkdownEditorService,
     private docSaveCoordinater: DocSaveCoordinateService,
     private store: Store<markdown.State>,
     private docSerivce: DocService
   ) {
-    _service.editorLoaded$.subscribe(() => {
+    this.editorLoadedSubs = editorService.editorLoaded$.subscribe(() => {
       setTimeout(() => (this.editorLoaded = true), 0);
     });
 
-    this.docMode$.subscribe(mode => {
+    this.docModeSubs = this.docMode$.subscribe(mode => {
       switch (mode) {
         case DocumentMode.Edit: {
           setTimeout(() => this.codeMirrorComponent.refresh(), 0);
@@ -67,24 +71,33 @@ export class MarkdownEditorComponent implements OnInit {
   }
 
   ngOnInit() {}
+  ngOnDestroy() {
+    this.editorLoadedSubs.unsubscribe();
+    this.docModeSubs.unsubscribe();
+  }
 
   canDeactivate(): Observable<boolean> | boolean {
     return this.docSaveCoordinater.isDirty$.pipe(
+      debounceTime(500),
       switchMap(value => {
         if (value) {
-          return this._dialogService.confirm(DocDirtyNotifyDialog).pipe(
-            map(value => {
-              if (value) {
-                this.docSerivce.save(this.codeMirrorComponent.value);
-                return false;
-              } else {
-                return true;
-              }
-            })
-          );
+          return this.dialog
+            .open(DocDirtyNotifyDialog)
+            .afterClosed()
+            .pipe(
+              map(value => {
+                if (value === "Yes") {
+                  this.docSerivce.save(this.codeMirrorComponent.value);
+                  return false;
+                } else {
+                  return true;
+                }
+              })
+            );
         }
         return Observable.of(true);
-      })
+      }),
+      take(1)
     );
   }
 }
