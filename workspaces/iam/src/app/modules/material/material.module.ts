@@ -80,6 +80,6 @@ export const MODULES = [
 
 @NgModule({
   imports: [...MatModules, ...MODULES],
-  exports: [CdkTableModule, , ...MatModules, ...MODULES]
+  exports: [CdkTableModule, ...MatModules, ...MODULES]
 })
 export class MaterialModule {}

@@ -1,12 +1,11 @@
 {
-	"private": true,
-	"name": "iam",
-	"workspaces": [
-		"workspaces/*"
-	],
-	"scripts": {
-		"start": "cd workspaces\\iam & npm run start",
-		"deploy": "cd workspaces\\iam & npm run deploy",
-		"upgrade": "yarn upgrade --latest"
-	}
+  "private": true,
+  "name": "iam",
+  "workspaces": ["workspaces/*"],
+  "scripts": {
+    "start": "cd workspaces\\iam & npm run start",
+    "deploy": "cd workspaces\\iam & npm run deploy",
+    "upgrade": "yarn upgrade --latest",
+    "ba": "cd workspaces\\iam & npm run ba"
+  }
 }
