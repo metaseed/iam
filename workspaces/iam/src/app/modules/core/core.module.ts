@@ -10,7 +10,8 @@ import { Logger } from "./services/logger.service";
 import { CopierService } from "./services/copier.service";
 import { DialogService } from "./services/dialog/dialog.service";
 import { DocumentRef } from "./document-ref";
-
+import { ScrollService } from "./services/scroll/scroll.service";
+import { ScrollSpyService } from "./services/scroll/scroll-spy.service";
 @NgModule({
   imports: [CommonModule, HotkeyModule],
   declarations: [],
@@ -22,7 +23,9 @@ import { DocumentRef } from "./document-ref";
     UpdateService,
     Logger,
     CopierService,
-    DialogService
+    DialogService,
+    ScrollService,
+    ScrollSpyService
   ]
 })
 export class CoreModule {}

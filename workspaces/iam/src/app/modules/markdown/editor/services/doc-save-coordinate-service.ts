@@ -4,7 +4,7 @@ import { MarkdownEditorService } from "./markdown.editor.service";
 import { DocService } from "docs";
 import { Observable } from "rxjs/Observable";
 import { Subject, BehaviorSubject } from "rxjs";
-import { filter, debounceTime } from "rxjs/operators";
+import { filter, auditTime } from "rxjs/operators";
 
 @Injectable()
 export class DocSaveCoordinateService {
@@ -19,7 +19,7 @@ export class DocSaveCoordinateService {
     private docService: DocService
   ) {
     this.isDirty$
-      .pipe(debounceTime(DocSaveCoordinateService.autoSaveDelayAfterEdit))
+      .pipe(auditTime(DocSaveCoordinateService.autoSaveDelayAfterEdit))
       .subscribe(value => {
         if (this.currentContent && value)
           this.docService.save(this.currentContent);

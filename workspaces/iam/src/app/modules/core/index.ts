@@ -5,4 +5,7 @@ export * from "./services/update.service";
 export * from "./window-ref";
 export * from "./document-ref";
 export * from "./services/copier.service";
+export * from "./services/scroll/scroll-spy.service";
+export * from "./services/scroll/scroll.service";
+export * from "./core.module";
 export * from "./services/dialog/dialog.service";
