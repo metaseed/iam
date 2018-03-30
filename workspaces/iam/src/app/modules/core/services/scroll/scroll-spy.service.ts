@@ -11,7 +11,7 @@ export interface ScrollItem {
   index: number;
 }
 
-export interface ScrollSpyInfo {
+export interface ScrollSpyToken {
   active: Observable<ScrollItem | null>;
   unspy: () => void;
 }
@@ -154,7 +154,7 @@ export class ScrollSpyService {
    *     - `active`: An observable of distinct ScrollItems.
    *     - `unspy`: A method to stop tracking this group of elements.
    */
-  spyOn(elements: Element[]): ScrollSpyInfo {
+  spyOn(elements: Element[]): ScrollSpyToken {
     if (!this.spiedElementGroups.length) {
       this.resizeEvents.subscribe(() => this.onResize());
       this.scrollEvents.subscribe(() => this.onScroll());

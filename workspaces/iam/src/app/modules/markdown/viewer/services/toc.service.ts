@@ -1,8 +1,7 @@
-import { Inject, Injectable } from '@angular/core';
-import { DOCUMENT, DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { ReplaySubject } from 'rxjs';
-import { ScrollSpyInfo, ScrollSpyService } from 'app/shared/scroll-spy.service';
-
+import { Inject, Injectable } from "@angular/core";
+import { DOCUMENT, DomSanitizer, SafeHtml } from "@angular/platform-browser";
+import { ReplaySubject } from "rxjs";
+import { ScrollSpyToken, ScrollSpyService } from "core";
 
 export interface TocItem {
   content: SafeHtml;
@@ -16,14 +15,15 @@ export interface TocItem {
 export class TocService {
   tocList = new ReplaySubject<TocItem[]>(1);
   activeItemIndex = new ReplaySubject<number | null>(1);
-  private scrollSpyInfo: ScrollSpyInfo | null = null;
+  private scrollSpyInfo: ScrollSpyToken | null = null;
 
   constructor(
-      @Inject(DOCUMENT) private document: any,
-      private domSanitizer: DomSanitizer,
-      private scrollSpyService: ScrollSpyService) { }
+    @Inject(DOCUMENT) private document: any,
+    private domSanitizer: DomSanitizer,
+    private scrollSpyService: ScrollSpyService
+  ) {}
 
-  genToc(docElement?: Element, docId = '') {
+  genToc(docElement?: Element, docId = "") {
     this.resetScrollSpyInfo();
 
     if (!docElement) {
@@ -37,13 +37,15 @@ export class TocService {
       content: this.extractHeadingSafeHtml(heading),
       href: `${docId}#${this.getId(heading, idMap)}`,
       level: heading.tagName.toLowerCase(),
-      title: (heading.textContent || '').trim(),
+      title: (heading.textContent || "").trim()
     }));
 
     this.tocList.next(tocList);
 
     this.scrollSpyInfo = this.scrollSpyService.spyOn(headings);
-    this.scrollSpyInfo.active.subscribe(item => this.activeItemIndex.next(item && item.index));
+    this.scrollSpyInfo.active.subscribe(item =>
+      this.activeItemIndex.next(item && item.index)
+    );
   }
 
   reset() {
@@ -53,12 +55,14 @@ export class TocService {
 
   // This bad boy exists only to strip off the anchor link attached to a heading
   private extractHeadingSafeHtml(heading: HTMLHeadingElement) {
-    const div: HTMLDivElement = this.document.createElement('div');
+    const div: HTMLDivElement = this.document.createElement("div");
     div.innerHTML = heading.innerHTML;
-    const anchorLinks: NodeListOf<HTMLAnchorElement> = div.querySelectorAll('a');
+    const anchorLinks: NodeListOf<HTMLAnchorElement> = div.querySelectorAll(
+      "a"
+    );
     for (let i = 0; i < anchorLinks.length; i++) {
       const anchorLink = anchorLinks[i];
-      if (!anchorLink.classList.contains('header-link')) {
+      if (!anchorLink.classList.contains("header-link")) {
         // this is an anchor that contains actual content that we want to keep
         // move the contents of the anchor into its parent
         const parent = anchorLink.parentNode!;
@@ -75,8 +79,9 @@ export class TocService {
   }
 
   private findTocHeadings(docElement: Element): HTMLHeadingElement[] {
-    const headings = docElement.querySelectorAll('h1,h2,h3');
-    const skipNoTocHeadings = (heading: HTMLHeadingElement) => !/(?:no-toc|notoc)/i.test(heading.className);
+    const headings = docElement.querySelectorAll("h1,h2,h3");
+    const skipNoTocHeadings = (heading: HTMLHeadingElement) =>
+      !/(?:no-toc|notoc)/i.test(heading.className);
 
     return Array.prototype.filter.call(headings, skipNoTocHeadings);
   }
@@ -97,7 +102,10 @@ export class TocService {
     if (id) {
       addToMap(id);
     } else {
-      id = (h.textContent || '').trim().toLowerCase().replace(/\W+/g, '-');
+      id = (h.textContent || "")
+        .trim()
+        .toLowerCase()
+        .replace(/\W+/g, "-");
       id = addToMap(id);
       h.id = id;
     }

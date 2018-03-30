@@ -40,22 +40,23 @@ import * as sub from "markdown-it-sub";
 import * as sup from "markdown-it-sup";
 import * as ins from "markdown-it-ins";
 import * as mark from "markdown-it-mark";
-import * as footnote from "./plugins/markdown-it-footnote";
+import * as footnote from "./markdown-it-plugins/footnote";
 import * as deflist from "markdown-it-deflist";
 import * as abbr from "markdown-it-abbr";
-import * as imsize from "./plugins/markdown-it-imsize";
-import * as anchor from "./plugins/markdown-it-anchor";
-import * as toc from "./plugins/markdown-it-table-of-contents";
-import { ContainerPlugin } from "./plugins/container";
+import * as imsize from "./markdown-it-plugins/imsize";
+import * as anchor from "./markdown-it-plugins/anchor";
+import * as toc from "./markdown-it-plugins/toc";
+import { ContainerPlugin } from "./markdown-it-plugins/container";
 import { MarkdownConfig } from "../markdown.config";
 import latex from "markdown-it-latex";
 import { mergeConf, DocumentRef, base64Encode, base64Decode } from "core";
 import { Router } from "@angular/router";
 //import latex from 'markdown-it-katex';
-import { Mermaid } from "./plugins/mermaid";
+import { Mermaid } from "./markdown-it-plugins/mermaid";
 import { CopierService } from "core";
 import { ObservableMedia, MediaChange } from "@angular/flex-layout";
 import { Subscription } from "rxjs";
+
 @Injectable()
 export class MarkdownViewerService {
   private defaultConfig: MarkdownConfig = {

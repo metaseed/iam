@@ -1,14 +1,14 @@
-'use strict';
+"use strict";
 
-var fs   = require('fs');
-var path = require('path');
+var fs = require("fs");
+var path = require("path");
 
-var detector = require('./detector');
+var detector = require("./detector");
 var handlers = {};
-var types = require('./types');
+var types = require("./types");
 
 types.forEach(function(type) {
-  handlers[type] = require('./types/' + type);
+  handlers[type] = require("./types/" + type);
 });
 
 var MaxBufferSize = 128 * 1024;
@@ -24,11 +24,11 @@ function lookup(buffer, filepath) {
     }
   }
 
-  throw new TypeError('Unsupported file type');
+  throw new TypeError("Unsupported file type");
 }
 
 function asyncFileToBuffer(filepath, callback) {
-  fs.open(filepath, 'r', function(err0, descriptor) {
+  fs.open(filepath, "r", function(err0, descriptor) {
     if (err0) {
       return callback(err0);
     }
@@ -49,7 +49,7 @@ function asyncFileToBuffer(filepath, callback) {
 }
 
 function syncFileToBuffer(filepath) {
-  var descriptor = fs.openSync(filepath, 'r');
+  var descriptor = fs.openSync(filepath, "r");
   var size = fs.fstatSync(descriptor).size;
   var bufferSize = Math.min(size, MaxBufferSize);
   var buffer = new Buffer(bufferSize);
@@ -64,13 +64,13 @@ function syncFileToBuffer(filepath) {
  * @param[in] callback(option): if specified, gets size async.
  */
 module.exports = function(input, callback) {
-  if (typeof input !== 'string') {
-    throw new TypeError('Input must be file name');
+  if (typeof input !== "string") {
+    throw new TypeError("Input must be file name");
   }
 
   var filepath = path.resolve(input);
 
-  if (typeof callback === 'function') {
+  if (typeof callback === "function") {
     asyncFileToBuffer(filepath, function(err, buffer) {
       if (err) {
         return callback(err);
