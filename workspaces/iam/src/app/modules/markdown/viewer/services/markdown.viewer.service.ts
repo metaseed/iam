@@ -56,7 +56,6 @@ import { Mermaid } from "./markdown-it-plugins/mermaid";
 import { CopierService } from "core";
 import { ObservableMedia, MediaChange } from "@angular/flex-layout";
 import { Subscription } from "rxjs";
-
 @Injectable()
 export class MarkdownViewerService {
   private defaultConfig: MarkdownConfig = {
@@ -82,7 +81,6 @@ export class MarkdownViewerService {
   private markdown: MarkdownIt.MarkdownIt;
   private containerPlugin: ContainerPlugin;
   private mermaidPlugin: Mermaid;
-  private docRef = new DocumentRef();
   constructor(
     private router: Router,
     private document: DocumentRef,
@@ -148,7 +146,7 @@ export class MarkdownViewerService {
     this.markdown.renderer.rules.blockquote_open = function() {
       return '<blockquote class="blockquote">\n';
     };
-    (<any>this.docRef.nativeDocument).copier = new CopierService();
+    (<any>this.document.nativeDocument).copier = new CopierService();
   }
 
   public render(raw: string): string {
