@@ -1,4 +1,11 @@
-import { Component, Input, AfterViewInit, ElementRef, Output, EventEmitter } from "@angular/core";
+import {
+  Component,
+  Input,
+  AfterViewInit,
+  ElementRef,
+  Output,
+  EventEmitter
+} from "@angular/core";
 import { DomSanitizer, Title } from "@angular/platform-browser";
 import { MarkdownViewerService } from "./services/markdown.viewer.service";
 import { Scrollable } from "core";
@@ -15,7 +22,7 @@ import { Observable } from "rxjs/Observable";
 import { switchMap, tap } from "rxjs/operators";
 import { timer } from "rxjs/observable/timer";
 
-export const NO_ANIMATIONS = 'no-animations';
+export const NO_ANIMATIONS = "no-animations";
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -64,12 +71,12 @@ export class MarkdownViewerComponent {
     }, 0);
   }
   parsedModel: any;
-  protected currViewContainer: HTMLElement = document.createElement('div');
-  protected nextViewContainer: HTMLElement = document.createElement('div');
+  protected currViewContainer: HTMLElement = document.createElement("div");
+  protected nextViewContainer: HTMLElement = document.createElement("div");
 
   private onDestroy$ = new EventEmitter<void>();
   private docContents$ = new EventEmitter<string>();
-    // The new document is ready to be inserted into the viewer.
+  // The new document is ready to be inserted into the viewer.
   // (Embedded components have been loaded and instantiated, if necessary.)
   @Output() docReady = new EventEmitter<void>();
 
@@ -91,7 +98,8 @@ export class MarkdownViewerComponent {
     private tocService: TocService,
     private titleService: Title,
     private store: Store<view.State>
-  ) {
+  ) // private elementsLoader:ElementsLoader
+  {
     (<any>document).iamMarkdownIsPureViewMode = true;
   }
   ngAfterViewInit() {
@@ -115,61 +123,80 @@ export class MarkdownViewerComponent {
     // According to the [CSSOM spec](https://drafts.csswg.org/cssom/#serializing-css-values),
     // `time` values should be returned in seconds.
     const getActualDuration = (elem: HTMLElement) => {
-      const cssValue = getComputedStyle(elem).transitionDuration || '';
-      const seconds = Number(cssValue.replace(/s$/, ''));
+      const cssValue = getComputedStyle(elem).transitionDuration || "";
+      const seconds = Number(cssValue.replace(/s$/, ""));
       return 1000 * seconds;
     };
-    const animateProp =
-        (elem: HTMLElement, prop: keyof CSSStyleDeclaration, from: string, to: string, duration = 200) => {
-          const animationsDisabled = !MarkdownViewerComponent.animationsEnabled
-                                     || this.hostElement.classList.contains(NO_ANIMATIONS);
-          if (prop === 'length' || prop === 'parentRule') {
-            // We cannot animate length or parentRule properties because they are readonly
-            return this.void$;
-          }
-          elem.style.transition = '';
-          return animationsDisabled
-              ? this.void$.pipe(tap(() => elem.style[prop] = to))
-              : this.void$.pipe(
-                    // In order to ensure that the `from` value will be applied immediately (i.e.
-                    // without transition) and that the `to` value will be affected by the
-                    // `transition` style, we need to ensure an animation frame has passed between
-                    // setting each style.
-                    switchMap(() => raf$), tap(() => elem.style[prop] = from),
-                    switchMap(() => raf$), tap(() => elem.style.transition = `all ${duration}ms ease-in-out`),
-                    switchMap(() => raf$), tap(() => (elem.style as any)[prop] = to),
-                    switchMap(() => timer(getActualDuration(elem))), switchMap(() => this.void$),
-                );
-        };
+    const animateProp = (
+      elem: HTMLElement,
+      prop: keyof CSSStyleDeclaration,
+      from: string,
+      to: string,
+      duration = 200
+    ) => {
+      const animationsDisabled =
+        !MarkdownViewerComponent.animationsEnabled ||
+        this.hostElement.classList.contains(NO_ANIMATIONS);
+      if (prop === "length" || prop === "parentRule") {
+        // We cannot animate length or parentRule properties because they are readonly
+        return this.void$;
+      }
+      elem.style.transition = "";
+      return animationsDisabled
+        ? this.void$.pipe(tap(() => (elem.style[prop] = to)))
+        : this.void$.pipe(
+            // In order to ensure that the `from` value will be applied immediately (i.e.
+            // without transition) and that the `to` value will be affected by the
+            // `transition` style, we need to ensure an animation frame has passed between
+            // setting each style.
+            switchMap(() => raf$),
+            tap(() => (elem.style[prop] = from)),
+            switchMap(() => raf$),
+            tap(
+              () => (elem.style.transition = `all ${duration}ms ease-in-out`)
+            ),
+            switchMap(() => raf$),
+            tap(() => ((elem.style as any)[prop] = to)),
+            switchMap(() => timer(getActualDuration(elem))),
+            switchMap(() => this.void$)
+          );
+    };
 
-    const animateLeave = (elem: HTMLElement) => animateProp(elem, 'opacity', '1', '0.1');
-    const animateEnter = (elem: HTMLElement) => animateProp(elem, 'opacity', '0.1', '1');
+    const animateLeave = (elem: HTMLElement) =>
+      animateProp(elem, "opacity", "1", "0.1");
+    const animateEnter = (elem: HTMLElement) =>
+      animateProp(elem, "opacity", "0.1", "1");
 
     let done$ = this.void$;
 
     if (this.currViewContainer.parentElement) {
       done$ = done$.pipe(
-          // Remove the current view from the viewer.
-          switchMap(() => animateLeave(this.currViewContainer)),
-          tap(() => this.currViewContainer.parentElement!.removeChild(this.currViewContainer)),
-          tap(() => this.docRemoved.emit()),
+        // Remove the current view from the viewer.
+        switchMap(() => animateLeave(this.currViewContainer)),
+        tap(() =>
+          this.currViewContainer.parentElement!.removeChild(
+            this.currViewContainer
+          )
+        ),
+        tap(() => this.docRemoved.emit())
       );
     }
 
     return done$.pipe(
-        // Insert the next view into the viewer.
-        tap(() => this.hostElement.appendChild(this.nextViewContainer)),
-        tap(() => onInsertedCb()),
-        tap(() => this.docInserted.emit()),
-        switchMap(() => animateEnter(this.nextViewContainer)),
-        // Update the view references and clean up unused nodes.
-        tap(() => {
-          const prevViewContainer = this.currViewContainer;
-          this.currViewContainer = this.nextViewContainer;
-          this.nextViewContainer = prevViewContainer;
-          this.nextViewContainer.innerHTML = '';  // Empty to release memory.
-        }),
+      // Insert the next view into the viewer.
+      tap(() => this.hostElement.appendChild(this.nextViewContainer)),
+      tap(() => onInsertedCb()),
+      tap(() => this.docInserted.emit()),
+      switchMap(() => animateEnter(this.nextViewContainer)),
+      // Update the view references and clean up unused nodes.
+      tap(() => {
+        const prevViewContainer = this.currViewContainer;
+        this.currViewContainer = this.nextViewContainer;
+        this.nextViewContainer = prevViewContainer;
+        this.nextViewContainer.innerHTML = ""; // Empty to release memory.
+      })
     );
+  }
 }
 
 // https://jsfiddle.net/axtn/a91fsar3/

@@ -77,27 +77,27 @@ export class MarkdownEditorComponent implements OnInit {
   }
 
   canDeactivate(): Observable<boolean> | boolean {
-    return this.docSaveCoordinater.isDirty$.pipe(
-      debounceTime(500),
-      switchMap(value => {
-        if (value) {
-          return this.dialog
-            .open(DocDirtyNotifyDialog)
-            .afterClosed()
-            .pipe(
-              map(value => {
-                if (value === "Yes") {
-                  this.docSerivce.save(this.codeMirrorComponent.value);
-                  return false;
-                } else {
-                  return true;
-                }
-              })
-            );
-        }
-        return Observable.of(true);
-      }),
-      take(1)
-    );
+    //   return this.docSaveCoordinater.isDirty$.pipe(
+    //     debounceTime(500),
+    //     switchMap(value => {
+    //       if (value) {
+    //         return this.dialog.open(DocDirtyNotifyDialog).afterClosed();
+    //         // .pipe(
+    //         //   map(value => {
+    //         //     if (value === "Yes") {
+    //         //       this.docSerivce.save(this.codeMirrorComponent.value);
+    //         //       return false;
+    //         //     } else {
+    //         //       return true;
+    //         //     }
+    //         //   })
+    //         // );
+    //       }
+    //       return Observable.of(true);
+    //     }),
+    //     take(1)
+    //   );
+
+    return true;
   }
 }
