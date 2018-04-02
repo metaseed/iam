@@ -34,7 +34,8 @@ import { TocService } from "./services/toc.service";
     ReaderToolbarComponent,
     MarkdownViewerContainerComponent
   ],
-  providers: [TocService]
+  providers: [TocService],
+  entryComponents: [TocComponent]
 })
 export class MarkdownViewerModule {
   static forChild(config?: MarkdownConfig): ModuleWithProviders {

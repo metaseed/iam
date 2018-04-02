@@ -112,7 +112,22 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     //   }
     //   me.isSyncingRightScroll = false;
     // }
-
+    if (this.router.url === "/doc/new") {
+      //this.editModeChange(true, false);
+      this.isNewDoc = true;
+    }
+    this.docShowSub = this._docService.docShow$.subscribe(doc => {
+      if (doc === null) {
+        this._text = "";
+        return;
+      }
+      this._text = base64Decode(doc.content.content);
+      this._doc = doc;
+      if (this.isNewDoc) {
+        this.store.dispatch(new document.EditMode());
+      }
+      setTimeout(() => (this.docLoaded = true), 0);
+    });
     this.docMode$.subscribe(mode => {
       switch (mode) {
         case DocumentMode.Edit: {
@@ -157,22 +172,6 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   //   this.fixEditButton = viewportOffset.top <= 10;
   // }
   ngAfterViewInit() {
-    if (this.router.url === "/doc/new") {
-      //this.editModeChange(true, false);
-      this.isNewDoc = true;
-    }
-    this.docShowSub = this._docService.docShow$.subscribe(doc => {
-      if (doc === null) {
-        this._text = "";
-        return;
-      }
-      this._text = base64Decode(doc.content.content);
-      this._doc = doc;
-      if (this.isNewDoc) {
-        this.store.dispatch(new document.EditMode());
-      }
-      setTimeout(() => (this.docLoaded = true), 0);
-    });
     this._editorService.contentChanged$.subscribe(([content, editor]) => {
       let me = this;
       // function refresh() {//should be after viewer rendered its contents

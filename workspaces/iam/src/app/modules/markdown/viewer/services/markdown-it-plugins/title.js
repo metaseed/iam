@@ -1,5 +1,6 @@
 // https://github.com/valeriangalliat/markdown-it-title 2018/03/28
-export default (md, level = 1) => {
+
+module.exports = (md, level = 1) => {
   const originalHeadingOpen = md.renderer.rules.heading_open;
 
   md.renderer.rules.heading_open = function(...args) {

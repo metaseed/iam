@@ -78,7 +78,7 @@ export class MarkdownViewerService {
   }
 
   public showCodeLineNumber = true;
-  public parsedContent: { title: string };
+  public parsedContent: { title?: string } = {};
   mediaChangeSubscription: Subscription;
   private markdown: MarkdownIt.MarkdownIt;
   private containerPlugin: ContainerPlugin;
@@ -105,6 +105,7 @@ export class MarkdownViewerService {
 
     this.markdown = new MarkdownIt(config.markdownIt);
     this.markdown
+      .use(title)
       .use(markdownVideoPlugin, {
         youtube: { width: 640, height: 390 }
       })
@@ -137,7 +138,6 @@ export class MarkdownViewerService {
         includeLevel: [2, 3, 4]
       })
       .use(latex)
-      .use(title)
       .use(imsize, { autofill: true });
 
     this.mermaidPlugin = new Mermaid(this.markdown);
