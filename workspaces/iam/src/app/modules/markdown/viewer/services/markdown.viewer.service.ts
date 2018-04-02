@@ -40,9 +40,10 @@ import * as sub from "markdown-it-sub";
 import * as sup from "markdown-it-sup";
 import * as ins from "markdown-it-ins";
 import * as mark from "markdown-it-mark";
-import * as footnote from "./markdown-it-plugins/footnote";
-import * as deflist from "markdown-it-deflist";
 import * as abbr from "markdown-it-abbr";
+import * as deflist from "markdown-it-deflist";
+import * as title from "./markdown-it-plugins/title";
+import * as footnote from "./markdown-it-plugins/footnote";
 import * as imsize from "./markdown-it-plugins/imsize";
 import * as anchor from "./markdown-it-plugins/anchor";
 import * as toc from "./markdown-it-plugins/toc";
@@ -77,10 +78,12 @@ export class MarkdownViewerService {
   }
 
   public showCodeLineNumber = true;
+  public parsedContent: { title: string };
   mediaChangeSubscription: Subscription;
   private markdown: MarkdownIt.MarkdownIt;
   private containerPlugin: ContainerPlugin;
   private mermaidPlugin: Mermaid;
+
   constructor(
     private router: Router,
     private document: DocumentRef,
@@ -134,6 +137,7 @@ export class MarkdownViewerService {
         includeLevel: [2, 3, 4]
       })
       .use(latex)
+      .use(title)
       .use(imsize, { autofill: true });
 
     this.mermaidPlugin = new Mermaid(this.markdown);
@@ -150,7 +154,9 @@ export class MarkdownViewerService {
   }
 
   public render(raw: string): string {
-    const r = `${this.markdown.render(raw)}`;
+    let env: any = {};
+    const r = `${this.markdown.render(raw, env)}`;
+    this.parsedContent.title = env.title;
     return r;
   }
 

@@ -16,7 +16,9 @@ import { Subscription } from "rxjs/Subscription";
 
     <div style="position:relative;height:100%;">
         <div class="viewer-container" #viewContainerDiv>
-            <markdown-viewer [model]="markdown"></markdown-viewer>
+          <div class="markdown-view">
+              <markdown-viewer [model]="markdown"></markdown-viewer>
+          </div>
         </div>
     </div>
     `,
@@ -33,6 +35,12 @@ import { Subscription } from "rxjs/Subscription";
             padding:0px 16px 0px
           }
         }
+
+        .markdown-view {
+          max-width: 1000px;
+          margin: auto;
+        }
+
     `
   ]
 })

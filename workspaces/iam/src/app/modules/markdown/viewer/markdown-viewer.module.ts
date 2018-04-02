@@ -13,6 +13,7 @@ import { NgSpinKitModule } from "ng-spin-kit";
 import { DocumentRef } from "core";
 import { ObservableMedia } from "@angular/flex-layout";
 import { TocComponent } from "./toc/toc.component";
+import { TocService } from "./services/toc.service";
 
 @NgModule({
   declarations: [
@@ -33,7 +34,7 @@ import { TocComponent } from "./toc/toc.component";
     ReaderToolbarComponent,
     MarkdownViewerContainerComponent
   ],
-  providers: []
+  providers: [TocService]
 })
 export class MarkdownViewerModule {
   static forChild(config?: MarkdownConfig): ModuleWithProviders {

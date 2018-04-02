@@ -54,7 +54,7 @@ import {
 import { CdkTableModule } from "@angular/cdk/table";
 
 export const MatModules = [
-  // MatIconModule,
+  MatIconModule,
   MatButtonModule,
   // MatCheckboxModule,
   // MatCardModule,
