@@ -31,20 +31,21 @@ export class ScrollSpiedElement implements ScrollItem {
 }
 
 export class ScrollSpiedElementGroup {
-  lastMaxScrollTop: number;
   activeScrollItem: ReplaySubject<ScrollItem | null> = new ReplaySubject(1);
 
-  resizeEvents$: Observable<any>;
-  scrollEvents$: Observable<any>;
+  private resizeEvents$: Observable<any>;
+  private scrollEvents$: Observable<any>;
+
+  private lastMaxScrollTop: number;
+  private lastContentHeight: number;
 
   private spiedElements: ScrollSpiedElement[];
   private onStopListening$ = new Subject();
-  private lastContentHeight: number;
 
   constructor(
     elements: Element[],
     private _container: HTMLElement | Window = window,
-    private topOffset = 0
+    private _topOffset = 0
   ) {
     this.spiedElements = elements.map(
       (elem, i) => new ScrollSpiedElement(elem, i)
@@ -73,7 +74,7 @@ export class ScrollSpiedElementGroup {
   calibrate() {
     const scrollTop = this.getScrollTop();
     this.spiedElements.forEach(spiedElem =>
-      spiedElem.calculateTop(scrollTop, this.topOffset)
+      spiedElem.calculateTop(scrollTop, this._topOffset)
     );
     this.spiedElements.sort((a, b) => b.top - a.top); // Sort in descending `top` order.
   }

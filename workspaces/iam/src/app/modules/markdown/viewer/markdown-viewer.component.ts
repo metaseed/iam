@@ -17,6 +17,7 @@ import lozad from "../../../../packages/lazy-load";
 export class MarkdownViewerComponent {
   lozad: any;
   @ViewChild("div") viewerContainerDiv: ElementRef;
+
   @Input()
   set model(value: string) {
     if (value) {
@@ -31,8 +32,7 @@ export class MarkdownViewerComponent {
       this.parsedModel = "";
     }
   }
-
-  parsedModel: any;
+  private parsedModel: any;
 
   constructor(
     private sanitized: DomSanitizer,

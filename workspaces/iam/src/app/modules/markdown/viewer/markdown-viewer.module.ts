@@ -12,12 +12,14 @@ import { MarkdownViewerContainerComponent } from "app/modules/markdown/viewer/ma
 import { NgSpinKitModule } from "ng-spin-kit";
 import { DocumentRef } from "core";
 import { ObservableMedia } from "@angular/flex-layout";
+import { TocComponent } from "./toc/toc.component";
 
 @NgModule({
   declarations: [
     MarkdownViewerComponent,
     ReaderToolbarComponent,
-    MarkdownViewerContainerComponent
+    MarkdownViewerContainerComponent,
+    TocComponent
   ],
   imports: [
     CommonModule,
