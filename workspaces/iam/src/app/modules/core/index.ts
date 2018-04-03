@@ -10,3 +10,4 @@ export * from "./services/scroll/scroll.service";
 export * from "./core.module";
 export * from "./services/scrollable";
 export * from "./services/dialog/dialog.service";
+export * from "./services/logger.service";

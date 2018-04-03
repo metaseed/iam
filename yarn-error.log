@@ -54,15 +54,6 @@ Lockfile:
       rxjs "^5.5.6"
       source-map "^0.5.6"
   
-  "@angular-devkit/core@^0.4.5":
-    version "0.4.8"
-    resolved "https://registry.yarnpkg.com/@angular-devkit/core/-/core-0.4.8.tgz#449718ec31de765f69f9fb7bead3a74f5b54c875"
-    dependencies:
-      ajv "~5.5.1"
-      chokidar "^1.7.0"
-      rxjs "^5.5.8"
-      source-map "^0.5.6"
-  
   "@angular-devkit/schematics@0.3.2":
     version "0.3.2"
     resolved "https://registry.yarnpkg.com/@angular-devkit/schematics/-/schematics-0.3.2.tgz#09a2268fad61f4f956f42db87913b8748c512a78"
@@ -70,20 +61,13 @@ Lockfile:
       "@ngtools/json-schema" "^1.1.0"
       rxjs "^5.5.6"
   
-  "@angular-devkit/schematics@^0.4.5":
-    version "0.4.8"
-    resolved "https://registry.yarnpkg.com/@angular-devkit/schematics/-/schematics-0.4.8.tgz#4fbe8d3e243771a96f20e7a5b2cd5152310f27cd"
-    dependencies:
-      "@ngtools/json-schema" "^1.1.0"
-      rxjs "^5.5.8"
-  
   "@angular-mdc/theme@0.33.0":
     version "0.33.0"
     resolved "https://registry.yarnpkg.com/@angular-mdc/theme/-/theme-0.33.0.tgz#4abf5ab2d0463fc5ce3032066df778ef77f76fde"
   
-  "@angular-mdc/web@^0.33.0":
-    version "0.33.0"
-    resolved "https://registry.yarnpkg.com/@angular-mdc/web/-/web-0.33.0.tgz#1a1ea9f17df38698712f6325f916e95d6d888ec4"
+  "@angular-mdc/web@^0.33.1":
+    version "0.33.1"
+    resolved "https://registry.yarnpkg.com/@angular-mdc/web/-/web-0.33.1.tgz#adb11a6eb99fbeccd86eccc2ab749f5b31adb9fb"
     dependencies:
       "@angular-mdc/theme" "0.33.0"
   
@@ -93,9 +77,9 @@ Lockfile:
     dependencies:
       tslib "^1.9.0"
   
-  "@angular/cdk@6.0.0-rc.0":
-    version "6.0.0-rc.0"
-    resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-6.0.0-rc.0.tgz#c849318a5d4aa2bcab2fd204c9e13b2d36406279"
+  "@angular/cdk@^5.0.0-rc.1":
+    version "5.2.4"
+    resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-5.2.4.tgz#c0a429a8710d8fedb157f546e21cb49d4335f7f7"
     dependencies:
       tslib "^1.7.1"
   
@@ -219,13 +203,10 @@ Lockfile:
     version "6.0.0-rc.1"
     resolved "https://registry.yarnpkg.com/@angular/language-service/-/language-service-6.0.0-rc.1.tgz#02781601e4b55688b9f083c647fd86a566380d71"
   
-  "@angular/material@6.0.0-beta.5":
-    version "6.0.0-beta.5"
-    resolved "https://registry.yarnpkg.com/@angular/material/-/material-6.0.0-beta.5.tgz#cc10a4a01f219b3092c5950f5ccd79eee7bee46c"
+  "@angular/material@^5.0.0-rc.1":
+    version "5.2.4"
+    resolved "https://registry.yarnpkg.com/@angular/material/-/material-5.2.4.tgz#9e823798324283d23ea839156fac5bcb73443d55"
     dependencies:
-      "@angular-devkit/core" "^0.4.5"
-      "@angular-devkit/schematics" "^0.4.5"
-      "@schematics/angular" "^0.4.5"
       tslib "^1.7.1"
   
   "@angular/platform-browser-dynamic@^6.0.0-rc.1":
@@ -294,12 +275,6 @@ Lockfile:
   "@schematics/angular@0.3.2":
     version "0.3.2"
     resolved "https://registry.yarnpkg.com/@schematics/angular/-/angular-0.3.2.tgz#be209a032a3e4577992d94fbaa14bd4bfde485e2"
-    dependencies:
-      typescript "~2.6.2"
-  
-  "@schematics/angular@^0.4.5":
-    version "0.4.8"
-    resolved "https://registry.yarnpkg.com/@schematics/angular/-/angular-0.4.8.tgz#b292edbc2f185b2bcae950f9fe09819ab2ef2a7a"
     dependencies:
       typescript "~2.6.2"
   
@@ -6153,12 +6128,6 @@ Lockfile:
     dependencies:
       symbol-observable "1.0.1"
   
-  rxjs@^5.5.8:
-    version "5.5.8"
-    resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.5.8.tgz#b2b0809a57614ad6254c03d7446dea0d83ca3791"
-    dependencies:
-      symbol-observable "1.0.1"
-  
   safe-buffer@5.1.1, safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
     version "5.1.1"
     resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.1.tgz#893312af69b2123def71f57889001671eeb2c853"
@@ -7799,4 +7768,4 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.8.23.tgz#7ab0bc9bedb4b9197864563841b4b478dd9bfce7"
 
 Trace: 
-  Error: EPERM: operation not permitted, unlink 'M:\Workspace\i'm\node_modules\@angular\material\bottom-sheet\typings'
+  Error: EPERM: operation not permitted, unlink 'M:\Workspace\i'm\node_modules\@angular-mdc\web\grid-list\typings'

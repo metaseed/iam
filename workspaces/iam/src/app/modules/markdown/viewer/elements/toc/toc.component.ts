@@ -13,7 +13,7 @@ import { combineLatest } from "rxjs/observable/combineLatest";
 //import { combineLatest} from 'rxjs';// rxjs 6
 // import { asapScheduler } from "rxjs";
 import { Scheduler } from "rxjs/Rx";
-import { TocItem, TocService } from "../services/toc.service";
+import { TocItem, TocService } from "../../services/toc.service";
 import { ScrollService } from "core";
 import { Title } from "@angular/platform-browser";
 // import { subscribeOn } from "rxjs/operators";
@@ -21,7 +21,7 @@ import { Title } from "@angular/platform-browser";
 type TocType = "None" | "Floating" | "EmbeddedSimple" | "EmbeddedExpandable";
 
 @Component({
-  selector: "aio-toc",
+  selector: "i-toc",
   templateUrl: "toc.component.html",
   styles: ["toc.component.scss"]
 })

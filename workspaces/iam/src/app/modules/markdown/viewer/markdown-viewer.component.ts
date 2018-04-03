@@ -4,41 +4,34 @@ import {
   AfterViewInit,
   ElementRef,
   Output,
-  EventEmitter
+  EventEmitter,
+  Injector
 } from "@angular/core";
-import { DomSanitizer, Title } from "@angular/platform-browser";
+import { DomSanitizer, Title, Meta } from "@angular/platform-browser";
 import { MarkdownViewerService } from "./services/markdown.viewer.service";
-import { Scrollable } from "core";
+import { Scrollable, Logger, DocumentRef } from "core";
 import { ViewChild } from "@angular/core";
 import * as view from "../reducers/view";
 import { Store } from "@ngrx/store";
 import * as fromView from "../actions/view";
 import * as MarkdownIt from "markdown-it";
 import lozad from "../../../../packages/lazy-load";
-import { TocComponent } from "./toc/toc.component";
+import { TocComponent } from "./elements/toc/toc.component";
 import { of } from "rxjs/observable/of";
 import { TocService } from "./services/toc.service";
 import { Observable } from "rxjs/Observable";
-import { switchMap, tap } from "rxjs/operators";
+import { switchMap, tap, catchError, takeUntil } from "rxjs/operators";
 import { timer } from "rxjs/observable/timer";
+import { createCustomElement } from "@angular/elements";
+import { ElementsLoader } from "./elements/elements-loader";
+import { getAddr } from "./utils/getUri";
 
 export const NO_ANIMATIONS = "no-animations";
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: "markdown-viewer",
-  template: ` <div #div class="markdown-view" [innerHtml]="parsedModel">
-</div>
-  `,
-  styles: [
-    `
-  .markdown-view {
-    max-width: 1000px;
-    margin: auto;
-  }
-
-  `
-  ]
+  template: ""
 })
 export class MarkdownViewerComponent {
   static animationsEnabled = true;
@@ -46,36 +39,54 @@ export class MarkdownViewerComponent {
 
   private void$ = of<void>(undefined);
   private hostElement: HTMLElement;
-  @ViewChild("div") private viewContainerDiv;
+
+  private docContents$ = new EventEmitter<string>();
   @Input()
   set model(value: string) {
-    if (value) {
-      this.parsedModel = this.sanitized.bypassSecurityTrustHtml(
-        this.service.render(value)
-      );
-    } else {
-      this.parsedModel = "";
-    }
-
     if (!value) return;
+    this.docContents$.emit(this.service.render(value));
+  }
 
-    setTimeout(() => {
-      //remvoe timeout??
-      TocComponent.prepareTitleAndToc(
-        this.hostElement,
-        this.service.parsedContent.title,
-        this.tocService,
-        this.titleService
-      )();
-      this.lozad.observe();
-    }, 0);
+  private render(content: string): Observable<void> {
+    let addTitleAndToc: () => void;
+    return this.void$.pipe(
+      tap(_ => (this.nextViewContainer.innerHTML = content || "")),
+      tap(
+        _ =>
+          (addTitleAndToc = TocComponent.prepareTitleAndToc(
+            this.nextViewContainer,
+            this.service.parsedContent.title,
+            this.tocService,
+            this.titleService
+          ))
+      ),
+      switchMap(_ =>
+        this.elementsLoader.loadContainingCustomElements(this.nextViewContainer)
+      ),
+      tap(_ => this.docReady.emit()),
+      switchMap(_ => this.swapViews(addTitleAndToc)),
+      tap(_ => this.docRendered.emit()),
+      tap(_ => this.lozad.observe()),
+      catchError(err => {
+        const errorMessage = err instanceof Error ? err.stack : err;
+        this.logger.error(
+          new Error(
+            `[DocViewer] Error preparing document '${getAddr(
+              this.documentRef.nativeDocument.location.href
+            )}': ${errorMessage}`
+          )
+        );
+        this.nextViewContainer.innerHTML = "";
+        this.setNoIndex(true);
+        return this.void$;
+      })
+    );
   }
   parsedModel: any;
   protected currViewContainer: HTMLElement = document.createElement("div");
   protected nextViewContainer: HTMLElement = document.createElement("div");
 
   private onDestroy$ = new EventEmitter<void>();
-  private docContents$ = new EventEmitter<string>();
   // The new document is ready to be inserted into the viewer.
   // (Embedded components have been loaded and instantiated, if necessary.)
   @Output() docReady = new EventEmitter<void>();
@@ -93,17 +104,29 @@ export class MarkdownViewerComponent {
   @Output() docRendered = new EventEmitter<void>();
 
   constructor(
+    private documentRef: DocumentRef,
+    private logger: Logger,
+    private metaService: Meta,
+    elementRef: ElementRef,
+    private injector: Injector,
     private sanitized: DomSanitizer,
     private service: MarkdownViewerService,
     private tocService: TocService,
     private titleService: Title,
-    private store: Store<view.State>
-  ) // private elementsLoader:ElementsLoader
-  {
+    private store: Store<view.State>,
+    private elementsLoader: ElementsLoader
+  ) {
     (<any>document).iamMarkdownIsPureViewMode = true;
+    this.hostElement = elementRef.nativeElement;
+    this.docContents$
+      .pipe(
+        switchMap(newDoc => this.render(newDoc)),
+        takeUntil(this.onDestroy$)
+      )
+      .subscribe();
   }
   ngAfterViewInit() {
-    var container = (this.hostElement = this.viewContainerDiv.nativeElement);
+    var container = this.hostElement;
     this.lozad = (<any>lozad)("img[data-src]", { container });
   }
 
@@ -196,6 +219,19 @@ export class MarkdownViewerComponent {
         this.nextViewContainer.innerHTML = ""; // Empty to release memory.
       })
     );
+  }
+
+  /**
+   * Tell search engine crawlers whether to index this page
+   */
+  private setNoIndex(val: boolean) {
+    if (val) {
+      this.metaService.addTag({ name: "googlebot", content: "noindex" });
+      this.metaService.addTag({ name: "robots", content: "noindex" });
+    } else {
+      this.metaService.removeTag('name="googlebot"');
+      this.metaService.removeTag('name="robots"');
+    }
   }
 }
 

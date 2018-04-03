@@ -12,30 +12,30 @@ import { MarkdownViewerContainerComponent } from "app/modules/markdown/viewer/ma
 import { NgSpinKitModule } from "ng-spin-kit";
 import { DocumentRef } from "core";
 import { ObservableMedia } from "@angular/flex-layout";
-import { TocComponent } from "./toc/toc.component";
+import { TocComponent } from "./elements/toc/toc.component";
+import { ElementsModule } from "./elements/elements.module";
 import { TocService } from "./services/toc.service";
 
 @NgModule({
   declarations: [
     MarkdownViewerComponent,
     ReaderToolbarComponent,
-    MarkdownViewerContainerComponent,
-    TocComponent
+    MarkdownViewerContainerComponent
   ],
   imports: [
     CommonModule,
     NgSpinKitModule,
     SharedModule,
     MaterialModule,
-    RouterModule
+    RouterModule,
+    ElementsModule
   ],
   exports: [
     MarkdownViewerComponent,
     ReaderToolbarComponent,
     MarkdownViewerContainerComponent
   ],
-  providers: [TocService],
-  entryComponents: [TocComponent]
+  providers: [TocService]
 })
 export class MarkdownViewerModule {
   static forChild(config?: MarkdownConfig): ModuleWithProviders {

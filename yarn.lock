@@ -27,15 +27,15 @@
     "@ngtools/json-schema" "^1.1.0"
     rxjs "^5.5.6"
 
-"@angular-mdc/theme@0.33.0":
-  version "0.33.0"
-  resolved "https://registry.yarnpkg.com/@angular-mdc/theme/-/theme-0.33.0.tgz#4abf5ab2d0463fc5ce3032066df778ef77f76fde"
+"@angular-mdc/theme@0.31.0":
+  version "0.31.0"
+  resolved "https://registry.yarnpkg.com/@angular-mdc/theme/-/theme-0.31.0.tgz#42b791d69731530b8ebcf16999dd67f87b56d855"
 
-"@angular-mdc/web@^0.33.0":
-  version "0.33.0"
-  resolved "https://registry.yarnpkg.com/@angular-mdc/web/-/web-0.33.0.tgz#1a1ea9f17df38698712f6325f916e95d6d888ec4"
+"@angular-mdc/web@0.31.1":
+  version "0.31.1"
+  resolved "https://registry.yarnpkg.com/@angular-mdc/web/-/web-0.31.1.tgz#5f49c654946fb4ab0af283f5f2ad39f0e9c9dfec"
   dependencies:
-    "@angular-mdc/theme" "0.33.0"
+    "@angular-mdc/theme" "0.31.0"
 
 "@angular/animations@^6.0.0-rc.1":
   version "6.0.0-rc.1"
