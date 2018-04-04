@@ -1,12 +1,11 @@
 {
-  "name": "angular-hotkey-module",
+  "name": "@metaseed/angular-hotkey-module",
   "version": "1.0.0",
   "scripts": {
     "lint": "tslint src/**/*.ts",
     "test": "tsc && karma start",
-    "prepublish": "tsc",
-    "tsc": "tsc",
-    "ngc": "./node_modules/.bin/ngc -p tsconfig.json"
+    "ngc": "./node_modules/.bin/ngc -p tsconfig.json",
+    "build": "ng-packagr -p ./ng-package.json"
   },
   "repository": {
     "type": "git",
@@ -21,12 +20,14 @@
   "bugs": {
     "url": "git@github.com:brtnshrdr/angular2-hotkeys.git/issues"
   },
-  "main": "./index.js",
+
+  "main": "./dist/bundles/metaseed-angular-hotkey-module.umd.js",
   "dependencies": {
-    "@types/mousetrap": "^1.5.34",
     "mousetrap": "^1.6.1"
   },
   "devDependencies": {
+    "ng-packagr": "^2.4.1",
+    "@types/mousetrap": "^1.6.0",
     "@angular/common": "^6.0.0-rc.1",
     "@angular/compiler": "^6.0.0-rc.1",
     "@angular/compiler-cli": "^6.0.0-rc.1",
@@ -38,6 +39,7 @@
     "typescript": "~2.7.2",
     "zone.js": "^0.8.19"
   },
+
   "engines": {
     "node": ">=0.8.0"
   }
