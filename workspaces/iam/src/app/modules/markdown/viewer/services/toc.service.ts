@@ -42,7 +42,11 @@ export class TocService {
 
     this.tocList.next(tocList);
 
-    this.scrollSpyInfo = this.scrollSpyService.spyOn(headings);
+    this.scrollSpyInfo = this.scrollSpyService.spyOn(
+      headings,
+      <HTMLElement>docElement,
+      60
+    );
     this.scrollSpyInfo.active.subscribe(item =>
       this.activeItemIndex.next(item && item.index)
     );

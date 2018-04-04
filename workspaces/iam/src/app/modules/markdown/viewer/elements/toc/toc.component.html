@@ -1,5 +1,5 @@
 <div class="toc-container no-print">
-  <div *ngIf="type !== 'None'" class="toc-inner no-print" [class.collapsed]="isCollapsed">
+  <div *ngIf="(type !== 'None')&&show" class="toc-inner no-print" [class.collapsed]="isCollapsed">
 
     <div *ngIf="type === 'EmbeddedSimple'" class="toc-heading embedded">
       Contents
@@ -24,4 +24,5 @@
       [class.collapsed]="isCollapsed" title="Expand/collapse contents" aria-label="Expand/collapse contents" [attr.aria-pressed]="!isCollapsed">
     </button>
   </div>
+  <button (click)="show=!show" mat-raised-button color="primary" style="position:fixed;right:0px;bottom:30px;width:50px;min-width:50px;">TOC</button>
 </div>

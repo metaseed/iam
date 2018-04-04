@@ -79,7 +79,7 @@ export class ScrollSpiedElementGroup {
     this.spiedElements.sort((a, b) => b.top - a.top); // Sort in descending `top` order.
   }
 
-  private onResize() {
+  private onResize = () => {
     const contentHeight = this.getContentHeight();
     const viewportHeight = this.getViewportHeight();
 
@@ -87,9 +87,9 @@ export class ScrollSpiedElementGroup {
     this.lastMaxScrollTop = contentHeight - viewportHeight;
 
     this.calibrate();
-  }
+  };
 
-  private onScroll() {
+  private onScroll = () => {
     if (this.lastContentHeight !== this.getContentHeight()) {
       // Something has caused the scroll height to change.
       // (E.g. image downloaded, accordion expanded/collapsed etc.)
@@ -112,7 +112,7 @@ export class ScrollSpiedElementGroup {
     }
 
     this.activeScrollItem.next(activeItem || null);
-  }
+  };
 
   private getContentHeight() {
     if (this._container instanceof HTMLElement) {

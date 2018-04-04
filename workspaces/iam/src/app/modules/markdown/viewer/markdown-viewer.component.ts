@@ -25,6 +25,8 @@ import { timer } from "rxjs/observable/timer";
 import { createCustomElement } from "@angular/elements";
 import { ElementsLoader } from "./elements/elements-loader";
 import { getAddr } from "./utils/getUri";
+import { MarkdownViewerContainerComponent } from "./markdown-viewer-container.component";
+import { Inject } from "@angular/core";
 
 export const NO_ANIMATIONS = "no-animations";
 
@@ -40,6 +42,9 @@ export class MarkdownViewerComponent {
   private hostElement: HTMLElement;
   private docContents$ = new EventEmitter<string>();
   private lozad: any;
+  // new Scrollable(this.hostElement).scroll$.subscribe(a => {
+  //   console.log(a);
+  // });
 
   @Input()
   set model(value: string) {
@@ -51,10 +56,11 @@ export class MarkdownViewerComponent {
     let addTitleAndToc: () => void;
     return this.void$.pipe(
       tap(_ => (this.nextViewContainer.innerHTML = content || "")),
+      tap(() => this.hostElement.appendChild(this.nextViewContainer)),
       tap(
         _ =>
           (addTitleAndToc = TocComponent.prepareTitleAndToc(
-            this.nextViewContainer,
+            this.parent.viewerContainerDiv.nativeElement,
             getAddr(this.documentRef.nativeDocument.location.href),
             this.tocService,
             this.titleService
@@ -104,6 +110,8 @@ export class MarkdownViewerComponent {
   @Output() docRendered = new EventEmitter<void>();
 
   constructor(
+    @Inject(MarkdownViewerContainerComponent)
+    private parent: MarkdownViewerContainerComponent,
     private documentRef: DocumentRef,
     private logger: Logger,
     private metaService: Meta,

@@ -7,16 +7,15 @@ import {
   QueryList,
   ViewChildren
 } from "@angular/core";
-import { startWith, takeUntil } from "rxjs/operators";
-import { Subject } from "rxjs";
-import { combineLatest } from "rxjs/observable/combineLatest";
-//import { combineLatest} from 'rxjs';// rxjs 6
-// import { asapScheduler } from "rxjs";
+import { startWith, takeUntil /*, subscribeOn */ } from "rxjs/operators";
+import { Subject, combineLatest, asapScheduler } from "rxjs"; // rxjs 6
 import { Scheduler } from "rxjs/Rx";
 import { TocItem, TocService } from "../../services/toc.service";
 import { ScrollService } from "core";
 import { Title } from "@angular/platform-browser";
-// import { subscribeOn } from "rxjs/operators";
+import { BreakpointObserver } from "@angular/cdk/layout";
+import { Breakpoints } from "@angular/cdk/layout";
+import { BreakpointState } from "@angular/cdk/layout";
 
 type TocType = "None" | "Floating" | "EmbeddedSimple" | "EmbeddedExpandable";
 
@@ -27,6 +26,8 @@ type TocType = "None" | "Floating" | "EmbeddedSimple" | "EmbeddedExpandable";
 export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
   activeIndex: number | null = null;
   type: TocType = "None";
+
+  show = true;
   isCollapsed = true;
   isEmbedded = false;
   @ViewChildren("tocItem") private items: QueryList<ElementRef>;
@@ -69,15 +70,25 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
 
-      titleService.setTitle(title ? `Angular - ${title}` : "Angular");
+      // titleService.setTitle(title ? `Angular - ${title}` : "Angular");
     };
   }
 
   constructor(
+    private bm: BreakpointObserver,
     private scrollService: ScrollService,
     private tocService: TocService,
     elementRef: ElementRef
   ) {
+    bm
+      .observe([Breakpoints.Small, Breakpoints.XSmall])
+      .subscribe((state: BreakpointState) => {
+        if (state.matches) {
+          this.show = false;
+        } else {
+          this.show = true;
+        }
+      });
     this.isEmbedded =
       elementRef.nativeElement.className.indexOf("embedded") !== -1;
   }
@@ -106,7 +117,7 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
       // which, in turn, are caused by the rendering that happened due to a ChangeDetection.
       // Without asap, we would be updating the model while still in a ChangeDetection handler, which is disallowed by Angular.
       combineLatest(
-        //this.tocService.activeItemIndex.pipe(subscribeOn(asapScheduler)),//rxjs 6
+        // this.tocService.activeItemIndex.pipe(subscribeOn(asapScheduler)),//rxjs 6
         this.tocService.activeItemIndex.observeOn(Scheduler.asap),
         this.items.changes.pipe(startWith(this.items))
       )

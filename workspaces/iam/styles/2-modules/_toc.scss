@@ -1,4 +1,5 @@
 .toc-container {
+  z-index: 20;
   width: 18%;
   position: fixed;
   top: 76px;
@@ -6,6 +7,19 @@
   bottom: 12px;
   overflow-y: auto;
   overflow-x: hidden;
+  &::-webkit-scrollbar {
+    width: 0px;
+    // height: 6px;
+    // background-color: #eeeeee;
+  }
+  // &::-webkit-scrollbar-thumb {
+  //   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  //   background-color: #aaaaaa;
+  // }
+  // &::-webkit-scrollbar-track {
+  //   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
+  //   background-color: #eeeeee;
+  // }
 }
 
 aio-toc.embedded {
@@ -23,6 +37,7 @@ aio-toc.embedded {
 }
 
 .toc-inner {
+  background: white;
   font-size: 13px;
   overflow-y: visible;
   padding: 4px 0 0 10px;
@@ -115,9 +130,14 @@ aio-toc.embedded {
     }
 
     li {
+      letter-spacing: 0.3px;
+      font-weight: 400;
+      & > em {
+        letter-spacing: 0.3px;
+      }
       box-sizing: border-box;
-      font-size: 12px;
-      line-height: 16px;
+      font-size: 14px;
+      line-height: 24px;
       padding: 3px 0 3px 12px;
       position: relative;
       transition: all 0.3s ease-in-out;
