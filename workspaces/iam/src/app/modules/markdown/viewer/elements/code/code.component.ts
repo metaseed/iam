@@ -29,26 +29,19 @@ const DEFAULT_LINE_NUMS_COUNT = 10;
  * Example usage:
  *
  * ```
-  <i-code
+  <iam-code
     [language]="ts"
     [linenums]="true"
     [path]="router/src/app/app.module.ts"
     [region]="animations-module">
-  </i-code>
-
-<i-code
-language="ts"
-linenums="true"
-path="router/src/app/app.module.ts"
-region="animations-module">
-</i-code>
+  </iam-code>
  * ```
  *
  *
  * Renders code provided through the `updateCode` method.
  */
 @Component({
-  selector: "i-code",
+  selector: "iam-code",
   template: `
     <pre class="prettyprint lang-{{language}}">
       <button *ngIf="!hideCopy" class="material-icons copy-button no-print"

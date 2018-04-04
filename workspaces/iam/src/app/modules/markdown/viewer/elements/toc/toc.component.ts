@@ -79,8 +79,8 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private scrollService: ScrollService,
-    elementRef: ElementRef,
-    private tocService: TocService
+    private tocService: TocService,
+    elementRef: ElementRef
   ) {
     this.isEmbedded =
       elementRef.nativeElement.className.indexOf("embedded") !== -1;

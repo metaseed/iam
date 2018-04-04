@@ -10,7 +10,7 @@ export const ELEMENT_MODULE_PATHS_AS_ROUTES = [
   },
   {
     selector: "i-code",
-    loadChildren: "./code/code.module#CodeModule"
+    loadChildren: "./code/code-example.module#CodeExampleModule"
   }
 ];
 
