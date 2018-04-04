@@ -22,8 +22,7 @@ type TocType = "None" | "Floating" | "EmbeddedSimple" | "EmbeddedExpandable";
 
 @Component({
   selector: "i-toc",
-  templateUrl: "toc.component.html",
-  styles: ["toc.component.scss"]
+  templateUrl: "toc.component.html"
 })
 export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
   activeIndex: number | null = null;

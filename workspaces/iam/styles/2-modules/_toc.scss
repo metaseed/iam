@@ -89,13 +89,12 @@ aio-toc.embedded {
   }
 
   button.toc-more-items::after {
-    content: 'expand_less';
+    content: "expand_less";
   }
 
   button.toc-more-items.collapsed::after {
-    content: 'more_horiz';
+    content: "more_horiz";
   }
-
 
   .mat-icon.collapsed {
     @include rotate(0deg);
@@ -122,14 +121,14 @@ aio-toc.embedded {
       padding: 3px 0 3px 12px;
       position: relative;
       transition: all 0.3s ease-in-out;
-
+      margin: 0;
       &.h1:after {
-        content: '';
+        content: "";
         display: block;
         height: 1px;
         width: 40%;
         margin: 7px 0 4px 0;
-        background: #DBDBDB;
+        background: #dbdbdb;
         clear: both;
       }
 
@@ -140,10 +139,14 @@ aio-toc.embedded {
       a {
         font-size: inherit;
         color: lighten($darkgray, 10);
-        display:table-cell;
+        display: table-cell;
         overflow: visible;
         font-size: 12px;
         display: table-cell;
+      }
+
+      a:hover {
+        text-decoration: none;
       }
 
       &:hover a {
@@ -156,7 +159,7 @@ aio-toc.embedded {
           font-weight: 500;
 
           &:before {
-            content: '';
+            content: "";
             border-radius: 50%;
             left: -3px;
             top: 12px;
@@ -173,7 +176,7 @@ aio-toc.embedded {
       &:before {
         border-left: 1px solid $lightgray;
         bottom: 0;
-        content: '';
+        content: "";
         left: 0;
         position: absolute;
         top: 0;
@@ -188,7 +191,7 @@ aio-toc.embedded {
       }
 
       &:not(.active):hover a:before {
-        content: '';
+        content: "";
         border-radius: 50%;
         left: -3px;
         top: 12px;
@@ -199,7 +202,6 @@ aio-toc.embedded {
       }
     }
   }
-
 }
 
 aio-toc.embedded > div.collapsed li.secondary {

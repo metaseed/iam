@@ -62,7 +62,7 @@ export class TocService {
     );
     for (let i = 0; i < anchorLinks.length; i++) {
       const anchorLink = anchorLinks[i];
-      if (!anchorLink.classList.contains("header-link")) {
+      if (!anchorLink.classList.contains("deep-link")) {
         // this is an anchor that contains actual content that we want to keep
         // move the contents of the anchor into its parent
         const parent = anchorLink.parentNode!;

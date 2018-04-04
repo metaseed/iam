@@ -55,7 +55,7 @@ export class MarkdownViewerComponent {
         _ =>
           (addTitleAndToc = TocComponent.prepareTitleAndToc(
             this.nextViewContainer,
-            this.service.parsedContent.title,
+            getAddr(this.documentRef.nativeDocument.location.href),
             this.tocService,
             this.titleService
           ))
