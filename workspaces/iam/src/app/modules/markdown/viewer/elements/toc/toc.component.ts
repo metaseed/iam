@@ -47,10 +47,7 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (needsToc && !embeddedToc) {
       // Add an embedded ToC if it's needed and there isn't one in the content already.
-      titleEl!.insertAdjacentHTML(
-        "afterend",
-        '<aio-toc class="embedded"></aio-toc>'
-      );
+      titleEl!.insertAdjacentHTML("afterend", "<aio-toc></aio-toc>");
     } else if (!needsToc && embeddedToc) {
       // Remove the embedded Toc if it's there and not needed.
       embeddedToc.remove();

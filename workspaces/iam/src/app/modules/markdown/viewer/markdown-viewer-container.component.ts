@@ -16,7 +16,7 @@ import { Subscription } from "rxjs/Subscription";
 
     <div style="position:relative;height:100%;">
         <div class="viewer-container" #viewContainerDiv>
-            <div class="markdown-view toc-container no-print">
+            <div class="markdown-view">
               <markdown-viewer [model]="markdown"></markdown-viewer>
               </div>
         </div>

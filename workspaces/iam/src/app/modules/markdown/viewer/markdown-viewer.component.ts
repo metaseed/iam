@@ -34,13 +34,13 @@ export const NO_ANIMATIONS = "no-animations";
   template: ""
 })
 export class MarkdownViewerComponent {
-  static animationsEnabled = true;
-  lozad: any;
+  static animationsEnabled = false;
 
   private void$ = of<void>(undefined);
   private hostElement: HTMLElement;
-
   private docContents$ = new EventEmitter<string>();
+  private lozad: any;
+
   @Input()
   set model(value: string) {
     if (!value) return;
