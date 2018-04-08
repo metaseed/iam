@@ -3,10 +3,11 @@
   width: 18%;
   position: fixed;
   top: 76px;
-  right: 0;
+  right: 8px;
   bottom: 12px;
   overflow-y: auto;
   overflow-x: hidden;
+  min-width: 180px;
   &::-webkit-scrollbar {
     width: 0px;
     // height: 6px;
@@ -22,7 +23,7 @@
   // }
 }
 
-aio-toc.embedded {
+i-toc.embedded {
   @media (min-width: 801px) {
     display: none;
   }
@@ -224,6 +225,6 @@ aio-toc.embedded {
   }
 }
 
-aio-toc.embedded > div.collapsed li.secondary {
+i-toc.embedded > div.collapsed li.secondary {
   display: none;
 }

@@ -16,6 +16,7 @@ import { Title } from "@angular/platform-browser";
 import { BreakpointObserver } from "@angular/cdk/layout";
 import { Breakpoints } from "@angular/cdk/layout";
 import { BreakpointState } from "@angular/cdk/layout";
+import { Location } from "@angular/common";
 
 type TocType = "None" | "Floating" | "EmbeddedSimple" | "EmbeddedExpandable";
 
@@ -43,11 +44,11 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
   ): () => void {
     const titleEl = targetElem.querySelector("h1");
     const needsToc = !!titleEl && !/no-?toc/i.test(titleEl.className);
-    const embeddedToc = targetElem.querySelector("aio-toc.embedded");
+    const embeddedToc = targetElem.querySelector("i-toc.embedded");
 
     if (needsToc && !embeddedToc) {
       // Add an embedded ToC if it's needed and there isn't one in the content already.
-      titleEl!.insertAdjacentHTML("afterend", "<aio-toc></aio-toc>");
+      titleEl!.insertAdjacentHTML("afterend", "<i-toc></i-toc>");
     } else if (!needsToc && embeddedToc) {
       // Remove the embedded Toc if it's there and not needed.
       embeddedToc.remove();
@@ -77,8 +78,9 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private bm: BreakpointObserver,
     private scrollService: ScrollService,
-    private tocService: TocService,
-    elementRef: ElementRef
+    public tocService: TocService,
+    elementRef: ElementRef,
+    private location: Location
   ) {
     bm
       .observe([Breakpoints.Small, Breakpoints.XSmall])
@@ -155,8 +157,16 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  navigate(addr) {
+    // this.location.go(addr);
+    this.show = false;
+  }
+
   toTop() {
     this.scrollService.scrollToTop();
+  }
+  toggleToc() {
+    this.show = !this.show;
   }
 }
 

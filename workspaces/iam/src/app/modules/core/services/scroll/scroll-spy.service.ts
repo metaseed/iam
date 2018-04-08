@@ -1,6 +1,11 @@
 import { Inject, Injectable } from "@angular/core";
 import { DOCUMENT } from "@angular/platform-browser";
-import { auditTime, distinctUntilChanged, takeUntil } from "rxjs/operators";
+import {
+  auditTime,
+  distinctUntilChanged,
+  takeUntil,
+  map
+} from "rxjs/operators";
 
 import { ScrollService } from "./scroll.service";
 import { fromEvent } from "rxjs/observable/fromEvent";
@@ -14,6 +19,7 @@ export interface ScrollItem {
 
 export interface ScrollSpyToken {
   active: Observable<ScrollItem | null>;
+  isScrollDown$: Observable<any>;
   unspy: () => void;
 }
 
@@ -89,6 +95,21 @@ export class ScrollSpiedElementGroup {
     this.calibrate();
   };
 
+  getScrollDown() {
+    let lastValue = this.getScrollTop();
+    return this.scrollEvents$.pipe(
+      map(event => {
+        const currentValue = this.getScrollTop();
+        if (currentValue - lastValue > 0) {
+          lastValue = currentValue;
+          return { scroll: event, isDown: true };
+        }
+        lastValue = currentValue;
+        return { scroll: event, isDown: false };
+      })
+    );
+  }
+
   private onScroll = () => {
     if (this.lastContentHeight !== this.getContentHeight()) {
       // Something has caused the scroll height to change.
@@ -160,6 +181,7 @@ export class ScrollSpyService {
 
     return {
       active: spiedGroup.activeScrollItem.pipe(distinctUntilChanged()),
+      isScrollDown$: spiedGroup.getScrollDown(),
       unspy: () => this.unspy(spiedGroup)
     };
   }

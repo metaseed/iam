@@ -295,11 +295,11 @@ describe("CodeComponent", () => {
 //// Test helpers ////
 // tslint:disable:member-ordering
 @Component({
-  selector: "aio-host-comp",
+  selector: "i-host-comp",
   template: `
-    <aio-code [language]="language"
+    <i-code [language]="language"
     [linenums]="linenums" [path]="path" [region]="region"
-    [hideCopy]="hideCopy" [title]="title"></aio-code>
+    [hideCopy]="hideCopy" [title]="title"></i-code>
   `
 })
 class HostComponent implements AfterViewInit {
