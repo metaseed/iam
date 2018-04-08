@@ -163,16 +163,12 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
   onClick(event) {
-    if(this.isSmallScreen){
     if (!this.elementRef.nativeElement.contains(event.target)){ // similar checks
      this.show = false;
     }
-    }
    }
   navigate(addr) {
-    if(this.isSmallScreen) {
     this.show = false;
-  }
 }
 
   toTop() {
