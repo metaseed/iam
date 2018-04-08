@@ -37,6 +37,7 @@ export const NO_ANIMATIONS = "no-animations";
 })
 export class MarkdownViewerComponent {
   static animationsEnabled = false;
+  static config_addTocByDefault = false;
 
   private void$ = of<void>(undefined);
   private hostElement: HTMLElement;
@@ -53,19 +54,24 @@ export class MarkdownViewerComponent {
   }
 
   private render(content: string): Observable<void> {
-    let addTitleAndToc: () => void;
+    const targetElement = this.parent.viewerContainerDiv.nativeElement;
+    const docId = getAddr(this.documentRef.nativeDocument.location.href);
+    let addTitleAndToc = () => {
+      this.tocService.genToc(targetElement, docId);
+    };
     return this.void$.pipe(
       tap(_ => (this.nextViewContainer.innerHTML = content || "")),
       tap(() => this.hostElement.appendChild(this.nextViewContainer)),
-      tap(
-        _ =>
-          (addTitleAndToc = TocComponent.prepareTitleAndToc(
-            this.parent.viewerContainerDiv.nativeElement,
-            getAddr(this.documentRef.nativeDocument.location.href),
+      tap(_ => {
+        if (MarkdownViewerComponent.config_addTocByDefault) {
+          addTitleAndToc = TocComponent.prepareTitleAndToc(
+            targetElement,
+            docId,
             this.tocService,
             this.titleService
-          ))
-      ),
+          );
+        }
+      }),
       switchMap(_ =>
         this.elementsLoader.loadContainingCustomElements(this.nextViewContainer)
       ),

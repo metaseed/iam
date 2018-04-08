@@ -13,9 +13,11 @@
 
     <ul class="toc-list" [class.embedded]="type !== 'Floating'">
       <ng-container *ngFor="let toc of tocList; let i = index">
-        <li (click)="navigate(toc.href)" #tocItem title="{{toc.title}}" *ngIf="type === 'Floating' || toc.level !== 'h1'" class="{{toc.level}}"
-          [class.secondary]="type === 'EmbeddedExpandable' && i >= primaryMax" [class.active]="i === activeIndex">
-          <a [href]="toc.href" [innerHTML]="toc.content"></a>
+        <li #tocItem title="{{toc.title}}" *ngIf="type === 'Floating' || toc.level !== 'h1'" class="{{toc.level}}" [class.secondary]="type === 'EmbeddedExpandable' && i >= primaryMax"
+          [class.active]="i === activeIndex">
+          <div style="display:inline-block" (click)="navigate(toc.href)">
+            <a [href]="toc.href" [innerHTML]="toc.content"></a>
+          </div>
         </li>
       </ng-container>
     </ul>
@@ -25,4 +27,5 @@
     </button>
   </div>
 </div>
-<button (click)="toggleToc()" *ngIf="tocService.isScrollUp" mat-raised-button color="primary" style="z-index:100;position:fixed;right:5px;bottom:30px;width:50px;min-width:50px;">TOC</button>
+
+<div (click)="toggleToc()" *ngIf="isSmallScreen && tocService.isScrollUp" style="color:white;background-color: #c1c1c1aa;cursor:pointer;z-index:100;position:fixed;right:5px;bottom:30px;width:50px;">TOC</div>

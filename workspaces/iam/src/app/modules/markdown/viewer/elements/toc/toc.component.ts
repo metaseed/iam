@@ -22,6 +22,9 @@ type TocType = "None" | "Floating" | "EmbeddedSimple" | "EmbeddedExpandable";
 
 @Component({
   selector: "i-toc",
+  host:{
+    '(document:click)':'onClick($event)'
+  }
   templateUrl: "toc.component.html"
 })
 export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -29,6 +32,7 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
   type: TocType = "None";
 
   show = true;
+  isSmallScreen:boolean;
   isCollapsed = true;
   isEmbedded = false;
   @ViewChildren("tocItem") private items: QueryList<ElementRef>;
@@ -79,7 +83,7 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
     private bm: BreakpointObserver,
     private scrollService: ScrollService,
     public tocService: TocService,
-    elementRef: ElementRef,
+    private elementRef: ElementRef,
     private location: Location
   ) {
     bm
@@ -87,8 +91,10 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((state: BreakpointState) => {
         if (state.matches) {
           this.show = false;
+          this.isSmallScreen = true;
         } else {
           this.show = true;
+          this.isSmallScreen = false;
         }
       });
     this.isEmbedded =
@@ -156,11 +162,18 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
       this.toTop();
     }
   }
-
+  onClick(event) {
+    if(this.isSmallScreen){
+    if (!this.elementRef.nativeElement.contains(event.target)){ // similar checks
+     this.show = false;
+    }
+    }
+   }
   navigate(addr) {
-    // this.location.go(addr);
+    if(this.isSmallScreen) {
     this.show = false;
   }
+}
 
   toTop() {
     this.scrollService.scrollToTop();
