@@ -22,9 +22,9 @@ type TocType = "None" | "Floating" | "EmbeddedSimple" | "EmbeddedExpandable";
 
 @Component({
   selector: "i-toc",
-  host:{
-    '(document:click)':'onClick($event)'
-  }
+  host: {
+    "(document:click)": "onClick($event)"
+  },
   templateUrl: "toc.component.html"
 })
 export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -32,7 +32,7 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
   type: TocType = "None";
 
   show = true;
-  isSmallScreen:boolean;
+  isSmallScreen: boolean;
   isCollapsed = true;
   isEmbedded = false;
   @ViewChildren("tocItem") private items: QueryList<ElementRef>;
@@ -163,13 +163,14 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
   onClick(event) {
-    if (!this.elementRef.nativeElement.contains(event.target)){ // similar checks
-     this.show = false;
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      // similar checks
+      this.show = false;
     }
-   }
+  }
   navigate(addr) {
-    this.show = false;
-}
+    if (this.isSmallScreen) this.show = false;
+  }
 
   toTop() {
     this.scrollService.scrollToTop();
