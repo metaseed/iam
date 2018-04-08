@@ -1,4 +1,8 @@
+<!-- <div style="background-color:white;text-align:center">
+  <a href="#">^</a>
+</div> -->
 <div class="toc-container no-print" *ngIf="show">
+
   <div *ngIf="type !== 'None'" class="toc-inner no-print" [class.collapsed]="isCollapsed">
 
     <div *ngIf="type === 'EmbeddedSimple'" class="toc-heading embedded">
@@ -28,4 +32,4 @@
   </div>
 </div>
 
-<div (click)="toggleToc()" *ngIf="tocService.isScrollUp" style="color:white;background-color: #c1c1c1aa;cursor:pointer;z-index:100;position:fixed;right:5px;bottom:30px;width:50px;">TOC</div>
+<div (click)="toggleToc()" *ngIf="tocService.isScrollUp" style="color:white;background-color: #c1c1c1aa;cursor:pointer;z-index:100;position:fixed;right:6px;bottom:30px;">TOC</div>
