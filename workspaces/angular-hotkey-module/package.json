@@ -12,13 +12,13 @@
     "url": "git@github.com:brtnshrdr/angular2-hotkeys.git"
   },
   "author": {
-    "name": "Nick Richardson",
-    "email": "nick.richardson@mediapixeldesign.com"
+    "name": "metasong",
+    "email": "metaseed@gmail.com"
   },
   "keywords": ["angular", "angular2", "hotkeys", "keyboard", "shortcut"],
   "license": "MIT",
   "bugs": {
-    "url": "git@github.com:brtnshrdr/angular2-hotkeys.git/issues"
+    "url": "git@github.com:metaseed/angular2-hotkeys.git/issues"
   },
 
   "main": "./dist/bundles/metaseed-angular-hotkey-module.umd.js",
