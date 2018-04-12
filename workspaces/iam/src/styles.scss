@@ -35,26 +35,11 @@
 div.markdown-code:hover > button {
   visibility: visible;
 }
-.copy-button {
-  visibility: collapse;
-  z-index: 2;
-  position: absolute;
-  right: 3px;
-  color: #b0bec5;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-}
 
 .line-numbers-rows {
   opacity: 0.6;
 }
 
-.copy-button:hover,
-.lang-bash .copy-button,
-.lang-sh .copy-button {
-  color: #6e6e6e;
-}
 .markdown-view {
   h1:hover .deep-link .deep-link-icon,
   h2:hover .deep-link .deep-link-icon,

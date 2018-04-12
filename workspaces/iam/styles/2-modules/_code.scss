@@ -1,6 +1,7 @@
-code-example, code-tabs {
-    clear: both;
-    display: block;
+code-example,
+code-tabs {
+  clear: both;
+  display: block;
 }
 
 code-example,
@@ -29,7 +30,9 @@ code-tabs mat-tab-body {
 
 // TERMINAL / SHELL TEXT STYLES
 
-code-example.code-shell, code-example[language=sh], code-example[language=bash] {
+code-example.code-shell,
+code-example[language="sh"],
+code-example[language="bash"] {
   background-color: $darkgray;
 }
 
@@ -67,28 +70,27 @@ code-tabs mat-tab-body-content .fadeIn {
 }
 
 i-code pre {
-    display: flex;
-    min-height: 32px;
-    margin: 16px 24px;
-    white-space: pre-wrap;
-    align-items: center;
+  display: flex;
+  min-height: 32px;
+  margin: 16px 24px;
+  white-space: pre-wrap;
+  align-items: center;
 
-    code span {
-      line-height: 24px;
-    }
+  code span {
+    line-height: 24px;
+  }
 }
-
 
 .code-missing {
   color: $darkred;
 }
 
-
 .copy-button {
   position: absolute;
-  top: -8px;
-  right: -32px;
-
+  top: -6px;
+  right: 0px;
+  visibility: collapse;
+  z-index: 2;
   color: $blue-grey-200;
   background-color: transparent;
   border: none;
@@ -98,7 +100,8 @@ i-code pre {
   }
 }
 
-.lang-sh .copy-button, .lang-bash .copy-button {
+.lang-sh .copy-button,
+.lang-bash .copy-button {
   color: $mediumgray;
   &:hover {
     color: $lightgray;
@@ -114,9 +117,8 @@ i-code pre {
   transform: none;
 }
 
-
 [role="tabpanel"] {
-    transition: none;
+  transition: none;
 }
 
 .sidenav-content code a {
@@ -134,7 +136,7 @@ i-code pre {
 ol.linenums {
   margin: 0;
   font-family: $main-font;
-  color: #B3B6B7;
+  color: #b3b6b7;
   li {
     margin: 0;
     font-family: $code-font;
@@ -146,40 +148,106 @@ ol.linenums {
 /* The following class|color styles are derived from https://github.com/google/code-prettify/blob/master/src/prettify.css*/
 
 /* SPAN elements with the classes below are added by prettyprint. */
-.pln { color: #000 }  /* plain text */
+.pln {
+  color: #000;
+} /* plain text */
 
 @media screen {
-  .str { color: #800 }  /* string content */
-  .kwd { color: #00f }  /* a keyword */
-  .com { color: #060 }  /* a comment */
-  .typ { color: red }  /* a type name */
-  .lit { color: #08c }  /* a literal value */
+  .str {
+    color: #800;
+  } /* string content */
+  .kwd {
+    color: #00f;
+  } /* a keyword */
+  .com {
+    color: #060;
+  } /* a comment */
+  .typ {
+    color: red;
+  } /* a type name */
+  .lit {
+    color: #08c;
+  } /* a literal value */
   /* punctuation, lisp open bracket, lisp close bracket */
-  .pun, .opn, .clo { color: #660 }
-  .tag { color: #008 }  /* a markup tag name */
-  .atn { color: #606 }  /* a markup attribute name */
-  .atv { color: #800 }  /* a markup attribute value */
-  .dec, .var { color: #606 }  /* a declaration; a variable name */
-  .fun { color: red }  /* a function name */
+  .pun,
+  .opn,
+  .clo {
+    color: #660;
+  }
+  .tag {
+    color: #008;
+  } /* a markup tag name */
+  .atn {
+    color: #606;
+  } /* a markup attribute name */
+  .atv {
+    color: #800;
+  } /* a markup attribute value */
+  .dec,
+  .var {
+    color: #606;
+  } /* a declaration; a variable name */
+  .fun {
+    color: red;
+  } /* a function name */
 }
 
 /* Use higher contrast and text-weight for printable form. */
 @media print, projection {
-  .str { color: #060 }
-  .kwd { color: #006; font-weight: bold }
-  .com { color: #600; font-style: italic }
-  .typ { color: #404; font-weight: bold }
-  .lit { color: #044 }
-  .pun, .opn, .clo { color: #440 }
-  .tag { color: #006; font-weight: bold }
-  .atn { color: #404 }
-  .atv { color: #060 }
+  .str {
+    color: #060;
+  }
+  .kwd {
+    color: #006;
+    font-weight: bold;
+  }
+  .com {
+    color: #600;
+    font-style: italic;
+  }
+  .typ {
+    color: #404;
+    font-weight: bold;
+  }
+  .lit {
+    color: #044;
+  }
+  .pun,
+  .opn,
+  .clo {
+    color: #440;
+  }
+  .tag {
+    color: #006;
+    font-weight: bold;
+  }
+  .atn {
+    color: #404;
+  }
+  .atv {
+    color: #060;
+  }
 }
 
 /* SHELL / TERMINAL CODE BLOCKS */
 
-code-example.code-shell, code-example[language=sh], code-example[language=bash] {
-  & .pnk, .blk,.pln, .otl, .kwd, .typ, .tag, .str, .atv, .atn, .com, .lit, .pun, .dec {
+code-example.code-shell,
+code-example[language="sh"],
+code-example[language="bash"] {
+  & .pnk,
+  .blk,
+  .pln,
+  .otl,
+  .kwd,
+  .typ,
+  .tag,
+  .str,
+  .atv,
+  .atn,
+  .com,
+  .lit,
+  .pun,
+  .dec {
     color: $codegreen;
   }
 }
