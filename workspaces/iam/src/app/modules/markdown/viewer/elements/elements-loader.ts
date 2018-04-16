@@ -46,31 +46,26 @@ export class ElementsLoader {
   /** Registers the custom element defined on the WithCustomElement module factory. */
   private register(selector: string) {
     const modulePath = this.elementsToLoad.get(selector)!;
-    return this.moduleFactoryLoader
-      .load(modulePath)
-      .then(elementModuleFactory => {
-        if (!this.elementsToLoad.has(selector)) {
-          return;
-        }
+    return this.moduleFactoryLoader.load(modulePath).then(moduleFactory => {
+      if (!this.elementsToLoad.has(selector)) {
+        return;
+      }
 
-        const elementModuleRef = elementModuleFactory.create(
-          this.moduleRef.injector
-        );
-        const CustomElementComponent =
-          elementModuleRef.instance.customElementComponent;
-        const CustomElement = createCustomElement(CustomElementComponent, {
-          injector: elementModuleRef.injector
-        });
-
-        if (!customElements.get(selector)) {
-          // temp workaround for hmr, when customElement already defined. BUT, new CustomElement is not used!
-          // need to undefine and redefine to use new CustomElement
-          customElements!.define(selector, CustomElement);
-        }
-
-        this.elementsToLoad.delete(selector);
-
-        return customElements.whenDefined(selector);
+      const moduleRef = moduleFactory.create(this.moduleRef.injector);
+      const CustomElementComponent = moduleRef.instance.customElementComponent;
+      const CustomElement = createCustomElement(CustomElementComponent, {
+        injector: moduleRef.injector
       });
+
+      if (!customElements.get(selector)) {
+        // temp workaround for hmr, when customElement already defined. BUT, new CustomElement is not used!
+        // need to undefine and redefine to use new CustomElement
+        customElements!.define(selector, CustomElement);
+      }
+
+      this.elementsToLoad.delete(selector);
+
+      return customElements.whenDefined(selector);
+    });
   }
 }

@@ -14,20 +14,14 @@ export const ELEMENT_MODULE_PATHS_AS_ROUTES = [
   }
 ];
 
-/**
- * Interface expected to be implemented by all modules that declare a component that can be used as
- * a custom element.
- */
 export interface WithCustomElementComponent {
   customElementComponent: Type<any>;
 }
 
-/** Injection token to provide the element path modules. */
 export const ELEMENT_MODULE_PATHS_TOKEN = new InjectionToken(
   "iam/elements-map"
 );
 
-/** Map of possible custom element selectors to their lazy-loadable module paths. */
 export const ELEMENT_MODULE_PATHS = new Map<string, string>();
 ELEMENT_MODULE_PATHS_AS_ROUTES.forEach(route => {
   ELEMENT_MODULE_PATHS.set(route.selector, route.loadChildren);
