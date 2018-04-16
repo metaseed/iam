@@ -1,6 +1,6 @@
-<mdc-toolbar style="position:fixed; bottom:0;" *ngIf="show">
+<mdc-toolbar style="position:fixed; bottom:0;" class="tab-bar--dark" *ngIf="show">
   <mdc-toolbar-row style="min-height:inherit">
-    <mdc-toolbar-section [alignStart]="true">
+    <mdc-toolbar-section [alignStart]="true" style="padding:0;">
       <mdc-tab-bar style="height:inherit;text-transform:capitalize;" [primary]="false" [secondary]="true">
         <mdc-tab routerLinkActive #rla="routerLinkActive" [active]="rla.isActive" [routerLink]="['/']">
           <mdc-icon>home</mdc-icon>
