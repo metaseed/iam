@@ -1,9 +1,7 @@
 {
   "private": true,
   "name": "iam",
-  "workspaces": [
-    "workspaces/*"
-  ],
+  "workspaces": ["workspaces/*", "workspaces/modules/*"],
   "scripts": {
     "start": "cd workspaces\\iam & npm run start",
     "deploy": "cd workspaces\\iam & npm run deploy",

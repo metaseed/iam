@@ -1,5 +1,5 @@
 {
-  "name": "@metaseed/angular-hotkey-module",
+  "name": "@metaseed/angular-hotkey",
   "version": "1.0.0",
   "scripts": {
     "lint": "tslint src/**/*.ts",
@@ -21,7 +21,7 @@
     "url": "git@github.com:metaseed/angular2-hotkeys.git/issues"
   },
 
-  "main": "./dist/bundles/metaseed-angular-hotkey-module.umd.js",
+  "main": "./dist/bundles/metaseed-angular-hotkey.umd.js",
   "dependencies": {
     "mousetrap": "^1.6.1"
   },

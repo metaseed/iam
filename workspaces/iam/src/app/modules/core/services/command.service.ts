@@ -1,5 +1,5 @@
 import { Injectable, Inject } from "@angular/core";
-import { HotkeysService, Hotkey } from "@metaseed/angular-hotkey-module";
+import { HotkeysService, Hotkey } from "@metaseed/angular-hotkey";
 import { Subject } from "rxjs/Subject";
 import { Observable } from "rxjs/Observable";
 import { ConfigService, ConfigModel } from "./config.service";

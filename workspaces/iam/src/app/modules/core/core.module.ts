@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 import { WindowRef } from "./window-ref";
 import { CommonModule } from "@angular/common";
 
-import { HotkeyModule } from "@metaseed/angular-hotkey-module";
+import { HotkeyModule } from "@metaseed/angular-hotkey";
 import { CommandService } from "./services/command.service";
 import { UpdateService } from "./services/update.service";
 import { ConfigService } from "./services/config.service";
