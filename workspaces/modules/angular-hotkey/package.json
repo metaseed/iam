@@ -1,15 +1,13 @@
 {
   "name": "@metaseed/angular-hotkey",
-  "description":
-    "hotkeys for angular - https://github.com/metaseed/iam/tree/master/workspaces/modules/angular-hotkey",
-  "version": "1.0.0",
+  "description": "hotkeys for angular - https://github.com/metaseed/iam/tree/master/workspaces/modules/angular-hotkey",
+  "version": "1.0.1",
   "scripts": {
     "lint": "tslint src/**/*.ts",
     "test": "tsc && karma start",
     "ngc": "./node_modules/.bin/ngc -p tsconfig.json",
     "ng-packagr": "ng-packagr",
-    "prerelease": "npm run build",
-    "release": "release-it",
+    "release": "node dotenv & release-it",
     "build": "ng-packagr -p ./ng-package.json"
   },
   "repository": {
@@ -20,7 +18,13 @@
     "name": "metasong",
     "email": "metaseed@gmail.com"
   },
-  "keywords": ["angular", "angular2", "hotkeys", "keyboard", "shortcut"],
+  "keywords": [
+    "angular",
+    "angular2",
+    "hotkeys",
+    "keyboard",
+    "shortcut"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "git@github.com:metaseed/iam.git/issues"
