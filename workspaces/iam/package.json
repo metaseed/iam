@@ -5,17 +5,14 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 4200",
+    "hmr": "ng serve --port 4200 -hmr -e=hmr",
     "build": "ng build --prod -vendor-chunk=true",
-    "update:monaco":
-      "ncp ../../node_modules/monaco-editor/min/ ./assets/monaco-editor/",
-    "deploy":
-      "ng build --prod --base-href /iam/ && angular-cli-ghpages && start http://metaseed.github.io/iam",
-    "deploy_doc":
-      "ng build --prod --output-path ../../docs  --base-href /iam/ && cd ../.. && git add . && git commit -am \"deploy\" && git push && start http://metaseed.github.io/iam",
+    "update:monaco": "ncp ../../node_modules/monaco-editor/min/ ./assets/monaco-editor/",
+    "deploy": "ng build --prod --base-href /iam/ && angular-cli-ghpages && start http://metaseed.github.io/iam",
+    "deploy_doc": "ng build --prod --output-path ../../docs  --base-href /iam/ && cd ../.. && git add . && git commit -am \"deploy\" && git push && start http://metaseed.github.io/iam",
     "test": "ng test",
     "lint": "ng lint",
-    "ba":
-      "ng build --prod -vendor-chunk=true --stats-json & webpack-bundle-analyzer dist/stats.json",
+    "ba": "ng build --prod -vendor-chunk=true --stats-json & webpack-bundle-analyzer dist/stats.json",
     "e2e": "ng e2e"
   },
   "engines": {
@@ -89,6 +86,7 @@
     "zone.js": "^0.8.19"
   },
   "devDependencies": {
+    "@angularclass/hmr": "^2.1.3",
     "@types/codemirror": "^0.0.55",
     "@types/jasmine": "~2.8.2",
     "@types/jasminewd2": "~2.0.3",
