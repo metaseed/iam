@@ -3,7 +3,8 @@
   "name": "iam",
   "workspaces": ["workspaces/*", "workspaces/modules/*"],
   "scripts": {
-    "start": "cd workspaces\\iam & npm run start",
+    "start": "cd workspaces\\iam & npm start",
+    "hmr": "cd workspaces\\iam & npm run hmr",
     "deploy": "cd workspaces\\iam & npm run deploy",
     "upgrade": "yarn upgrade --latest",
     "ba": "cd workspaces\\iam & npm run ba"

@@ -1,0 +1,9 @@
+{
+  "src": {
+    "tagName": "v%s"
+  },
+  "github": {
+    "release": true
+  },
+  "requireCleanWorkingDir": false
+}

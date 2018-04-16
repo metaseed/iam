@@ -1,6 +1,8 @@
 {
   "name": "iam",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description":
+    "I'm(https://github.com/metaseed/iam writing your professional life!",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -78,7 +80,6 @@
     "markdown-it-table-of-contents": "^0.3.2",
     "markdown-it-task-lists": "^2.1.0",
     "markdown-it-video": "^0.5.1",
-    "monaco-editor": "^0.10.1",
     "mousetrap": "^1.6.1",
     "ng-spin-kit": "^5.1.1",
     "pica": "^4.0.1",
