@@ -1,13 +1,14 @@
 {
   "name": "@metaseed/angular-hotkey",
-  "description": "hotkeys for angular - https://github.com/metaseed/iam/tree/master/workspaces/modules/angular-hotkey",
-  "version": "1.0.1",
+  "description":
+    "hotkeys for angular - https://github.com/metaseed/iam/tree/master/workspaces/modules/angular-hotkey",
+  "version": "1.0.4",
   "scripts": {
     "lint": "tslint src/**/*.ts",
     "test": "tsc && karma start",
     "ngc": "./node_modules/.bin/ngc -p tsconfig.json",
-    "ng-packagr": "ng-packagr",
-    "release": "node dotenv & release-it",
+    "prerelease": "npm run build",
+    "release": "npm publish dist.tgz --access public",
     "build": "ng-packagr -p ./ng-package.json"
   },
   "repository": {
@@ -18,13 +19,7 @@
     "name": "metasong",
     "email": "metaseed@gmail.com"
   },
-  "keywords": [
-    "angular",
-    "angular2",
-    "hotkeys",
-    "keyboard",
-    "shortcut"
-  ],
+  "keywords": ["angular", "angular2", "hotkeys", "keyboard", "shortcut"],
   "license": "MIT",
   "bugs": {
     "url": "git@github.com:metaseed/iam.git/issues"
@@ -33,12 +28,11 @@
   "dependencies": {
     "mousetrap": "^1.6.1"
   },
-  "private": true,
   "peerDependencies": {
-    "@angular/common": "^6.0.0-rc.1",
-    "@angular/compiler": "^6.0.0-rc.1",
-    "@angular/compiler-cli": "^6.0.0-rc.1",
-    "@angular/core": "^6.0.0-rc.1"
+    "@angular/common": "^5.0.0",
+    "@angular/compiler": "^5.0.0",
+    "@angular/compiler-cli": "^5.0.0",
+    "@angular/core": "^5.0.0"
   },
   "devDependencies": {
     "@types/core-js": "0.9.43",

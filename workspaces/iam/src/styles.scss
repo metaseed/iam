@@ -2,20 +2,21 @@
 
 // $mdc-theme-primary: #1565c0; // change primary color example
 // $mdc-theme-secondary: #388e3c; // change secondary color example
-@import "~@angular-mdc/theme";
-@import "~@angular/material/prebuilt-themes/deeppurple-amber";
+@import '~@angular-mdc/theme';
+@import '~@angular/material/prebuilt-themes/deeppurple-amber';
+
 :root {
   --mdc-theme-text-primary-on-background: #fff;
   --mdc-theme-text-secondary-on-background: rgba(255, 255, 255, 0.74);
 }
 
-@import "~markdown-it-latex/src/katex.css";
-@import "variables";
-@import "~font-awesome/scss/font-awesome";
-@import "~bootstrap/scss/bootstrap";
+@import '~markdown-it-latex/src/katex.css';
+@import 'variables';
+@import '~font-awesome/scss/font-awesome';
+@import '~bootstrap/scss/bootstrap';
 // @import '~highlight.js/styles/github';
-@import "~prismjs/themes/prism";
-@import "~prismjs/plugins/line-numbers/prism-line-numbers";
+@import '~prismjs/themes/prism';
+@import '~prismjs/plugins/line-numbers/prism-line-numbers';
 /* Rules for sizing the icon. */
 @media all and (min-width: 960px) {
   ::-webkit-scrollbar {
@@ -69,7 +70,7 @@ div.markdown-code:hover > button {
   }
 }
 .material-icons {
-  font-family: "Material Icons";
+  font-family: 'Material Icons';
   font-weight: normal;
   font-style: normal;
   font-size: 24px;
@@ -80,7 +81,7 @@ div.markdown-code:hover > button {
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
-  -webkit-font-feature-settings: "liga";
+  -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
 }
 
@@ -154,11 +155,11 @@ div.markdown-code:hover > button {
   margin-left: -20px;
 }
 
-@import "~codemirror/lib/codemirror";
+@import '~codemirror/lib/codemirror';
 // @import '~codemirror/addon/scroll/simplescrollbars';
-@import "~codemirror/addon/display/fullscreen";
-@import "~codemirror/addon/dialog/dialog";
-@import "~codemirror/addon/search/matchesonscrollbar";
+@import '~codemirror/addon/display/fullscreen';
+@import '~codemirror/addon/dialog/dialog';
+@import '~codemirror/addon/search/matchesonscrollbar';
 
 .CodeMirror {
   height: 100vh;
@@ -185,11 +186,11 @@ div.markdown-code:hover > button {
     box-shadow: inset 0 -1px 0 #959da5;
   }
   ins:before {
-    content: "\21b1";
+    content: '\21b1';
     font-size: 0.3rem;
   }
   ins:after {
-    content: "\21b0";
+    content: '\21b0';
     font-size: 0.3rem;
   }
 }
@@ -213,4 +214,4 @@ div.markdown-code:hover > button {
   color: black;
 }
 
-@import "./styles/main.scss";
+@import './styles/main.scss';
