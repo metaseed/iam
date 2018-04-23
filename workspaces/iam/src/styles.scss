@@ -1,9 +1,7 @@
-/* You can add global styles to this file, and also import other style files */
-
+@import './styles/main.scss';
 // $mdc-theme-primary: #1565c0; // change primary color example
 // $mdc-theme-secondary: #388e3c; // change secondary color example
 @import '~@angular-mdc/theme';
-@import '~@angular/material/prebuilt-themes/deeppurple-amber';
 
 :root {
   --mdc-theme-text-primary-on-background: #fff;
@@ -213,5 +211,3 @@ div.markdown-code:hover > button {
 .mdc-menu--open > .mdc-menu__items {
   color: black;
 }
-
-@import './styles/main.scss';
