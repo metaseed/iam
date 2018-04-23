@@ -1,5 +1,4 @@
-/// <reference path="../../../../../../../../node_modules/monaco-editor/monaco.d.ts" />
-import { Subject } from "rxjs/Subject";
+import { Subject } from 'rxjs/Subject';
 
 export class MarkdownEditorService {
   public editorLoaded$ = new Subject();

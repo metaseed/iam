@@ -1,26 +1,25 @@
-import { Component, OnInit, Input, Output, ViewChild } from "@angular/core";
-import { MarkdownEditorService } from "./index";
-import { setTimeout } from "timers";
-import { MonacoEditorComponent } from "./monaco-editor/monaco-editor.component";
-import { EventEmitter } from "@angular/core";
-import { Scrollable } from "core";
-import * as markdown from "../reducers";
-import * as fromEdit from "../actions/edit";
-import { CodemirrorComponent } from "./codemirror-editor/codemirror.component";
-import * as fromMarkdown from "./../reducers";
-import { DocumentMode } from "./../reducers/document";
-import { DocSaveCoordinateService } from "./services/doc-save-coordinate-service";
-import { Observable } from "rxjs/Observable";
-import { map, filter, switchMap, debounceTime, take } from "rxjs/Operators";
-import { Store, select } from "@ngrx/store";
-import { DialogService } from "core";
-import { DocService } from "docs";
-import { DocDirtyNotifyDialog } from "./doc-dirty-notify-dialog";
-import { MatDialog } from "@angular/material";
-import { Subscription } from "rxjs";
+import { Component, OnInit, Input, Output, ViewChild } from '@angular/core';
+import { MarkdownEditorService } from './index';
+import { setTimeout } from 'timers';
+import { EventEmitter } from '@angular/core';
+import { Scrollable } from 'core';
+import * as markdown from '../reducers';
+import * as fromEdit from '../actions/edit';
+import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
+import * as fromMarkdown from './../reducers';
+import { DocumentMode } from './../reducers/document';
+import { DocSaveCoordinateService } from './services/doc-save-coordinate-service';
+import { Observable } from 'rxjs/Observable';
+import { map, filter, switchMap, debounceTime, take } from 'rxjs/Operators';
+import { Store, select } from '@ngrx/store';
+import { DialogService } from 'core';
+import { DocService } from 'docs';
+import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
+import { MatDialog } from '@angular/material';
+import { Subscription } from 'rxjs';
 
 @Component({
-  selector: "ms-markdown-editor",
+  selector: 'ms-markdown-editor',
   template: `
     <codemirror [(ngModel)]="markdown"></codemirror>
     <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>
@@ -86,7 +85,7 @@ export class MarkdownEditorComponent implements OnInit {
             .afterClosed()
             .pipe(
               map(value => {
-                if (value === "Yes") {
+                if (value === 'Yes') {
                   this.docSerivce.save(this.codeMirrorComponent.value);
                   return false;
                 } else {
