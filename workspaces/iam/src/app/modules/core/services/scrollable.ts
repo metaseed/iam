@@ -1,9 +1,9 @@
-import { map } from "rxjs/operators";
-import { fromEvent } from "rxjs/observable/fromEvent";
+import { map } from 'rxjs/operators';
+import { fromEvent } from 'rxjs';
 
 export class Scrollable {
   get scroll$() {
-    return fromEvent(this.element, "scroll");
+    return fromEvent(this.element, 'scroll');
   }
 
   get isScrollDown$() {

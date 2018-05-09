@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Document } from "../models/document";
-import { DocService } from "../services/doc.service";
-import { MdcDialog } from '@angular-mdc/web';
+import { Document } from '../models/document';
+import { DocService } from '../services/doc.service';
+import { MatDialog } from '@angular/material';
 import { DeleteAlertDialog } from 'app/modules/docs/doc-list/dialog.component';
 
 @Component({
@@ -15,29 +15,28 @@ export class DocListComponent implements OnInit {
   @Output() onDelete = new EventEmitter<Document>();
   @Output() onShow = new EventEmitter<Document>();
 
-  constructor(private dialog: MdcDialog) { }
+  constructor(private dialog: MatDialog) {}
 
-  @Input() set documents(v) {
+  @Input()
+  set documents(v) {
     this.docs = v;
   }
   get documents() {
     return this.docs;
   }
 
-  ngOnInit() {
-
-  }
+  ngOnInit() {}
 
   show(document: Document) {
     this.onShow.emit(document);
   }
 
   delete(document: Document) {
-    const dialogRef = this.dialog.open(DeleteAlertDialog, { escapeToClose: true, clickOutsideToClose: true })
-    dialogRef.componentInstance.myDialog._accept.subscribe(() => {
-
-      this.onDelete.emit(document);
-    })
+    const dialogRef = this.dialog.open(DeleteAlertDialog, {
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe(r => {
+      if (r === 'Yes') this.onDelete.emit(document);
+    });
   }
-
 }

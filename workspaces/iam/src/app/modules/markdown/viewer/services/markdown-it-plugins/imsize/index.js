@@ -3,12 +3,12 @@
 
 "use strict";
 
-var sizeOf = require("./imsize");
+// var sizeOf = require("./imsize");
 
 var parseImageSize = require("./helpers/parse_image_size");
 
 function image_with_size(md, options) {
-  return function(state, silent) {
+  return function (state, silent) {
     var attrs,
       code,
       label,
@@ -27,10 +27,10 @@ function image_with_size(md, options) {
       oldPos = state.pos,
       max = state.posMax;
 
-    if (state.src.charCodeAt(state.pos) !== 0x21 /* ! */) {
+    if (state.src.charCodeAt(state.pos) !== 0x21 /* ! */ ) {
       return false;
     }
-    if (state.src.charCodeAt(state.pos + 1) !== 0x5b /* [ */) {
+    if (state.src.charCodeAt(state.pos + 1) !== 0x5b /* [ */ ) {
       return false;
     }
 
@@ -69,7 +69,7 @@ function image_with_size(md, options) {
     }
 
     pos = labelEnd + 1;
-    if (pos < max && state.src.charCodeAt(pos) === 0x28 /* ( */) {
+    if (pos < max && state.src.charCodeAt(pos) === 0x28 /* ( */ ) {
       //
       // Inline link
       //
@@ -159,7 +159,7 @@ function image_with_size(md, options) {
         }
       }
 
-      if (pos >= max || state.src.charCodeAt(pos) !== 0x29 /* ) */) {
+      if (pos >= max || state.src.charCodeAt(pos) !== 0x29 /* ) */ ) {
         state.pos = oldPos;
         return false;
       }
@@ -181,7 +181,7 @@ function image_with_size(md, options) {
         }
       }
 
-      if (pos < max && state.src.charCodeAt(pos) === 0x5b /* [ */) {
+      if (pos < max && state.src.charCodeAt(pos) === 0x5b /* [ */ ) {
         start = pos + 1;
         pos = md.helpers.parseLinkLabel(state, pos);
         if (pos >= 0) {
@@ -230,18 +230,24 @@ function image_with_size(md, options) {
       if (options) {
         if (options.autofill && width === "" && height === "") {
           try {
-            var dimensions = sizeOf(href);
-            width = dimensions.width;
-            height = dimensions.height;
+            // var dimensions = sizeOf(href);
+            width = '100%';
+            // height = dimensions.height;
           } catch (e) {}
         }
       }
 
       token = state.push("image", "img", 0);
       if (document.iamMarkdownIsPureViewMode) {
-        token.attrs = attrs = [["data-src", href], ["alt", ""]];
+        token.attrs = attrs = [
+          ["data-src", href],
+          ["alt", ""]
+        ];
       } else {
-        token.attrs = attrs = [["src", href], ["alt", ""]];
+        token.attrs = attrs = [
+          ["src", href],
+          ["alt", ""]
+        ];
       }
 
       token.children = tokens;

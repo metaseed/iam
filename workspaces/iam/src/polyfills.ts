@@ -38,19 +38,13 @@
 // import 'classlist.js';  // Run `npm install --save classlist.js`.
 
 /** Evergreen browsers require these. **/
-import "core-js/es6/reflect";
-import "core-js/es7/reflect";
-
-/**
- * Required to support Web Animations `@angular/platform-browser/animations`.
- * Needed for: All but Chrome, Firefox and Opera. http://caniuse.com/#feat=web-animation
- **/
-// import 'web-animations-js';  // Run `npm install --save web-animations-js`.
+import 'core-js/es6/reflect';
+import 'core-js/es7/reflect';
 
 /***************************************************************************************************
  * Zone JS is required by Angular itself.
  */
-import "zone.js/dist/zone"; // Included with Angular CLI.
+import 'zone.js/dist/zone'; // Included with Angular CLI.
 
 /***************************************************************************************************
  * APPLICATION IMPORTS
@@ -66,5 +60,5 @@ import "zone.js/dist/zone"; // Included with Angular CLI.
  */
 // import 'intl/locale-data/jsonp/en';
 
-//import '@webcomponents/webcomponentsjs/webcomponents-sd-ce.js';// codemirror https://stackoverflow.com/questions/47211542/how-to-make-my-angular-4-code-compatible-with-firefox
-import "@webcomponents/custom-elements/src/native-shim";
+// import '@webcomponents/webcomponentsjs/webcomponents-sd-ce.js';// codemirror https://stackoverflow.com/questions/47211542/how-to-make-my-angular-4-code-compatible-with-firefox
+import '@webcomponents/custom-elements/src/native-shim';

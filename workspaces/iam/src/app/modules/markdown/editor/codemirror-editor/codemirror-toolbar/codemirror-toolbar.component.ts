@@ -1,31 +1,24 @@
-import {
-  Component,
-  OnInit,
-  AfterViewInit,
-  Input,
-  Renderer,
-  ViewChild
-} from "@angular/core";
-import { MarkdownComponent } from "../../../markdown.component";
-import { DomSanitizer } from "@angular/platform-browser";
+import { Component, OnInit, AfterViewInit, Input, Renderer, ViewChild } from '@angular/core';
+import { MarkdownComponent } from '../../../markdown.component';
+import { DomSanitizer } from '@angular/platform-browser';
 
-import { Subscription } from "rxjs/Subscription";
-import { DocService } from "docs";
-import { MarkdownEditorService } from "../../../editor/index";
-import { CommandService, Command, DocumentRef } from "core";
-import { Store, select } from "@ngrx/store";
-import { State } from "../../../reducers";
-import * as doc from "../../../actions/document";
-import * as edit from "../../../actions/edit";
-import { OnDestroy } from "@angular/core";
-import { ObservableMedia } from "@angular/flex-layout";
-import * as fromMarkdown from "../../../reducers";
-import * as CodeMirror from "codemirror";
-import { HtmlParser } from "@angular/compiler";
+import { Subscription } from 'rxjs';
+import { DocService } from 'docs';
+import { MarkdownEditorService } from '../../../editor/index';
+import { CommandService, Command, DocumentRef } from 'core';
+import { Store, select } from '@ngrx/store';
+import { State } from '../../../reducers';
+import * as doc from '../../../actions/document';
+import * as edit from '../../../actions/edit';
+import { OnDestroy } from '@angular/core';
+import { ObservableMedia } from '@angular/flex-layout';
+import * as fromMarkdown from '../../../reducers';
+import * as CodeMirror from 'codemirror';
+import { HtmlParser } from '@angular/compiler';
 @Component({
-  selector: "ms-codemirror-toolbar",
-  templateUrl: "./codemirror-toolbar.component.html",
-  styleUrls: ["./codemirror-toolbar.component.scss"]
+  selector: 'ms-codemirror-toolbar',
+  templateUrl: './codemirror-toolbar.component.html',
+  styleUrls: ['./codemirror-toolbar.component.scss']
 })
 export class CodemirrorToolbarComponent implements OnInit {
   private static COMMANDS_CONFIG;
@@ -49,82 +42,72 @@ export class CodemirrorToolbarComponent implements OnInit {
     private store: Store<State>
   ) {
     this.mediaChangeSubscription = media.subscribe(change => {
-      if (!["xs", "sm"].includes(change.mqAlias)) {
+      if (!['xs', 'sm'].includes(change.mqAlias)) {
         this.gtsmBreakpoint = false;
       } else {
         this.gtsmBreakpoint = true;
       }
     });
-    this._subscription = _commandService.commands.subscribe(c =>
-      this.handleCommand(c)
-    );
+    this._subscription = _commandService.commands.subscribe(c => this.handleCommand(c));
     let me = this;
     this.editorLoadedSubscription = this._editorService.editorLoaded$.subscribe(
       (editor: CodeMirror.Editor) => {
         if (!CodemirrorToolbarComponent.COMMANDS_CONFIG) {
           CodemirrorToolbarComponent.COMMANDS_CONFIG = {
             Bold: {
-              command: "Bold",
-              func: (selectedText, defaultText) =>
-                `**${selectedText || defaultText}**`,
+              command: 'Bold',
+              func: (selectedText, defaultText) => `**${selectedText || defaultText}**`,
               startSize: 2,
-              hotKey: "Ctrl-M B"
+              hotKey: 'Ctrl-M B'
             },
             Italic: {
-              command: "Italic",
-              func: (selectedText, defaultText) =>
-                `*${selectedText || defaultText}*`,
+              command: 'Italic',
+              func: (selectedText, defaultText) => `*${selectedText || defaultText}*`,
               startSize: 1,
-              hotKey: "Ctrl-M I"
+              hotKey: 'Ctrl-M I'
             },
             Heading: {
-              command: "Heading",
-              func: (selectedText, defaultText) =>
-                `# ${selectedText || defaultText}`,
+              command: 'Heading',
+              func: (selectedText, defaultText) => `# ${selectedText || defaultText}`,
               startSize: 2,
-              hotKey: "Ctrl-M H"
+              hotKey: 'Ctrl-M H'
             },
             Reference: {
-              command: "Reference",
-              func: (selectedText, defaultText) =>
-                `> ${selectedText || defaultText}`,
+              command: 'Reference',
+              func: (selectedText, defaultText) => `> ${selectedText || defaultText}`,
               startSize: 2,
-              hotKey: "Ctrl-M R"
+              hotKey: 'Ctrl-M R'
             },
             Link: {
-              command: "Link",
-              func: (selectedText, defaultText) =>
-                `[${selectedText || defaultText}](http://)`,
+              command: 'Link',
+              func: (selectedText, defaultText) => `[${selectedText || defaultText}](http://)`,
               startSize: 1,
-              hotKey: "Ctrl-M L"
+              hotKey: 'Ctrl-M L'
             },
             Image: {
-              command: "Image",
-              func: (selectedText, defaultText) =>
-                `![${selectedText || defaultText}](http://)`,
+              command: 'Image',
+              func: (selectedText, defaultText) => `![${selectedText || defaultText}](http://)`,
               startSize: 2,
-              hotKey: "Ctrl-M M"
+              hotKey: 'Ctrl-M M'
             },
             Ul: {
-              command: "Ul",
-              func: (selectedText, defaultText) =>
-                `- ${selectedText || defaultText}`,
+              command: 'Ul',
+              func: (selectedText, defaultText) => `- ${selectedText || defaultText}`,
               startSize: 2,
-              hotKey: "Ctrl-M U"
+              hotKey: 'Ctrl-M U'
             },
             Ol: {
-              command: "Ol",
-              func: (selectedText, defaultText) =>
-                `1 ${selectedText || defaultText}`,
+              command: 'Ol',
+              func: (selectedText, defaultText) => `1 ${selectedText || defaultText}`,
               startSize: 2,
-              hotKey: "Ctrl-M O"
+              hotKey: 'Ctrl-M O'
             },
             Code: {
-              command: "Code",
+              command: 'Code',
               func: (selectedText, defaultText) =>
-                "```lang\r\n" + (selectedText || defaultText) + "\r\n```",
+                '```lang\r\n' + (selectedText || defaultText) + '\r\n```',
               startSize: 3,
-              hotKey: "Ctrl-M C"
+              hotKey: 'Ctrl-M C'
             }
           };
         }
@@ -141,14 +124,14 @@ export class CodemirrorToolbarComponent implements OnInit {
           }
         }
 
-        option["Ctrl-M Q"] = function(editor) {
+        option['Ctrl-M Q'] = function(editor) {
           //(<HTMLElement>(me.div.nativeElement)).click();
           //document.activeElement.blur();
           editor.display.input.textarea.blur();
         };
-        option["Ctrl-Up"] = "scrollLineUp";
-        option["Ctrl-Down"] = "scrollLineDown";
-        option["Alt-F"] = "findPersistent";
+        option['Ctrl-Up'] = 'scrollLineUp';
+        option['Ctrl-Down'] = 'scrollLineDown';
+        option['Alt-F'] = 'findPersistent';
         /*
       Ctrl-F / Cmd-F
 Start searching
@@ -164,10 +147,7 @@ Alt-F
 Persistent search (dialog doesn't autoclose, enter to find next, Shift-Enter to find previous)
 Alt-G
 Jump to line*/
-        me.editor.setOption(
-          "extraKeys",
-          (<any>CodeMirror).normalizeKeyMap(option)
-        );
+        me.editor.setOption('extraKeys', (<any>CodeMirror).normalizeKeyMap(option));
       }
     );
   }
@@ -205,7 +185,7 @@ Jump to line*/
     }
     let selectionText = this.doc.getSelection();
 
-    if (type === "Focus") {
+    if (type === 'Focus') {
       this.editor.focus();
       return;
     }
@@ -213,24 +193,24 @@ Jump to line*/
     const config = CodemirrorToolbarComponent.COMMANDS_CONFIG[type];
     let startSize = config.startSize;
     // let selectionText: string = this.editor.getModel().getValueInRange(selection);
-    selectionText = config.func(selectionText, "");
-    this.doc.replaceSelection(selectionText, "around");
-    if (config.command === "Ul") {
+    selectionText = config.func(selectionText, '');
+    this.doc.replaceSelection(selectionText, 'around');
+    if (config.command === 'Ul') {
       this._hideIcons.Ul = true;
       this._hideIcons.Ol = false;
-    } else if (config.command === "Ol") {
+    } else if (config.command === 'Ol') {
       this._hideIcons.Ul = false;
       this._hideIcons.Ol = true;
-    } else if (config.command === "Bold") {
+    } else if (config.command === 'Bold') {
       this._hideIcons.Bold = true;
       this._hideIcons.Italic = false;
-    } else if (config.command === "Italic") {
+    } else if (config.command === 'Italic') {
       this._hideIcons.Bold = false;
       this._hideIcons.Italic = true;
-    } else if (config.command === "Link") {
+    } else if (config.command === 'Link') {
       this._hideIcons.Link = true;
       this._hideIcons.Image = false;
-    } else if (config.command === "Image") {
+    } else if (config.command === 'Image') {
       this._hideIcons.Link = false;
       this._hideIcons.Image = true;
     }
@@ -246,8 +226,7 @@ Jump to line*/
   }
   ngOnInit() {}
   ngOnDestroy() {
-    if (this.editorLoadedSubscription)
-      this.editorLoadedSubscription.unsubscribe();
+    if (this.editorLoadedSubscription) this.editorLoadedSubscription.unsubscribe();
     if (this.mediaChangeSubscription) {
       this.mediaChangeSubscription.unsubscribe();
       this.mediaChangeSubscription = null;

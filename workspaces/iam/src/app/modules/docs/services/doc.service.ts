@@ -1,25 +1,21 @@
-import { Injectable, EventEmitter } from "@angular/core";
-import { ActivatedRoute, Router, NavigationEnd } from "@angular/router";
-import { Document } from "../models/document";
-import { Observable } from "rxjs/Observable";
-import { HttpClient } from "@angular/common/http";
-import {
-  GithubStorage,
-  UserInfo,
-  EditIssueParams
-} from "../../../storage/github/index";
-import { Repository } from "../../../storage/github/repository";
-import { DocsModel } from "../models/docs.model";
-import { DocMeta } from "../models/doc-meta";
-import { Content } from "../../../storage/github/model/content";
-import { ReplaySubject } from "rxjs";
-import { MdcSnackbar } from "@angular-mdc/web";
-import { base64Encode } from "core";
-import { map, flatMap } from "rxjs/operators";
-import { Location } from "@angular/common";
+import { Injectable, EventEmitter } from '@angular/core';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { Document } from '../models/document';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { GithubStorage, UserInfo, EditIssueParams } from '../../../storage/github/index';
+import { Repository } from '../../../storage/github/repository';
+import { DocsModel } from '../models/docs.model';
+import { DocMeta } from '../models/doc-meta';
+import { Content } from '../../../storage/github/model/content';
+import { ReplaySubject } from 'rxjs';
+import { MatSnackBar } from '@angular/material';
+import { base64Encode } from 'core';
+import { map, flatMap } from 'rxjs/operators';
+import { Location } from '@angular/common';
 @Injectable()
 export class DocService {
-  static FolderName = "documents";
+  static FolderName = 'documents';
 
   public docListLoaded = false;
   public docAdd$ = new EventEmitter();
@@ -31,21 +27,19 @@ export class DocService {
   private _repoSub$ = new ReplaySubject<Repository>();
   private _storage = new GithubStorage(
     this._http,
-    new UserInfo("metasong", "metaseed@gmail.com", "mssong179")
+    new UserInfo('metasong', 'metaseed@gmail.com', 'mssong179')
   );
   private editor: CodeMirror.Editor;
   public isDocDirty = false;
 
   constructor(
     private _http: HttpClient,
-    private snackBar: MdcSnackbar,
+    private snackBar: MatSnackBar,
     private location: Location,
     private router: Router,
     private activedRoute: ActivatedRoute
   ) {
-    this._storage
-      .repos("iam-data")
-      .subscribe(repo => this._repoSub$.next(repo));
+    this._storage.repos('iam-data').subscribe(repo => this._repoSub$.next(repo));
   }
 
   // store(todo: Document) {
@@ -60,15 +54,13 @@ export class DocService {
 
   deleteDoc(doc) {
     this._repoSub$.subscribe(repo =>
-      repo.issue.edit(doc.number, { state: "closed" }).subscribe(a => {
+      repo.issue.edit(doc.number, { state: 'closed' }).subscribe(a => {
         let title = doc.metaData.title;
-        repo
-          .delFile(`${DocService.FolderName}/${title}_${doc.number}.md`)
-          .subscribe(_ => {
-            const index = this.model.docs.indexOf(doc);
-            if (index !== -1) this.model.docs.splice(index, 1);
-            // console.log(a);
-          });
+        repo.delFile(`${DocService.FolderName}/${title}_${doc.number}.md`).subscribe(_ => {
+          const index = this.model.docs.indexOf(doc);
+          if (index !== -1) this.model.docs.splice(index, 1);
+          // console.log(a);
+        });
       })
     );
   }
@@ -76,7 +68,7 @@ export class DocService {
   newDoc() {
     let doc = {
       content: {
-        content: base64Encode("# Title\n*summery*\n")
+        content: base64Encode('# Title\n*summery*\n')
       }
     };
     this.model.currentDoc = null;
@@ -85,9 +77,7 @@ export class DocService {
 
   showDoc(title: string, id: number | string, hasSufix: boolean = true) {
     let me = this;
-    let content = `${DocService.FolderName}/${title}_${id}${
-      hasSufix ? ".md" : ""
-    }`;
+    let content = `${DocService.FolderName}/${title}_${id}${hasSufix ? '.md' : ''}`;
     this._repoSub$.subscribe(repo =>
       repo.getContents(content).subscribe(
         (content: Content) => {
@@ -113,45 +103,37 @@ export class DocService {
   }
 
   getContentUrl(issueNum, title) {
-    return `https://metaseed.github.io/iam/doc?id=${issueNum}&title=${encodeURIComponent(
-      title
-    )}`;
+    return `https://metaseed.github.io/iam/doc?id=${issueNum}&title=${encodeURIComponent(title)}`;
   }
   // http://reactivex.io/documentation/operators/replay.html
   saveNew = (content: string) => {
     let title = DocMeta.getTitle(content);
-    if (!title) throw "must have title";
+    if (!title) throw 'must have title';
     return this._repoSub$.pipe(
       flatMap(repo =>
         repo.issue.create({ title }).pipe(
           flatMap(issue => {
             let id = issue.number;
-            return repo
-              .newFile(`${DocService.FolderName}/${title}_${id}.md`, content)
-              .pipe(
-                flatMap(file => {
-                  let url = this.getContentUrl(id, title);
-                  return DocMeta.serializeContent(
-                    content,
-                    file.content.sha,
-                    url
-                  ).pipe(
-                    flatMap(([metaString, metaData]) => {
-                      let data: EditIssueParams = {
-                        title: title,
-                        body: <string>metaString
-                      };
-                      return repo.issue.edit(id, data).pipe(
-                        map((doc: Document) => {
-                          doc.metaData = <DocMeta>metaData;
-                          this.model.docs.unshift(doc);
-                          return doc;
-                        })
-                      );
-                    })
-                  );
-                })
-              );
+            return repo.newFile(`${DocService.FolderName}/${title}_${id}.md`, content).pipe(
+              flatMap(file => {
+                let url = this.getContentUrl(id, title);
+                return DocMeta.serializeContent(content, file.content.sha, url).pipe(
+                  flatMap(([metaString, metaData]) => {
+                    let data: EditIssueParams = {
+                      title: title,
+                      body: <string>metaString
+                    };
+                    return repo.issue.edit(id, data).pipe(
+                      map((doc: Document) => {
+                        doc.metaData = <DocMeta>metaData;
+                        this.model.docs.unshift(doc);
+                        return doc;
+                      })
+                    );
+                  })
+                );
+              })
+            );
           })
         )
       )
@@ -159,7 +141,7 @@ export class DocService {
   };
   private modifyUrlAfterSaved(doc: Document) {
     const url = this.router
-      .createUrlTree(["/doc"], {
+      .createUrlTree(['/doc'], {
         // relativeTo: this.activedRoute,
         queryParams: {
           id: doc.number,
@@ -176,14 +158,14 @@ export class DocService {
       this.edit(content, this.model.currentDoc).subscribe(doc => {
         this.model.currentDoc = doc;
 
-        this.snackBar.show("Saved!", "OK");
+        this.snackBar.open('Saved!', 'OK');
         this.modifyUrlAfterSaved(doc);
         this.docSaved$.next(this.model.currentDoc);
       });
     } else {
       this.saveNew(content).subscribe(doc => {
         this.model.currentDoc = doc;
-        this.snackBar.show("New document saved!", "OK");
+        this.snackBar.open('New document saved!', 'OK');
         this.modifyUrlAfterSaved(doc);
         this.docSaved$.next(this.model.currentDoc);
       });
@@ -192,7 +174,7 @@ export class DocService {
 
   edit = (content: string, doc: Document) => {
     let title = DocMeta.getTitle(content);
-    if (!title) throw "must have title";
+    if (!title) throw 'must have title';
 
     const changeTitle = doc.metaData ? title !== doc.metaData.title : true;
     return this._repoSub$.pipe(
@@ -206,11 +188,7 @@ export class DocService {
           .pipe(
             flatMap(file => {
               let url = this.getContentUrl(doc.number, title);
-              return DocMeta.serializeContent(
-                content,
-                file.content.sha,
-                url
-              ).pipe(
+              return DocMeta.serializeContent(content, file.content.sha, url).pipe(
                 flatMap(([metaString, metaData]) => {
                   let data: EditIssueParams = {
                     title: title,
@@ -221,9 +199,7 @@ export class DocService {
                       if (changeTitle) {
                         repo
                           .delFileViaSha(
-                            `${DocService.FolderName}/${doc.metaData.title}_${
-                              doc.number
-                            }.md`,
+                            `${DocService.FolderName}/${doc.metaData.title}_${doc.number}.md`,
                             doc.metaData.contentId
                           )
                           .subscribe();
@@ -244,7 +220,7 @@ export class DocService {
     return this._repoSub$
       .pipe(
         flatMap(repo => {
-          return repo.issue.list("open");
+          return repo.issue.list('open');
         })
       )
       .subscribe(
@@ -276,7 +252,7 @@ export class DocService {
       );
   }
 
-  get(id: number) {
+  get(id: number): Observable<Document> {
     return this._repoSub$.pipe(
       flatMap(repo => {
         return repo.issue.get(id).pipe(

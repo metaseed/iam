@@ -2,29 +2,29 @@
   <div fxLayout="row wrap" style="justify-content:space-around;">
     <div class="doc-card-container" *ngFor="let doc of documents; let i = index">
 
-      <mdc-card *ngIf="doc.state!=='closed'" class="doc-card">
-        <mdc-ripple style="flex-grow:1; display:flex;">
-          <mdc-card-primary-action (click)="show(doc)" style="flex-grow:1;">
-            <a style="text-decoration:none">
-              <div class="doc-card__row">
-                <div class="doc-card__info">
-                  <h1 class="title-truncate">{{doc.metaData.title}}</h1>
-                  <h2 mdc-card-subtitle class="summary-truncate">{{doc.metaData.summary}}</h2>
-                </div>
-                <div *ngIf="doc.metaData.imageData" style="background-position:50% 50%; width:168px;height:158px;margin-top:16px" [style.background-image]="'url('+doc.metaData.imageData+')'"></div>
-              </div>
-            </a>
-          </mdc-card-primary-action>
-        </mdc-ripple>
-        <!-- <mdc-list-divider></mdc-list-divider> -->
-        <mdc-card-actions style="justify-content:space-between">
+      <mat-card *ngIf="doc.state!=='closed'" class="doc-card" style="flex-grow:1; display:flex;">
 
-          <button mdc-button (click)="delete(doc)">
-            <mdc-icon>delete_forever</mdc-icon>
+        <div (click)="show(doc)" style="flex-grow:1;">
+          <a style="text-decoration:none">
+            <div class="doc-card__row">
+              <div class="doc-card__info">
+                <h1 class="title-truncate">{{doc.metaData.title}}</h1>
+                <h2 mat-card-subtitle class="summary-truncate">{{doc.metaData.summary}}</h2>
+              </div>
+              <div *ngIf="doc.metaData.imageData" style="background-position:50% 50%; width:168px;height:158px;margin-top:16px" [style.background-image]="'url('+doc.metaData.imageData+')'"></div>
+            </div>
+          </a>
+        </div>
+
+        <!-- <mat-list-divider></mat-list-divider> -->
+        <mat-card-actions style="justify-content:space-between">
+
+          <button mat-button (click)="delete(doc)">
+            <mat-icon>delete_forever</mat-icon>
 
           </button>
-        </mdc-card-actions>
-      </mdc-card>
+        </mat-card-actions>
+      </mat-card>
     </div>
   </div>
 </div>

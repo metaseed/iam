@@ -1,7 +1,7 @@
-import { Injectable, Inject } from "@angular/core";
-import { PlatformLocation } from "@angular/common";
-import { DOCUMENT } from "@angular/platform-browser";
-import { fromEvent } from "rxjs/observable/fromEvent";
+import { Injectable, Inject } from '@angular/core';
+import { PlatformLocation } from '@angular/common';
+import { DOCUMENT } from '@angular/platform-browser';
+import { fromEvent } from 'rxjs';
 
 /**
  * A service that scrolls document elements into view
@@ -12,16 +12,12 @@ export class ScrollService {
 
   get topOfPageElement() {
     if (!this._topOfPageElement) {
-      this._topOfPageElement =
-        this.document.getElementById("top-of-page") || this.document.body;
+      this._topOfPageElement = this.document.getElementById('top-of-page') || this.document.body;
     }
     return this._topOfPageElement;
   }
 
-  constructor(
-    @Inject(DOCUMENT) private document: any,
-    private location: PlatformLocation
-  ) {}
+  constructor(@Inject(DOCUMENT) private document: any, private location: PlatformLocation) {}
 
   /**
    * Scroll to the element with id extracted from the current location hash fragment.
@@ -29,9 +25,7 @@ export class ScrollService {
    */
   scroll() {
     const hash = this.getCurrentHash();
-    const element: HTMLElement = hash
-      ? this.document.getElementById(hash)
-      : this.topOfPageElement;
+    const element: HTMLElement = hash ? this.document.getElementById(hash) : this.topOfPageElement;
     this.scrollToElement(element);
   }
 
@@ -74,6 +68,6 @@ export class ScrollService {
    * Return the hash fragment from the `PlatformLocation`, minus the leading `#`.
    */
   private getCurrentHash() {
-    return decodeURIComponent(this.location.hash.replace(/^#/, ""));
+    return decodeURIComponent(this.location.hash.replace(/^#/, ''));
   }
 }

@@ -1,21 +1,28 @@
-<mdc-toolbar #toolbar *ngIf="!isScrollDown && !isEditMode" [style.position]="isPositionFixed?'fixed':'relative'" style="z-index:20;">
+<mat-toolbar #toolbar *ngIf="!isScrollDown && !isEditMode" [style.position]="isPositionFixed?'fixed':'relative'" style="z-index:20;">
   <!-- [@show]="isScrollDown===false" -->
-  <mdc-toolbar-row>
-    <mdc-toolbar-section alignStart="true">
-      <a routerLinkActive [routerLink]="['/']" mdc-toolbar-icon material-icon>arrow_back</a>
+  <mat-toolbar-row>
 
-      <mdc-toolbar-title>Document</mdc-toolbar-title>
-    </mdc-toolbar-section>
-    <mdc-toolbar-section alignEnd="true">
-      <a tabindex="1" mdc-toolbar-icon material-icon (click)="toEditMode($event)">mode_edit</a>
-      <a tabindex="1" mdc-toolbar-icon material-icon (click)="menu.open()">more_vert</a>
-      <mdc-menu #menu (select)="more($event)" [anchorCorner]="top-start">
-        <mdc-menu-item id="0">Item 1</mdc-menu-item>
-        <mdc-menu-item id="1" [disabled]="true">Item 2</mdc-menu-item>
-        <mdc-menu-item id="2">Item 3</mdc-menu-item>
-        <mdc-menu-divider></mdc-menu-divider>
-        <mdc-menu-item id="3">Item 4</mdc-menu-item>
-      </mdc-menu>
-    </mdc-toolbar-section>
-  </mdc-toolbar-row>
-</mdc-toolbar>
+    <a routerLinkActive [routerLink]="['/']" mat-toolbar-icon material-icon>arrow_back</a>
+
+    <span style="flex:1 1 auto">Document</span>
+
+
+    <button class="mat-icon-button" (click)="toEditMode($event)">
+      <mat-icon>
+        mode_edit
+      </mat-icon>
+    </button>
+    <button class="mat-icon-button" [matMenuTriggerFor]="menu">
+      <mat-icon>
+        more_vert
+      </mat-icon>
+    </button>
+    <mat-menu #menu (select)="more($event)">
+      <button id="0">Item 1</button>
+      <button id="1" [disabled]="true">Item 2</button>
+      <button id="2">Item 3</button>
+      <button id="3">Item 4</button>
+    </mat-menu>
+
+  </mat-toolbar-row>
+</mat-toolbar>

@@ -1,19 +1,10 @@
 import * as doc from './actions/document';
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  Inject,
-  HostListener,
-  ElementRef
-} from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, HostListener, ElementRef } from '@angular/core';
 // import { AceEditorDirective } from './editor/markdown-editor.directive';
 import { MarkdownViewerComponent } from './viewer/markdown-viewer.component';
 import { HttpClient } from '@angular/common/http';
 import { APP_BASE_HREF } from '@angular/common';
-import { timeout } from 'rxjs/operator/timeout';
-import { take, map } from 'rxjs/operators';
-import { setTimeout } from 'timers';
+import { take, map, timeout } from 'rxjs/operators';
 import { DocService } from 'docs';
 import { MarkdownEditorService } from './editor/index';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -26,11 +17,10 @@ import * as document from './actions/document';
 import { ChangeDetectorRef } from '@angular/core';
 import { MarkdownEditorComponent } from './editor/markdown-editor.component';
 import { ObservableMedia, MediaChange } from '@angular/flex-layout';
-import { Subscription } from 'rxjs/Subscription';
 import { OnDestroy } from '@angular/core';
 import { MarkdownViewerContainerComponent } from './viewer/markdown-viewer-container.component';
 import { HasElementRef } from '@angular/material/core/typings/common-behaviors/color';
-import { Observable } from 'rxjs/Observable';
+import { Observable, Subscription } from 'rxjs';
 import { DocSaveCoordinateService } from './editor/services/doc-save-coordinate-service';
 
 @Component({
@@ -51,15 +41,12 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   editorLoaded = false;
   mediaChangeSubscription: Subscription;
   @ViewChild(MarkdownEditorComponent) editor: MarkdownEditorComponent;
-  @ViewChild(MarkdownViewerContainerComponent)
-  viewer: MarkdownViewerContainerComponent;
+  @ViewChild(MarkdownViewerContainerComponent) viewer: MarkdownViewerContainerComponent;
   @ViewChild('viewerDiv') viewerDiv: ElementRef;
   @ViewChild('editorDiv') editorDiv: ElementRef;
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
-  editWithView$ = this.store.pipe(
-    select(fromMarkdown.selectDocumentShowPreviewState)
-  );
+  editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState));
   gtsmBreakPoint = false;
   editWithView: boolean | null;
   // isSyncingLeftScroll = false;
@@ -207,11 +194,9 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   // }
 
   showDemo() {
-    this._http
-      .get(`${this.baseHref}assets/markdown.md`, { responseType: 'text' })
-      .subscribe(a => {
-        this._text = a;
-      });
+    this._http.get(`${this.baseHref}assets/markdown.md`, { responseType: 'text' }).subscribe(a => {
+      this._text = a;
+    });
   }
 
   public get markdown(): string {

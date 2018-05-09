@@ -1,0 +1,12 @@
+{
+  "version": 3,
+  "file": "metaseed-angular-hotkey.js",
+  "sources": [
+    "ng://@metaseed/angular-hotkey/projects/angular-hotkey/src/metaseed-angular-hotkey.ts"
+  ],
+  "sourcesContent": [
+    "/**\n * Generated bundle index. Do not edit.\n */\n\nexport * from './public_api';\n"
+  ],
+  "names": [],
+  "mappings": ";;;;;;;AAIA,2GAAc,cAAc,CAAC"
+}

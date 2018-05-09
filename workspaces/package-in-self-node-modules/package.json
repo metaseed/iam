@@ -10,6 +10,7 @@
   "license": "ISC",
   "devDependencies": {
     "@angular/service-worker": "5.0.0",
-    "font-awesome": "4.5.0"
+    "font-awesome": "4.5.0",
+    "ng-packagr": "3.0.0-rc.0"
   }
 }

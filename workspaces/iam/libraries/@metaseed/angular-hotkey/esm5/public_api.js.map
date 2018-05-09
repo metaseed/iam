@@ -1,0 +1,12 @@
+{
+  "version": 3,
+  "file": "public_api.js",
+  "sources": [
+    "ng://@metaseed/angular-hotkey/projects/angular-hotkey/src/public_api.ts"
+  ],
+  "sourcesContent": [
+    "import { NgModule, ModuleWithProviders } from '@angular/core';\n\nexport * from './lib/cheatsheet.component';\nexport * from './lib/hotkey.model';\nexport * from './lib/hotkey.options';\n\nexport * from './lib/hotkeys.service';\nexport * from './lib/hotkeys.directive';\nexport * from './lib/angular-hotkey.module';\n"
+  ],
+  "names": [],
+  "mappings": ";;;;AAEA,oCAAc,4BAA4B,CAAC;AAC3C,uBAAc,oBAAoB,CAAC;AACnC,8BAAc,sBAAsB,CAAC;AAErC,+BAAc,uBAAuB,CAAC;AACtC,iCAAc,yBAAyB,CAAC;AACxC,6BAAc,6BAA6B,CAAC"
+}

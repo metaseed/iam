@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "iam",
-  "workspaces": ["workspaces/*", "workspaces/modules/*"],
+  "workspaces": ["workspaces/iam/libraries/*", "workspaces/*"],
   "scripts": {
     "start": "cd workspaces\\iam & npm start",
     "hmr": "cd workspaces\\iam & npm run hmr",

@@ -6,34 +6,32 @@ import {
   Output,
   EventEmitter,
   Injector
-} from "@angular/core";
-import { DomSanitizer, Title, Meta } from "@angular/platform-browser";
-import { MarkdownViewerService } from "./services/markdown.viewer.service";
-import { Scrollable, Logger, DocumentRef } from "core";
-import { ViewChild } from "@angular/core";
-import * as view from "../reducers/view";
-import { Store } from "@ngrx/store";
-import * as fromView from "../actions/view";
-import * as MarkdownIt from "markdown-it";
-import lozad from "../../../../packages/lazy-load";
-import { TocComponent } from "./elements/toc/toc.component";
-import { of } from "rxjs/observable/of";
-import { TocService } from "./services/toc.service";
-import { Observable } from "rxjs/Observable";
-import { switchMap, tap, catchError, takeUntil } from "rxjs/operators";
-import { timer } from "rxjs/observable/timer";
-import { createCustomElement } from "@angular/elements";
-import { ElementsLoader } from "./elements/elements-loader";
-import { getAddr } from "./utils/getUri";
-import { MarkdownViewerContainerComponent } from "./markdown-viewer-container.component";
-import { Inject } from "@angular/core";
+} from '@angular/core';
+import { DomSanitizer, Title, Meta } from '@angular/platform-browser';
+import { MarkdownViewerService } from './services/markdown.viewer.service';
+import { Scrollable, Logger, DocumentRef } from 'core';
+import { ViewChild } from '@angular/core';
+import * as view from '../reducers/view';
+import { Store } from '@ngrx/store';
+import * as fromView from '../actions/view';
+import * as MarkdownIt from 'markdown-it';
+import lozad from '../../../../packages/lazy-load';
+import { TocComponent } from './elements/toc/toc.component';
+import { of, Observable, timer } from 'rxjs';
+import { TocService } from './services/toc.service';
+import { switchMap, tap, catchError, takeUntil } from 'rxjs/operators';
+import { createCustomElement } from '@angular/elements';
+import { ElementsLoader } from './elements/elements-loader';
+import { getAddr } from './utils/getUri';
+import { MarkdownViewerContainerComponent } from './markdown-viewer-container.component';
+import { Inject } from '@angular/core';
 
-export const NO_ANIMATIONS = "no-animations";
+export const NO_ANIMATIONS = 'no-animations';
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: "markdown-viewer",
-  template: ""
+  selector: 'markdown-viewer',
+  template: ''
 })
 export class MarkdownViewerComponent {
   static animationsEnabled = false;
@@ -60,7 +58,7 @@ export class MarkdownViewerComponent {
       this.tocService.genToc(targetElement, docId);
     };
     return this.void$.pipe(
-      tap(_ => (this.nextViewContainer.innerHTML = content || "")),
+      tap(_ => (this.nextViewContainer.innerHTML = content || '')),
       tap(() => this.hostElement.appendChild(this.nextViewContainer)),
       tap(_ => {
         if (MarkdownViewerComponent.config_addTocByDefault) {
@@ -72,9 +70,7 @@ export class MarkdownViewerComponent {
           );
         }
       }),
-      switchMap(_ =>
-        this.elementsLoader.loadContainingCustomElements(this.nextViewContainer)
-      ),
+      switchMap(_ => this.elementsLoader.loadContainingCustomElements(this.nextViewContainer)),
       tap(_ => this.docReady.emit()),
       switchMap(_ => this.swapViews(addTitleAndToc)),
       tap(_ => this.docRendered.emit()),
@@ -88,15 +84,15 @@ export class MarkdownViewerComponent {
             )}': ${errorMessage}`
           )
         );
-        this.nextViewContainer.innerHTML = "";
+        this.nextViewContainer.innerHTML = '';
         this.setNoIndex(true);
         return this.void$;
       })
     );
   }
   parsedModel: any;
-  protected currViewContainer: HTMLElement = document.createElement("div");
-  protected nextViewContainer: HTMLElement = document.createElement("div");
+  protected currViewContainer: HTMLElement = document.createElement('div');
+  protected nextViewContainer: HTMLElement = document.createElement('div');
 
   private onDestroy$ = new EventEmitter<void>();
   // The new document is ready to be inserted into the viewer.
@@ -116,8 +112,7 @@ export class MarkdownViewerComponent {
   @Output() docRendered = new EventEmitter<void>();
 
   constructor(
-    @Inject(MarkdownViewerContainerComponent)
-    private parent: MarkdownViewerContainerComponent,
+    @Inject(MarkdownViewerContainerComponent) private parent: MarkdownViewerContainerComponent,
     private documentRef: DocumentRef,
     private logger: Logger,
     private metaService: Meta,
@@ -133,15 +128,12 @@ export class MarkdownViewerComponent {
     (<any>document).iamMarkdownIsPureViewMode = true;
     this.hostElement = elementRef.nativeElement;
     this.docContents$
-      .pipe(
-        switchMap(newDoc => this.render(newDoc)),
-        takeUntil(this.onDestroy$)
-      )
+      .pipe(switchMap(newDoc => this.render(newDoc)), takeUntil(this.onDestroy$))
       .subscribe();
   }
   ngAfterViewInit() {
     var container = this.hostElement;
-    this.lozad = (<any>lozad)("img[data-src]", { container });
+    this.lozad = (<any>lozad)('img[data-src]', { container });
   }
 
   ngOnDestroy() {
@@ -160,8 +152,8 @@ export class MarkdownViewerComponent {
     // According to the [CSSOM spec](https://drafts.csswg.org/cssom/#serializing-css-values),
     // `time` values should be returned in seconds.
     const getActualDuration = (elem: HTMLElement) => {
-      const cssValue = getComputedStyle(elem).transitionDuration || "";
-      const seconds = Number(cssValue.replace(/s$/, ""));
+      const cssValue = getComputedStyle(elem).transitionDuration || '';
+      const seconds = Number(cssValue.replace(/s$/, ''));
       return 1000 * seconds;
     };
     const animateProp = (
@@ -174,11 +166,11 @@ export class MarkdownViewerComponent {
       const animationsDisabled =
         !MarkdownViewerComponent.animationsEnabled ||
         this.hostElement.classList.contains(NO_ANIMATIONS);
-      if (prop === "length" || prop === "parentRule") {
+      if (prop === 'length' || prop === 'parentRule') {
         // We cannot animate length or parentRule properties because they are readonly
         return this.void$;
       }
-      elem.style.transition = "";
+      elem.style.transition = '';
       return animationsDisabled
         ? this.void$.pipe(tap(() => (elem.style[prop] = to)))
         : this.void$.pipe(
@@ -189,9 +181,7 @@ export class MarkdownViewerComponent {
             switchMap(() => raf$),
             tap(() => (elem.style[prop] = from)),
             switchMap(() => raf$),
-            tap(
-              () => (elem.style.transition = `all ${duration}ms ease-in-out`)
-            ),
+            tap(() => (elem.style.transition = `all ${duration}ms ease-in-out`)),
             switchMap(() => raf$),
             tap(() => ((elem.style as any)[prop] = to)),
             switchMap(() => timer(getActualDuration(elem))),
@@ -199,10 +189,8 @@ export class MarkdownViewerComponent {
           );
     };
 
-    const animateLeave = (elem: HTMLElement) =>
-      animateProp(elem, "opacity", "1", "0.1");
-    const animateEnter = (elem: HTMLElement) =>
-      animateProp(elem, "opacity", "0.1", "1");
+    const animateLeave = (elem: HTMLElement) => animateProp(elem, 'opacity', '1', '0.1');
+    const animateEnter = (elem: HTMLElement) => animateProp(elem, 'opacity', '0.1', '1');
 
     let done$ = this.void$;
 
@@ -210,11 +198,7 @@ export class MarkdownViewerComponent {
       done$ = done$.pipe(
         // Remove the current view from the viewer.
         switchMap(() => animateLeave(this.currViewContainer)),
-        tap(() =>
-          this.currViewContainer.parentElement!.removeChild(
-            this.currViewContainer
-          )
-        ),
+        tap(() => this.currViewContainer.parentElement!.removeChild(this.currViewContainer)),
         tap(() => this.docRemoved.emit())
       );
     }
@@ -230,7 +214,7 @@ export class MarkdownViewerComponent {
         const prevViewContainer = this.currViewContainer;
         this.currViewContainer = this.nextViewContainer;
         this.nextViewContainer = prevViewContainer;
-        this.nextViewContainer.innerHTML = ""; // Empty to release memory.
+        this.nextViewContainer.innerHTML = ''; // Empty to release memory.
       })
     );
   }
@@ -240,8 +224,8 @@ export class MarkdownViewerComponent {
    */
   private setNoIndex(val: boolean) {
     if (val) {
-      this.metaService.addTag({ name: "googlebot", content: "noindex" });
-      this.metaService.addTag({ name: "robots", content: "noindex" });
+      this.metaService.addTag({ name: 'googlebot', content: 'noindex' });
+      this.metaService.addTag({ name: 'robots', content: 'noindex' });
     } else {
       this.metaService.removeTag('name="googlebot"');
       this.metaService.removeTag('name="robots"');

@@ -1,27 +1,32 @@
-<mdc-toolbar style="position:fixed; bottom:0;" class="tab-bar--dark" *ngIf="show">
-  <mdc-toolbar-row style="min-height:inherit">
-    <mdc-toolbar-section [alignStart]="true" style="padding:0;">
-      <mdc-tab-bar style="height:inherit;text-transform:capitalize;" [primary]="false" [secondary]="true">
-        <mdc-tab routerLinkActive #rla="routerLinkActive" [active]="rla.isActive" [routerLink]="['/']">
-          <mdc-icon>home</mdc-icon>
-          <mdc-tab-icon-text>home</mdc-tab-icon-text>
-        </mdc-tab>
-        <mdc-tab>
-          <mdc-icon>explore</mdc-icon>
-          <mdc-tab-icon-text>explore</mdc-tab-icon-text>
-        </mdc-tab>
-        <mdc-tab routerLinkActive #rla1="routerLinkActive" [active]="rla1.isActive" [routerLink]="['/doc','new']">
-          <mdc-icon [fontSize]="48">add_circle</mdc-icon>
-        </mdc-tab>
-        <mdc-tab>
-          <mdc-icon>message</mdc-icon>
-          <mdc-tab-icon-text>message</mdc-tab-icon-text>
-        </mdc-tab>
-        <mdc-tab>
-          <mdc-icon>person</mdc-icon>
-          <mdc-tab-icon-text>me</mdc-tab-icon-text>
-        </mdc-tab>
-      </mdc-tab-bar>
-    </mdc-toolbar-section>
-  </mdc-toolbar-row>
-</mdc-toolbar>
+<mat-toolbar style="position:fixed; bottom:0;" class="tab-bar--dark" *ngIf="show">
+  <mat-toolbar-row style="min-height:inherit">
+
+    <nav mat-tab-nav-bar style="height:inherit;text-transform:capitalize;padding:0;" [primary]="false" [secondary]="true">
+      <a mat-tab-link routerLinkActive #rla="routerLinkActive" [active]="rla.isActive" [routerLink]="['/']">
+        <mat-icon>home</mat-icon>
+        <span>home</span>
+      </a>
+      <!-- <mat-tab>
+        <mat-icon>explore</mat-icon>
+        <mat-tab-icon-text>explore</mat-tab-icon-text>
+      </mat-tab>
+      <mat-tab routerLinkActive #rla1="routerLinkActive" [active]="rla1.isActive" [routerLink]="['/doc','new']">
+        <mat-icon [fontSize]="48">add_circle</mat-icon>
+      </mat-tab>
+      <mat-tab>
+        <mat-icon>message</mat-icon>
+        <mat-tab-icon-text>message</mat-tab-icon-text>
+      </mat-tab> -->
+      <a mat-tab-link routerLinkActive #rla="routerLinkActive" [active]="rla.isActive" [routerLink]="['/doc','new']">
+        <mat-icon [fontSize]="48">add_circle</mat-icon>
+        <span>new</span>
+      </a>
+      <a mat-tab-link routerLinkActive #rla="routerLinkActive" [active]="rla.isActive" [routerLink]="['/']">
+        <mat-icon>person</mat-icon>
+        <span>me</span>
+      </a>
+
+    </nav>
+
+  </mat-toolbar-row>
+</mat-toolbar>

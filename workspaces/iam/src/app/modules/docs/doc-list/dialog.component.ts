@@ -1,23 +1,22 @@
-import { Component, ViewChild } from "@angular/core";
-import { MdcDialogRef, MdcDialogComponent } from "@angular-mdc/web";
+import { Component, ViewChild } from '@angular/core';
+import { MatDialogRef } from '@angular/material';
 
 @Component({
   template: `
-    <mdc-dialog #myDialog>
-      <mdc-dialog-header>
-        <mdc-dialog-header-title>
-          Delete this document?
-        </mdc-dialog-header-title>
-      </mdc-dialog-header>
-      <mdc-dialog-footer>
-        <button mdc-dialog-button [cancel]="true">Cancel</button>
-        <button mdc-dialog-button [action]="true" [accept]="true">Yes</button>
-      </mdc-dialog-footer>
-    </mdc-dialog>
-    `,
+        <h1 mat-dialog-title>
+        Delete?
+        </h1>
+<div mat-dialog-content>
+  <p>
+  Are you want delete this document?
+  </p>
+</div>
+<div mat-dialog-actions>
+<button mat-button [mat-dialog-close]="'Cancel'">Cancel</button>
+<button mat-button [mat-dialog-close]="'Yes'">Yes</button>
+</div>
+    `
 })
 export class DeleteAlertDialog {
-  @ViewChild('myDialog') myDialog: MdcDialogComponent;
-  constructor(
-    public dialogRef: MdcDialogRef<DeleteAlertDialog>) { }
+  constructor(public dialogRef: MatDialogRef<DeleteAlertDialog>) {}
 }

@@ -1,13 +1,13 @@
-import { IStorage } from "../storage";
-import { Observable } from "rxjs/Observable";
-import { catchError, map, mergeMap, tap } from "rxjs/operators";
-import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Const } from "./model/const";
-import { UserInfo } from "./user-info";
-import { Repository } from "./repository";
-import { Requestable } from "./requestable";
-import * as GitHub from "github-api";
+import { IStorage } from '../storage';
+import { Observable } from 'rxjs';
+import { catchError, map, mergeMap, tap } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Const } from './model/const';
+import { UserInfo } from './user-info';
+import { Repository } from './repository';
+import { Requestable } from './requestable';
+import * as GitHub from 'github-api';
 
 @Injectable()
 export class GithubStorage extends Requestable {
@@ -36,11 +36,7 @@ export class GithubStorage extends Requestable {
   }
 
   getRepos(name: string): Observable<Repository> {
-    return this.request(
-      "GET",
-      `/repos/${this._userInfo.name}/${name}`,
-      null
-    ).pipe(
+    return this.request('GET', `/repos/${this._userInfo.name}/${name}`, null).pipe(
       map(resp => {
         return new Repository(this._http, this._userInfo, name, this.gh);
       }),
@@ -54,10 +50,10 @@ export class GithubStorage extends Requestable {
   }
 
   newRepos(name: string) {
-    return this.request("POST", "/user/repos", {
+    return this.request('POST', '/user/repos', {
       name: name,
-      description: "This is your first repository",
-      homepage: "https://github.com",
+      description: 'This is your first repository',
+      homepage: 'https://github.com',
       private: false,
       auto_init: true,
       has_issues: true,

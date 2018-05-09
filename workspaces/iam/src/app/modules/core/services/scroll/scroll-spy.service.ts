@@ -1,16 +1,10 @@
-import { Inject, Injectable } from "@angular/core";
-import { DOCUMENT } from "@angular/platform-browser";
-import {
-  auditTime,
-  distinctUntilChanged,
-  takeUntil,
-  map
-} from "rxjs/operators";
+import { Inject, Injectable } from '@angular/core';
+import { DOCUMENT } from '@angular/platform-browser';
+import { auditTime, distinctUntilChanged, takeUntil, map } from 'rxjs/operators';
 
-import { ScrollService } from "./scroll.service";
-import { fromEvent } from "rxjs/observable/fromEvent";
-import { Observable } from "rxjs/Observable";
-import { ReplaySubject, Subject } from "rxjs";
+import { ScrollService } from './scroll.service';
+import { Observable, fromEvent } from 'rxjs';
+import { ReplaySubject, Subject } from 'rxjs';
 
 export interface ScrollItem {
   element: Element;
@@ -26,10 +20,7 @@ export interface ScrollSpyToken {
 export class ScrollSpiedElement implements ScrollItem {
   top = 0;
 
-  constructor(
-    public readonly element: Element,
-    public readonly index: number
-  ) {}
+  constructor(public readonly element: Element, public readonly index: number) {}
 
   calculateTop(scrollTop: number, topOffset: number) {
     this.top = scrollTop + this.element.getBoundingClientRect().top - topOffset;
@@ -53,23 +44,17 @@ export class ScrollSpiedElementGroup {
     private _container: HTMLElement | Window = window,
     private _topOffset = 0
   ) {
-    this.spiedElements = elements.map(
-      (elem, i) => new ScrollSpiedElement(elem, i)
-    );
+    this.spiedElements = elements.map((elem, i) => new ScrollSpiedElement(elem, i));
 
-    this.resizeEvents$ = fromEvent(_container, "resize").pipe(auditTime(300));
-    this.scrollEvents$ = fromEvent(_container, "scroll").pipe(auditTime(10));
+    this.resizeEvents$ = fromEvent(_container, 'resize').pipe(auditTime(300));
+    this.scrollEvents$ = fromEvent(_container, 'scroll').pipe(auditTime(10));
   }
 
   spyOn() {
     this.calibrate();
     this.onScroll();
-    this.scrollEvents$
-      .pipe(takeUntil(this.onStopListening$))
-      .subscribe(this.onScroll);
-    this.resizeEvents$
-      .pipe(takeUntil(this.onStopListening$))
-      .subscribe(this.onResize);
+    this.scrollEvents$.pipe(takeUntil(this.onStopListening$)).subscribe(this.onScroll);
+    this.resizeEvents$.pipe(takeUntil(this.onStopListening$)).subscribe(this.onResize);
   }
 
   unSpy() {
@@ -79,9 +64,7 @@ export class ScrollSpiedElementGroup {
 
   calibrate() {
     const scrollTop = this.getScrollTop();
-    this.spiedElements.forEach(spiedElem =>
-      spiedElem.calculateTop(scrollTop, this._topOffset)
-    );
+    this.spiedElements.forEach(spiedElem => spiedElem.calculateTop(scrollTop, this._topOffset));
     this.spiedElements.sort((a, b) => b.top - a.top); // Sort in descending `top` order.
   }
 
@@ -161,21 +144,14 @@ export class ScrollSpiedElementGroup {
 export class ScrollSpyService {
   private spiedElementGroups: ScrollSpiedElementGroup[] = [];
 
-  constructor(
-    @Inject(DOCUMENT) private doc: any,
-    private scrollService: ScrollService
-  ) {}
+  constructor(@Inject(DOCUMENT) private doc: any, private scrollService: ScrollService) {}
 
   spyOn(
     elements: Element[],
     container: HTMLElement | Window = window,
     topOffset = 0
   ): ScrollSpyToken {
-    const spiedGroup = new ScrollSpiedElementGroup(
-      elements,
-      container,
-      topOffset
-    );
+    const spiedGroup = new ScrollSpiedElementGroup(elements, container, topOffset);
     this.spiedElementGroups.push(spiedGroup);
     spiedGroup.spyOn();
 
@@ -188,8 +164,6 @@ export class ScrollSpyService {
 
   private unspy(spiedGroup: ScrollSpiedElementGroup) {
     spiedGroup.unSpy();
-    this.spiedElementGroups = this.spiedElementGroups.filter(
-      group => group !== spiedGroup
-    );
+    this.spiedElementGroups = this.spiedElementGroups.filter(group => group !== spiedGroup);
   }
 }

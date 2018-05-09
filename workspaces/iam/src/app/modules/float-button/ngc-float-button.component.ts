@@ -1,9 +1,6 @@
 /* created by @GustavoCostaW https://github.com/gustavocostaw/ngc-float-button  */
 
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable, Subject, Subscription, BehaviorSubject } from 'rxjs';
 import { NgcFloatItemButtonComponent } from './ngc-float-item-button.component';
 import {
   Component,
@@ -22,7 +19,8 @@ import {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'ngc-float-button',
-  styles: [`
+  styles: [
+    `
 
   :host {
     position: absolute;
@@ -87,7 +85,8 @@ import {
     transform: scale(0.8, 0.8) translate3d(0, 0, 0);
   }
 
-  `],
+  `
+  ],
   template: `
     <nav class="fab-menu" [class.active]="state.getValue().display">
         <a class="fab-toggle" (click)="toggle()">
@@ -97,7 +96,6 @@ import {
     </nav>
   `
 })
-
 export class NgcFloatButtonComponent implements AfterContentInit, OnDestroy, OnChanges {
   private elementref: HTMLElement;
   private subs: Subscription[] = [];
@@ -145,54 +143,52 @@ export class NgcFloatButtonComponent implements AfterContentInit, OnDestroy, OnC
 
   // transition
   private animateButtons(eventType) {
-    this.buttons.toArray().forEach( (btn, i) => {
-      i+=1;
+    this.buttons.toArray().forEach((btn, i) => {
+      i += 1;
       let style = btn.elementref.nativeElement.style;
 
       if (eventType !== 'directionChanged' && this.state.getValue().display) {
         style['transform'] = 'scale(1)';
         style['transition-duration'] = '0s';
 
-
         if (btn.timeout) {
           clearTimeout(btn.timeout);
         }
       }
 
-      setTimeout( () => {
-        style['transition-duration'] = this.state.getValue().display ? `${ 90 + (100 * i) }ms` : '';
+      setTimeout(() => {
+        style['transition-duration'] = this.state.getValue().display ? `${90 + 100 * i}ms` : '';
         style['transform'] = this.state.getValue().display ? this.getTranslate(i) : '';
       }, 50);
 
       if (eventType !== 'directionChanged' && !this.state.getValue().display) {
-        btn.timeout = setTimeout( () => {
+        btn.timeout = setTimeout(() => {
           style['transform'] = 'scale(0)';
-        }, 90 + (100 * i) );
+        }, 90 + 100 * i);
       }
     });
   }
 
   // get transition direction
   private getTranslate(i) {
+    let animation;
 
-      let animation;
+    switch (this.direction) {
+      case 'right':
+        animation = `translate3d(${this.state.getValue().spaceBetweenButtons * i}px,0,0)`;
+        break;
+      case 'bottom':
+        animation = `translate3d(0,${this.state.getValue().spaceBetweenButtons * i}px,0)`;
+        break;
+      case 'left':
+        animation = `translate3d(-${this.state.getValue().spaceBetweenButtons * i}px,0,0)`;
+        break;
+      default:
+        animation = `translate3d(0,-${this.state.getValue().spaceBetweenButtons * i}px,0)`;
+        break;
+    }
 
-      switch (this.direction) {
-        case 'right' :
-           animation = `translate3d(${ this.state.getValue().spaceBetweenButtons * i }px,0,0)`;
-           break;
-        case  'bottom' :
-          animation = `translate3d(0,${ this.state.getValue().spaceBetweenButtons * i }px,0)`;
-          break;
-        case 'left' :
-          animation = `translate3d(-${ this.state.getValue().spaceBetweenButtons * i }px,0,0)`;
-          break;
-        default :
-          animation = `translate3d(0,-${ this.state.getValue().spaceBetweenButtons * i }px,0)`;
-          break;
-      }
-
-      return animation;
+    return animation;
   }
 
   /* some problems here */
@@ -224,7 +220,7 @@ export class NgcFloatButtonComponent implements AfterContentInit, OnDestroy, OnC
       this.subs.push(sub);
     });
 
-    const sub = this.state.subscribe( v => {
+    const sub = this.state.subscribe(v => {
       this.animateButtons(v.event);
 
       this.events.next({

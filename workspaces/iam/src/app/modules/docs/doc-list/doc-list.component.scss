@@ -1,7 +1,7 @@
-@import "~@angular-mdc/theme/material";
+// @import "~@angular-mdc/theme/material";
 .done-true {
   text-decoration: line-through;
-  color: #CCC;
+  color: #ccc;
 }
 
 .doc-card-container,
@@ -15,10 +15,10 @@
 .doc-card__row {
   display: flex;
   border-top-left-radius: inherit;
-  @include mdc-rtl {
-    border-top-left-radius: 0;
-    border-top-right-radius: inherit;
-  }
+  // @include mdc-rtl {
+  //   border-top-left-radius: 0;
+  //   border-top-right-radius: inherit;
+  // }
 }
 
 .doc-card__info {
@@ -45,7 +45,7 @@ $lines-to-show: 3;
   /* Fallback for non-webkit */
   display: -webkit-box;
   max-width: 400px;
-  max-height: $font-size*$line-height*$lines-to-show;
+  max-height: $font-size * $line-height * $lines-to-show;
   /* Fallback for non-webkit */
   margin-left: 0;
   font-weight: 400;
@@ -59,7 +59,7 @@ $lines-to-show: 3;
 
 $font-size-s: 0.875rem;
 $line-height-s: 1.2;
-$lines-to-show-s:6;
+$lines-to-show-s: 6;
 .summary-truncate {
   font-family: Roboto, sans-serif;
   display: block;
@@ -67,7 +67,7 @@ $lines-to-show-s:6;
   /* Fallback for non-webkit */
   display: -webkit-box;
   max-width: 400px;
-  max-height: $font-size-s*$line-height-s*$lines-to-show-s;
+  max-height: $font-size-s * $line-height-s * $lines-to-show-s;
   /* Fallback for non-webkit */
   margin-left: 0;
   font-size: $font-size-s;
@@ -76,5 +76,5 @@ $lines-to-show-s:6;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: var(--mdc-theme-text-secondary-on-light, rgba(0, 0, 0, .54));
+  color: var(--mdc-theme-text-secondary-on-light, rgba(0, 0, 0, 0.54));
 }

@@ -1,10 +1,7 @@
-import "rxjs/add/observable/of";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs/Observable";
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
 
-import { MdcDialog } from "@angular-mdc/web";
-import { map } from "rxjs/operators";
-import { race } from "rxjs/observable/race";
+import { race, map } from 'rxjs/operators';
 /**
  * Async modal dialog service
  * DialogService makes this app easier to test by faking this service.
@@ -12,24 +9,25 @@ import { race } from "rxjs/observable/race";
  */
 @Injectable()
 export class DialogService {
-  constructor(private dialog: MdcDialog) {}
+  constructor(private dialog) {}
   confirm(dialogComponent): Observable<boolean> {
     // const confirmation = window.confirm(message || "Is it OK?");
     let ref = this.dialog.open(dialogComponent, {
       escapeToClose: true,
       clickOutsideToClose: true
     });
-    return race(
-      (<any>ref.componentInstance).dialog._accept.pipe(
+    return (<any>ref.componentInstance).dialog._accept
+      .pipe(
         map(() => {
           return true;
         })
-      ),
-      (<any>ref.componentInstance).dialog._cancel.pipe(
-        map(() => {
-          return false;
-        })
       )
-    );
+      .race(
+        (<any>ref.componentInstance).dialog._cancel.pipe(
+          map(() => {
+            return false;
+          })
+        )
+      );
   }
 }

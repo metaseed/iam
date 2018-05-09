@@ -1,0 +1,12 @@
+{
+  "version": 3,
+  "file": "angular-hotkey.module.js",
+  "sources": [
+    "ng://@metaseed/angular-hotkey/projects/angular-hotkey/src/lib/angular-hotkey.module.ts"
+  ],
+  "sourcesContent": [
+    "import { NgModule, ModuleWithProviders } from '@angular/core';\nimport { HotkeysDirective } from './hotkeys.directive';\nimport { CheatSheetComponent } from './cheatsheet.component';\nimport { CommonModule } from '@angular/common';\nimport { IHotkeyOptions, HotkeyOptions } from './hotkey.options';\nimport { HotkeysService } from './hotkeys.service';\n\n@NgModule({\n  imports: [CommonModule],\n  exports: [HotkeysDirective, CheatSheetComponent],\n  declarations: [HotkeysDirective, CheatSheetComponent]\n})\nexport class HotkeyModule {\n  static forRoot(options: IHotkeyOptions = {}): ModuleWithProviders {\n    return {\n      ngModule: HotkeyModule,\n      providers: [HotkeysService, { provide: HotkeyOptions, useValue: options }]\n    };\n  }\n}\n"
+  ],
+  "names": [],
+  "mappings": ";;;;AAAA,OAAO,EAAE,QAAQ,EAAuB,MAAM,eAAe,CAAC;AAC9D,OAAO,EAAE,gBAAgB,EAAE,MAAM,qBAAqB,CAAC;AACvD,OAAO,EAAE,mBAAmB,EAAE,MAAM,wBAAwB,CAAC;AAC7D,OAAO,EAAE,YAAY,EAAE,MAAM,iBAAiB,CAAC;AAC/C,OAAO,EAAkB,aAAa,EAAE,MAAM,kBAAkB,CAAC;AACjE,OAAO,EAAE,cAAc,EAAE,MAAM,mBAAmB,CAAC;AAOnD,MAAM;;;;;IACJ,MAAM,CAAC,OAAO,CAAC,UAA0B,EAAE;QACzC,MAAM,CAAC;YACL,QAAQ,EAAE,YAAY;YACtB,SAAS,EAAE,CAAC,cAAc,EAAE,EAAE,OAAO,EAAE,aAAa,EAAE,QAAQ,EAAE,OAAO,EAAE,CAAC;SAC3E,CAAC;KACH;;;YAXF,QAAQ,SAAC;gBACR,OAAO,EAAE,CAAC,YAAY,CAAC;gBACvB,OAAO,EAAE,CAAC,gBAAgB,EAAE,mBAAmB,CAAC;gBAChD,YAAY,EAAE,CAAC,gBAAgB,EAAE,mBAAmB,CAAC;aACtD"
+}

@@ -1,11 +1,10 @@
-import { fromEvent } from "rxjs/observable/fromEvent";
-import { Injectable, Inject } from "@angular/core";
-import { Observable } from "rxjs/Observable";
+import { Injectable, Inject } from '@angular/core';
+import { Observable, fromEvent } from 'rxjs';
 
-import { DOCUMENT } from "@angular/platform-browser";
-import { debounceTime, map } from "rxjs/operators";
-import { getCurrentDebugContext } from "@angular/core/src/view/services";
-import { Scrollable } from "./services/scrollable";
+import { DOCUMENT } from '@angular/platform-browser';
+import { debounceTime, map } from 'rxjs/operators';
+import { getCurrentDebugContext } from '@angular/core/src/view/services';
+import { Scrollable } from './services/scrollable';
 
 @Injectable()
 export class DocumentRef extends Scrollable {

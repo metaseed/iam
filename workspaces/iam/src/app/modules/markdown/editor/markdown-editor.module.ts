@@ -10,7 +10,6 @@ import { NgSpinKitModule } from 'ng-spin-kit';
 import { MaterialModule } from 'app/modules/material/material.module';
 import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
 import { CodemirrorToolbarComponent } from './codemirror-editor/codemirror-toolbar/codemirror-toolbar.component';
-import { KeyMapSelectionDialog } from './editor-toolbar/dialog.component';
 import { DocSaveCoordinateService } from './services/doc-save-coordinate-service';
 import { CanDeactivateGuard } from './services/can-deactive-guard.service';
 import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
@@ -21,7 +20,6 @@ import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
     CodemirrorComponent,
     MarkdownEditorComponent,
     CodemirrorToolbarComponent,
-    KeyMapSelectionDialog,
     DocDirtyNotifyDialog
   ],
   imports: [
@@ -39,11 +37,7 @@ import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
     CodemirrorComponent
     // MonacoEditorLoaderModule
   ],
-  providers: [
-    MarkdownEditorService,
-    DocSaveCoordinateService,
-    CanDeactivateGuard
-  ],
-  entryComponents: [DocDirtyNotifyDialog, KeyMapSelectionDialog]
+  providers: [MarkdownEditorService, DocSaveCoordinateService, CanDeactivateGuard],
+  entryComponents: [DocDirtyNotifyDialog]
 })
 export class MarkdownEditorModule {}
