@@ -1,7 +1,7 @@
-<mat-toolbar style="position:fixed; bottom:0;" class="tab-bar--dark" *ngIf="show">
-  <mat-toolbar-row style="min-height:inherit">
+<mat-toolbar style="position:fixed; bottom:0;min-height: inherit;" class="tab-bar--dark" *ngIf="show">
+  <mat-toolbar-row style="height: inherit;">
 
-    <nav mat-tab-nav-bar style="height:inherit;text-transform:capitalize;padding:0;">
+    <nav mat-tab-nav-bar style="height:inherit;text-transform:capitalize;padding:0;margin:0 auto;">
       <a mat-tab-link routerLinkActive #rla="routerLinkActive" [active]="rla.isActive" [routerLink]="['/']">
         <mat-icon>home</mat-icon>
         <span>home</span>
@@ -18,8 +18,8 @@
         <mat-tab-icon-text>message</mat-tab-icon-text>
       </mat-tab> -->
       <a mat-tab-link routerLinkActive #rla="routerLinkActive" [active]="rla.isActive" [routerLink]="['/doc','new']">
-        <mat-icon >add_circle</mat-icon>
-        <span>new</span>
+        <mat-icon style="font-size: 4.8rem; height: auto;">add_circle</mat-icon>
+        <!-- <span>new</span> -->
       </a>
       <a mat-tab-link routerLinkActive #rla="routerLinkActive" [active]="rla.isActive" [routerLink]="['/']">
         <mat-icon>person</mat-icon>
