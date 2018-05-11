@@ -1,9 +1,0 @@
-@import '~@angular/material/theming';
-
-$iam-light-primary: mat-palette($mat-grey, 400, 300, 500);
-$iam-light-accent: mat-palette($mat-grey, A200, A100, A400);
-$iam-theme-light: mat-light-theme($iam-light-primary, $iam-light-accent);
-
-$iam-dark-primary: mat-palette($mat-blue-gray, 700, 500, 900);
-$iam-dark-accent: mat-palette($mat-blue-gray, A200, A100, A400);
-$iam-theme-dark: mat-dark-theme($iam-dark-primary, $iam-dark-accent);

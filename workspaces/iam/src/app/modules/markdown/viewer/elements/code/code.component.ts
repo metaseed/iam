@@ -6,12 +6,12 @@ import {
   OnChanges,
   Output,
   ViewChild
-} from "@angular/core";
-import { Logger } from "core";
-import { PrettyPrinter } from "./pretty-printer.service";
-import { CopierService } from "packages/copier.service";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { tap } from "rxjs/operators";
+} from '@angular/core';
+import { Logger } from 'core';
+import { PrettyPrinter } from './pretty-printer.service';
+import { CopierService } from '../../../../../../../packages/copier.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { tap } from 'rxjs/operators';
 
 /**
  * If linenums is not set, this is the default maximum number of lines that
@@ -41,7 +41,7 @@ const DEFAULT_LINE_NUMS_COUNT = 10;
  * Renders code provided through the `updateCode` method.
  */
 @Component({
-  selector: "iam-code",
+  selector: 'iam-code',
   template: `
     <pre class="prettyprint lang-{{language}}">
       <button *ngIf="!hideCopy" class="material-icons copy-button no-print"
@@ -55,7 +55,7 @@ const DEFAULT_LINE_NUMS_COUNT = 10;
     `
 })
 export class CodeComponent implements OnChanges {
-  ariaLabel = "";
+  ariaLabel = '';
 
   /** The code to be copied when clicking the copy button, this should not be HTML encoded */
   private codeText: string;
@@ -99,7 +99,7 @@ export class CodeComponent implements OnChanges {
   @Input()
   set title(title: string) {
     this._title = title;
-    this.ariaLabel = this.title ? `Copy code snippet from ${this.title}` : "";
+    this.ariaLabel = this.title ? `Copy code snippet from ${this.title}` : '';
   }
   get title(): string {
     return this._title;
@@ -109,7 +109,7 @@ export class CodeComponent implements OnChanges {
   @Output() codeFormatted = new EventEmitter<void>();
 
   /** The element in the template that will display the formatted code. */
-  @ViewChild("codeContainer") codeContainer: ElementRef;
+  @ViewChild('codeContainer') codeContainer: ElementRef;
 
   constructor(
     private snackbar: MatSnackBar,
@@ -132,11 +132,7 @@ export class CodeComponent implements OnChanges {
     this.codeText = this.getCodeText(); // store the unformatted code as text (for copying)
 
     this.pretty
-      .formatCode(
-        leftAlignedCode,
-        this.language,
-        this.getLinenums(leftAlignedCode)
-      )
+      .formatCode(leftAlignedCode, this.language, this.getLinenums(leftAlignedCode))
       .pipe(tap(() => this.codeFormatted.emit()))
       .subscribe(
         c => this.setCodeHtml(c),
@@ -148,13 +144,9 @@ export class CodeComponent implements OnChanges {
 
   /** Sets the message showing that the code could not be found. */
   private showMissingCodeMessage() {
-    const src = this.path
-      ? this.path + (this.region ? "#" + this.region : "")
-      : "";
-    const srcMsg = src ? ` for\n${src}` : ".";
-    this.setCodeHtml(
-      `<p class="code-missing">The code sample is missing${srcMsg}</p>`
-    );
+    const src = this.path ? this.path + (this.region ? '#' + this.region : '') : '';
+    const srcMsg = src ? ` for\n${src}` : '.';
+    this.setCodeHtml(`<p class="code-missing">The code sample is missing${srcMsg}</p>`);
   }
 
   /** Sets the innerHTML of the code container to the provided code string. */
@@ -178,13 +170,11 @@ export class CodeComponent implements OnChanges {
     const successfullyCopied = this.copier.copyText(code);
 
     if (successfullyCopied) {
-      this.logger.log("Copied code to clipboard:", code);
-      this.snackbar.open("Code Copied", "", { duration: 800 });
+      this.logger.log('Copied code to clipboard:', code);
+      this.snackbar.open('Code Copied', '', { duration: 800 });
     } else {
-      this.logger.error(
-        new Error(`ERROR copying code to clipboard: "${code}"`)
-      );
-      this.snackbar.open("Copy failed. Please try again!", "", {
+      this.logger.error(new Error(`ERROR copying code to clipboard: "${code}"`));
+      this.snackbar.open('Copy failed. Please try again!', '', {
         duration: 800
       });
     }
@@ -193,13 +183,13 @@ export class CodeComponent implements OnChanges {
   /** Gets the calculated value of linenums (boolean/number). */
   getLinenums(code: string) {
     const linenums =
-      typeof this.linenums === "boolean"
+      typeof this.linenums === 'boolean'
         ? this.linenums
-        : this.linenums === "true"
+        : this.linenums === 'true'
           ? true
-          : this.linenums === "false"
+          : this.linenums === 'false'
             ? false
-            : typeof this.linenums === "string"
+            : typeof this.linenums === 'string'
               ? parseInt(this.linenums, 10)
               : this.linenums;
 
@@ -213,7 +203,7 @@ export class CodeComponent implements OnChanges {
 function leftAlign(text: string): string {
   let indent = Number.MAX_VALUE;
 
-  const lines = text.split("\n");
+  const lines = text.split('\n');
   lines.forEach(line => {
     const lineIndent = line.search(/\S/);
     if (lineIndent !== -1) {
@@ -223,6 +213,6 @@ function leftAlign(text: string): string {
 
   return lines
     .map(line => line.substr(indent))
-    .join("\n")
+    .join('\n')
     .trim();
 }

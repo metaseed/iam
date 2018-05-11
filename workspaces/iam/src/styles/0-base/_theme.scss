@@ -1,9 +1,6 @@
-@import '../../src/app/modules/material/theme-variables';
-
+@import '../theme-variables';
 @include mat-core();
-
 @include angular-material-theme($iam-theme-light);
-
 .theme-dark {
   @include angular-material-theme($iam-theme-dark);
 }

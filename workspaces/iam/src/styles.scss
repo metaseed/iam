@@ -1,18 +1,14 @@
-@import './styles/main.scss';
-
+@import './styles/main';
 :root {
   --mdc-theme-text-primary-on-background: #fff;
   --mdc-theme-text-secondary-on-background: rgba(255, 255, 255, 0.74);
 }
 
 @import '~markdown-it-latex/src/katex.css';
-@import 'variables';
 @import '~font-awesome/scss/font-awesome';
 @import '~bootstrap/scss/bootstrap';
-// @import '~highlight.js/styles/github';
 @import '~prismjs/themes/prism';
 @import '~prismjs/plugins/line-numbers/prism-line-numbers';
-/* Rules for sizing the icon. */
 @media all and (min-width: 960px) {
   ::-webkit-scrollbar {
     width: 6px;
@@ -28,7 +24,8 @@
     background-color: #eeeeee;
   }
 }
-div.markdown-code:hover > button {
+
+div.markdown-code:hover>button {
   visibility: visible;
 }
 
@@ -47,7 +44,6 @@ div.markdown-code:hover > button {
   .deep-link-icon:hover {
     visibility: visible;
   }
-
   .deep-link {
     float: left;
     margin-left: -18px;
@@ -64,6 +60,7 @@ div.markdown-code:hover > button {
     border: 0;
   }
 }
+
 .material-icons {
   font-family: 'Material Icons';
   font-weight: normal;
@@ -131,10 +128,10 @@ div.markdown-code:hover > button {
   line-height: 1.58;
   letter-spacing: -0.003em;
 }
+
 .blockquote {
   border-left: 3px solid rgba(0, 0, 0, 0.84);
-  padding-left: 20px;
-  // margin-left: -23px;
+  padding-left: 20px; // margin-left: -23px;
   // padding-bottom: 2px;
   // border-left: 0.25rem solid #eceeef;
 }
@@ -155,15 +152,14 @@ div.markdown-code:hover > button {
 @import '~codemirror/addon/display/fullscreen';
 @import '~codemirror/addon/dialog/dialog';
 @import '~codemirror/addon/search/matchesonscrollbar';
-
 .CodeMirror {
   height: 100vh;
 }
+
 .markdown-container {
   .CodeMirror {
     height: calc(100vh - 38px);
   }
-
   .cm-s-default .cm-formatting {
     opacity: 0.48;
   }
@@ -188,23 +184,4 @@ div.markdown-code:hover > button {
     content: '\21b0';
     font-size: 0.3rem;
   }
-}
-
-// .CodeMirror-gutter-filler,
-// .CodeMirror-vscrollbar {
-//   z-index: 0;
-// }
-// .CodeMirror pre {
-//   z-index: 0;
-// }
-.mdc-snackbar {
-  z-index: 9;
-}
-
-.mdc-menu--open {
-  z-index: 9;
-}
-
-.mdc-menu--open > .mdc-menu__items {
-  color: black;
 }

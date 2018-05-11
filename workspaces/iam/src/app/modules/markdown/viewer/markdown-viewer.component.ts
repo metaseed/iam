@@ -15,7 +15,7 @@ import * as view from '../reducers/view';
 import { Store } from '@ngrx/store';
 import * as fromView from '../actions/view';
 import * as MarkdownIt from 'markdown-it';
-import lozad from '../../../../packages/lazy-load';
+import lozad from '../../../../../packages/lazy-load';
 import { TocComponent } from './elements/toc/toc.component';
 import { of, Observable, timer } from 'rxjs';
 import { TocService } from './services/toc.service';
