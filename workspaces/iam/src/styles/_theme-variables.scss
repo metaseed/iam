@@ -3,3 +3,4 @@ $primary-palette: mat-palette($mat-indigo);
 $accent-palette: mat-palette($mat-indigo, A200, A100, A400);
 $iam-theme-light: mat-light-theme($primary-palette, $accent-palette);
 $iam-theme-dark: mat-dark-theme($primary-palette, $accent-palette);
+$typography-config: mat-typography-config();

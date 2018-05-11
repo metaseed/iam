@@ -45,7 +45,8 @@ export const MatModules = [
   MatSnackBarModule,
   MatProgressBarModule,
   MatToolbarModule,
-  MatDialogModule
+  MatDialogModule,
+  MatIconModule
 ];
 
 @NgModule({

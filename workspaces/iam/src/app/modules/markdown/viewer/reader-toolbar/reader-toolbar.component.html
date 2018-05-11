@@ -1,18 +1,21 @@
-<mat-toolbar #toolbar *ngIf="!isScrollDown && !isEditMode" [style.position]="isPositionFixed?'fixed':'relative'" style="z-index:20;">
+<mat-toolbar color="primary" #toolbar *ngIf="!isScrollDown && !isEditMode" [style.position]="isPositionFixed?'fixed':'relative'"
+  style="z-index:20;">
   <!-- [@show]="isScrollDown===false" -->
   <mat-toolbar-row>
 
-    <a routerLinkActive [routerLink]="['/']" mat-toolbar-icon material-icon>arrow_back</a>
+    <button routerLinkActive [routerLink]="['/']" mat-icon-button>
+      <mat-icon>arrow_back</mat-icon>
+    </button>
 
-    <span style="flex:1 1 auto">Document</span>
+    <span style="flex:1 1 auto;margin:2.4rem">Document</span>
 
 
-    <button class="mat-icon-button" (click)="toEditMode($event)">
+    <button mat-icon-button (click)="toEditMode($event)">
       <mat-icon>
         mode_edit
       </mat-icon>
     </button>
-    <button class="mat-icon-button" [matMenuTriggerFor]="menu">
+    <button mat-icon-button [matMenuTriggerFor]="menu">
       <mat-icon>
         more_vert
       </mat-icon>

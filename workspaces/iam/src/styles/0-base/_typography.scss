@@ -11,7 +11,6 @@ html {
 //   -webkit-font-smoothing: antialiased;
 //   -moz-osx-font-smoothing: grayscale;
 // }
-
 .markdown-container {
   h1,
   h2,
@@ -25,59 +24,48 @@ html {
     line-height: 1.25;
   }
   h1 {
-    padding-bottom: 0.3em;
-    font-size: 2em;
+    padding-bottom: 0.3rem;
+    font-size: 2rem;
     border-bottom: 1px solid #eaecef;
-    line-height: 2.2em;
+    line-height: 2.2rem;
   }
-
   h2 {
-    padding-bottom: 0.3em;
-    font-size: 1.5em;
+    padding-bottom: 0.3rem;
+    font-size: 1.5rem;
     border-bottom: 1px solid #eaecef;
-    line-height: 2em;
+    line-height: 2rem;
   }
-
   h3 {
-    font-size: 1.25em;
+    font-size: 1.25rem;
   }
-
   h4 {
-    font-size: 1em;
+    font-size: 1rem;
   }
-
   h5 {
-    font-size: 0.875em;
+    font-size: 0.875rem;
   }
-
   h6 {
-    font-size: 0.85em;
+    font-size: 0.85rem;
     color: #6a737d;
   }
   .cm-header-1 {
     @extend h1;
   }
-
   .cm-header-2 {
     @extend h2;
   }
-
   .cm-header-3 {
     @extend h3;
   }
-
   .cm-header-4 {
     @extend h4;
   }
-
   .cm-header-5 {
     @extend h5;
   }
-
   .cm-header-6 {
     @extend h4;
   }
-
   .mat-tab-body-wrapper h2 {
     margin-top: 0;
   }
@@ -104,15 +92,12 @@ html {
 //     margin: 4px 0;
 //   }
 // }
-
 // li p {
 //   margin: 0;
 // }
-
 // a {
 //   text-decoration: none;
 // }
-
 // .app-toolbar a {
 //   font-size: 16px;
 //   font-weight: 400;
@@ -121,41 +106,34 @@ html {
 //   text-transform: uppercase;
 //   padding: 21px 0;
 // }
-
 // strong {
 //   font-weight: 500;
 // }
-
 // table {
 //   border-collapse: collapse;
 //   border-radius: 2px;
 //   border-spacing: 0;
 //   margin: 0 0 32px 0;
 // }
-
 // table tbody th {
 //   max-width: 100px;
 //   padding: 13px 32px;
 //   text-align: left;
 // }
-
 // td {
 //   font-weight: 400;
 //   padding: 8px 30px;
 //   letter-spacing: 0.3px;
-
 //   p {
 //     margin: 0;
 //   }
 // }
-
 // th {
 //   font-size: 16px;
 //   font-weight: 500;
 //   padding: 13px 32px;
 //   text-align: left;
 // }
-
 // p > code,
 // li > code,
 // td > code,
@@ -169,12 +147,10 @@ html {
 //   background-color: $backgroundgray;
 //   border-radius: 4px;
 // }
-
 // code {
 //   font-family: $code-font;
 //   font-size: 90%;
 // }
-
 // .sidenav-content a {
 //   color: $blue;
 //   &:hover {

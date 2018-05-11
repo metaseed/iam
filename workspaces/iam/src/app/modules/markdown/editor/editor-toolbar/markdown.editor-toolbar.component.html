@@ -1,19 +1,19 @@
-<mat-toolbar *ngIf="!isScrollDown && isEditMode" [style.position]="isPositionFixed?'fixed':'relative'" style="z-index: 20;"
+<mat-toolbar color="primary" *ngIf="!isScrollDown && isEditMode" [style.position]="isPositionFixed?'fixed':'relative'" style="z-index: 20;"
   #toolbar>
   <mat-toolbar-row>
-    <button class="mat-icon-button">
-      <mat-icon tabindex="1" routerLinkActive [routerLink]="['/']">
+    <button mat-icon-button routerLinkActive [routerLink]="['/']">
+      <mat-icon>
         arrow_back
       </mat-icon>
     </button>
     <span style="flex:1 1 auto">Edit</span>
 
-    <button class="mat-icon-button" (click)="undo()">
+    <button mat-icon-button (click)="undo()">
       <mat-icon>
         undo
       </mat-icon>
     </button>
-    <button class="mat-icon-button" (click)="redo()">
+    <button mat-icon-button (click)="redo()">
       <mat-icon>
         redo
       </mat-icon>
@@ -21,16 +21,18 @@
 
 
     <!--visibility_off-->
-    <a tabindex="1" mat-toolbar-icon material-icon [class.save-button]="(docSaver.isDirty$ | async) && !docSaver.isSaving" [class.saving]="docSaver.isSaving"
-      (click)="save()">save</a>
-    <a tabindex="1" mat-toolbar-icon material-icon *ngIf="!gtsmBreakpoint" (click)="togglePreview()">{{markdown.showPreviewPanel?'chrome_reader_mode':'chrome_reader_mode'}}</a>
-    <!-- <a href="#/toolbar-demo" class="material-icons mat-toolbar__icon">fullscreen</a> -->
-    <button class="mat-icon-button" (click)="toViewMode($event)">
+    <button mat-icon-button (click)="save()" [class.save-button]="(docSaver.isDirty$ | async) && !docSaver.isSaving" [class.saving]="docSaver.isSaving">
+      <mat-icon>save</mat-icon>
+    </button>
+    <button mat-icon-button *ngIf="!gtsmBreakpoint" (click)="togglePreview()">
+      <mat-icon>{{markdown.showPreviewPanel?'chrome_reader_mode':'chrome_reader_mode'}}</mat-icon>
+    </button>
+    <button mat-icon-button (click)="toViewMode($event)">
       <mat-icon>
         visibility
       </mat-icon>
     </button>
-    <button class="mat-icon-button" [matMenuTriggerFor]="menu">
+    <button mat-icon-button [matMenuTriggerFor]="menu">
       <mat-icon>
         more_vert
       </mat-icon>
