@@ -1,9 +1,5 @@
-@import './styles/main';
-:root {
-  --mdc-theme-text-primary-on-background: #fff;
-  --mdc-theme-text-secondary-on-background: rgba(255, 255, 255, 0.74);
-}
-
+$fa-font-path: '~font-awesome/fonts';
+$icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap';
 @import '~markdown-it-latex/src/katex.css';
 @import '~font-awesome/scss/font-awesome';
 @import '~bootstrap/scss/bootstrap';

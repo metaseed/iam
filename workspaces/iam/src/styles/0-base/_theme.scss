@@ -1,6 +1,12 @@
 @import '../theme-variables';
+@import '../../app/modules/shared/theme';
 @include mat-core();
-@include angular-material-theme($iam-theme-light);
+@mixin themes($theme) {
+  @include angular-material-theme($theme);
+  @include shared-module-theme($theme);
+}
+
+@include themes($iam-theme-light);
 .theme-dark {
-  @include angular-material-theme($iam-theme-dark);
+  @include themes($iam-theme-dark);
 }

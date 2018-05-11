@@ -1,16 +1,8 @@
 // always using rem as size unit, 1rem = 10px
 html {
-  font-size: 62.5%;
+  // font-size: 62.5%;
 }
 
-// body {
-//   font-family: $main-font;
-//   margin: 0;
-//   color: $darkgray;
-//   font-size: 14px;
-//   -webkit-font-smoothing: antialiased;
-//   -moz-osx-font-smoothing: grayscale;
-// }
 .markdown-container {
   h1,
   h2,
@@ -18,8 +10,6 @@ html {
   h4,
   h5,
   h6 {
-    // margin-top: 24px;
-    // margin-bottom: 16px;
     font-weight: 600;
     line-height: 1.25;
   }
@@ -70,90 +60,3 @@ html {
     margin-top: 0;
   }
 }
-
-// p,
-// ol,
-// ul,
-// ol,
-// li,
-// input,
-// a {
-//   font-size: 14px;
-//   line-height: 24px;
-//   letter-spacing: 0.3px;
-//   font-weight: 400;
-//   & > em {
-//     letter-spacing: 0.3px;
-//   }
-// }
-// ol {
-//   li,
-//   p {
-//     margin: 4px 0;
-//   }
-// }
-// li p {
-//   margin: 0;
-// }
-// a {
-//   text-decoration: none;
-// }
-// .app-toolbar a {
-//   font-size: 16px;
-//   font-weight: 400;
-//   color: white;
-//   font-family: $main-font;
-//   text-transform: uppercase;
-//   padding: 21px 0;
-// }
-// strong {
-//   font-weight: 500;
-// }
-// table {
-//   border-collapse: collapse;
-//   border-radius: 2px;
-//   border-spacing: 0;
-//   margin: 0 0 32px 0;
-// }
-// table tbody th {
-//   max-width: 100px;
-//   padding: 13px 32px;
-//   text-align: left;
-// }
-// td {
-//   font-weight: 400;
-//   padding: 8px 30px;
-//   letter-spacing: 0.3px;
-//   p {
-//     margin: 0;
-//   }
-// }
-// th {
-//   font-size: 16px;
-//   font-weight: 500;
-//   padding: 13px 32px;
-//   text-align: left;
-// }
-// p > code,
-// li > code,
-// td > code,
-// th > code {
-//   font-family: $code-font;
-//   font-size: 85%;
-//   color: $darkgray;
-//   letter-spacing: 0;
-//   line-height: 1;
-//   padding: 2px 0;
-//   background-color: $backgroundgray;
-//   border-radius: 4px;
-// }
-// code {
-//   font-family: $code-font;
-//   font-size: 90%;
-// }
-// .sidenav-content a {
-//   color: $blue;
-//   &:hover {
-//     color: $mediumgray;
-//   }
-// }

@@ -1,8 +1,8 @@
-<mat-toolbar style="position:fixed; bottom:0;min-height: inherit;" class="tab-bar--dark" *ngIf="show">
+<mat-toolbar style="position:fixed; bottom:0;min-height: inherit;" class="tab-bar--dark mat-primary" *ngIf="show">
   <mat-toolbar-row style="height: inherit;">
 
     <nav mat-tab-nav-bar style="height:inherit;text-transform:capitalize;padding:0;margin:0 auto;">
-      <a mat-tab-link routerLinkActive #rla="routerLinkActive" [active]="rla.isActive" [routerLink]="['/']">
+      <a mat-tab-link routerLinkActive="active" [routerLink]="['/']">
         <mat-icon>home</mat-icon>
         <span>home</span>
       </a>

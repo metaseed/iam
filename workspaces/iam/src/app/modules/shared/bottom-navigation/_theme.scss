@@ -1,0 +1,16 @@
+@import 'theme-variables';
+@mixin iam-bot-nav($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  a.mat-tab-link {
+    color: map-get($primary, default-contrast);
+    &:hover {
+      color: map-get($primary, darker-contrast);
+    }
+    &.active:not(.mat-tab-disabled) {
+      opacity: 1 !important;
+    }
+  } // mat-ink-bar.mat-ink-bar {
+  //   background-color: map-get($accent, default) !important;
+  // }
+}

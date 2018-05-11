@@ -1,14 +1,7 @@
 .tab-bar--dark {
   .mdc-tab {
     line-height: 1em;
-  } // .mdc-tab:not(.mdc-tab--active) {
-  //   @include mdc-tab-ink-color(rgba(mdc-theme-prop-value(white), 0.54));
-  // }
-  // .mdc-tab--active,
-  // .mdc-tab:hover {
-  //   @include mdc-tab-ink-color(white);
-  // }
-  // @include mdc-toolbar-fill-color(#303030);
+  }
 }
 
 .mat-tab-links {

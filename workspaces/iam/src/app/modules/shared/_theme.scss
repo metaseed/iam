@@ -1,0 +1,6 @@
+/*shared module theme*/
+
+@import './bottom-navigation/theme';
+@mixin shared-module-theme($theme) {
+  @include iam-bot-nav($theme);
+}
