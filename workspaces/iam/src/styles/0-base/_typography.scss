@@ -38,25 +38,31 @@ html {
   //   font-size: 0.85rem;
   //   color: #6a737d;
   // }
-  .cm-header-1 {
-    @extend h1;
-  }
-  .cm-header-2 {
-    @extend h2;
-  }
-  .cm-header-3 {
-    @extend h3;
-  }
-  .cm-header-4 {
-    @extend h4;
-  }
-  .cm-header-5 {
-    @extend h5;
-  }
-  .cm-header-6 {
-    @extend h4;
-  }
-  .mat-tab-body-wrapper h2 {
-    margin-top: 0;
+  .CodeMirror {
+    font-family: inherit;
+    .cm-header-1 {
+      @extend h1;
+    }
+    .cm-header-2 {
+      @extend h2;
+    }
+    .cm-header-3 {
+      @extend h3;
+    }
+    .cm-header-4 {
+      @extend h4;
+    }
+    .cm-header-5 {
+      @extend h5;
+    }
+    .cm-header-6 {
+      @extend h4;
+    }
+    .mat-tab-body-wrapper h2 {
+      margin-top: 0;
+    }
+    .cm-keyword,.cm-def,.cm-def,.cm-comment,.cm-tab,.cm-variable,.cm-property,.cm-operator,.cm-string {
+      font-family:  Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    }
   }
 }
