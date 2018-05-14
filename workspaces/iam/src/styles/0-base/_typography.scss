@@ -1,43 +1,43 @@
 // always using rem as size unit, 1rem = 10px
 html {
-  // font-size: 62.5%;
+  font-size: 62.5%;
 }
 
 .markdown-container {
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-weight: 600;
-    line-height: 1.25;
-  }
-  h1 {
-    padding-bottom: 0.3rem;
-    font-size: 2rem;
-    border-bottom: 1px solid #eaecef;
-    line-height: 2.2rem;
-  }
-  h2 {
-    padding-bottom: 0.3rem;
-    font-size: 1.5rem;
-    border-bottom: 1px solid #eaecef;
-    line-height: 2rem;
-  }
-  h3 {
-    font-size: 1.25rem;
-  }
-  h4 {
-    font-size: 1rem;
-  }
-  h5 {
-    font-size: 0.875rem;
-  }
-  h6 {
-    font-size: 0.85rem;
-    color: #6a737d;
-  }
+  // h1,
+  // h2,
+  // h3,
+  // h4,
+  // h5,
+  // h6 {
+  //   font-weight: 600;
+  //   line-height: 1.25;
+  // }
+  // h1 {
+  //   padding-bottom: 0.3rem;
+  //   font-size: 2rem;
+  //   border-bottom: 1px solid #eaecef;
+  //   line-height: 2.2rem;
+  // }
+  // h2 {
+  //   padding-bottom: 0.3rem;
+  //   font-size: 1.5rem;
+  //   border-bottom: 1px solid #eaecef;
+  //   line-height: 2rem;
+  // }
+  // h3 {
+  //   font-size: 1.25rem;
+  // }
+  // h4 {
+  //   font-size: 1rem;
+  // }
+  // h5 {
+  //   font-size: 0.875rem;
+  // }
+  // h6 {
+  //   font-size: 0.85rem;
+  //   color: #6a737d;
+  // }
   .cm-header-1 {
     @extend h1;
   }
