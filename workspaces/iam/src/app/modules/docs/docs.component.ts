@@ -9,7 +9,7 @@ import { NgSpinKitModule } from 'ng-spin-kit'
 @Component({
   selector: 'docs',
   templateUrl: './docs.component.html',
-  styleUrls: ['./docs.component.css'],
+  styleUrls: ['./docs.component.scss'],
 })
 export class DocsComponent {
   constructor(public docService: DocService, private router: Router) { }

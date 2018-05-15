@@ -11,6 +11,7 @@ import { DocService } from "./services/doc.service";
 import { MaterialModule } from "../../modules/material/material.module";
 import { NgSpinKitModule } from "ng-spin-kit";
 import { DeleteAlertDialog } from "app/modules/docs/doc-list/dialog.component";
+import { DocSearchComponent } from './doc-search/doc-search.component';
 const todosRoutes: Routes = [
   {
     path: "docs",
@@ -31,7 +32,8 @@ const todosRoutes: Routes = [
     DeleteAlertDialog,
     NewDocComponent,
     DocsComponent,
-    DocListComponent
+    DocListComponent,
+    DocSearchComponent
   ],
   exports: [DocsComponent],
   providers: [DocService],

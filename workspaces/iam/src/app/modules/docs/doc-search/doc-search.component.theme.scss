@@ -1,0 +1,22 @@
+@import 'theme-variables';
+
+@mixin well-provision-search-theme($theme) {
+  $foreground: map-get($theme, foreground);
+  $action-bar-input-color: mat-color($foreground, text);
+  $hint: mat-color($foreground, hint-text);
+
+  .doc-search {
+    input {
+      color: $action-bar-input-color;
+      &::placeholder {
+        color: $hint;
+      }
+      &:focus {
+        color: $action-bar-input-color !important;
+      }
+    }
+    .search-icon {
+      color: $hint;
+    }
+  }
+}

@@ -1,3 +1,4 @@
+@import '~@angular/material/theming';
 // just replace the material's default one: px to rem;
 $iam-typography-config: mat-typography-config(
         $font-family:   "Roboto, 'Helvetica Neue', sans-serif",
@@ -5,21 +6,23 @@ $iam-typography-config: mat-typography-config(
         $display-3:     mat-typography-level(5.6rem, 6.2rem, 400),
         $display-2:     mat-typography-level(4.5rem, 5.6rem, 400),
         $display-1:     mat-typography-level(3.4rem, 4rem, 400),
-        $headline:      mat-typography-level(2.8rem, 4.0rem, 400),
-        $title:         mat-typography-level(2.4rem, 2.6rem, 400, "RobotoBold"),
+        $headline:      mat-typography-level(2.8rem, 4.0rem, 500),
+        $title:         mat-typography-level(2.4rem, 2.6rem, 500),
         $subheading-2:  mat-typography-level(2rem, 3.6rem, 400),
         $subheading-1:  mat-typography-level(1.9rem, 3.2rem, 400),
-        $body-2:        mat-typography-level(1.8rem, 3.2rem, 500, "RobotoMedium"),
+        $body-2:        mat-typography-level(1.8rem, 3.2rem, 500),
         $body-1:        mat-typography-level(1.8rem, 2.8rem, 400),
         $caption:       mat-typography-level(1.6rem, 2.8rem, 400),
-        $button:        mat-typography-level(1.8rem, 1.4rem, 400, "RobotoBold"),
+        $button:        mat-typography-level(1.8rem, 1.4rem, 400),
         // Line-height must be unit-less fraction of the font-size.
-        $input:         mat-typography-level(1.4rem, 1.5, 400, "RobotoMedium")
+        $input:         mat-typography-level(1.4rem, 1.5, 500)
 );
 
-$iam-typography-config: map-merge($map1: $iam-typography-config,
-                                  $map2: (radio: mat-typography-level(1.4rem, 1.4rem, 400, "RobotoRegular"))
-                );
+$iam-typography-config: map-merge($iam-typography-config,
+      (
+      radio: mat-typography-level(1.4rem, 1.4rem, 400, "RobotoRegular"),
+      blockquote: mat-typography-level(inherit, 1.58, 400, inherit, -0.003em)
+      ));
 // .unicorn-header {
 //   font-size: mat-font-size($config, headline);
 //   font-family: mat-font-family($config);

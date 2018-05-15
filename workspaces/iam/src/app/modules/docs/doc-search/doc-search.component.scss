@@ -1,0 +1,22 @@
+.doc-search {
+  width: 100%;
+  height: 4rem;
+  padding-left: 1rem;
+  font-size: 1.4rem;
+  display: flex;
+  flex: 1;
+  background: white;
+  mat-icon {
+    margin: auto;
+  }
+  input {
+    flex: 1;
+    font-family: RobotoRegular;
+    width: auto;
+    max-width: none;
+    display: inline-block;
+    border: 0;
+    padding: 0.25rem 0.5rem;
+    margin: 0;
+  }
+}
