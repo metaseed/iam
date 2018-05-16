@@ -1,6 +1,6 @@
 <div style="height:100vh;overflow-y:auto;">
   <div style="margin-bottom:5.5rem">
-    <iam-doc-search></iam-doc-search>
+    <iam-doc-search (Search)="onSearch($event)"></iam-doc-search>
     <doc-list [documents]="docService.model?.docs" (onShow)="showDoc($event)" (onDelete)="deleteDoc($event)"></doc-list>
     <sk-wave [isRunning]="!docService.docListLoaded"></sk-wave>
   </div>

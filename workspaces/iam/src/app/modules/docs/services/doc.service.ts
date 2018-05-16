@@ -1,18 +1,21 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { Document } from '../models/document';
-import { Observable } from 'rxjs';
+import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { MatSnackBar } from '@angular/material';
+
+import { ReplaySubject, Observable } from 'rxjs';
+import { map, flatMap } from 'rxjs/operators';
+
+import { base64Encode } from 'core';
+
+import { Document } from '../models/document';
 import { GithubStorage, UserInfo, EditIssueParams } from '../../../storage/github/index';
 import { Repository } from '../../../storage/github/repository';
 import { DocsModel } from '../models/docs.model';
 import { DocMeta } from '../models/doc-meta';
 import { Content } from '../../../storage/github/model/content';
-import { ReplaySubject } from 'rxjs';
-import { MatSnackBar } from '@angular/material';
-import { base64Encode } from 'core';
-import { map, flatMap } from 'rxjs/operators';
-import { Location } from '@angular/common';
+
 @Injectable()
 export class DocService {
   static FolderName = 'documents';

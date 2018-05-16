@@ -5,6 +5,7 @@ import { DocsModel } from './models/docs.model';
 import { Router } from '@angular/router';
 import { NavigationExtras } from '@angular/router/src/router';
 import { NgSpinKitModule } from 'ng-spin-kit'
+import { DocSearchService } from './services/doc-search.service';
 
 @Component({
   selector: 'docs',
@@ -12,7 +13,7 @@ import { NgSpinKitModule } from 'ng-spin-kit'
   styleUrls: ['./docs.component.scss'],
 })
 export class DocsComponent {
-  constructor(public docService: DocService, private router: Router) { }
+  constructor(public docService: DocService, private docSearchService: DocSearchService, private router: Router) { }
 
   ngOnInit() {
     this.docService.getAll();
@@ -41,4 +42,7 @@ export class DocsComponent {
     this.docService.deleteDoc(doc);
   }
 
+  onSearch(keyword: string) {
+    let docs = this.docSearchService.search(this.docService.model.docs,keyword);
+  }
 }
