@@ -229,17 +229,25 @@
     mousetrap "^1.6.1"
     tslib "^1.9.0"
 
-"@ngrx/effects@^v6.0.0-beta.1":
-  version "6.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@ngrx/effects/-/effects-6.0.0-beta.1.tgz#34e742e8c6a5730291f1e1f35798173ac0a93733"
+"@ngrx/effects@^v6.0.0-beta.3":
+  version "6.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@ngrx/effects/-/effects-6.0.0-beta.3.tgz#29e70a2fee0e793e9c08cbc7657232c043f9410b"
 
-"@ngrx/store-devtools@v6.0.0-beta.1":
-  version "6.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@ngrx/store-devtools/-/store-devtools-6.0.0-beta.1.tgz#8bbac342c90340589c881577e193dbe67c487c5a"
+"@ngrx/entity@^v6.0.0-beta.3":
+  version "6.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@ngrx/entity/-/entity-6.0.0-beta.3.tgz#cada859a70eb6291f29fb51cd2c74508f90f3213"
 
-"@ngrx/store@^v6.0.0-beta.1":
-  version "6.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@ngrx/store/-/store-6.0.0-beta.1.tgz#db4b91fb54828b83495ae9cfb544cf62266a441d"
+"@ngrx/schematics@^6.0.0-beta.3":
+  version "6.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@ngrx/schematics/-/schematics-6.0.0-beta.3.tgz#e5e03cd9096a0b45e0bbbeb327379128c04e35dd"
+
+"@ngrx/store-devtools@v6.0.0-beta.3":
+  version "6.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@ngrx/store-devtools/-/store-devtools-6.0.0-beta.3.tgz#899836165b6554c0f981054610293f6d0958d4de"
+
+"@ngrx/store@^v6.0.0-beta.3":
+  version "6.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@ngrx/store/-/store-6.0.0-beta.3.tgz#584e0bb69c2ea75637a2c2adfb27fc08db98dc92"
 
 "@ngtools/json-schema@^1.1.0":
   version "1.1.0"
