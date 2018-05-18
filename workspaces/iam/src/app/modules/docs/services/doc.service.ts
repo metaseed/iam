@@ -45,16 +45,6 @@ export class DocService {
     this._storage.repos('iam-data').subscribe(repo => this._repoSub$.next(repo));
   }
 
-  // store(todo: Document) {
-  //   console.log('Storing' + todo);
-  //   return this.http.post(TodoListService.baseUrl + '/todos', todo)
-  //     .map(resp => resp.json())
-  //     .catch(res => {
-  //       console.error(res.toString());
-  //       return Observable.throw(res.message || 'Server error')
-  //     });
-  // }
-
   deleteDoc(doc) {
     this._repoSub$.subscribe(repo =>
       repo.issue.edit(doc.number, { state: 'closed' }).subscribe(a => {
@@ -229,15 +219,6 @@ export class DocService {
       .subscribe(
         (docs: Document[]) => {
           let docList = new Array<Document>();
-          docs.sort((a, b) => {
-            if (a.updated_at < b.updated_at) {
-              return 1;
-            } else if (a.updated_at > b.updated_at) {
-              return -1;
-            } else {
-              return 0;
-            }
-          });
           docs.forEach(d => {
             let meta = DocMeta.deSerialize(d.body);
             if (meta) {

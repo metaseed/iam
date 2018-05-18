@@ -13,7 +13,11 @@ import { NgSpinKitModule } from 'ng-spin-kit';
 import { DeleteAlertDialog } from 'app/modules/docs/doc-list/dialog.component';
 import { DocSearchComponent } from './doc-search/doc-search.component';
 import { DocSearchService } from './services/doc-search.service';
-const todosRoutes: Routes = [
+import { StoreModule } from '@ngrx/store';
+import * as fromState from './state';
+import { EffectsModule } from '@ngrx/effects';
+import { DocumentEffects } from './state/document.effects';
+const routes: Routes = [
   {
     path: 'docs',
     component: DocsComponent
@@ -26,8 +30,10 @@ const todosRoutes: Routes = [
     FormsModule,
     MaterialModule,
     FlexLayoutModule,
-    NgSpinKitModule
-    //RouterModule.forChild(todosRoutes),
+    NgSpinKitModule,
+    StoreModule.forFeature('docs', fromState.reducers, { metaReducers: fromState.metaReducers }),
+    EffectsModule.forFeature([DocumentEffects])
+    //RouterModule.forChild(routes),
   ],
   declarations: [
     DeleteAlertDialog,
