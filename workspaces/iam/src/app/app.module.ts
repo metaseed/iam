@@ -18,6 +18,8 @@ import { MaterialModule } from "./modules/material/material.module";
 import { metaReducers, reducers } from "app/reducers";
 import { StoreDevtoolsModule } from "@ngrx/store-devtools";
 import { SharedModule } from "shared";
+import { EffectsModule } from '@ngrx/effects';
+import { AppEffects } from './app.effects';
 /**
  * This function is used internal to get a string instance of the `<base href="" />` value from `index.html`.
  * This is an exported function, instead of a private function or inline lambda, to prevent this error:
@@ -55,13 +57,10 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
       cheatSheetCloseEsc: true,
       cheatSheetDescription: "shortcuts"
     }),
-    StoreDevtoolsModule
-      .instrument
-      //   {
-      //   name: 'NgRx Iam DevTools',
-      //   logOnly: environment.production
-      // }
-      ()
+
+    !environment.production ? StoreDevtoolsModule.instrument() : [],
+
+    EffectsModule.forRoot([AppEffects])
   ],
   providers: [
     {
