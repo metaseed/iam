@@ -5,9 +5,9 @@ import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { MatSnackBar } from '@angular/material';
 
 import { ReplaySubject, Observable } from 'rxjs';
-import { map, flatMap } from 'rxjs/operators';
+import { map, flatMap, take } from 'rxjs/operators';
 
-import { base64Encode } from 'core';
+import { base64Encode, ConfigService, ConfigModel } from 'core';
 
 import { Document } from '../models/document';
 import { GithubStorage, UserInfo, EditIssueParams } from '../../../storage/github/index';
@@ -27,22 +27,19 @@ export class DocService {
   public docSaving$ = new EventEmitter();
   public model: DocsModel = new DocsModel();
   public docShow$ = new EventEmitter();
-  private _repoSub$ = new ReplaySubject<Repository>();
-  private _storage = new GithubStorage(
-    this._http,
-    new UserInfo('metasong', 'metaseed@gmail.com', 'mssong179')
-  );
+
   private editor: CodeMirror.Editor;
   public isDocDirty = false;
+  private _repoSub$:Observable<Repository>;
 
   constructor(
-    private _http: HttpClient,
     private snackBar: MatSnackBar,
     private location: Location,
     private router: Router,
-    private activedRoute: ActivatedRoute
+    private activedRoute: ActivatedRoute,
+    private _storage: GithubStorage
   ) {
-    this._storage.repos('iam-data').subscribe(repo => this._repoSub$.next(repo));
+    this._repoSub$ =this._storage.repo();
   }
 
   deleteDoc(doc) {

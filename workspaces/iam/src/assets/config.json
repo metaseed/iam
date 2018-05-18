@@ -6,4 +6,5 @@
     "ctrl+right": ["AppComponent.Forward", "MainComponent.MoveRight"],
     "ctrl+m f": ["Focus"]
   }
+
 }

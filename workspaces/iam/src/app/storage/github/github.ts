@@ -1,18 +1,21 @@
 import { IStorage } from '../storage';
-import { Observable } from 'rxjs';
-import { catchError, map, mergeMap, tap } from 'rxjs/operators';
-import { Injectable } from '@angular/core';
+import { Observable, combineLatest } from 'rxjs';
+import { catchError, map, mergeMap, tap,shareReplay } from 'rxjs/operators';
+import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Const } from './model/const';
 import { UserInfo } from './user-info';
 import { Repository } from './repository';
 import { Requestable } from './requestable';
 import * as GitHub from 'github-api';
+import { GITHUB_AUTHENTICATION } from './tokens';
+import { ConfigService } from 'core';
 
 @Injectable()
 export class GithubStorage extends Requestable {
   gh: GitHub;
-  constructor(http: HttpClient, userInfo: UserInfo) {
+  private _repo: Observable<Repository>;
+  constructor(http: HttpClient, @Inject(GITHUB_AUTHENTICATION)userInfo: UserInfo) {
     super(http, userInfo);
     this.gh = new GitHub({
       username: userInfo.name,
@@ -23,8 +26,10 @@ export class GithubStorage extends Requestable {
     });
   }
 
-  repos(name: string): Observable<Repository> {
-    return this.getRepos(name).pipe(
+  repo(name = 'iam-data'): Observable<Repository> {
+    if(this._repo) return this._repo;
+    return this._repo = this.getRepos(name).pipe(
+      shareReplay(1),
       catchError(err => {
         if (err.id === 404) {
           return this.newRepos(name);

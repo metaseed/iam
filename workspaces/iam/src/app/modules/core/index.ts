@@ -1,5 +1,5 @@
 export * from "./services/command.service";
-export * from "./services/config.service";
+export * from "./config/config.service";
 export * from "./utils";
 export * from "./services/update.service";
 export * from "./window-ref";

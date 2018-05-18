@@ -1,14 +1,19 @@
 import { HttpClient } from '@angular/common/http';
 import { APP_BASE_HREF } from '@angular/common';
-import { Injectable, Inject } from '@angular/core';
+import { Injectable, Inject, InjectionToken } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 
 class HotkeyConfig {
     [key: string]: string[];
 }
 
-export class ConfigModel {
+export interface ConfigModel {
     hotkeys: HotkeyConfig;
+    storage: {
+      github: {
+        dataRepo: string;
+      }
+    }
 }
 
 @Injectable()

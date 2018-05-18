@@ -1,6 +1,6 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import { Document } from '../models/document';
-import { CollectionDocumentActions, CollectionDocumentActionTypes } from './collection-document.actions';
+import { DocumentActions, DocumentActionTypes } from './document.actions';
 
 export interface State extends EntityState<Document> {
   // additional entities state properties
@@ -16,50 +16,54 @@ export const initialState: State = adapter.getInitialState({
 });
 export function reducer(
   state = initialState,
-  action: CollectionDocumentActions
+  action: DocumentActions
 ): State {
   switch (action.type) {
-    case CollectionDocumentActionTypes.AddCollectionDocument: {
+    case DocumentActionTypes.AddDocument: {
       return adapter.addOne(action.payload.collectionDocument, state);
     }
 
-    case CollectionDocumentActionTypes.UpsertCollectionDocument: {
+    case DocumentActionTypes.UpsertDocument: {
       return adapter.upsertOne(action.payload.collectionDocument, state);
     }
 
-    case CollectionDocumentActionTypes.AddCollectionDocuments: {
+    case DocumentActionTypes.AddDocuments: {
       return adapter.addMany(action.payload.collectionDocuments, state);
     }
 
-    case CollectionDocumentActionTypes.UpsertCollectionDocuments: {
+    case DocumentActionTypes.UpsertDocuments: {
       return adapter.upsertMany(action.payload.collectionDocuments, state);
     }
 
-    case CollectionDocumentActionTypes.UpdateCollectionDocument: {
+    case DocumentActionTypes.UpdateDocument: {
       return adapter.updateOne(action.payload.collectionDocument, state);
     }
 
-    case CollectionDocumentActionTypes.UpdateCollectionDocuments: {
+    case DocumentActionTypes.UpdateDocuments: {
       return adapter.updateMany(action.payload.collectionDocuments, state);
     }
 
-    case CollectionDocumentActionTypes.DeleteCollectionDocument: {
+    case DocumentActionTypes.DeleteDocument: {
       return adapter.removeOne(action.payload.id, state);
     }
 
-    case CollectionDocumentActionTypes.DeleteCollectionDocuments: {
+    case DocumentActionTypes.DeleteDocuments: {
       return adapter.removeMany(action.payload.ids, state);
     }
 
-    case CollectionDocumentActionTypes.LoadCollectionDocuments: {
+    case DocumentActionTypes.LoadDocuments: {
       return adapter.addAll(action.payload.collectionDocuments, state);
     }
 
-    case CollectionDocumentActionTypes.ClearCollectionDocuments: {
+    case DocumentActionTypes.ClearDocuments: {
       return adapter.removeAll(state);
     }
-    case CollectionDocumentActionTypes.SetCurrentDocumentId: {
+    case DocumentActionTypes.SetCurrentDocumentId: {
       return { ...state, currentDocumentId: action.payload.id };
+    }
+
+    case DocumentActionTypes.SetDocumentsMessage: {
+      return {...state, message:action.payload}
     }
 
     default: {

@@ -6,7 +6,7 @@ import {
   MetaReducer
 } from '@ngrx/store';
 import { environment } from 'environments/environment';
-import * as fromDocument from './collection-document.reducer';
+import * as fromDocument from './document.reducer';
 
 export interface State {
 
