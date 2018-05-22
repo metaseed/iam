@@ -53,8 +53,8 @@ export function reducer(
     }
 
     case DocumentActionTypes.LoadDocuments: {
-      // const actionStatus = {action: DocumentEffectsActionTypes.Load, message:'documents loaded.', status: ActionStatus.Success}
-      return adapter.addAll(action.payload.collectionDocuments, state);
+      const actionStatus = {action: DocumentEffectsActionTypes.Load, message:'documents loaded.', status: ActionStatus.Success}
+      return adapter.addAll(action.payload.collectionDocuments, {...state,actionStatus});
     }
 
     case DocumentActionTypes.ClearDocuments: {

@@ -1,7 +1,8 @@
-import { Action, Store } from '@ngrx/store';
+import { Action, Store, select } from '@ngrx/store';
 import { Observable, TimeoutError, UnaryFunction, of } from 'rxjs';
 import { State } from './document.reducer';
-import { filter, timeout, map, catchError } from 'rxjs/operators';
+import { filter, timeout, map, catchError, tap } from 'rxjs/operators';
+import { getDocumentActionStatusState } from 'app/modules/docs/state';
 
 export enum DocumentEffectsActionTypes {
   Load = '[DocumentEffects] Load',
@@ -41,9 +42,9 @@ export function getActionStatus(
   store: Store<State>,
   timeoutHandler?: (TimeoutError) => void
 ): Observable<boolean> {
-  return store.select('actionStatus').pipe(
-    filter(msg => msg && msg.action === action),
-    timeout(30000),
+  return store.pipe(
+    select(getDocumentActionStatusState),
+    filter(msg =>msg && msg.action === action),
     map(msg => msg.status === ActionStatus.Success),
     catchError((err: TimeoutError) => {
       if (timeoutHandler) timeoutHandler(err);
