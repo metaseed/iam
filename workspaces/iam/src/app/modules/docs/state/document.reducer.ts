@@ -1,11 +1,12 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import { Document } from '../models/document';
 import { DocumentActions, DocumentActionTypes } from './document.actions';
+import { DocumentEffectsActionTypes, DocumentActionStatus, ActionStatus } from './document.effects.actions';
 
 export interface State extends EntityState<Document> {
   // additional entities state properties
   currentDocumentId: string;
-  message?: {type: 'success'|'fail'|null, content: string};
+  actionStatus?: DocumentActionStatus
 }
 
 export const adapter: EntityAdapter<Document> = createEntityAdapter<Document>({sortComparer: (a: Document, b: Document)=> a.updated_at <  b.updated_at?-1:1});
@@ -52,6 +53,7 @@ export function reducer(
     }
 
     case DocumentActionTypes.LoadDocuments: {
+      // const actionStatus = {action: DocumentEffectsActionTypes.Load, message:'documents loaded.', status: ActionStatus.Success}
       return adapter.addAll(action.payload.collectionDocuments, state);
     }
 
@@ -63,7 +65,7 @@ export function reducer(
     }
 
     case DocumentActionTypes.SetDocumentsMessage: {
-      return {...state, message:action.payload}
+      return {...state, actionStatus:action.payload}
     }
 
     default: {

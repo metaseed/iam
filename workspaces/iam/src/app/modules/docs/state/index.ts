@@ -7,22 +7,23 @@ import {
 } from '@ngrx/store';
 import { environment } from 'environments/environment';
 import * as fromDocument from './document.reducer';
-
-export interface State {
-
-  document: fromDocument.State;
+import * as fromRoot from '../../../reducers';
+export interface State extends fromRoot.State {
+  docs: DocsState;
 }
 
-export const reducers: ActionReducerMap<State> = {
-
+export interface DocsState {
+  document: fromDocument.State;
+}
+export const reducers: ActionReducerMap<DocsState> = {
   document: fromDocument.reducer,
 };
 
-
 export const metaReducers: MetaReducer<State>[] = !environment.production ? [] : [];
 
-export const getDocsState = createFeatureSelector<fromDocument.State>('docs');
-export const getDocumentsState = createSelector(getDocsState,fromDocument.selectAll);
-export const getDocumentEntitiesState = createSelector(getDocsState,fromDocument.selectEntities);
-export const getCurrentDocumentIdState = createSelector(getDocsState,fromDocument.selectCurrentDocumentId);
+export const getDocsState = createFeatureSelector<DocsState>('docs');
+export const getDocumentState = createSelector(getDocsState,state=>state.document);
+export const getDocumentsState = createSelector(getDocumentState,fromDocument.selectAll);
+export const getDocumentEntitiesState = createSelector(getDocumentState,fromDocument.selectEntities);
+export const getCurrentDocumentIdState = createSelector(getDocumentState,fromDocument.selectCurrentDocumentId);
 export const getCurrentDocumentState = createSelector(getDocumentEntitiesState, getCurrentDocumentIdState,(entities,id)=>entities[id]);

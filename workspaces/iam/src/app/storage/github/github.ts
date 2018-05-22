@@ -1,6 +1,14 @@
 import { IStorage } from '../storage';
 import { Observable, combineLatest } from 'rxjs';
-import { catchError, map, mergeMap, tap,shareReplay } from 'rxjs/operators';
+import {
+  catchError,
+  map,
+  mergeMap,
+  tap,
+  shareReplay,
+  withLatestFrom,
+  switchMap
+} from 'rxjs/operators';
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Const } from './model/const';
@@ -15,7 +23,11 @@ import { ConfigService } from 'core';
 export class GithubStorage extends Requestable {
   gh: GitHub;
   private _repo: Observable<Repository>;
-  constructor(http: HttpClient, @Inject(GITHUB_AUTHENTICATION)userInfo: UserInfo) {
+  constructor(
+    http: HttpClient,
+    @Inject(GITHUB_AUTHENTICATION) userInfo: UserInfo,
+    private configService: ConfigService
+  ) {
     super(http, userInfo);
     this.gh = new GitHub({
       username: userInfo.name,
@@ -26,22 +38,29 @@ export class GithubStorage extends Requestable {
     });
   }
 
-  repo(name = 'iam-data'): Observable<Repository> {
-    if(this._repo) return this._repo;
-    return this._repo = this.getRepos(name).pipe(
-      shareReplay(1),
-      catchError(err => {
-        if (err.id === 404) {
-          return this.newRepos(name);
-        } else {
-          return Observable.throw(err);
-        }
+  init(): Observable<Repository> {
+    if (this._repo) return this._repo;
+
+    return (this._repo = this.configService.config$.pipe(
+      switchMap(config => {
+        let user = config.storage.github.userName;
+        let name = config.storage.github.dataRepoName;
+        return this.getRepos(user, name).pipe(
+          shareReplay(1),
+          catchError(err => {
+            if (err.id === 404) {
+              return this.newRepos(name);
+            } else {
+              return Observable.throw(err);
+            }
+          })
+        );
       })
-    );
+    ));
   }
 
-  getRepos(name: string): Observable<Repository> {
-    return this.request('GET', `/repos/${this._userInfo.name}/${name}`, null).pipe(
+  private getRepos(user: string, name: string): Observable<Repository> {
+    return this.request('GET', `/repos/${user}/${name}`, null).pipe(
       map(resp => {
         return new Repository(this._http, this._userInfo, name, this.gh);
       }),
@@ -54,7 +73,7 @@ export class GithubStorage extends Requestable {
     );
   }
 
-  newRepos(name: string) {
+  private newRepos(name: string) {
     return this.request('POST', '/user/repos', {
       name: name,
       description: 'This is your first repository',

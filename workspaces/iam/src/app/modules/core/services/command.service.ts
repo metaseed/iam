@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { HotkeysService, Hotkey } from '@metaseed/angular-hotkey';
 import { Subject, Observable } from 'rxjs';
-import { ConfigService, ConfigModel } from './config.service';
+import { ConfigService, ConfigModel } from '../config/config.service';
 
 export class Command {
   name: string;

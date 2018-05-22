@@ -24,7 +24,7 @@ describe('create repo', () => {
 
     it('should create repository create and delete file', () => {
         storage = TestBed.get(GithubStorage);
-        storage.repo('test2').subscribe(
+        storage.init('test2').subscribe(
             (repo: Repository) => {
                 console.log(repo);
                 repo.file('test010a83', 'aafabaa7777778744o7acaaaaaa' + Date.now()).subscribe((file) => {

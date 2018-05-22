@@ -15,6 +15,9 @@ import { Repository } from '../../../storage/github/repository';
 import { DocsModel } from '../models/docs.model';
 import { DocMeta } from '../models/doc-meta';
 import { Content } from '../../../storage/github/model/content';
+import { Store } from '@ngrx/store';
+import { State } from '../state/document.reducer';
+import { DocumentEffectsDelete, DocumentEffectsLoad } from '../state/document.effects.actions';
 
 @Injectable()
 export class DocService {
@@ -33,13 +36,14 @@ export class DocService {
   private _repoSub$:Observable<Repository>;
 
   constructor(
+    private store: Store<State>,
     private snackBar: MatSnackBar,
     private location: Location,
     private router: Router,
     private activedRoute: ActivatedRoute,
     private _storage: GithubStorage
   ) {
-    this._repoSub$ =this._storage.repo();
+    this._repoSub$ =this._storage.init();
   }
 
   deleteDoc(doc) {
@@ -207,30 +211,7 @@ export class DocService {
   };
 
   getAll() {
-    return this._repoSub$
-      .pipe(
-        flatMap(repo => {
-          return repo.issue.list('open');
-        })
-      )
-      .subscribe(
-        (docs: Document[]) => {
-          let docList = new Array<Document>();
-          docs.forEach(d => {
-            let meta = DocMeta.deSerialize(d.body);
-            if (meta) {
-              d.metaData = meta;
-              docList.push(d);
-            }
-          });
-          this.model.docs = docList;
-          this.docListLoaded = true;
-        },
-        error => {
-          console.log(error);
-          this.docListLoaded = true;
-        }
-      );
+     this.store.dispatch(new DocumentEffectsLoad());
   }
 
   get(id: number): Observable<Document> {

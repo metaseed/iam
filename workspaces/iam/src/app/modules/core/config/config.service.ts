@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { APP_BASE_HREF } from '@angular/common';
 import { Injectable, Inject, InjectionToken } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
+import { Observable } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 
 class HotkeyConfig {
     [key: string]: string[];
@@ -11,21 +12,18 @@ export interface ConfigModel {
     hotkeys: HotkeyConfig;
     storage: {
       github: {
-        dataRepo: string;
+        userName: string;
+        dataRepoName: string;
       }
     }
 }
 
 @Injectable()
 export class ConfigService {
-    public config$ = new ReplaySubject<ConfigModel>();
+    public config$: Observable<ConfigModel>;
 
     constructor(private http: HttpClient,
         @Inject(APP_BASE_HREF) private baseHref) {
-        this.http.get(`${this.baseHref}assets/config.json`).toPromise()
-            .then(r => r as ConfigModel)
-            .then(c => {
-                this.config$.next(c);
-            });
+        this. config$ = this.http.get<ConfigModel>(`${this.baseHref}assets/config.json`).pipe(shareReplay(1));
     }
 }

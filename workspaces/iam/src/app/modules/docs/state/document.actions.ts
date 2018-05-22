@@ -1,6 +1,7 @@
 import { Action } from '@ngrx/store';
 import { Update } from '@ngrx/entity';
 import { Document } from '../models/document';
+import { DocumentEffectsActions, DocumentEffectsActionTypes, DocumentActionStatus } from './document.effects.actions';
 
 export enum DocumentActionTypes {
   LoadDocuments = '[Document] Load Documents',
@@ -80,14 +81,9 @@ export class SetCurrentDocumentId implements Action {
   constructor(public payload: { id: string }) {}
 }
 
-export interface DocumentMessage {
-  type: 'success' | 'fail' | null;
-  content: string;
-}
-
 export class SetDocumentsMessage implements Action {
   readonly type = DocumentActionTypes.SetDocumentsMessage;
-  constructor(public payload: DocumentMessage) {}
+  constructor(public payload: DocumentActionStatus) {}
 }
 
 export type DocumentActions =

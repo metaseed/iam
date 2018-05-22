@@ -21,6 +21,8 @@ import { SharedModule } from "shared";
 import { EffectsModule } from '@ngrx/effects';
 import { AppEffects } from './app.effects';
 import { StorageModule } from "./storage/storage.module";
+import { DBModule } from "./modules/db/database";
+import { schema } from "./modules/db/schema";
 /**
  * This function is used internal to get a string instance of the `<base href="" />` value from `index.html`.
  * This is an exported function, instead of a private function or inline lambda, to prevent this error:
@@ -47,6 +49,7 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
     CoreModule,
     DocsModule,
     SharedModule,
+    DBModule.provideDB(schema),
     MaterialModule,
     ServiceWorkerModule.register(`./ngsw-worker.js`, {
       enabled: environment.production
