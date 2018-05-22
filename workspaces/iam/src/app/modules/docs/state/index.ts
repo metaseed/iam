@@ -19,8 +19,6 @@ export const reducers: ActionReducerMap<DocsState> = {
   document: fromDocument.reducer,
 };
 
-export const metaReducers: MetaReducer<State>[] = !environment.production ? [] : [];
-
 export const getDocsState = createFeatureSelector<DocsState>('docs');
 export const getDocumentState = createSelector(getDocsState,state=>state.document);
 export const getDocumentsState = createSelector(getDocumentState,fromDocument.selectAll);

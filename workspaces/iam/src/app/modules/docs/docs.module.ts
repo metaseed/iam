@@ -31,7 +31,7 @@ const routes: Routes = [
     MaterialModule,
     FlexLayoutModule,
     NgSpinKitModule,
-    StoreModule.forFeature('docs', fromState.reducers, { metaReducers: fromState.metaReducers }),
+    StoreModule.forFeature<fromState.DocsState>('docs', fromState.reducers ),
     EffectsModule.forFeature([DocumentEffects])
     //RouterModule.forChild(routes),
   ],
