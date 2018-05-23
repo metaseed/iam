@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { Document } from './models/document';
 import { DocService } from './services/doc.service';
 import { DocsModel } from './models/docs.model';
@@ -8,11 +8,25 @@ import { NgSpinKitModule } from 'ng-spin-kit';
 import { DocSearchService } from './services/doc-search.service';
 import { State } from './state/document.reducer';
 import { Store, select } from '@ngrx/store';
-import { Observable, TimeoutError, of } from 'rxjs';
-import { map, filter, timeout, catchError, take, skip } from 'rxjs/operators';
+import { Observable, TimeoutError, of, from } from 'rxjs';
+import {
+  map,
+  filter,
+  timeout,
+  catchError,
+  switchAll,
+  take,
+  skip,
+  debounceTime,
+  distinctUntilChanged,
+  combineLatest,
+  tap,
+  mergeAll
+} from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import { DocumentEffectsActionTypes, getActionStatus } from './state/document.effects.actions';
 import { getDocumentsState } from './state';
+import { DocSearchComponent } from './doc-search/doc-search.component';
 
 @Component({
   selector: 'docs',
@@ -20,6 +34,8 @@ import { getDocumentsState } from './state';
   styleUrls: ['./docs.component.scss']
 })
 export class DocsComponent {
+  @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;
+
   defaultTimeoutHandler = err => this.snackBar.open(err.message, 'ok', { duration: 6000 });
   isLoaded$ = getActionStatus(
     DocumentEffectsActionTypes.Load,
@@ -27,7 +43,10 @@ export class DocsComponent {
     this.defaultTimeoutHandler
   );
 
-  docs$ = this.store.pipe(select(getDocumentsState));
+
+
+  private initDocs$ = this.store.pipe(select(getDocumentsState));
+  docs$: Observable<Document[]>;
   constructor(
     private store: Store<State>,
     public docService: DocService,
@@ -36,9 +55,23 @@ export class DocsComponent {
     private snackBar: MatSnackBar
   ) {
     this.docService.getAll();
+    this.initDocs$.subscribe(a=>{
+      console.log(a);
+    })
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    const filteredDocs$ = this.docSearch.Search.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      combineLatest(this.initDocs$),
+      map(([keyword, docs]) => {
+        return this.docSearchService.search(docs, keyword);
+      })
+    );
+
+    this.docs$ = from([this.initDocs$,filteredDocs$]).pipe(mergeAll());
+  }
 
   addNewElement(element: string) {
     this.docService.newDoc();
@@ -61,9 +94,5 @@ export class DocsComponent {
   deleteDoc(doc: Document) {
     doc.state = 'closed';
     this.docService.deleteDoc(doc);
-  }
-
-  onSearch(keyword: string) {
-    let docs = this.docSearchService.search(this.docService.model.docs, keyword);
   }
 }

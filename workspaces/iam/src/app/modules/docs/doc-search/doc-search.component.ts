@@ -6,7 +6,7 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./doc-search.component.scss']
 })
 export class DocSearchComponent implements OnInit {
-  @Output() Search = new EventEmitter();
+  @Output() Search = new EventEmitter<string>();
   constructor() {}
 
   ngOnInit() {}

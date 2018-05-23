@@ -36,6 +36,7 @@ export class DocumentEffects {
               docList.push(d);
             }
           });
+          this.store.dispatch(new SetDocumentsMessage({ status: ActionStatus.Success, action: DocumentEffectsActionTypes.Load ,message: 'documents loaded' }));
           return new LoadDocuments({ collectionDocuments: docList });
         }),
         catchError(err => of(new SetDocumentsMessage({ status: ActionStatus.Fail, action: DocumentEffectsActionTypes.Load ,message: err })))

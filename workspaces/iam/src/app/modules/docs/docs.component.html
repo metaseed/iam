@@ -1,6 +1,6 @@
 <div style="height:100vh;overflow-y:auto;">
   <div style="margin-bottom:5.5rem">
-    <iam-doc-search (Search)="onSearch($event)"></iam-doc-search>
+    <iam-doc-search></iam-doc-search>
     <doc-list [documents]="docs$ | async" (onShow)="showDoc($event)" (onDelete)="deleteDoc($event)"></doc-list>
     <sk-wave [isRunning]="!(isLoaded$ | async)"></sk-wave>
   </div>

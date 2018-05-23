@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as Fuse from 'fuse.js';
+import { Document } from '../models/document';
 
 @Injectable()
 export class DocSearchService {
@@ -14,7 +15,10 @@ export class DocSearchService {
   constructor() {}
 
   search(docs, keyword: string) {
+    if(keyword.trim()==''){
+      return docs;
+    }
     const fuse = new Fuse(docs, this.options);
-    return fuse.search(keyword);
+    return fuse.search<Document>(keyword);
   }
 }
