@@ -26,7 +26,7 @@ import {
 import { MatSnackBar } from '@angular/material';
 import { DocumentEffectsActionTypes, getActionStatus, getDocumentsState, DocumentEffectsLoad } from './state';
 import { DocSearchComponent } from './doc-search/doc-search.component';
-
+import {switchIfEmit} from '../core/operators/switchIfEmit';
 @Component({
   selector: 'docs',
   templateUrl: './docs.component.html',
@@ -61,6 +61,9 @@ export class DocsComponent {
 
   ngOnInit() {
     const filteredDocs$ = this.docSearch.Search.pipe(
+      tap(a=>{
+        console.warn(a);
+      }),
       debounceTime(500),
       distinctUntilChanged(),
       combineLatest(this.initDocs$),
@@ -69,7 +72,7 @@ export class DocsComponent {
       })
     );
 
-    this.docs$ = from([this.initDocs$,filteredDocs$]).pipe(mergeAll());
+    this.docs$ = from([this.initDocs$,filteredDocs$]).pipe(switchIfEmit());
   }
 
   addNewElement(element: string) {
