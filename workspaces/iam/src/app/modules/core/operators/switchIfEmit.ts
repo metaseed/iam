@@ -20,11 +20,18 @@ import { Observable, Subscription } from 'rxjs';
  * while switchAll operator switched when new observable available.
  *
  * Semantics:
- * 1. it will wait all the inner observables, any one that emit a value will be switched to the outer observable output.
- * 2. if another inner observable emmit a value, then the outer would switch to it. the original inner observable would be unsubscribed.
- * 3. if the outer complete, all the active(emiting or waiting to emit) inner observables would be unsubscribed.
- * 4. if one inner observable complete, it will continue waiting other inner observables.
- * 5. any inner observable error would be tramsmit to the ourter observable.
+ * 1. it will wait all the inner observables, any one that emit a value will be switched to
+ *    the outer observable output.
+ * 2. if another inner observable emmit a value, then the outer would switch to it. the
+ *    original inner observable would be unsubscribed.
+ * 3. if the source observable(emmit observable items) completes/has error, it will continue waiting
+ *    for the inner observables that already emited by the source.
+ * 4. if the outer complete, all the active(emiting or waiting to emit) inner observables
+ *    would be unsubscribed.
+ * 5. if one inner observable completes, it will continue waiting for other inner observables.
+ * 6. any inner observable error would be tramsmit to the ourter observable.
+ * 7. if the outer observable is unsubscribed, the inner active observables and the upper
+ *    source observable would be unsubscribed.
  */
 export const switchIfEmit = () => <T>(source: Observable<Observable<T>>) =>
   new Observable<T>(observer => {
