@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Document } from '../models/document';
 import { DocService } from '../services/doc.service';
 import { MatDialog } from '@angular/material';
-import { DeleteAlertDialog } from 'app/modules/docs/doc-list/dialog.component';
+import { DeleteAlertDialog } from 'app/modules/docs/doc-list-item/dialog.component';
 
 @Component({
   selector: 'doc-list-item',

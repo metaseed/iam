@@ -24,7 +24,7 @@ import {
   mergeAll
 } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
-import { DocumentEffectsActionTypes, getActionStatus, getDocumentsState, DocumentEffectsLoad } from './state';
+import { DocumentEffectsActionTypes, getActionStatus, getDocumentsState, DocumentEffectsLoad, DocumentEffectsDelete } from './state';
 import { DocSearchComponent } from './doc-search/doc-search.component';
 import {switchIfEmit} from '../core/operators/switchIfEmit';
 @Component({
@@ -94,7 +94,6 @@ export class DocsComponent {
   }
 
   deleteDoc(doc: Document) {
-    doc.state = 'closed';
-    this.docService.deleteDoc(doc);
+   this.store.dispatch(new DocumentEffectsDelete({number:doc.number, id:doc.id,title:doc.title}))
   }
 }
