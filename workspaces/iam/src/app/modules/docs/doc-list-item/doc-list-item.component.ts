@@ -5,11 +5,11 @@ import { MatDialog } from '@angular/material';
 import { DeleteAlertDialog } from 'app/modules/docs/doc-list/dialog.component';
 
 @Component({
-  selector: 'doc-list',
-  templateUrl: './doc-list.component.html',
-  styleUrls: ['./doc-list.component.scss']
+  selector: 'doc-list-item',
+  templateUrl: './doc-list-item.component.html',
+  styleUrls: ['./doc-list-item.component.scss']
 })
-export class DocListComponent implements OnInit {
+export class DocItemComponent implements OnInit {
   private docs;
 
   @Output() onDelete = new EventEmitter<Document>();

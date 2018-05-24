@@ -6,17 +6,18 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { DocsComponent } from './docs.component';
 import { NewDocComponent } from './new-doc/new-doc.component';
-import { DocListComponent } from './doc-list/doc-list.component';
+import { DocItemComponent } from './doc-list-item/doc-list-item.component';
 import { DocService } from './services/doc.service';
 import { MaterialModule } from '../../modules/material/material.module';
 import { NgSpinKitModule } from 'ng-spin-kit';
-import { DeleteAlertDialog } from 'app/modules/docs/doc-list/dialog.component';
+import { DeleteAlertDialog } from 'app/modules/docs/doc-list-item/dialog.component';
 import { DocSearchComponent } from './doc-search/doc-search.component';
 import { DocSearchService } from './services/doc-search.service';
 import { StoreModule } from '@ngrx/store';
 import * as fromState from './state';
 import { EffectsModule } from '@ngrx/effects';
 import { DocumentEffects } from './state/document.effects';
+import { DocDeleteComponent } from './doc-list-item/doc-delete/doc-delete.component';
 const routes: Routes = [
   {
     path: 'docs',
@@ -39,8 +40,9 @@ const routes: Routes = [
     DeleteAlertDialog,
     NewDocComponent,
     DocsComponent,
-    DocListComponent,
-    DocSearchComponent
+    DocItemComponent,
+    DocSearchComponent,
+    DocDeleteComponent
   ],
   exports: [DocsComponent],
   providers: [DocService, DocSearchService],
