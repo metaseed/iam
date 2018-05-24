@@ -3,14 +3,16 @@
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
   a.mat-tab-link {
-    color: map-get($primary, default-contrast);
+    color: map-get($accent, default);
     &:hover {
-      color: map-get($primary, darker-contrast);
+      color: map-get($accent, darker);
     }
     &.active:not(.mat-tab-disabled) {
       opacity: 1 !important;
     }
-  } // mat-ink-bar.mat-ink-bar {
-  //   background-color: map-get($accent, default) !important;
-  // }
+  }
+  mat-ink-bar.mat-ink-bar {
+    // background-color: map-get($accent, default) !important;
+    visibility: hidden !important;
+  }
 }
