@@ -24,8 +24,7 @@ import {
   mergeAll
 } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
-import { DocumentEffectsActionTypes, getActionStatus } from './state/document.effects.actions';
-import { getDocumentsState } from './state';
+import { DocumentEffectsActionTypes, getActionStatus, getDocumentsState, DocumentEffectsLoad } from './state';
 import { DocSearchComponent } from './doc-search/doc-search.component';
 
 @Component({
@@ -54,7 +53,7 @@ export class DocsComponent {
     private router: Router,
     private snackBar: MatSnackBar
   ) {
-    this.docService.getAll();
+    this.store.dispatch(new DocumentEffectsLoad());
     this.initDocs$.subscribe(a=>{
       console.log(a);
     })

@@ -8,6 +8,10 @@ import {
 import { environment } from 'environments/environment';
 import * as fromDocument from './document.reducer';
 import * as fromRoot from '../../../reducers';
+
+export * from './document.effects.actions';
+export * from './document.actions';
+
 export interface State extends fromRoot.State {
   docs: DocsState;
 }

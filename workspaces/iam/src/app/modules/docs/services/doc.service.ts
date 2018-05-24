@@ -210,10 +210,6 @@ export class DocService {
     );
   };
 
-  getAll() {
-     this.store.dispatch(new DocumentEffectsLoad());
-  }
-
   get(id: number): Observable<Document> {
     return this._repoSub$.pipe(
       flatMap(repo => {
