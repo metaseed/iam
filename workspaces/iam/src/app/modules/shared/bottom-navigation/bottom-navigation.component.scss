@@ -1,8 +1,3 @@
-.tab-bar--dark {
-  .mdc-tab {
-    line-height: 1rem;
-  }
-}
 
 .mat-tab-links {
   align-items: center;
@@ -12,7 +7,8 @@
   display: flex;
   .mat-tab-link {
     flex-direction: column;
-    line-height: 1rem;
+    line-height: 1.6rem;
+    font-size: 1.2rem;
     height: auto;
     &:hover {
       text-decoration: none;
