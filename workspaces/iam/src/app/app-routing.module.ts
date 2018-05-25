@@ -19,11 +19,20 @@ const appRoutes: Routes = [
     data: { preload: true }
   },
   {
+    path:'explore',
+    loadChildren:'app/modules/me/me.module#MeModule'
+  },
+  {
+    path:'message',
+    loadChildren:'app/modules/me/me.module#MeModule'
+  },
+  {
     path:'me',
     loadChildren:'app/modules/me/me.module#MeModule'
   },
 
-  { path: '', component: DocsComponent, pathMatch:'full' },
+  { path: 'home', component: DocsComponent },
+  { path: '', redirectTo:'/home', pathMatch:'full'},
   { path: '**', component: NotFoundComponent }
 ];
 

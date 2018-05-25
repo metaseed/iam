@@ -12,30 +12,18 @@ const HOME_ICON_INACTIVE = `
 `;
 const BELL = `
 <svg viewBox="0 0 20 20">
-  <g id="Page-1" stroke="none" stroke-width="1" fill-rule="evenodd">
-    <g id="bell">
-      <g id="group-3" transform="">
-        <path d="M10,20 C10.14,20 10.27,19.99 10.4,19.96 C11.05,19.82 11.58,19.38 11.84,18.78 C11.94,18.54 11.99,18.28 11.99,18 L7.99,18 C8,19.1 8.89,20 10,20 Z"
-          id="Path" transform=""></path>
-        <path d="M16,9 C16,5.93 14.36,3.36 11.5,2.68 L11.5,2 C11.5,1.17 10.83,0.5 10,0.5 C9.17,0.5 8.5,1.17 8.5,2 L8.5,2.68 C5.63,3.36 4,5.92 4,9 L4,14 L2,16 L2,17 L18,17 L18,16 L16,14 L16,9 Z"
-          id="Shape" fill-rule="nonzero"></path>
-      </g>
-    </g>
+  <g stroke="none" stroke-width="1" fill-rule="evenodd">
+    <path d="M10,20 C10.14,20 10.27,19.99 10.4,19.96 C11.05,19.82 11.58,19.38 11.84,18.78 C11.94,18.54 11.99,18.28 11.99,18 L7.99,18 C8,19.1 8.89,20 10,20 Z"></path>
+    <path d="M16,9 C16,5.93 14.36,3.36 11.5,2.68 L11.5,2 C11.5,1.17 10.83,0.5 10,0.5 C9.17,0.5 8.5,1.17 8.5,2 L8.5,2.68 C5.63,3.36 4,5.92 4,9 L4,14 L2,16 L2,17 L18,17 L18,16 L16,14 L16,9 Z" fill-rule="nonzero"></path>
   </g>
 </svg>
 `;
 
 const BELL_INACTIVE = `
 <svg viewBox="0 0 20 20">
-  <g id="Page-1" stroke-width="2" fill-rule="evenodd">
-    <g id="bell">
-      <g id="group-3" transform="">
-        <path d="M10,20 C10.14,20 10.27,19.99 10.4,19.96 C11.05,19.82 11.58,19.38 11.84,18.78 C11.94,18.54 11.99,18.28 11.99,18 L7.99,18 C8,19.1 8.89,20 10,20 Z"
-          id="Path" transform=""></path>
-        <path d="M16,9 C16,5.93 14.36,3.36 11.5,2.68 L11.5,2 C11.5,1.17 10.83,0.5 10,0.5 C9.17,0.5 8.5,1.17 8.5,2 L8.5,2.68 C5.63,3.36 4,5.92 4,9 L4,14 L2,16 L2,17 L18,17 L18,16 L16,14 L16,9 Z"
-          id="Shape" stroke-width="2" fill="none" fill-rule="nonzero"></path>
-      </g>
-    </g>
+  <g>
+    <path d="M10,20 C10.14,20 10.27,19.99 10.4,19.96 C11.05,19.82 11.58,19.38 11.84,18.78 C11.94,18.54 11.99,18.28 11.99,18 L7.99,18 C8,19.1 8.89,20 10,20 Z" fill="none"></path>
+    <path d="M16,9 C16,5.93 14.36,3.36 11.5,2.68 L11.5,2 C11.5,1.17 10.83,0.5 10,0.5 C9.17,0.5 8.5,1.17 8.5,2 L8.5,2.68 C5.63,3.36 4,5.92 4,9 L4,14 L2,16 L2,17 L18,17 L18,16 L16,14 L16,9 Z" stroke-width="1.3" fill="none" fill-rule="nonzero"></path>
   </g>
 </svg>
 `;
@@ -76,20 +64,20 @@ const EXPLORE = `
   />
 </svg>
 
-`
+`;
 const EXPLORE_INACTIVE = `
 <svg viewBox="0 0 512 512">
   <path d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 448c-110.532 0-200-89.451-200-200 0-110.531 89.451-200 200-200 110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200zm91.326-312.131l-33.359 137.779a24.005 24.005 0 0 1-6.772 11.729l-102.64 97.779c-17.104 16.293-45.56.434-39.88-23.024l33.359-137.779a23.997 23.997 0 0 1 6.772-11.729l102.642-97.779c17.285-16.47 45.494-.175 39.878 23.024zM256 224c-17.673 0-32 14.327-32 32s14.327 32 32 32 32-14.327 32-32-14.327-32-32-32z"
   />
 </svg>
-`
+`;
 
 const ME_INACTIVE = `
 <svg viewBox="0 0 24 24">
-    <path d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"/>
+    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" stroke-width="1.5" fill="none"/>
 </svg>
-`
-const ME =`
+`;
+const ME = `
 <svg viewBox="0 0 24 24">
     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
 </svg>
@@ -115,34 +103,19 @@ export class BottomNavigationComponent implements OnInit {
       sanitizer.bypassSecurityTrustHtml(HOME_ICON_INACTIVE)
     );
 
-    iconRegistry.addSvgIconLiteral(
-      'bell',
-      sanitizer.bypassSecurityTrustHtml(BELL)
-    );
-    iconRegistry.addSvgIconLiteral(
-      'bell-ring',
-      sanitizer.bypassSecurityTrustHtml(BELL_RING)
-    );
+    iconRegistry.addSvgIconLiteral('bell', sanitizer.bypassSecurityTrustHtml(BELL));
+    iconRegistry.addSvgIconLiteral('bell-ring', sanitizer.bypassSecurityTrustHtml(BELL_RING));
     iconRegistry.addSvgIconLiteral(
       'bell-inactive',
       sanitizer.bypassSecurityTrustHtml(BELL_INACTIVE)
     );
-    iconRegistry.addSvgIconLiteral(
-      'explore',
-      sanitizer.bypassSecurityTrustHtml(EXPLORE)
-    );
+    iconRegistry.addSvgIconLiteral('explore', sanitizer.bypassSecurityTrustHtml(EXPLORE));
     iconRegistry.addSvgIconLiteral(
       'explore-inactive',
       sanitizer.bypassSecurityTrustHtml(EXPLORE_INACTIVE)
     );
-    iconRegistry.addSvgIconLiteral(
-      'me',
-      sanitizer.bypassSecurityTrustHtml(ME)
-    );
-    iconRegistry.addSvgIconLiteral(
-      'me-inactive',
-      sanitizer.bypassSecurityTrustHtml(ME_INACTIVE)
-    );
+    iconRegistry.addSvgIconLiteral('me', sanitizer.bypassSecurityTrustHtml(ME));
+    iconRegistry.addSvgIconLiteral('me-inactive', sanitizer.bypassSecurityTrustHtml(ME_INACTIVE));
   }
 
   ngOnInit() {
