@@ -2,13 +2,21 @@
 @mixin iam-bot-nav($theme) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
+  $foreground: map-get($theme, foreground);
+  $hintColor: map-get($foreground, hint-text);
+  $textColor: map-get($foreground, text);
+  $disableTextColor: map-get($foreground, disabled-text);
   a.mat-tab-link {
-    color: map-get($accent, default);
+    color: $disableTextColor;
+    stroke: $disableTextColor;
     &:hover {
-      color: map-get($accent, darker);
+      color: $hintColor;
+      stroke: $hintColor;
     }
-    &.active:not(.mat-tab-disabled) {
+    &.mat-tab-label-active:not(.mat-tab-disabled) {
       opacity: 1 !important;
+      color: $textColor;
+      stroke: $textColor;
     }
   }
   mat-ink-bar.mat-ink-bar {

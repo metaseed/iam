@@ -2,27 +2,29 @@
   <mat-toolbar-row style="height: inherit;">
 
     <nav mat-tab-nav-bar style="height:inherit;text-transform:capitalize;padding:0;margin:0 auto;">
-      <a mat-tab-link routerLinkActive="active" [routerLink]="['/']">
-        <mat-icon class="md-28">home</mat-icon>
+      <a mat-tab-link routerLinkActive #rla="routerLinkActive" [active]="rla.isActive" [routerLink]="['/home']">
+        <mat-icon *ngIf="rla.isActive" svgIcon="home"></mat-icon>
+        <mat-icon *ngIf="!rla.isActive" svgIcon="home-inactive"></mat-icon>
         <span>home</span>
       </a>
-      <!-- <mat-tab>
-        <mat-icon>explore</mat-icon>
-        <mat-tab-icon-text>explore</mat-tab-icon-text>
-      </mat-tab>
-      <mat-tab routerLinkActive #rla1="routerLinkActive" [active]="rla1.isActive" [routerLink]="['/doc','new']">
-        <mat-icon [fontSize]="48">add_circle</mat-icon>
-      </mat-tab>
-      <mat-tab>
-        <mat-icon>message</mat-icon>
-        <mat-tab-icon-text>message</mat-tab-icon-text>
-      </mat-tab> -->
-      <a mat-tab-link routerLinkActive #rla="routerLinkActive" [active]="rla.isActive" [routerLink]="['/doc','new']">
+      <a mat-tab-link routerLinkActive #rla4="routerLinkActive" [active]="rla4.isActive" [routerLink]="['/explore']">
+        <mat-icon *ngIf="rla4.isActive" svgIcon="explore"></mat-icon>
+        <mat-icon *ngIf="!rla4.isActive" svgIcon="explore-inactive"></mat-icon>
+        <span>explore</span>
+      </a>
+      <a mat-tab-link routerLinkActive #rla1="routerLinkActive" [active]="rla1.isActive" [routerLink]="['/doc','new']">
         <mat-icon class="md-48" style="height: auto;">add_circle</mat-icon>
         <!-- <span>new</span> -->
       </a>
-      <a mat-tab-link routerLinkActive #rla="routerLinkActive" [active]="rla.isActive" [routerLink]="['/']">
-        <mat-icon class="md-28">person</mat-icon>
+      <a mat-tab-link routerLinkActive #rla3="routerLinkActive" [active]="rla3.isActive" [routerLink]="['/message']">
+        <mat-icon *ngIf="rla3.isActive" svgIcon="bell"></mat-icon>
+        <mat-icon *ngIf="!rla3.isActive" svgIcon="bell-inactive"></mat-icon>
+        <span>message</span>
+      </a>
+
+      <a mat-tab-link routerLinkActive #rla5="routerLinkActive" [active]="rla5.isActive" [routerLink]="['/me']">
+        <mat-icon *ngIf="rla5.isActive" svgIcon="me"></mat-icon>
+        <mat-icon *ngIf="!rla5.isActive" svgIcon="me-inactive"></mat-icon>
         <span>me</span>
       </a>
 

@@ -18,7 +18,12 @@ const appRoutes: Routes = [
     loadChildren: 'app/modules/markdown/markdown.module#MarkdownModule',
     data: { preload: true }
   },
-  { path: '', component: DocsComponent },
+  {
+    path:'me',
+    loadChildren:'app/modules/me/me.module#MeModule'
+  },
+
+  { path: '', component: DocsComponent, pathMatch:'full' },
   { path: '**', component: NotFoundComponent }
 ];
 
