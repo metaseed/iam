@@ -13,7 +13,7 @@
         <span>explore</span>
       </a>
       <a mat-tab-link routerLinkActive #rla1="routerLinkActive" [active]="rla1.isActive" [routerLink]="['/doc','new']">
-        <mat-icon svgIcon="add" style="height: auto; width: 4.8rem;height: 4.8rem;"></mat-icon>
+        <mat-icon class="add-icon" svgIcon="add" style="height: auto; width: 4.8rem;height: 4.8rem;"></mat-icon>
       </a>
       <a mat-tab-link routerLinkActive #rla3="routerLinkActive" [active]="rla3.isActive" [routerLink]="['/message']">
         <mat-icon *ngIf="rla3.isActive" svgIcon="bell"></mat-icon>

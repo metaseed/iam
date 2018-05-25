@@ -2,16 +2,22 @@
 @mixin iam-bot-nav($theme) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
+  $primary-color: map-get($primary,default);
   $foreground: map-get($theme, foreground);
-  $hintColor: map-get($foreground, hint-text);
+  $hintColor: map-get($foreground, text);//hint-text);
   $textColor: map-get($foreground, text);
-  $disableTextColor: map-get($foreground, disabled-text);
+  $disableTextColor: map-get($foreground, icon);//disabled-text);
   a.mat-tab-link {
-    color: $disableTextColor;
-    stroke: $disableTextColor;
+    color: $hintColor;
+    stroke: $hintColor;
     &:hover {
+      opacity: 1 !important;
       color: $hintColor;
       stroke: $hintColor;
+    }
+    .add-icon {
+      color:$primary-color;
+
     }
     &.mat-tab-label-active:not(.mat-tab-disabled) {
       opacity: 1 !important;
