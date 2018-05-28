@@ -22,6 +22,7 @@ import { MarkdownViewerContainerComponent } from './viewer/markdown-viewer-conta
 import { HasElementRef } from '@angular/material/core/typings/common-behaviors/color';
 import { Observable, Subscription } from 'rxjs';
 import { DocSaveCoordinateService } from './editor/services/doc-save-coordinate-service';
+import { DocumentEffectsShow } from '../docs/state';
 
 @Component({
   selector: 'ms-markdown',
@@ -175,7 +176,8 @@ export class MarkdownComponent implements OnInit, OnDestroy {
           } else {
             let title = params.get('title');
             let id = params.get('id');
-            return this._docService.showDoc(title, id);
+            // return this._docService.showDoc(title, id);
+            return this.store.dispatch(new DocumentEffectsShow({doc:{id,title,format:'md'}}));
           }
         }, this),
         take(1)

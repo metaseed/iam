@@ -11,13 +11,17 @@ import {
 } from './document.effects.actions';
 import { LoadDocuments, SetDocumentsMessage, DeleteDocument } from './document.actions';
 import { GithubStorage } from '../../../storage/github';
-import { switchMap, catchError, map, tap, take } from 'rxjs/operators';
+import { switchMap, catchError, map, tap, take, retry } from 'rxjs/operators';
 import { Repository } from '../../../../../types/github-api';
 import { DocumentActionTypes } from '../../markdown/actions/document';
 import { DocMeta } from '../models/doc-meta';
 import { Document } from '../models/document';
 import { State } from '../../markdown/reducers/document';
-import { getDocumentEntitiesState } from 'app/modules/docs/state';
+import {
+  getDocumentEntitiesState,
+  DocumentEffectsShow,
+  SetCurrentDocumentId
+} from 'app/modules/docs/state';
 import { DocService } from '../services/doc.service';
 
 @Injectable()
@@ -68,6 +72,57 @@ export class DocumentEffects {
             })
           )
         )
+      )
+    )
+  );
+
+  @Effect()
+  ShowDocument: Observable<Action> = this.actions$.pipe(
+    ofType<DocumentEffectsShow>(DocumentEffectsActionTypes.Show),
+    tap(action => this.store.dispatch(new SetCurrentDocumentId({ id: action.payload.doc.id }))),
+    tap(action =>
+      this.store.dispatch(
+        new SetDocumentsMessage({
+          action: DocumentEffectsActionTypes.Show,
+          status: ActionStatus.Start
+        })
+      )
+    ),
+
+    switchMap(action => {
+      let withFormat = true;
+      return this._storage.init().pipe(
+        switchMap(repo => {
+          function getContent() {
+            const doc = action.payload.doc;
+            const id = doc.id;
+            const title = doc.title;
+            const format = doc.format;
+            let content = `${DocService.FolderName}/${title}_${id}.${format}`;
+            if(!withFormat) content = `${DocService.FolderName}/${title}_${id}`;
+            withFormat = false;
+            return repo.getContents(content).pipe(
+              map(c => {
+                doc.content = <any>c;
+                return new SetDocumentsMessage({
+                  action: DocumentEffectsActionTypes.Show,
+                  status: ActionStatus.Success
+                });
+              })
+            );
+          }
+          return getContent();
+        }),
+        retry(2)
+      );
+    }),
+    catchError(err =>
+      of(
+        new SetDocumentsMessage({
+          status: ActionStatus.Fail,
+          action: DocumentEffectsActionTypes.Load,
+          message: err
+        })
       )
     )
   );

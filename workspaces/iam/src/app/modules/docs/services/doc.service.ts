@@ -45,20 +45,6 @@ export class DocService {
   ) {
     this._repoSub$ =this._storage.init();
   }
-
-  deleteDoc(doc) {
-    this._repoSub$.subscribe(repo =>
-      repo.issue.edit(doc.number, { state: 'closed' }).subscribe(a => {
-        let title = doc.metaData.title;
-        repo.delFile(`${DocService.FolderName}/${title}_${doc.number}.md`).subscribe(_ => {
-          const index = this.model.docs.indexOf(doc);
-          if (index !== -1) this.model.docs.splice(index, 1);
-          // console.log(a);
-        });
-      })
-    );
-  }
-
   newDoc() {
     let doc = {
       content: {

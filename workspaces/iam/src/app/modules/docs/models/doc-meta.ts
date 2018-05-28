@@ -8,7 +8,8 @@ export class DocMeta {
     public contentId: string, // sha of file
     public title: string,
     public summary: string,
-    public imageData: string
+    public imageData: string,
+    public format = 'md' // sufix
   ) {}
 
   static serialize(
