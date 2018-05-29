@@ -3,7 +3,6 @@ import { NgModule } from "@angular/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { AppComponent } from "./app.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { MarkdownModule } from "./modules";
 import { HotkeyModule } from "@metaseed/angular-hotkey";
 import { CoreModule } from "core";
 import { HttpClientModule } from "@angular/common/http";

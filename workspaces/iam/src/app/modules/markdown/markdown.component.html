@@ -16,7 +16,7 @@
       <ms-markdown-editor [(markdown)]="markdown"></ms-markdown-editor>
     </div>
     <div #viewerDiv class="split-pane-content-secondary" style="height: 100%">
-      <markdown-viewer-container [markdown]="markdown"></markdown-viewer-container>
+      <markdown-viewer-container [markdown]="docContent | async"></markdown-viewer-container>
     </div>
   </vertical-split-pane>
   <div class="md-footer ">words:</div>

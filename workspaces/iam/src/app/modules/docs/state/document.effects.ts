@@ -20,9 +20,12 @@ import { State } from '../../markdown/reducers/document';
 import {
   getDocumentEntitiesState,
   DocumentEffectsShow,
-  SetCurrentDocumentId
+  SetCurrentDocumentId,
+  getCurrentDocumentState,
+  AddDocument
 } from 'app/modules/docs/state';
 import { DocService } from '../services/doc.service';
+import { format } from 'util';
 
 @Injectable()
 export class DocumentEffects {
@@ -79,7 +82,7 @@ export class DocumentEffects {
   @Effect()
   ShowDocument: Observable<Action> = this.actions$.pipe(
     ofType<DocumentEffectsShow>(DocumentEffectsActionTypes.Show),
-    tap(action => this.store.dispatch(new SetCurrentDocumentId({ id: action.payload.doc.id }))),
+    tap(action => this.store.dispatch(new SetCurrentDocumentId({ id: action.payload.doc.number }))),
     tap(action =>
       this.store.dispatch(
         new SetDocumentsMessage({
@@ -90,30 +93,46 @@ export class DocumentEffects {
     ),
 
     switchMap(action => {
-      let withFormat = true;
       return this._storage.init().pipe(
         switchMap(repo => {
-          function getContent() {
-            const doc = action.payload.doc;
-            const id = doc.id;
-            const title = doc.title;
-            const format = doc.format;
-            let content = `${DocService.FolderName}/${title}_${id}.${format}`;
-            if(!withFormat) content = `${DocService.FolderName}/${title}_${id}`;
-            withFormat = false;
-            return repo.getContents(content).pipe(
-              map(c => {
-                doc.content = <any>c;
-                return new SetDocumentsMessage({
-                  action: DocumentEffectsActionTypes.Show,
-                  status: ActionStatus.Success
-                });
-              })
-            );
-          }
-          return getContent();
-        }),
-        retry(2)
+          return this.store.select(getCurrentDocumentState).pipe(
+            switchMap(document => {
+              function getContent(docu, withFormat = true) {
+                const doc = action.payload.doc;
+                const number = doc.number;
+                const title = doc.title;
+                let format = doc.format;
+                let content = `${DocService.FolderName}/${title}_${number}.${format}`;
+                if (!withFormat) content = `${DocService.FolderName}/${title}_${number}`;
+                return repo.getContents(content).pipe(
+                  map(c => {
+                    docu.content = <any>c;
+                    return new SetDocumentsMessage({
+                      action: DocumentEffectsActionTypes.Show,
+                      status: ActionStatus.Success
+                    });
+                  })
+                );
+              }
+              let curDoc = document ? { ...document } : { ...action.payload.doc };
+              let retryCounter = 0;
+              return getContent(curDoc).pipe(
+                tap(_ => {
+                  if (!document)
+                    this.store.dispatch(new AddDocument({ collectionDocument: <any>curDoc }));
+                }),
+                catchError(err => {
+                  if (retryCounter < 1) {
+                    retryCounter++;
+                    return getContent(curDoc, false);
+                  } else {
+                    throw err;
+                  }
+                })
+              );
+            })
+          );
+        })
       );
     }),
     catchError(err =>

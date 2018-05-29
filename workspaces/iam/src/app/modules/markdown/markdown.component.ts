@@ -22,7 +22,8 @@ import { MarkdownViewerContainerComponent } from './viewer/markdown-viewer-conta
 import { HasElementRef } from '@angular/material/core/typings/common-behaviors/color';
 import { Observable, Subscription } from 'rxjs';
 import { DocSaveCoordinateService } from './editor/services/doc-save-coordinate-service';
-import { DocumentEffectsShow } from '../docs/state';
+import { DocumentEffectsShow, getCurrentDocumentState } from '../docs/state';
+import { Document } from '../docs/models/document';
 
 @Component({
   selector: 'ms-markdown',
@@ -50,6 +51,16 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState));
   gtsmBreakPoint = false;
   editWithView: boolean | null;
+  docContent = this.store.select<Document>(getCurrentDocumentState).pipe(
+    map(doc => {
+      if (doc && doc.content){
+        return base64Decode(doc.content.content);
+      }
+      else {
+        return '';
+      }
+    })
+  );
   // isSyncingLeftScroll = false;
   // isSyncingRightScroll = false;
   constructor(
@@ -83,6 +94,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     let me = this;
+
     // this.editorDiv.nativeElement.onscroll = function () {
     //   if (!me.isSyncingLeftScroll) {
     //     me.isSyncingRightScroll = true;
@@ -102,6 +114,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
       //this.editModeChange(true, false);
       this.isNewDoc = true;
     }
+
     this.docShowSub = this._docService.docShow$.subscribe(doc => {
       if (doc === null) {
         this._text = '';
@@ -168,6 +181,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
       // }
       // refresh();
     });
+
     this.route.queryParamMap
       .pipe(
         map(params => {
@@ -175,9 +189,11 @@ export class MarkdownComponent implements OnInit, OnDestroy {
             return this._docService.newDoc();
           } else {
             let title = params.get('title');
-            let id = params.get('id');
+            let num = params.get('id');
             // return this._docService.showDoc(title, id);
-            return this.store.dispatch(new DocumentEffectsShow({doc:{id,title,format:'md'}}));
+            this.store.dispatch(
+              new DocumentEffectsShow({ doc: { number:num, title, format: 'md' } })
+            );
           }
         }, this),
         take(1)
