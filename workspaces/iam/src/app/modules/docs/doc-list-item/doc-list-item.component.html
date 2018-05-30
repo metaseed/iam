@@ -8,10 +8,10 @@
           <a style="text-decoration:none">
             <div class="doc-card__row">
               <div class="doc-card__info">
-                <h1 class="title-truncate">{{doc.metaData.title}}</h1>
-                <h2 mat-card-subtitle class="summary-truncate">{{doc.metaData.summary}}</h2>
+                <h1 class="title-truncate">{{doc.metaData?.title}}</h1>
+                <h2 mat-card-subtitle class="summary-truncate">{{doc.metaData?.summary}}</h2>
               </div>
-              <div *ngIf="doc.metaData.imageData" style="background-position:50% 50%; width:168px;height:158px;margin-top:16px" [style.background-image]="'url('+doc.metaData.imageData+')'"></div>
+              <div *ngIf="doc.metaData?.imageData" style="background-position:50% 50%; width:168px;height:158px;margin-top:16px" [style.background-image]="'url('+doc.metaData?.imageData+')'"></div>
             </div>
           </a>
         </div>

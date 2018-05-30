@@ -53,7 +53,6 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
     ServiceWorkerModule.register(`./ngsw-worker.js`, {
       enabled: environment.production
     }),
-    // StoreModule.forRoot({ a: 'b' });
     StoreModule.forRoot(reducers, { metaReducers }),
     HotkeyModule.forRoot({
       disableCheatSheet: false,
@@ -62,7 +61,7 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
       cheatSheetDescription: "shortcuts"
     }),
 
-    !environment.production ? StoreDevtoolsModule.instrument() : [],
+    // !environment.production ? StoreDevtoolsModule.instrument() : [],
 
     EffectsModule.forRoot([AppEffects])
   ],

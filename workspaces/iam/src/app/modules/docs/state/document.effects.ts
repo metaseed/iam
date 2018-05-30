@@ -22,7 +22,8 @@ import {
   DocumentEffectsShow,
   SetCurrentDocumentId,
   getCurrentDocumentState,
-  AddDocument
+  AddDocument,
+  UpdateDocument
 } from 'app/modules/docs/state';
 import { DocService } from '../services/doc.service';
 import { format } from 'util';
@@ -57,14 +58,12 @@ export class DocumentEffects {
               docList.push(d);
             }
           });
-          this.store.dispatch(
-            new SetDocumentsMessage({
-              status: ActionStatus.Success,
-              action: DocumentEffectsActionTypes.Load,
-              message: 'documents loaded'
-            })
-          );
-          return new LoadDocuments({ collectionDocuments: docList });
+          this.store.dispatch(new LoadDocuments({ collectionDocuments: docList }));
+          return new SetDocumentsMessage({
+            status: ActionStatus.Success,
+            action: DocumentEffectsActionTypes.Load,
+            message: 'documents loaded'
+          });
         }),
         catchError(err =>
           of(
@@ -95,41 +94,47 @@ export class DocumentEffects {
     switchMap(action => {
       return this._storage.init().pipe(
         switchMap(repo => {
-          return this.store.select(getCurrentDocumentState).pipe(
-            switchMap(document => {
-              function getContent(docu, withFormat = true) {
-                const doc = action.payload.doc;
-                const number = doc.number;
-                const title = doc.title;
-                let format = doc.format;
-                let content = `${DocService.FolderName}/${title}_${number}.${format}`;
-                if (!withFormat) content = `${DocService.FolderName}/${title}_${number}`;
-                return repo.getContents(content).pipe(
-                  map(c => {
-                    docu.content = <any>c;
-                    return new SetDocumentsMessage({
-                      action: DocumentEffectsActionTypes.Show,
-                      status: ActionStatus.Success
-                    });
-                  })
-                );
+          let document: Document;
+          this.store
+            .select(getDocumentEntitiesState)
+            .pipe(take(1))
+            .subscribe(documents => {
+              document = documents[action.payload.doc.number];
+            });
+          function getContent(docu, withFormat = true) {
+            const doc = action.payload.doc;
+            const number = doc.number;
+            const title = doc.title;
+            let format = doc.format;
+            let content = `${DocService.FolderName}/${title}_${number}.${format}`;
+            if (!withFormat) content = `${DocService.FolderName}/${title}_${number}`;
+            return repo.getContents(content).pipe(
+              map(c => {
+                docu.content = <any>c;
+                return new SetDocumentsMessage({
+                  action: DocumentEffectsActionTypes.Show,
+                  status: ActionStatus.Success
+                });
+              })
+            );
+          }
+          let curDoc = document ? { ...document } : { ...action.payload.doc };
+          let retryCounter = 0;
+          return getContent(curDoc).pipe(
+            tap(_ => {
+              if (!document){
+                this.store.dispatch(new AddDocument({ collectionDocument: <any>curDoc }));
+              } else {
+                this.store.dispatch(new UpdateDocument({collectionDocument: {id:<string>(curDoc.number), changes:<any>curDoc}}))
               }
-              let curDoc = document ? { ...document } : { ...action.payload.doc };
-              let retryCounter = 0;
-              return getContent(curDoc).pipe(
-                tap(_ => {
-                  if (!document)
-                    this.store.dispatch(new AddDocument({ collectionDocument: <any>curDoc }));
-                }),
-                catchError(err => {
-                  if (retryCounter < 1) {
-                    retryCounter++;
-                    return getContent(curDoc, false);
-                  } else {
-                    throw err;
-                  }
-                })
-              );
+            }),
+            catchError(err => {
+              if (retryCounter < 1) {
+                retryCounter++;
+                return getContent(curDoc, false);
+              } else {
+                throw err;
+              }
             })
           );
         })

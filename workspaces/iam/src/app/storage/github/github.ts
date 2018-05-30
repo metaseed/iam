@@ -1,5 +1,5 @@
 import { IStorage } from '../storage';
-import { Observable, combineLatest } from 'rxjs';
+import { Observable, combineLatest, Subscriber, ReplaySubject } from 'rxjs';
 import {
   catchError,
   map,
@@ -17,7 +17,7 @@ import { Repository } from './repository';
 import { Requestable } from './requestable';
 import * as GitHub from 'github-api';
 import { GITHUB_AUTHENTICATION } from './tokens';
-import { ConfigService } from 'core';
+import { ConfigService, ConfigModel } from 'core';
 
 @Injectable()
 export class GithubStorage extends Requestable {
@@ -41,21 +41,31 @@ export class GithubStorage extends Requestable {
   init(): Observable<Repository> {
     if (this._repo) return this._repo;
 
-    return (this._repo = this.configService.config$.pipe(
-      switchMap(config => {
-        let user = config.storage.github.userName;
-        let name = config.storage.github.dataRepoName;
-        return this.getRepos(user, name).pipe(
-          shareReplay(1),
-          catchError(err => {
-            if (err.id === 404) {
-              return this.newRepos(name);
-            } else {
-              return Observable.throw(err);
-            }
-          })
-        );
-      })
+    return (this._repo = this.configService.config$.lift(
+      (_ => {
+        const me = this;
+        let replayObservable
+        let hasError = false;
+        return function(this: Subscriber<Repository>, source: Observable<ConfigModel>) {
+          if (!replayObservable) {
+            replayObservable = new ReplaySubject(1);
+            source.pipe(switchMap(config => {
+              let user = config.storage.github.userName;
+              let name = config.storage.github.dataRepoName;
+              return me.getRepos(user, name).pipe(
+                catchError(err => {
+                  if (err.id === 404) {
+                    return me.newRepos(name);
+                  } else {
+                    return Observable.throw(err);
+                  }
+                })
+              );
+            })).subscribe(o=>replayObservable.next(o));
+          }
+          return replayObservable.subscribe(this);
+        };
+      })()
     ));
   }
 
