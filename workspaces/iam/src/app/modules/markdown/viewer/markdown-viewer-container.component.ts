@@ -6,54 +6,27 @@ import * as fromView from '../actions/view';
 import { Store, select } from '@ngrx/store';
 import { DocService } from 'docs';
 import { ElementRef } from '@angular/core';
-import { Subscription, of } from 'rxjs';
+import { Subscription, of, Subject } from 'rxjs';
+import {
+  getDocumentActionStatusState,
+  DocumentEffectsActionTypes,
+  DocumentActionTypes,
+  ActionStatus
+} from '../../docs/state';
+import { filter, takeLast, takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'markdown-viewer-container',
-  template: `
-    <ms-reader-toolbar></ms-reader-toolbar>
-    <ms-reading-position-indicator *ngIf="isScrollDown" [element]="viewContainerDiv"></ms-reading-position-indicator>
-    <sk-three-bounce [isRunning]="!docLoaded"></sk-three-bounce>
-
-    <div style="position:relative;height:100%;">
-        <div class="viewer-container" #viewContainerDiv>
-            <div class="markdown-view">
-              <markdown-viewer [model]="markdown"></markdown-viewer>
-              </div>
-        </div>
-    </div>
-    `,
-  styles: [
-    `
-        .viewer-container {
-            overflow-y:auto;
-            overflow-x:auto;
-            padding:0px 3px 0px;
-            height:100%;
-        }
-        @media all and (min-width: 960px) {
-          .viewer-container{
-            padding:0px 16px 0px
-          }
-        }
-        .markdown-view {
-          max-width: 1000px;
-          margin: auto;
-        }
-
-
-    `
-  ]
+  templateUrl: './markdown-viewer-container.component.html',
+  styleUrls: ['./markdown-viewer-container.component.scss']
 })
 export class MarkdownViewerContainerComponent implements AfterViewInit {
-  showDocSubscription: Subscription;
-  isLockScrollWithViewSubscription: Subscription;
+  destroy$ = new Subject();
 
   @Input() markdown: string;
   @Input() hideToolbar: false;
   @ViewChild('viewContainerDiv') viewerContainerDiv: ElementRef;
   docLoaded = false;
   isEditorScrollDown$;
-  isEditorScrollDownSubscription;
   isLockScrollWithView$;
   isLockScrollWithView;
   constructor(private store: Store<markdown.State>, private _docService: DocService) {}
@@ -65,10 +38,11 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
     this.isLockScrollWithView$ = this.store.pipe(
       select(markdown.selectEditLockScrollWithViewState)
     );
-    this.isLockScrollWithViewSubscription = this.isLockScrollWithView$.subscribe(isLock => {
+    this.isLockScrollWithView$.pipe(takeUntil(this.destroy$)).subscribe(isLock => {
       this.isLockScrollWithView = isLock;
     });
-    this.isEditorScrollDownSubscription = this.isEditorScrollDown$.subscribe(value => {
+
+    this.isEditorScrollDown$.pipe(takeUntil(this.destroy$)).subscribe(value => {
       if (this.isLockScrollWithView && value.scroll) {
         let edit_div = value.scroll.target;
         let v_per = edit_div.scrollTop / (edit_div.scrollHeight - edit_div.clientHeight);
@@ -79,29 +53,29 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
         me.viewerContainerDiv.nativeElement.scrollTop += delta_v_view;
       }
     });
-    this.showDocSubscription = this._docService.docShow$.subscribe(doc => {
-      this.docLoaded = true;
 
-      new Scrollable(this.viewerContainerDiv.nativeElement).isScrollDown$.subscribe(e => {
+    this.store
+      .select(getDocumentActionStatusState)
+      .pipe(
+        filter(status => status && status.action === DocumentEffectsActionTypes.Show),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(status => {
+        if (status.status === ActionStatus.Start) {
+          this.docLoaded = false;
+        } else {
+          this.docLoaded = true;
+        }
+      });
+    new Scrollable(this.viewerContainerDiv.nativeElement).isScrollDown$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(e => {
         this.store.dispatch(new fromView.ScrollDown(e));
-        // console.log(e)
         this.isScrollDown = e.isDown;
       });
-    });
   }
 
   ngOnDestroy() {
-    if (this.showDocSubscription) {
-      this.showDocSubscription.unsubscribe();
-      this.showDocSubscription = null;
-    }
-    if (this.isLockScrollWithViewSubscription) {
-      this.isLockScrollWithViewSubscription.unsubscribe();
-      this.isLockScrollWithViewSubscription = null;
-    }
-    if (this.isEditorScrollDownSubscription) {
-      this.isEditorScrollDownSubscription.unsubscribe();
-      this.isEditorScrollDownSubscription = null;
-    }
+    this.destroy$.next();
   }
 }

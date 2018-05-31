@@ -8,6 +8,7 @@ import {
 import { environment } from 'environments/environment';
 import * as fromDocument from './document.reducer';
 import * as fromRoot from '../../../reducers';
+import { DocumentEffectsActions } from '.';
 
 export * from './document.effects.actions';
 export * from './document.actions';
@@ -27,6 +28,6 @@ export const getDocsState = createFeatureSelector<DocsState>('docs');
 export const getDocumentState = createSelector(getDocsState,state=>state.document);
 export const getDocumentsState = createSelector(getDocumentState,fromDocument.selectAll);
 export const getDocumentEntitiesState = createSelector(getDocumentState,fromDocument.selectEntities);
-export const getDocumentActionStatusState = createSelector(getDocumentState,state=>state.actionStatus);
 export const getCurrentDocumentIdState = createSelector(getDocumentState,fromDocument.selectCurrentDocumentId);
 export const getCurrentDocumentState = createSelector(getDocumentEntitiesState, getCurrentDocumentIdState,(entities,id)=>entities[id]);
+export const getDocumentActionStatusState = createSelector(getDocumentState,fromDocument.selectDocumentActionStatus);

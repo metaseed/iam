@@ -15,7 +15,7 @@ export enum DocumentActionTypes {
   DeleteDocuments = '[Document] Delete Documents',
   ClearDocuments = '[Document] Clear Documents',
   SetCurrentDocumentId = '[Document] Set Current CollectoinDocument Id',
-  SetDocumentsMessage = '[Document] Set Message'
+  SetDocumentStatus = '[Document] Set Status'
 }
 
 export class LoadDocuments implements Action {
@@ -82,7 +82,7 @@ export class SetCurrentDocumentId implements Action {
 }
 
 export class SetDocumentsMessage implements Action {
-  readonly type = DocumentActionTypes.SetDocumentsMessage;
+  readonly type = DocumentActionTypes.SetDocumentStatus;
   constructor(public payload: DocumentActionStatus) {}
 }
 

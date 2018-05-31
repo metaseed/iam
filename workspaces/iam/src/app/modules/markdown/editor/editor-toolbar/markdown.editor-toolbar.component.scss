@@ -5,11 +5,11 @@ a:hover {
 
 .save-button:after {
   content: " \25CF";
-  font-size: 0.44em;
+  font-size: 1.34rem;
   color: red;
-  margin-top: -2.3em;
-  margin-left: 1.4em;
-  display: inherit;
+  margin-top: -0.6rem;
+  margin-left: -0.9rem;
+  position: absolute;
 }
 
 .saving:after {

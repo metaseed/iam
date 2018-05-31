@@ -32,7 +32,6 @@ import { Document } from '../docs/models/document';
 })
 export class MarkdownComponent implements OnInit, OnDestroy {
   private docShowSub: any;
-  private _text: string;
   private _doc: any;
   isFullScreen: boolean;
   fixEditButton = false;
@@ -51,7 +50,8 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState));
   gtsmBreakPoint = false;
   editWithView: boolean | null;
-  docContent = this.store.select<Document>(getCurrentDocumentState).pipe(
+
+  markdown$ = this.store.select<Document>(getCurrentDocumentState).pipe(
     map(doc => {
       if (doc && doc.content){
         return base64Decode(doc.content.content);
@@ -117,10 +117,8 @@ export class MarkdownComponent implements OnInit, OnDestroy {
 
     this.docShowSub = this._docService.docShow$.subscribe(doc => {
       if (doc === null) {
-        this._text = '';
         return;
       }
-      this._text = base64Decode(doc.content.content);
       this._doc = doc;
       if (this.isNewDoc) {
         this.store.dispatch(new document.EditMode());
@@ -213,15 +211,6 @@ export class MarkdownComponent implements OnInit, OnDestroy {
 
   showDemo() {
     this._http.get(`${this.baseHref}assets/markdown.md`, { responseType: 'text' }).subscribe(a => {
-      this._text = a;
     });
-  }
-
-  public get markdown(): string {
-    return this._text;
-  }
-  public set markdown(text) {
-    this._text = text;
-    this._doc && (this._doc.body = text);
   }
 }

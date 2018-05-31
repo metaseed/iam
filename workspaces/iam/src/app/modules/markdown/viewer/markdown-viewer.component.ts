@@ -36,11 +36,11 @@ export const NO_ANIMATIONS = 'no-animations';
 export class MarkdownViewerComponent {
   static animationsEnabled = false;
   static config_addTocByDefault = false;
+  lozad = lozad();
 
   private void$ = of<void>(undefined);
   private hostElement: HTMLElement;
   private docContents$ = new EventEmitter<string>();
-  private lozad: any;
   // new Scrollable(this.hostElement).scroll$.subscribe(a => {
   //   console.log(a);
   // });

@@ -63,7 +63,7 @@ export function reducer(
       return { ...state, currentDocumentId: action.payload.id };
     }
 
-    case DocumentActionTypes.SetDocumentsMessage: {
+    case DocumentActionTypes.SetDocumentStatus: {
       return {...state, actionStatus:action.payload}
     }
 
@@ -82,3 +82,4 @@ export const {
 
 
 export const selectCurrentDocumentId = (state: State) => state.currentDocumentId;
+export const selectDocumentActionStatus = (state:State) => state.actionStatus;
