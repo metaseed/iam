@@ -68,8 +68,8 @@ export class Issue extends Requestable {
       params
     );
   }
-  get(issueNumber: number) {
-    return this.request(
+  get(issueNumber: number):Observable<Issue> {
+    return <Observable<Issue>>this.request<Issue>(
       'GET',
       `/repos/${this._userInfo.name}/${this.repository}/issues/${issueNumber}`
     );

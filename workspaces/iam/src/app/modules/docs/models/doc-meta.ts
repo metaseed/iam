@@ -17,7 +17,8 @@ export class DocMeta {
     summary: string,
     imageUrl: string,
     contentId: string,
-    contentUrl: string
+    contentUrl: string,
+    format:string
   ) {
     //         if (imageUrl) {
     //             let o = Observable.bindCallback(DocMeta.convertImgToDataUrlViaCanvas);
@@ -48,12 +49,13 @@ export class DocMeta {
         "title": "${title}",
         "summary": "${summary}",
         "imageData":"${imageUrl}",
-        "contentId":"${contentId}"
+        "contentId":"${contentId}",
+        "format":"${format}"
     }
 -->
 > please visit: **[${title}](${contentUrl})**
         `,
-      new DocMeta(contentId, title, summary, imageUrl)
+      new DocMeta(contentId, title, summary, imageUrl,format)
     ]);
   }
   static getFirstLine(text) {
@@ -82,11 +84,11 @@ export class DocMeta {
     if (r && r[1]) return r[1];
     return '';
   }
-  static serializeContent(content: string, contentId: string, contentUrl: string) {
+  static serializeContent(content: string, contentId: string, contentUrl: string,format:string) {
     let header = DocMeta.getTitle(content);
     let summary = DocMeta.getSummary(content);
     let picUrl = DocMeta.getFirstPicture(content);
-    return DocMeta.serialize(header, summary, picUrl, contentId, contentUrl);
+    return DocMeta.serialize(header, summary, picUrl, contentId, contentUrl,format);
   }
 
   static deSerialize(metaData: string) {

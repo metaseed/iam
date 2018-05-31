@@ -55,33 +55,6 @@ export class DocService {
     this.docShow$.next(doc);
   }
 
-  showDoc(title: string, id: number | string, hasSufix: boolean = true) {
-    let me = this;
-    let content = `${DocService.FolderName}/${title}_${id}${hasSufix ? '.md' : ''}`;
-    this._repoSub$.subscribe(repo =>
-      repo.getContents(content).subscribe(
-        (content: Content) => {
-          let doc = me.model.docs.find(doc => doc.number === +id);
-          function showContent(doc: Document) {
-            doc.content = content;
-            me.model.currentDoc = doc;
-            me.docShow$.next(doc);
-          }
-          if (!doc) {
-            me.get(+id).subscribe(doc => {
-              showContent(doc);
-            });
-          } else {
-            showContent(doc);
-          }
-        },
-        error => {
-          if (hasSufix) this.showDoc(title, id, false);
-        }
-      )
-    );
-  }
-
   getContentUrl(issueNum, title) {
     return `https://metaseed.github.io/iam/doc?id=${issueNum}&title=${encodeURIComponent(title)}`;
   }
@@ -97,7 +70,7 @@ export class DocService {
             return repo.newFile(`${DocService.FolderName}/${title}_${id}.md`, content).pipe(
               flatMap(file => {
                 let url = this.getContentUrl(id, title);
-                return DocMeta.serializeContent(content, file.content.sha, url).pipe(
+                return DocMeta.serializeContent(content, file.content.sha, url,'md').pipe(
                   flatMap(([metaString, metaData]) => {
                     let data: EditIssueParams = {
                       title: title,
@@ -168,7 +141,7 @@ export class DocService {
           .pipe(
             flatMap(file => {
               let url = this.getContentUrl(doc.number, title);
-              return DocMeta.serializeContent(content, file.content.sha, url).pipe(
+              return DocMeta.serializeContent(content, file.content.sha, url,'md').pipe(
                 flatMap(([metaString, metaData]) => {
                   let data: EditIssueParams = {
                     title: title,
@@ -196,18 +169,7 @@ export class DocService {
     );
   };
 
-  get(id: number): Observable<Document> {
-    return this._repoSub$.pipe(
-      flatMap(repo => {
-        return repo.issue.get(id).pipe(
-          map((doc: Document) => {
-            doc.metaData = DocMeta.deSerialize(doc.body);
-            return doc;
-          })
-        );
-      })
-    );
-  }
+
   // update(todo: Document) {
   //   console.log('Update');
 

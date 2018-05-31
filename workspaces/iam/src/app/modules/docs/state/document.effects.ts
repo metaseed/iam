@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { Observable, defer, of } from 'rxjs';
+import { Observable, defer, of, throwError } from 'rxjs';
 import { Database } from '../../db/database';
 import { Action, Store } from '@ngrx/store';
 import {
@@ -10,9 +10,8 @@ import {
   DocumentEffectsDelete
 } from './document.effects.actions';
 import { LoadDocuments, SetDocumentsMessage, DeleteDocument } from './document.actions';
-import { GithubStorage } from '../../../storage/github';
+import { GithubStorage, Repository } from '../../../storage/github';
 import { switchMap, catchError, map, tap, take, retry } from 'rxjs/operators';
-import { Repository } from '../../../../../types/github-api';
 import { DocumentActionTypes } from '../../markdown/actions/document';
 import { DocMeta } from '../models/doc-meta';
 import { Document } from '../models/document';
@@ -90,51 +89,40 @@ export class DocumentEffects {
         })
       )
     ),
-
     switchMap(action => {
       return this._storage.init().pipe(
         switchMap(repo => {
           let document: Document;
+          const actionDoc = action.payload.doc;
           this.store
             .select(getDocumentEntitiesState)
             .pipe(take(1))
             .subscribe(documents => {
-              document = documents[action.payload.doc.number];
+              document = documents[actionDoc.number];
             });
-          function getContent(docu, withFormat = true) {
-            const doc = action.payload.doc;
-            const number = doc.number;
-            const title = doc.title;
-            let format = doc.format;
-            let content = `${DocService.FolderName}/${title}_${number}.${format}`;
-            if (!withFormat) content = `${DocService.FolderName}/${title}_${number}`;
-            return repo.getContents(content).pipe(
-              map(c => {
-                docu.content = <any>c;
-                return new SetDocumentsMessage({
-                  action: DocumentEffectsActionTypes.Show,
-                  status: ActionStatus.Success
-                });
-              })
-            );
-          }
+
           let curDoc = document ? { ...document } : { ...action.payload.doc };
-          let retryCounter = 0;
-          return getContent(curDoc).pipe(
-            tap(_ => {
-              if (!document){
+          const num = +actionDoc.number;
+          const title = actionDoc.title;
+          const format = actionDoc.format;
+          return getContent(repo, num, title, format).pipe(
+            tap(c => {
+              (<any>curDoc).content = c;
+              if (!document) {
                 this.store.dispatch(new AddDocument({ collectionDocument: <any>curDoc }));
               } else {
-                this.store.dispatch(new UpdateDocument({collectionDocument: {id:<string>(curDoc.number), changes:<any>curDoc}}))
+                this.store.dispatch(
+                  new UpdateDocument({
+                    collectionDocument: { id: <string>curDoc.number, changes: <any>curDoc }
+                  })
+                );
               }
             }),
-            catchError(err => {
-              if (retryCounter < 1) {
-                retryCounter++;
-                return getContent(curDoc, false);
-              } else {
-                throw err;
-              }
+            map(c => {
+              return new SetDocumentsMessage({
+                action: DocumentEffectsActionTypes.Show,
+                status: ActionStatus.Success
+              });
             })
           );
         })
@@ -207,4 +195,30 @@ export class DocumentEffects {
     private _storage: GithubStorage,
     private store: Store<State>
   ) {}
+}
+
+function getContent(repo: Repository, number: number, title: string, format: string, state = 0 ) {
+  let content = `${DocService.FolderName}/${title}_${number}.${format}`;
+  if (!format) content = `${DocService.FolderName}/${title}_${number}`;
+  return repo.getContents(content).pipe(/*from url*/
+    catchError(err => {
+      if (err.status === 404) {
+        if (state===0) {
+          state=1;
+          let doc: Document;
+          return repo.issue.get(number).pipe(
+            switchMap(doc => {
+              let meta = DocMeta.deSerialize(doc.body);
+              title = meta.title;
+              format = meta.format || 'md';
+              return getContent(repo, number, title, format, state);// from database
+            })
+          );
+        } else if(format && state===1) {
+          state=2; // stop
+          return getContent(repo,number,title,'',state); // from database but without format
+        }
+      }
+    })
+  );
 }

@@ -8,8 +8,8 @@ import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
 import * as fromMarkdown from './../reducers';
 import { DocumentMode } from './../reducers/document';
 import { DocSaveCoordinateService } from './services/doc-save-coordinate-service';
-import { Observable } from 'rxjs';
-import { map, filter, switchMap, debounceTime, take } from 'rxjs/Operators';
+import { Observable, Subject } from 'rxjs';
+import { map, filter, switchMap, debounceTime, take, takeUntil } from 'rxjs/Operators';
 import { Store, select } from '@ngrx/store';
 import { DialogService } from 'core';
 import { DocService } from 'docs';
@@ -26,9 +26,8 @@ import { Subscription, of } from 'rxjs';
   styles: []
 })
 export class MarkdownEditorComponent implements OnInit {
-  docModeSubs: Subscription;
-  editorLoadedSubs: Subscription;
   editorLoaded = false;
+  destroy$ = new Subject();
 
   @Output() markdownChange = new EventEmitter();
 
@@ -53,11 +52,11 @@ export class MarkdownEditorComponent implements OnInit {
     private store: Store<markdown.State>,
     private docSerivce: DocService
   ) {
-    this.editorLoadedSubs = editorService.editorLoaded$.subscribe(() => {
+    editorService.editorLoaded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       setTimeout(() => (this.editorLoaded = true), 0);
     });
 
-    this.docModeSubs = this.docMode$.subscribe(mode => {
+    this.docMode$.pipe(takeUntil(this.destroy$)).subscribe(mode => {
       switch (mode) {
         case DocumentMode.Edit: {
           setTimeout(() => this.codeMirrorComponent.refresh(), 0);
@@ -70,8 +69,7 @@ export class MarkdownEditorComponent implements OnInit {
 
   ngOnInit() {}
   ngOnDestroy() {
-    this.editorLoadedSubs.unsubscribe();
-    this.docModeSubs.unsubscribe();
+    this.destroy$.next();
   }
 
   canDeactivate(): Observable<boolean> | boolean {

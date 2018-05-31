@@ -86,7 +86,8 @@ export class DocsComponent {
     let navigationExtras: NavigationExtras = {
       queryParams: {
         id: doc.number,
-        title: doc.metaData.title
+        title: doc.metaData.title,
+        f:doc.metaData.format || 'md'
       }
     };
     this.router.navigate(['/doc'], navigationExtras);

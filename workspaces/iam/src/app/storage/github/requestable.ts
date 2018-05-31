@@ -30,7 +30,7 @@ export class Requestable {
     }
   }
 
-  request(method: string, path: string, data: any = null, media?: string) {
+  request<T>(method: string, path: string, data: any = null, media?: string) {
     method = method.toUpperCase();
     const url = this.getURL(path);
     const headers = this.getRequestHeader(media);
@@ -60,7 +60,7 @@ export class Requestable {
         responseType: 'json'
       });
     }
-    return <Observable<HttpResponse<any>>>this._http
+    return <Observable<HttpResponse<T>>>this._http
       .request(request)
       .pipe(filter(r => r instanceof HttpResponseBase));
   }

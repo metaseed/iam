@@ -94,22 +94,6 @@ export class MarkdownComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     let me = this;
-
-    // this.editorDiv.nativeElement.onscroll = function () {
-    //   if (!me.isSyncingLeftScroll) {
-    //     me.isSyncingRightScroll = true;
-    //     me.viewerDiv.nativeElement.scrollTop = this.scrollTop;
-    //   }
-    //   me.isSyncingLeftScroll = false;
-    // }
-
-    // this.viewerDiv.nativeElement.onscroll = function () {
-    //   if (!me.isSyncingRightScroll) {
-    //     me.isSyncingLeftScroll = true;
-    //     me.editorDiv.nativeElement.scrollTop = this.scrollTop;
-    //   }
-    //   me.isSyncingRightScroll = false;
-    // }
     if (this.router.url === '/doc/new') {
       //this.editModeChange(true, false);
       this.isNewDoc = true;
@@ -162,22 +146,9 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     this.changeDetecorRef.detectChanges();
   }
 
-  // @HostListener('window:scroll', ['$event'])
-  // onScroll(event) {
-  //   var viewportOffset = this._el.nativeElement.getBoundingClientRect();
-  //   // these are relative to the viewport, i.e. the window
-  //   this.fixEditButton = viewportOffset.top <= 10;
-  // }
   ngAfterViewInit() {
     this._editorService.contentChanged$.subscribe(([content, editor]) => {
       let me = this;
-      // function refresh() {//should be after viewer rendered its contents
-      //   if (!me.editorDiv || !me.viewerDiv || !me.editor) { setTimeout(() => refresh(), 0); return; };
-      //   me.editorDiv.nativeElement.style.height = me.viewerDiv.nativeElement.clientHeight + 'px';
-      //   me.editor.editor.editor.layout();
-      //   me.editor.editor.editor.focus();
-      // }
-      // refresh();
     });
 
     this.route.queryParamMap
@@ -188,9 +159,9 @@ export class MarkdownComponent implements OnInit, OnDestroy {
           } else {
             let title = params.get('title');
             let num = params.get('id');
-            // return this._docService.showDoc(title, id);
+            let format = params.get('f');
             this.store.dispatch(
-              new DocumentEffectsShow({ doc: { number:num, title, format: 'md' } })
+              new DocumentEffectsShow({ doc: { number:num, title, format } })
             );
           }
         }, this),
@@ -198,16 +169,6 @@ export class MarkdownComponent implements OnInit, OnDestroy {
       )
       .subscribe();
   }
-
-  // modeChange(edit = false, view = false) {
-  //   this.isEditMode = edit;
-  //   if (edit && this.gtsmBreakPoint) {
-  //     this.showPreviewPanel = true;
-  //     return;
-  //   }
-  //   this.showPreviewPanel = view;
-
-  // }
 
   showDemo() {
     this._http.get(`${this.baseHref}assets/markdown.md`, { responseType: 'text' }).subscribe(a => {
