@@ -63,13 +63,13 @@ export class UpdateDocuments implements Action {
 export class DeleteDocument implements Action {
   readonly type = DocumentActionTypes.DeleteDocument;
 
-  constructor(public payload: { id: string }) {}
+  constructor(public payload: { id: number }) {}
 }
 
 export class DeleteDocuments implements Action {
   readonly type = DocumentActionTypes.DeleteDocuments;
 
-  constructor(public payload: { ids: string[] }) {}
+  constructor(public payload: { ids: number[] }) {}
 }
 
 export class ClearDocuments implements Action {
@@ -78,7 +78,7 @@ export class ClearDocuments implements Action {
 
 export class SetCurrentDocumentId implements Action {
   readonly type = DocumentActionTypes.SetCurrentDocumentId;
-  constructor(public payload: { id: string }) {}
+  constructor(public payload: { id: number }) {}
 }
 
 export class SetDocumentsMessage implements Action {

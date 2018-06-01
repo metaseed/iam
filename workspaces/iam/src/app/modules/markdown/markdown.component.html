@@ -13,10 +13,10 @@
   <vertical-split-pane primary-component-minsize="100" secondary-component-minsize="100" [primary-component-toggled-off]="!isEditMode"
     [secondary-component-toggled-off]="isEditMode && !editWithView" local-storage-key="iam-md-split-pane" primary-component-initialratio="0.5">
     <div #editorDiv class="split-pane-content-primary">
-      <ms-markdown-editor [markdown]="markdown$ | async"></ms-markdown-editor>
+      <ms-markdown-editor [(markdown)]="markdown"></ms-markdown-editor>
     </div>
     <div #viewerDiv class="split-pane-content-secondary" style="height: 100%">
-      <markdown-viewer-container [markdown]="markdown$ | async"></markdown-viewer-container>
+      <markdown-viewer-container [markdown]="markdown"></markdown-viewer-container>
     </div>
   </vertical-split-pane>
   <div class="md-footer ">words:</div>

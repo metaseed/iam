@@ -51,6 +51,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   gtsmBreakPoint = false;
   editWithView: boolean | null;
 
+  markdown:string;
   markdown$ = this.store.select<Document>(getCurrentDocumentState).pipe(
     map(doc => {
       if (doc && doc.content){
@@ -60,7 +61,9 @@ export class MarkdownComponent implements OnInit, OnDestroy {
         return '';
       }
     })
-  );
+  ).subscribe(content=>{
+    this.markdown = content;
+  });
   // isSyncingLeftScroll = false;
   // isSyncingRightScroll = false;
   constructor(
@@ -158,7 +161,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
             return this._docService.newDoc();
           } else {
             let title = params.get('title');
-            let num = params.get('id');
+            let num = +params.get('id');
             let format = params.get('f');
             this.store.dispatch(
               new DocumentEffectsShow({ doc: { number:num, title, format } })

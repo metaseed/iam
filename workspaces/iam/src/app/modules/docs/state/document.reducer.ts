@@ -5,7 +5,7 @@ import { DocumentEffectsActionTypes, DocumentActionStatus, ActionStatus } from '
 
 export interface State extends EntityState<Document> {
   // additional entities state properties
-  currentDocumentId: string;
+  currentDocumentId: number;
   actionStatus?: DocumentActionStatus
 }
 

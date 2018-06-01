@@ -95,10 +95,10 @@ export class DocService {
   private modifyUrlAfterSaved(doc: Document) {
     const url = this.router
       .createUrlTree(['/doc'], {
-        // relativeTo: this.activedRoute,
         queryParams: {
           id: doc.number,
-          title: doc.metaData.title
+          title: doc.metaData.title,
+          format: doc.metaData.format
         }
       })
       .toString();

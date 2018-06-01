@@ -42,11 +42,11 @@ export class GithubStorage extends Requestable {
     if (this._repo) return this._repo;
 
     return (this._repo = this.configService.config$.lift(
-      (_ => {
+      (_ => { //IIFE
         const me = this;
         let replayObservable
         let hasError = false;
-        return function(this: Subscriber<Repository>, source: Observable<ConfigModel>) {
+        return function(this: Subscriber<Repository>, source: Observable<ConfigModel>) { // called every time when subscribe
           if (!replayObservable) {
             replayObservable = new ReplaySubject(1);
             source.pipe(switchMap(config => {
@@ -54,7 +54,7 @@ export class GithubStorage extends Requestable {
               let name = config.storage.github.dataRepoName;
               return me.getRepos(user, name).pipe(
                 catchError(err => {
-                  if (err.id === 404) {
+                  if (err.status === 404) {
                     return me.newRepos(name);
                   } else {
                     return Observable.throw(err);

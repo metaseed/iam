@@ -95,6 +95,6 @@ export class DocsComponent {
   }
 
   deleteDoc(doc: Document) {
-   this.store.dispatch(new DocumentEffectsDelete({number:doc.number, id:doc.id,title:doc.title}))
+   this.store.dispatch(new DocumentEffectsDelete({number:doc.number, title:doc.title}))
   }
 }

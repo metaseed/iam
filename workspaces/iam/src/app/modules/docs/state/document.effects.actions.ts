@@ -18,17 +18,19 @@ export class DocumentEffectsLoad implements Action {
 }
 export class DocumentEffectsDelete implements Action {
   readonly type = DocumentEffectsActionTypes.Delete;
-  constructor(public payload: { number: number; id: string; title: string }) {}
+  constructor(public payload: { number: number; title: string }) {}
 }
 export class DocumentEffectsNew implements Action {
   readonly type = DocumentEffectsActionTypes.New;
+  constructor(public payload:{format:string}){}
 }
 export class DocumentEffectsShow implements Action {
   readonly type = DocumentEffectsActionTypes.Show;
-  constructor(public payload: {doc:{ number: string; title?: string; format?: string}}) {}
+  constructor(public payload: {doc:{ number: number; title?: string; format?: string}}) {}
 }
 export class DocumentEffectsSave implements Action {
   readonly type = DocumentEffectsActionTypes.Save;
+  constructor(public payload:{content:string}){}
 }
 
 export enum ActionStatus {
