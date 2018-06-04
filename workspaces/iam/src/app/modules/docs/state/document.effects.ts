@@ -3,7 +3,11 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Observable, defer, of, throwError } from 'rxjs';
 import { Action, Store } from '@ngrx/store';
 
-import { getContent, NEW_DOC_ID } from './document.effects.util';
+import {
+  getContent,
+  NEW_DOC_ID,
+  getContentUrl,
+} from './document.effects.util';
 import { Database } from '../../db/database';
 import {
   DocumentEffectsLoad,
@@ -12,8 +16,8 @@ import {
   DocumentEffectsDelete
 } from './document.effects.actions';
 import { LoadDocuments, SetDocumentsMessage, DeleteDocument } from './document.actions';
-import { GithubStorage, Repository } from '../../../storage/github';
-import { switchMap, catchError, map, tap, take, retry } from 'rxjs/operators';
+import { GithubStorage, Repository, EditIssueParams } from '../../../storage/github';
+import { switchMap, catchError, map, tap, take, retry, combineLatest } from 'rxjs/operators';
 import { DocumentActionTypes } from '../../markdown/actions/document';
 import { DocMeta } from '../models/doc-meta';
 import { Document } from '../models/document';
@@ -31,25 +35,21 @@ import {
 import { DocService } from '../services/doc.service';
 import { format } from 'util';
 import { base64Encode } from 'core';
+import { MatSnackBar } from '@angular/material';
+import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class DocumentEffects {
-  private repo: Repository;
-
   constructor(
     private actions$: Actions,
     private db: Database,
-    storage: GithubStorage,
-    private store: Store<State>
-  ) {
-    storage
-      .init()
-      .pipe(take(1))
-      .subscribe(r => {
-        if (!r) throw 'could not initial repo';
-        this.repo = r;
-      });
-  }
+    private storage: GithubStorage,
+    private snackbar: MatSnackBar,
+    private store: Store<State>,
+    private location: Location,
+    private router: Router
+  ) {}
 
   @Effect({ dispatch: false })
   openDB$: Observable<any> = defer(() => {
@@ -67,7 +67,8 @@ export class DocumentEffects {
         })
       )
     ),
-    switchMap(_ => this.repo.issue.list('open')),
+    combineLatest(this.storage.init()),
+    switchMap(([a, repo]) => repo.issue.list('open')),
     map((docs: Document[]) => {
       let docList = new Array<Document>();
       docs.forEach(d => {
@@ -107,7 +108,8 @@ export class DocumentEffects {
         })
       )
     ),
-    switchMap(action => {
+    combineLatest(this.storage.init()),
+    switchMap(([action, repo]) => {
       let document: Document;
       const actionDoc = action.payload.doc;
       this.store
@@ -120,7 +122,7 @@ export class DocumentEffects {
       const num = +actionDoc.number;
       const title = actionDoc.title;
       const format = actionDoc.format;
-      return getContent(this.repo, num, title, format).pipe(
+      return getContent(repo, num, title, format).pipe(
         tap(c => {
           (<any>curDoc).content = c;
           if (!document) {
@@ -133,12 +135,13 @@ export class DocumentEffects {
             );
           }
         }),
-        map(_ => {
-          return new SetDocumentsMessage({
-            action: DocumentEffectsActionTypes.Show,
-            status: ActionStatus.Success
-          });
-        })
+        map(
+          _ =>
+            new SetDocumentsMessage({
+              action: DocumentEffectsActionTypes.Show,
+              status: ActionStatus.Success
+            })
+        )
       );
     }),
     catchError(err =>
@@ -201,42 +204,42 @@ export class DocumentEffects {
         })
       );
     }),
-    switchMap(action => {
+    combineLatest(this.storage.init()),
+    switchMap(([action, repo]) => {
+      const content = action.payload.content;
       let isNew = true;
       let title: string;
-      this.store
-        .select(getCurrentDocumentState)
-        .pipe(take(1))
-        .subscribe(
-          doc => {
-            if (doc.number === NEW_DOC_ID) {
-              isNew = false;
-            }
-            title = DocMeta.getTitle(action.payload.content);
-          },
-          err => throwError(err)
-        );
-
-      if (!title) {
-        return of(
-          new SetDocumentsMessage({
-            status: ActionStatus.Fail,
-            action: DocumentEffectsActionTypes.Save,
-            message: 'Must define a title!'
-          })
-        );
-      }
-
-      // let repo: Repository;
-      // this._storage;
-
-      // if (isNew) {
-      // }
-
-      return of(
-        new SetDocumentsMessage({
-          status: ActionStatus.Success,
-          action: DocumentEffectsActionTypes.Save
+      let format = action.payload.format;
+      return this.store.select(getCurrentDocumentState).pipe(
+        take(1),
+        tap(doc => {
+          if (doc.number !== NEW_DOC_ID) {
+            isNew = false;
+          }
+          title = DocMeta.getTitle(action.payload.content);
+        }),
+        switchMap(doc => {
+          if (!title) return throwError(new Error('Must define a title!'));
+          if (!doc.metaData) {
+            return repo.issue.get(doc.number).pipe(
+              map(d => {
+                let meta = DocMeta.deSerialize(d.body);
+                (<any>d).metaData = meta;
+                title = meta.title;
+                format = meta.format || format;
+                return d;
+              })
+            );
+          } else {
+            return of(doc);
+          }
+        }),
+        switchMap(d => {
+          if (isNew) {
+            return this.saveNew(repo, title, content, format);
+          } else {
+            return this.edit(repo, d, title, content, format);
+          }
         })
       );
     }),
@@ -245,12 +248,111 @@ export class DocumentEffects {
         new SetDocumentsMessage({
           status: ActionStatus.Fail,
           action: DocumentEffectsActionTypes.Save,
-          message: err
+          message: err.message + err.stack
         })
       )
     )
   );
 
+  saveNew = (repo: Repository, title: string, content: string, format: string) => {
+    return repo.issue.create({ title }).pipe(
+      switchMap(issue => {
+        let id = issue.number;
+        return repo.newFile(`${DocService.FolderName}/${title}_${id}.${format}`, content).pipe(
+          switchMap(file => {
+            let url = getContentUrl(id, title);
+            return DocMeta.serializeContent(content, file.content.sha, url, format).pipe(
+              switchMap(([metaString, metaData]) => {
+                let data: EditIssueParams = {
+                  title: title,
+                  body: <string>metaString
+                };
+                return repo.issue.edit(id, data).pipe(
+                  map((doc: Document) => {
+                    doc.metaData = <DocMeta>metaData;
+                    this.store.dispatch(
+                      new UpdateDocument({
+                        collectionDocument: { id: doc.number, changes: <any>doc }
+                      })
+                    );
+                    this.modifyUrlAfterSaved(id, title, format);
+                    this.snackbar.open('New document saved!', 'OK');
+                    return new SetDocumentsMessage({
+                      status: ActionStatus.Success,
+                      action: DocumentEffectsActionTypes.Save
+                    });
+                  })
+                );
+              })
+            );
+          })
+        );
+      })
+    );
+  };
+
+  edit = (repo: Repository, doc: Document, title: string, content: string, format: string) => {
+    const changeTitle = doc.metaData ? title !== doc.metaData.title : true;
+    return repo
+      .updateFile(
+        `${DocService.FolderName}/${title}_${doc.number}.${format}`,
+        content,
+        doc.metaData.contentId
+      )
+      .pipe(
+        switchMap(file => {
+          let url = getContentUrl(doc.number, title);
+          return DocMeta.serializeContent(content, file.content.sha, url, format).pipe(
+            switchMap(([metaString, metaData]) => {
+              let data: EditIssueParams = {
+                title: title,
+                body: <string>metaString
+              };
+              return repo.issue.edit(doc.number, data).pipe(
+                tap(d => {
+                  if (changeTitle) {
+                    return repo
+                      .delFileViaSha(
+                        `${DocService.FolderName}/${doc.metaData.title}_${doc.number}.${format}`,
+                        doc.metaData.contentId
+                      )
+                      .pipe(take(1))
+                      .subscribe();
+                  }
+                }),
+                map(a => {
+                  doc.metaData = <DocMeta>metaData;
+                  this.store.dispatch(
+                    new UpdateDocument({
+                      collectionDocument: { id: doc.number, changes: <any>doc }
+                    })
+                  );
+                  this.snackbar.open('Saved!', 'OK');
+                  this.modifyUrlAfterSaved(doc.number, title, format);
+                  return new SetDocumentsMessage({
+                    status: ActionStatus.Success,
+                    action: DocumentEffectsActionTypes.Save
+                  });
+                })
+              );
+            })
+          );
+        })
+      );
+  };
+    modifyUrlAfterSaved(num:number,title:string,format:string ) {
+    const url = this.router
+      .createUrlTree(['/doc'], {
+        queryParams: {
+          id: num,
+          title: title,
+          format: format
+        }
+      })
+      .toString();
+
+    this.location.go(url);
+  }
   @Effect()
   DeleteDocument: Observable<Action> = this.actions$.pipe(
     ofType<DocumentEffectsDelete>(DocumentEffectsActionTypes.Delete),
@@ -262,12 +364,13 @@ export class DocumentEffects {
         })
       )
     ),
-    switchMap(action => {
+    combineLatest(this.storage.init()),
+    switchMap(([action, repo]) => {
       const number = action.payload.number;
-      return this.repo.issue.edit(number, { state: 'closed' }).pipe(
+      return repo.issue.edit(number, { state: 'closed' }).pipe(
         switchMap(issue => {
           const title = action.payload.title;
-          return this.repo.delFile(`${DocService.FolderName}/${title}_${number}.md`).pipe(
+          return repo.delFile(`${DocService.FolderName}/${title}_${number}.md`).pipe(
             map(d => {
               this.store.dispatch(
                 new SetDocumentsMessage({

@@ -30,7 +30,7 @@ export class DocumentEffectsShow implements Action {
 }
 export class DocumentEffectsSave implements Action {
   readonly type = DocumentEffectsActionTypes.Save;
-  constructor(public payload:{content:string}){}
+  constructor(public payload:{content:string,format?:string}){}
 }
 
 export enum ActionStatus {

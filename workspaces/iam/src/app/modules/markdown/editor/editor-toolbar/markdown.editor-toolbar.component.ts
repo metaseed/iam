@@ -18,6 +18,7 @@ import * as CodeMirror from 'codemirror';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';
 import { MatToolbar, MatDialog } from '@angular/material';
+import { DocumentEffectsSave } from '../../../docs/state';
 
 @Component({
   selector: 'editor-toolbar',
@@ -133,7 +134,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   save = () => {
     const content = this.editor.getValue();
     this.store.dispatch(new edit.Save(content));
-    this.docService.save(content);
+    this.store.dispatch(new DocumentEffectsSave({content,format:'md'}));
   };
 
   undo = () => {
