@@ -1,7 +1,6 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { Document } from './models/document';
 import { DocService } from './services/doc.service';
-import { DocsModel } from './models/docs.model';
 import { Router } from '@angular/router';
 import { NavigationExtras } from '@angular/router/src/router';
 import { NgSpinKitModule } from 'ng-spin-kit';
@@ -75,13 +74,6 @@ export class DocsComponent {
     this.docs$ = from([this.initDocs$,filteredDocs$]).pipe(switchIfEmit());
   }
 
-  addNewElement(element: string) {
-    this.docService.newDoc();
-    // let todo = { id: this.model.length + 1, text: element, done: false };
-    // this._todoListService.store(todo)
-    //   .subscribe(t => this.todoList.push(t), alert);
-  }
-
   showDoc(doc: Document) {
     let navigationExtras: NavigationExtras = {
       queryParams: {
@@ -91,7 +83,6 @@ export class DocsComponent {
       }
     };
     this.router.navigate(['/doc'], navigationExtras);
-    // this._docService.showDoc(doc);
   }
 
   deleteDoc(doc: Document) {

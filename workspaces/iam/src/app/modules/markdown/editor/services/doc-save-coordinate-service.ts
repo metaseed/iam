@@ -13,7 +13,7 @@ export class DocSaveCoordinateService {
   private currentContent: string;
   static autoSaveDelayAfterEdit = 5 * 60 * 1000; //5min
 
-  constructor(private editorService: MarkdownEditorService, private docService: DocService) {
+  constructor(private editorService: MarkdownEditorService) {
     this.isDirty$
       .pipe(auditTime(DocSaveCoordinateService.autoSaveDelayAfterEdit))
       .subscribe(value => {
@@ -23,8 +23,8 @@ export class DocSaveCoordinateService {
     this.editorService.editorLoaded$.subscribe((editor: CodeMirror.Editor) => {
       this.editor = editor;
 
-      this.editorService.contentChanged$.subscribe((e: [string, CodeMirror.Editor]) => {
-        this.currentContent = e[0];
+      this.editorService.contentChanged$.subscribe(([content,editor]) => {
+        this.currentContent = content;
         this.checkDirty(editor);
       });
     });

@@ -3,11 +3,7 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Observable, defer, of, throwError } from 'rxjs';
 import { Action, Store } from '@ngrx/store';
 
-import {
-  getContent,
-  NEW_DOC_ID,
-  getContentUrl,
-} from './document.effects.util';
+import { getContent, NEW_DOC_ID, getContentUrl } from './document.effects.util';
 import { Database } from '../../db/database';
 import {
   DocumentEffectsLoad,
@@ -99,7 +95,7 @@ export class DocumentEffects {
   @Effect()
   ShowDocument: Observable<Action> = this.actions$.pipe(
     ofType<DocumentEffectsShow>(DocumentEffectsActionTypes.Show),
-    tap(action => this.store.dispatch(new SetCurrentDocumentId({ id: action.payload.doc.number }))),
+    tap(action => this.store.dispatch(new SetCurrentDocumentId({ id: action.payload.number }))),
     tap(action =>
       this.store.dispatch(
         new SetDocumentsMessage({
@@ -111,14 +107,14 @@ export class DocumentEffects {
     combineLatest(this.storage.init()),
     switchMap(([action, repo]) => {
       let document: Document;
-      const actionDoc = action.payload.doc;
+      const actionDoc = action.payload;
       this.store
         .select(getDocumentEntitiesState)
         .pipe(take(1))
         .subscribe(documents => {
           document = documents[actionDoc.number];
         });
-      let curDoc = document ? { ...document } : { ...action.payload.doc };
+      let curDoc = document ? { ...document } : { ...action.payload };
       const num = +actionDoc.number;
       const title = actionDoc.title;
       const format = actionDoc.format;
@@ -204,44 +200,26 @@ export class DocumentEffects {
         })
       );
     }),
-    combineLatest(this.storage.init()),
-    switchMap(([action, repo]) => {
+    combineLatest(this.storage.init(), this.store.select(getCurrentDocumentState)),
+    switchMap(([action, repo, doc]) => {
       const content = action.payload.content;
-      let isNew = true;
-      let title: string;
       let format = action.payload.format;
-      return this.store.select(getCurrentDocumentState).pipe(
-        take(1),
-        tap(doc => {
-          if (doc.number !== NEW_DOC_ID) {
-            isNew = false;
-          }
-          title = DocMeta.getTitle(action.payload.content);
-        }),
-        switchMap(doc => {
-          if (!title) return throwError(new Error('Must define a title!'));
-          if (!doc.metaData) {
-            return repo.issue.get(doc.number).pipe(
-              map(d => {
-                let meta = DocMeta.deSerialize(d.body);
-                (<any>d).metaData = meta;
-                title = meta.title;
-                format = meta.format || format;
-                return d;
-              })
-            );
-          } else {
-            return of(doc);
-          }
-        }),
-        switchMap(d => {
-          if (isNew) {
-            return this.saveNew(repo, title, content, format);
-          } else {
-            return this.edit(repo, d, title, content, format);
-          }
-        })
-      );
+      let newTitle = DocMeta.getTitle(action.payload.content);
+
+      if (!newTitle) return throwError(new Error('Must define a title!'));
+      if (!doc.metaData || !doc.metaData.contentId) { //from url show and save
+        return repo.issue.get(doc.number).pipe(
+          switchMap(doc => {
+            let meta = DocMeta.deSerialize(doc.body);
+            (<any>doc).metaData = meta;
+            newTitle = meta.title;
+            format = meta.format || format;
+            return this.saveNew(repo, newTitle, content, format);;
+          })
+        );
+      } else {
+        return this.edit(repo, doc, newTitle, content, format);;
+      }
     }),
     catchError(err =>
       of(
@@ -291,27 +269,27 @@ export class DocumentEffects {
     );
   };
 
-  edit = (repo: Repository, doc: Document, title: string, content: string, format: string) => {
-    const changeTitle = doc.metaData ? title !== doc.metaData.title : true;
+  edit = (repo: Repository, doc: Document, newTitle: string, content: string, format: string) => {
+    const changeTitle = doc.metaData ? newTitle !== doc.metaData.title : true;
     return repo
       .updateFile(
-        `${DocService.FolderName}/${title}_${doc.number}.${format}`,
+        `${DocService.FolderName}/${newTitle}_${doc.number}.${format}`,
         content,
         doc.metaData.contentId
       )
       .pipe(
         switchMap(file => {
-          let url = getContentUrl(doc.number, title);
+          let url = getContentUrl(doc.number, newTitle);
           return DocMeta.serializeContent(content, file.content.sha, url, format).pipe(
             switchMap(([metaString, metaData]) => {
               let data: EditIssueParams = {
-                title: title,
+                title: newTitle,
                 body: <string>metaString
               };
               return repo.issue.edit(doc.number, data).pipe(
                 tap(d => {
                   if (changeTitle) {
-                    return repo
+                    repo
                       .delFileViaSha(
                         `${DocService.FolderName}/${doc.metaData.title}_${doc.number}.${format}`,
                         doc.metaData.contentId
@@ -328,7 +306,7 @@ export class DocumentEffects {
                     })
                   );
                   this.snackbar.open('Saved!', 'OK');
-                  this.modifyUrlAfterSaved(doc.number, title, format);
+                  this.modifyUrlAfterSaved(doc.number, newTitle, format);
                   return new SetDocumentsMessage({
                     status: ActionStatus.Success,
                     action: DocumentEffectsActionTypes.Save
@@ -340,13 +318,13 @@ export class DocumentEffects {
         })
       );
   };
-    modifyUrlAfterSaved(num:number,title:string,format:string ) {
+  modifyUrlAfterSaved(num: number, title: string, format: string) {
     const url = this.router
       .createUrlTree(['/doc'], {
         queryParams: {
           id: num,
           title: title,
-          format: format
+          f: format
         }
       })
       .toString();

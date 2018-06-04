@@ -1,5 +1,5 @@
 import { IStorage } from '../storage';
-import { Observable, combineLatest, Subscriber, ReplaySubject } from 'rxjs';
+import { Observable, combineLatest, Subscriber, ReplaySubject, throwError } from 'rxjs';
 import {
   catchError,
   map,
@@ -57,7 +57,7 @@ export class GithubStorage extends Requestable {
                   if (err.status === 404) {
                     return me.newRepos(name);
                   } else {
-                    return Observable.throw(err);
+                    return throwError(err);
                   }
                 })
               );
@@ -75,7 +75,7 @@ export class GithubStorage extends Requestable {
         return new Repository(this._http, this._userInfo, name, this.gh);
       }),
       catchError(error => {
-        return Observable.throw({
+        return throwError({
           id: error.status,
           message: `get repository error: ${name}, message:${error.message}`
         });

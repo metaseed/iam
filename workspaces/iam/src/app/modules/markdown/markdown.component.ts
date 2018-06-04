@@ -4,7 +4,7 @@ import { Component, OnInit, ViewChild, Inject, HostListener, ElementRef } from '
 import { MarkdownViewerComponent } from './viewer/markdown-viewer.component';
 import { HttpClient } from '@angular/common/http';
 import { APP_BASE_HREF } from '@angular/common';
-import { take, map, timeout } from 'rxjs/operators';
+import { take, map, timeout, tap, takeUntil, combineLatest } from 'rxjs/operators';
 import { DocService } from 'docs';
 import { MarkdownEditorService } from './editor/index';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,9 +20,9 @@ import { ObservableMedia, MediaChange } from '@angular/flex-layout';
 import { OnDestroy } from '@angular/core';
 import { MarkdownViewerContainerComponent } from './viewer/markdown-viewer-container.component';
 import { HasElementRef } from '@angular/material/core/typings/common-behaviors/color';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, Subject } from 'rxjs';
 import { DocSaveCoordinateService } from './editor/services/doc-save-coordinate-service';
-import { DocumentEffectsShow, getCurrentDocumentState } from '../docs/state';
+import { DocumentEffectsShow, getCurrentDocumentState, DocumentEffectsNew } from '../docs/state';
 import { Document } from '../docs/models/document';
 
 @Component({
@@ -33,23 +33,22 @@ import { Document } from '../docs/models/document';
 export class MarkdownComponent implements OnInit, OnDestroy {
   private docShowSub: any;
   private _doc: any;
+  private destroy$ = new Subject();
   isFullScreen: boolean;
   fixEditButton = false;
   isEditMode = false;
   isNewDoc = false;
   showPreviewPanel = true;
-  docLoaded = false;
-  editorLoaded = false;
-  mediaChangeSubscription: Subscription;
+  DocumentMode = DocumentMode;
   @ViewChild(MarkdownEditorComponent) editor: MarkdownEditorComponent;
   @ViewChild(MarkdownViewerContainerComponent) viewer: MarkdownViewerContainerComponent;
   @ViewChild('viewerDiv') viewerDiv: ElementRef;
   @ViewChild('editorDiv') editorDiv: ElementRef;
 
-  docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
-  editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState));
-  gtsmBreakPoint = false;
-  editWithView: boolean | null;
+
+  docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState),takeUntil(this.destroy$))
+  editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState),takeUntil(this.destroy$))
+  gtsmBreakPoint = false
 
   markdown:string;
   markdown$ = this.store.select<Document>(getCurrentDocumentState).pipe(
@@ -64,8 +63,6 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   ).subscribe(content=>{
     this.markdown = content;
   });
-  // isSyncingLeftScroll = false;
-  // isSyncingRightScroll = false;
   constructor(
     private _docService: DocService,
     private _el: ElementRef,
@@ -80,65 +77,25 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     private media: ObservableMedia,
     private docRef: DocumentRef
   ) {
-    this.mediaChangeSubscription = media.subscribe((change: MediaChange) => {
+    media.asObservable().pipe(combineLatest(this.editWithView$),takeUntil(this.destroy$)).subscribe(([change,editWithView]) => {
       if (!['xs', 'sm'].includes(change.mqAlias)) {
         this.gtsmBreakPoint = true;
-        if (this.editWithView === null || this.editWithView === undefined) {
+        if (editWithView === null || editWithView === undefined) {
           this.store.dispatch(new doc.ShowPreview());
         }
       } else {
         this.gtsmBreakPoint = false;
       }
     });
-    _editorService.editorLoaded$.subscribe(() => {
-      setTimeout(() => (this.editorLoaded = true), 0);
-    });
+
   }
 
   ngOnInit() {
-    let me = this;
-    if (this.router.url === '/doc/new') {
-      //this.editModeChange(true, false);
-      this.isNewDoc = true;
-    }
 
-    this.docShowSub = this._docService.docShow$.subscribe(doc => {
-      if (doc === null) {
-        return;
-      }
-      this._doc = doc;
-      if (this.isNewDoc) {
-        this.store.dispatch(new document.EditMode());
-      }
-      setTimeout(() => (this.docLoaded = true), 0);
-    });
-    this.docMode$.subscribe(mode => {
-      switch (mode) {
-        case DocumentMode.Edit: {
-          this.isEditMode = true;
-          break;
-        }
-        case DocumentMode.View: {
-          this.isEditMode = false;
-          break;
-        }
-      }
-    });
-
-    this.editWithView$.subscribe(mode => {
-      this.editWithView = mode;
-    });
   }
 
   ngOnDestroy() {
-    if (this.mediaChangeSubscription) {
-      this.mediaChangeSubscription.unsubscribe();
-      this.mediaChangeSubscription = null;
-    }
-    if (this.docShowSub) {
-      this.docShowSub.unsubscribe();
-      this.docShowSub = null;
-    }
+    this.destroy$.next();
   }
 
   canDeactivate(): Observable<boolean> | boolean {
@@ -150,24 +107,23 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this._editorService.contentChanged$.subscribe(([content, editor]) => {
-      let me = this;
-    });
 
     this.route.queryParamMap
       .pipe(
-        map(params => {
-          if (this.isNewDoc) {
-            return this._docService.newDoc();
+        tap(params => {
+          if (this.router.url.startsWith( '/doc/new')) {
+            let format = params.get('f');
+            this.store.dispatch(new DocumentEffectsNew({format}));
+            this.store.dispatch(new document.EditMode());
           } else {
             let title = params.get('title');
             let num = +params.get('id');
             let format = params.get('f');
             this.store.dispatch(
-              new DocumentEffectsShow({ doc: { number:num, title, format } })
+              new DocumentEffectsShow({ number:num, title, format })
             );
           }
-        }, this),
+        }),
         take(1)
       )
       .subscribe();
