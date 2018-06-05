@@ -1,5 +1,5 @@
 import { Action, Store, select } from '@ngrx/store';
-import { Observable, TimeoutError, UnaryFunction, of } from 'rxjs';
+import { Observable, TimeoutError, UnaryFunction, of, asyncScheduler } from 'rxjs';
 import { State } from './document.reducer';
 import { filter, timeout, map, catchError, tap } from 'rxjs/operators';
 import { getDocumentActionStatusState } from 'app/modules/docs/state';
@@ -22,15 +22,15 @@ export class DocumentEffectsDelete implements Action {
 }
 export class DocumentEffectsNew implements Action {
   readonly type = DocumentEffectsActionTypes.New;
-  constructor(public payload:{format:string}){}
+  constructor(public payload: { format: string }) {}
 }
 export class DocumentEffectsShow implements Action {
   readonly type = DocumentEffectsActionTypes.Show;
-  constructor(public payload: {number: number; title?: string; format?: string}) {}
+  constructor(public payload: { number: number; title?: string; format?: string }) {}
 }
 export class DocumentEffectsSave implements Action {
   readonly type = DocumentEffectsActionTypes.Save;
-  constructor(public payload:{content:string,format?:string}){}
+  constructor(public payload: { content: string; format?: string }) {}
 }
 
 export enum ActionStatus {
@@ -44,22 +44,50 @@ export interface DocumentActionStatus {
   action: DocumentEffectsActionTypes;
   message?: string;
   context?: any;
+  /// todo: add corelationId;
 }
 
 export function getActionStatus(
   action: DocumentEffectsActionTypes,
-  store: Store<State>,
-  timeoutHandler?: (TimeoutError) => void
-): Observable<boolean> {
+  store: Store<State>
+): Observable<ActionStatus> {
   return store.pipe(
     select(getDocumentActionStatusState),
-    filter(msg => msg && msg.action === action),
-    map(msg => msg.status === ActionStatus.Success),
-    catchError((err: TimeoutError) => {
-      if (timeoutHandler) timeoutHandler(err);
-      return of(false);
-    })
+    ofActionType(action),
+    map(msg => msg.status)
   );
+}
+
+// export function monitorActionStatus(
+//   action: DocumentEffectsActionTypes,
+//   store: Store<State>,
+//   time: number,
+//   timeOutHander: (err: TimeoutError) => void
+// ):Observable<DocumentActionStatus> {
+//   let startTime:number;
+//   store.pipe(
+//     select(getDocumentActionStatusState),
+//     ofActionType(action),
+//     map(status=>{
+//       switch(status.status) {
+//         case ActionStatus.Start:{
+//           startTime = asyncScheduler.schedule.now();
+//           setTimeout
+//           break;
+//         }
+//         case ActionStatus.Fail: {
+
+//         }
+//       }
+//       return status;
+//     })
+//   );
+// }
+
+export function ofActionType(actionType: DocumentEffectsActionTypes) {
+  return filter((status: DocumentActionStatus) => {
+    return status && status.action === actionType;
+  });
 }
 
 export type DocumentEffectsActions =

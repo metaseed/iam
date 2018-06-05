@@ -44,7 +44,7 @@ export class GithubStorage extends Requestable {
     return (this._repo = this.configService.config$.lift(
       (_ => { //IIFE
         const me = this;
-        let replayObservable
+        let replayObservable: ReplaySubject<Repository>;
         let hasError = false;
         return function(this: Subscriber<Repository>, source: Observable<ConfigModel>) { // called every time when subscribe
           if (!replayObservable) {

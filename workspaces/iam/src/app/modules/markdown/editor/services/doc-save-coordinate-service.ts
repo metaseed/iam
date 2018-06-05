@@ -1,37 +1,44 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Document } from '../../../docs/models/document';
 import { MarkdownEditorService } from './markdown.editor.service';
-import { DocService } from 'docs';
 import { Subject, BehaviorSubject, Observable } from 'rxjs';
-import { filter, auditTime } from 'rxjs/operators';
+import { filter, auditTime, takeUntil, combineLatest } from 'rxjs/operators';
+import { Store, select } from '@ngrx/store';
+import * as docs from '../../../docs';
+import { selectEditorState, selectContentState } from '../../state';
+import { selectDocumentActionStatus } from '../../../docs/state/document.reducer';
 
 @Injectable()
-export class DocSaveCoordinateService {
-  isDirty$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  editor: CodeMirror.Editor;
-  isSaving: boolean;
-  private currentContent: string;
+export class DocSaveCoordinateService implements OnDestroy {
   static autoSaveDelayAfterEdit = 5 * 60 * 1000; //5min
 
-  constructor(private editorService: MarkdownEditorService) {
+  isDirty$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  isSaving: boolean;
+
+  private editor: CodeMirror.Editor;
+  private contentGeneration: number;
+  private currentContent: string;
+  private destroy$ = new Subject();
+
+  constructor(private editorService: MarkdownEditorService, private store:Store<State>) {
     this.isDirty$
-      .pipe(auditTime(DocSaveCoordinateService.autoSaveDelayAfterEdit))
-      .subscribe(value => {
-        if (this.currentContent && value) this.docService.save(this.currentContent);
-      });
-
-    this.editorService.editorLoaded$.subscribe((editor: CodeMirror.Editor) => {
-      this.editor = editor;
-
-      this.editorService.contentChanged$.subscribe(([content,editor]) => {
-        this.currentContent = content;
-        this.checkDirty(editor);
-      });
+    .pipe(auditTime(DocSaveCoordinateService.autoSaveDelayAfterEdit))
+    .subscribe(value => {
+      if (this.currentContent && value) this.docService.save(this.currentContent);
     });
+
+    const content$ = this.store.pipe(select(selectContentState))
+    this.store.pipe(select(selectEditorState),combineLatest(content$),takeUntil(this.destroy$)).subscribe(([editor,content])=>{
+      this.currentContent = content;
+      this.editor = editor;
+      this.checkDirty(editor);
+    })
 
     this.editorService.docLoaded$.subscribe((editor: CodeMirror.Editor) => {
       this.docLoadedHandler(editor);
     });
+
+    this.store.select(selectDocumentActionStatus).pipe(takeUntil(this.destroy$),filter)
 
     this.docService.docSaved$.subscribe((doc: Document) => {
       this.docSavedHandler(this.editor);
@@ -65,5 +72,9 @@ export class DocSaveCoordinateService {
     } else {
       this.isDirty$.next(true);
     }
+  }
+
+  private ngDestroy() {
+    this.destroy$.next();
   }
 }

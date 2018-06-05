@@ -7,7 +7,7 @@ import {
 } from '@ngrx/store';
 import { environment } from 'environments/environment';
 import * as fromDocument from './document.reducer';
-import * as fromRoot from '../../../reducers';
+import * as fromRoot from '../../../state';
 import { DocumentEffectsActions } from '.';
 
 export * from './document.effects.actions';

@@ -10,7 +10,7 @@ import { MarkdownConfig } from "./viewer/markdown.config";
 import { MarkdownRoutingModule } from "./markdown-routing.module";
 import { NgSpinKitModule } from "ng-spin-kit";
 import { StoreModule } from "@ngrx/store";
-import * as fromReducers from "./reducers";
+import * as fromState from "./state";
 import { MarkdownEditorComponent } from "./editor/markdown-editor.component";
 import { SharedModule } from "shared";
 @NgModule({
@@ -21,7 +21,7 @@ import { SharedModule } from "shared";
     HttpModule,
     NgSpinKitModule,
     MarkdownRoutingModule,
-    StoreModule.forFeature("markdown", fromReducers.reducers),
+    StoreModule.forFeature("markdown", fromState.reducers),
     MarkdownEditorModule,
     SharedModule,
     MarkdownViewerModule.forChild()

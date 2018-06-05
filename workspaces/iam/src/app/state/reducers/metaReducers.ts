@@ -1,16 +1,7 @@
-import {
-  ActionReducerMap,
-  MetaReducer,
-  ActionReducer,
-  createFeatureSelector,
-  createSelector
-} from '@ngrx/store';
-import { environment } from 'environments/environment';
+import { MetaReducer, ActionReducer } from "@ngrx/store";
+import { State } from "..";
+import { environment } from "environments/environment";
 import { storeFreeze } from 'ngrx-store-freeze';
-
-export interface State {}
-
-export const reducers: ActionReducerMap<State> = {};
 
 export function logger(reducer: ActionReducer<State>): ActionReducer<State> {
   return function(state: State, action: any): State {

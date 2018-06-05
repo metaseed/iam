@@ -23,9 +23,16 @@ import {
   mergeAll
 } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
-import { DocumentEffectsActionTypes, getActionStatus, getDocumentsState, DocumentEffectsLoad, DocumentEffectsDelete } from './state';
+import {
+  DocumentEffectsActionTypes,
+  getActionStatus,
+  getDocumentsState,
+  DocumentEffectsLoad,
+  DocumentEffectsDelete,
+  ActionStatus
+} from './state';
 import { DocSearchComponent } from './doc-search/doc-search.component';
-import {switchIfEmit} from '../core/operators/switchIfEmit';
+import { switchIfEmit } from '../core/operators/switchIfEmit';
 @Component({
   selector: 'docs',
   templateUrl: './docs.component.html',
@@ -35,16 +42,11 @@ export class DocsComponent {
   @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;
 
   defaultTimeoutHandler = err => this.snackBar.open(err.message, 'ok', { duration: 6000 });
-  isLoaded$ = getActionStatus(
-    DocumentEffectsActionTypes.Load,
-    this.store,
-    this.defaultTimeoutHandler
-  );
-
-
+  isLoaded$ =getActionStatus(DocumentEffectsActionTypes.Load, this.store);
 
   private initDocs$ = this.store.pipe(select(getDocumentsState));
   docs$: Observable<Document[]>;
+  ActionStatus=ActionStatus;
   constructor(
     private store: Store<State>,
     public docService: DocService,
@@ -53,14 +55,19 @@ export class DocsComponent {
     private snackBar: MatSnackBar
   ) {
     this.store.dispatch(new DocumentEffectsLoad());
-    this.initDocs$.subscribe(a=>{
+    this.initDocs$.subscribe(a => {
       console.log(a);
-    })
+    });
+  }
+
+  private refresh() {
+
   }
 
   ngOnInit() {
+    this.refresh();
     const filteredDocs$ = this.docSearch.Search.pipe(
-      tap(a=>{
+      tap(a => {
         console.warn(a);
       }),
       debounceTime(500),
@@ -71,7 +78,7 @@ export class DocsComponent {
       })
     );
 
-    this.docs$ = from([this.initDocs$,filteredDocs$]).pipe(switchIfEmit());
+    this.docs$ = from([this.initDocs$, filteredDocs$]).pipe(switchIfEmit());
   }
 
   showDoc(doc: Document) {
@@ -79,13 +86,13 @@ export class DocsComponent {
       queryParams: {
         id: doc.number,
         title: doc.metaData.title,
-        f:doc.metaData.format || 'md'
+        f: doc.metaData.format || 'md'
       }
     };
     this.router.navigate(['/doc'], navigationExtras);
   }
 
   deleteDoc(doc: Document) {
-   this.store.dispatch(new DocumentEffectsDelete({number:doc.number, title:doc.title}))
+    this.store.dispatch(new DocumentEffectsDelete({ number: doc.number, title: doc.title }));
   }
 }
