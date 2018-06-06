@@ -105,7 +105,7 @@ export class CodemirrorComponent {
       }
     };
     this.codemirrorInit(this.config);
-    this.store.dispatch(new fromEdit.EditorLoaded(this.instance));
+    this.store.dispatch(new fromEdit.EditorLoaded({editor:this.instance}));
     new Scrollable(
       this.scroll.nativeElement.children[1].lastChild
     ).isScrollDown$.subscribe(e => {
