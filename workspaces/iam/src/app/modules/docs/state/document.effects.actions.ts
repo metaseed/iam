@@ -4,6 +4,7 @@ import { State } from './document.reducer';
 import { filter, timeout, map, catchError, tap } from 'rxjs/operators';
 import { getDocumentActionStatusState } from 'app/modules/docs/state';
 import { Content } from '../../../storage/github/model/content';
+import { timeOutMonitor } from '../../core/operators';
 
 export enum DocumentEffectsActionTypes {
   Load = '[DocumentEffects] Load',
@@ -58,31 +59,30 @@ export function getActionStatus(
   );
 }
 
-// export function monitorActionStatus(
-//   action: DocumentEffectsActionTypes,
-//   store: Store<State>,
-//   time: number,
-//   timeOutHander: (err: TimeoutError) => void
-// ):Observable<DocumentActionStatus> {
-//   let startTime:number;
-//   store.pipe(
-//     select(getDocumentActionStatusState),
-//     ofActionType(action),
-//     map(status=>{
-//       switch(status.status) {
-//         case ActionStatus.Start:{
-//           startTime = asyncScheduler.schedule.now();
-//           setTimeout
-//           break;
-//         }
-//         case ActionStatus.Fail: {
-
-//         }
-//       }
-//       return status;
-//     })
-//   );
-// }
+export function monitorActionStatus(
+  action: DocumentEffectsActionTypes,
+  store: Store<State>,
+  due: number,
+  timeOutHander: (err: TimeoutError) => void
+): Observable<DocumentActionStatus> {
+  return store.pipe(
+    select(getDocumentActionStatusState),
+    ofActionType(action),
+    timeOutMonitor<DocumentActionStatus, DocumentActionStatus>(
+      due,
+      v => v.status === ActionStatus.Start,
+      (start, v) => v.status === ActionStatus.Success || v.status === ActionStatus.Fail,
+      start => {
+        if(timeOutHander) timeOutHander(new TimeoutError);
+        return {
+          status: ActionStatus.Fail,
+          action: start.action,
+          message: `Timeout when perform ${start.action}`
+        };
+      }
+    )
+  );
+}
 
 export function ofActionType(actionType: DocumentEffectsActionTypes) {
   return filter((status: DocumentActionStatus) => {

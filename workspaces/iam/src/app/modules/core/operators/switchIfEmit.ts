@@ -32,8 +32,13 @@ import { Observable, Subscription } from 'rxjs';
  * 6. any inner observable error would be tramsmit to the ourter observable.
  * 7. if the outer observable is unsubscribed, the inner active observables and the upper
  *    source observable would be unsubscribed.
+ * 8. the switchTester function used to add further condition logic to switch while item emmiting.
+ *     if omitted: switch with the first item.
+ *     if defined: switch when it returns true.
  */
-export const switchIfEmit = () => <T>(source: Observable<Observable<T>>) =>
+export const switchIfEmit = (switchTester: (T) => boolean = undefined) => <T>(
+  source: Observable<Observable<T>>
+) =>
   new Observable<T>(observer => {
     const subscription = new Subscription();
     let lastInnerObservable: Observable<T>;
@@ -41,10 +46,12 @@ export const switchIfEmit = () => <T>(source: Observable<Observable<T>>) =>
       innerObservable => {
         const innerSubscription = innerObservable.subscribe(item => {
           if (lastInnerObservable && lastInnerObservable !== innerObservable) {
-            const sourceSubscription = (<any>lastInnerObservable).subscription;
-            subscription.remove(sourceSubscription);
-            sourceSubscription.unsubscribe();
-            (<any>lastInnerObservable).subscription = undefined;
+            if (!switchTester || (switchTester && switchTester(item))) {
+              const sourceSubscription = (<any>lastInnerObservable).subscription;
+              subscription.remove(sourceSubscription);
+              sourceSubscription.unsubscribe();
+              (<any>lastInnerObservable).subscription = undefined;
+            }
           }
           lastInnerObservable = innerObservable;
           observer.next(item);
