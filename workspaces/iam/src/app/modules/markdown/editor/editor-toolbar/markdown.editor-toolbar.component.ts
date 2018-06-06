@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, Input, Renderer, ViewChild } from '@a
 import { MarkdownComponent } from '../../markdown.component';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { Subscription } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
 import { DocService } from 'docs';
 import { MarkdownEditorService } from '../../editor/index';
 import { CommandService, Command, DocumentRef } from '../../../core/index';
@@ -18,6 +18,7 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';
 import { MatToolbar, MatDialog } from '@angular/material';
 import { DocumentEffectsSave, DocumentEffectsNew } from '../../../docs/state';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'editor-toolbar',
@@ -56,9 +57,9 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   isPositionFixed: boolean;
   isScrollDown$;
   isScrollDown_view$;
+  destroy$ = new Subject();
   isEditMode = false;
   gtsmBreakpoint = false;
-  mediaChangeSubscription: Subscription;
   ngOnInit() {
     const scrollHandler = value => {
       this.isScrollDown = value.isDown;
@@ -97,16 +98,22 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     private state: State<fromMarkdown.State>,
     public docSaver: DocSaveCoordinateService
   ) {
-    this._editorService.editorLoaded$.subscribe(editor => {
-      this.editor = editor;
-    });
-    this.mediaChangeSubscription = media.subscribe(change => {
-      if (!['xs', 'sm'].includes(change.mqAlias)) {
-        this.gtsmBreakpoint = false;
-      } else {
-        this.gtsmBreakpoint = true;
-      }
-    });
+    this.store
+      .select(fromMarkdown.selectEditorState)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(editor => {
+        this.editor = editor;
+      });
+    media
+      .asObservable()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(change => {
+        if (!['xs', 'sm'].includes(change.mqAlias)) {
+          this.gtsmBreakpoint = false;
+        } else {
+          this.gtsmBreakpoint = true;
+        }
+      });
     (<any>CodeMirror).commands.save = this.save;
     let cmds = (<any>CodeMirror).commands;
     cmds.scrollLineUp = function(cm) {
@@ -128,12 +135,12 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   }
 
   ngDestroy() {
-    this.mediaChangeSubscription.unsubscribe();
+    this.destroy$.next();
   }
   save = () => {
     const content = this.editor.getValue();
     this.store.dispatch(new edit.Save(content));
-    this.store.dispatch(new DocumentEffectsSave({content,format:'md'}));
+    this.store.dispatch(new DocumentEffectsSave({ content, format: 'md' }));
   };
 
   undo = () => {
@@ -168,7 +175,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   };
 
   new = () => {
-    this.store.dispatch(new DocumentEffectsNew({format:'md'}));
+    this.store.dispatch(new DocumentEffectsNew({ format: 'md' }));
   };
 
   previewPanelClick(event: Event) {
@@ -186,7 +193,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     this.editorResize();
   }
 
-  private lockScrollWithView = false;
+ lockScrollWithView = false;
   more(event: { item: HTMLElement }) {
     if (event.item.id === '0') {
       this.lockScrollWithView = !this.lockScrollWithView;

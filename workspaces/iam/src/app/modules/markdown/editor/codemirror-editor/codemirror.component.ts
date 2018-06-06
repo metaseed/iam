@@ -82,10 +82,7 @@ export class CodemirrorComponent {
       this.onChange(v);
     }
   }
-  /**
-   * On component destroy
-   */
-  ngOnDestroy() {}
+
   @ViewChild("scroll") scroll;
 
   ngAfterViewInit() {
@@ -108,13 +105,17 @@ export class CodemirrorComponent {
       }
     };
     this.codemirrorInit(this.config);
-    this.service.editorLoaded$.next(this.instance);
+    this.store.dispatch(new fromEdit.EditorLoaded(this.instance));
     new Scrollable(
       this.scroll.nativeElement.children[1].lastChild
     ).isScrollDown$.subscribe(e => {
       this.store.dispatch(new fromEdit.ScrollDown(e));
       // console.log(e)
     });
+  }
+
+  ngOnDestroy() {
+    this.store.dispatch(new fromEdit.EditorUnloaded(this.instance));
   }
 
   /**
@@ -141,6 +142,7 @@ export class CodemirrorComponent {
   refresh() {
     this.instance.refresh();
   }
+
 
   /**
    * Value update process

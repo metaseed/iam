@@ -1,7 +1,6 @@
 import { Subject } from 'rxjs';
 
 export class MarkdownEditorService {
-  public editorLoaded$ = new Subject();
   public contentChanged$ = new Subject<[string, CodeMirror.Editor]>();
   public docLoaded$ = new Subject<CodeMirror.Editor>();
   public onTouched$ = new Subject();

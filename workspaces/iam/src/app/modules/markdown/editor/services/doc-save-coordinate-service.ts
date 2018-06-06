@@ -40,6 +40,10 @@ export class DocSaveCoordinateService implements OnDestroy {
       this.docLoadedHandler(editor);
     });
 
+    this.editorService.contentChanged$.pipe(takeUntil(this.destroy$),combineLatest(this.editor$)).subscribe(
+      ([c,editor])=>this.checkDirty(editor)
+    )
+
     getActionStatus(DocumentEffectsActionTypes.Save, this.store)
       .pipe(
         takeUntil(this.destroy$),

@@ -52,9 +52,12 @@ export class MarkdownEditorComponent implements OnInit {
     private store: Store<fromMarkdown.State>,
     private docSerivce: DocService
   ) {
-    editorService.editorLoaded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      setTimeout(() => (this.editorLoaded = true), 0);
-    });
+    this.store
+      .select(fromMarkdown.selectEditorState)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        setTimeout(() => (this.editorLoaded = true), 0);
+      });
 
     this.docMode$.pipe(takeUntil(this.destroy$)).subscribe(mode => {
       switch (mode) {
@@ -83,7 +86,9 @@ export class MarkdownEditorComponent implements OnInit {
             .pipe(
               map(value => {
                 if (value === 'Yes') {
-                  this.store.dispatch(new DocumentEffectsSave({content:this.codeMirrorComponent.value}))
+                  this.store.dispatch(
+                    new DocumentEffectsSave({ content: this.codeMirrorComponent.value })
+                  );
                   return false;
                 } else {
                   return true;

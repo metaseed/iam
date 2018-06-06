@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, Input, Renderer, ViewChild } from '@a
 import { MarkdownComponent } from '../../../markdown.component';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { Subscription } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
 import { DocService } from 'docs';
 import { MarkdownEditorService } from '../../../editor/index';
 import { CommandService, Command, DocumentRef } from 'core';
@@ -15,6 +15,7 @@ import { ObservableMedia } from '@angular/flex-layout';
 import * as fromMarkdown from '../../../state';
 import * as CodeMirror from 'codemirror';
 import { HtmlParser } from '@angular/compiler';
+import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'ms-codemirror-toolbar',
   templateUrl: './codemirror-toolbar.component.html',
@@ -22,8 +23,7 @@ import { HtmlParser } from '@angular/compiler';
 })
 export class CodemirrorToolbarComponent implements OnInit {
   private static COMMANDS_CONFIG;
-  editorLoadedSubscription: Subscription;
-  mediaChangeSubscription: Subscription;
+  destroy$ = new Subject();
   _subscription: Subscription;
   _options: any;
   gtsmBreakpoint = false;
@@ -41,17 +41,22 @@ export class CodemirrorToolbarComponent implements OnInit {
     private _domSanitizer: DomSanitizer,
     private store: Store<State>
   ) {
-    this.mediaChangeSubscription = media.subscribe(change => {
-      if (!['xs', 'sm'].includes(change.mqAlias)) {
-        this.gtsmBreakpoint = false;
-      } else {
-        this.gtsmBreakpoint = true;
-      }
-    });
+    media
+      .asObservable()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(change => {
+        if (!['xs', 'sm'].includes(change.mqAlias)) {
+          this.gtsmBreakpoint = false;
+        } else {
+          this.gtsmBreakpoint = true;
+        }
+      });
     this._subscription = _commandService.commands.subscribe(c => this.handleCommand(c));
     let me = this;
-    this.editorLoadedSubscription = this._editorService.editorLoaded$.subscribe(
-      (editor: CodeMirror.Editor) => {
+    this.store
+      .select(fromMarkdown.selectEditorState)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((editor: CodeMirror.Editor) => {
         if (!CodemirrorToolbarComponent.COMMANDS_CONFIG) {
           CodemirrorToolbarComponent.COMMANDS_CONFIG = {
             Bold: {
@@ -148,8 +153,7 @@ Persistent search (dialog doesn't autoclose, enter to find next, Shift-Enter to 
 Alt-G
 Jump to line*/
         me.editor.setOption('extraKeys', (<any>CodeMirror).normalizeKeyMap(option));
-      }
-    );
+      });
   }
   more = event => {};
 
@@ -226,10 +230,6 @@ Jump to line*/
   }
   ngOnInit() {}
   ngOnDestroy() {
-    if (this.editorLoadedSubscription) this.editorLoadedSubscription.unsubscribe();
-    if (this.mediaChangeSubscription) {
-      this.mediaChangeSubscription.unsubscribe();
-      this.mediaChangeSubscription = null;
-    }
+    this.destroy$.next();
   }
 }
