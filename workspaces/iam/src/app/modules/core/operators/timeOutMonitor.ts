@@ -17,11 +17,13 @@ export function isDate(value: any): value is Date {
 
 /**
  * start timeout monitor when select the start value, stop timer when select the stop item.
- * If timeout, unsubscribe and then subscribe to the Observable output from withObservable function.
+ * If timeout:
+ * unsubscribe from the source and then subscribe to the Observable output from observableOrValue function.
+ * or emit item to subscriber and continue monitor the source.
  * @param due timeout value, unit is miliscond
  * @param startSelector is from the item to start timer?
  * @param stopSelector is the time to stop timer?
- * @param withObservable if timeout,
+ * @param observableOrValue if timeout,
  *        if the function is defined to return Observable: unsubscribe from original source then subscribe to the new observable.
  *        if the function is defined to return an item: return the item to the subscriber and continue monitor the source.
  *        if omited, just unscribe from the original source observable
@@ -29,9 +31,9 @@ export function isDate(value: any): value is Date {
  */
 export function timeOutMonitor<T, R>(
   due: number | Date,
-  startSelector: (v:T) => boolean,
+  startSelector: (v: T) => boolean,
   stopSelector: (start: T, current: T) => boolean,
-  withObservable: ((start: T) => Observable<T | R>)| ((start: T) =>T|R) = undefined,
+  observableOrValue: ((start: T) => Observable<T | R>) | ((start: T) => T | R) = undefined,
   scheduler: SchedulerLike = asyncScheduler
 ): OperatorFunction<T, T | R> {
   return (source: Observable<T>) => {
@@ -43,7 +45,7 @@ export function timeOutMonitor<T, R>(
         absoluteTimeout,
         startSelector,
         stopSelector,
-        withObservable,
+        observableOrValue,
         scheduler
       )
     );
@@ -56,7 +58,7 @@ class TimeoutWithOperator<T, R> implements Operator<T, T | R> {
     private absoluteTimeout: boolean,
     private startSelector: (T) => boolean,
     private stopSelector: (start: T, current: T) => boolean,
-    private withObservable: ((start: T) => Observable<T | R>)| ((start: T) =>T|R),
+    private observableOrValue: ((start: T) => Observable<T | R>) | ((start: T) => T | R),
     private scheduler: SchedulerLike
   ) {}
   call(subscriber: Subscriber<T>, source: any): TeardownLogic {
@@ -67,7 +69,7 @@ class TimeoutWithOperator<T, R> implements Operator<T, T | R> {
         this.waitFor,
         this.startSelector,
         this.stopSelector,
-        this.withObservable,
+        this.observableOrValue,
         this.scheduler
       )
     );
@@ -76,8 +78,7 @@ class TimeoutWithOperator<T, R> implements Operator<T, T | R> {
 
 class TimeoutWithSubscriber<T, R> extends OuterSubscriber<T, R> {
   private action: SchedulerAction<TimeoutWithSubscriber<T, R>> = null;
-  private start: T;
-  private stop: T;
+  private startValue: T;
 
   constructor(
     destination: Subscriber<T>,
@@ -85,18 +86,18 @@ class TimeoutWithSubscriber<T, R> extends OuterSubscriber<T, R> {
     private waitFor: number,
     private startSelector: (T) => boolean,
     private stopSelector: (start: T, current: T) => boolean,
-    private withObservable: ((start: T) => Observable<R | T>)| ((start: T) =>T|R),
+    private observableOrValue: ((start: T) => Observable<R | T>) | ((start: T) => T | R),
     private scheduler: SchedulerLike
   ) {
     super(destination);
-    this.scheduleTimeout();
+    // this.scheduleTimeout(); only schedule timeout when emit item.
   }
 
   private static dispatchTimeout<T, R>(subscriber: TimeoutWithSubscriber<T, R>): void {
-    const { withObservable } = subscriber;
-    if (withObservable) {
-      let o = withObservable(subscriber.start);
-      if(o instanceof Observable) {
+    const { observableOrValue } = subscriber;
+    if (observableOrValue) {
+      let o = observableOrValue(subscriber.startValue);
+      if (o instanceof Observable) {
         (<any>subscriber)._unsubscribeAndRecycle();
         const sub = o.subscribe(subscriber);
         subscriber.add(sub);
@@ -134,14 +135,15 @@ class TimeoutWithSubscriber<T, R> extends OuterSubscriber<T, R> {
 
   protected _next(value: T): void {
     if (this.startSelector(value)) {
-      this.start = value;
+      this.startValue = value;
       if (!this.absoluteTimeout) {
         this.scheduleTimeout();
       }
     }
-    if (this.stopSelector(this.start, value)) {
-      this.stop = value;
-      this.action.unsubscribe();
+    if (this.stopSelector(this.startValue, value)) {
+      if (this.action) {
+        this.action.unsubscribe();
+      }
     }
 
     super._next(value);
@@ -150,9 +152,8 @@ class TimeoutWithSubscriber<T, R> extends OuterSubscriber<T, R> {
   /** @deprecated This is an internal implementation detail, do not use. */
   _unsubscribe() {
     this.action = null;
-    this.start = undefined;
-    this.stop = undefined;
+    this.startValue = undefined;
     this.scheduler = null;
-    this.withObservable = null;
+    this.observableOrValue = null;
   }
 }

@@ -53,13 +53,14 @@ export class DocumentEffects {
   });
 
   @Effect()
-  LoadDocuments: Observable<Action> = this.actions$.pipe(
+  LoadDocuments: Observable<Action> = ((coId=-1)=>this.actions$.pipe(
     ofType<DocumentEffectsLoad>(DocumentEffectsActionTypes.Load),
     tap(action =>
       this.store.dispatch(
         new SetDocumentsMessage({
           action: DocumentEffectsActionTypes.Load,
-          status: ActionStatus.Start
+          status: ActionStatus.Start,
+          corelationId: coId = Date.now()
         })
       )
     ),
@@ -78,6 +79,7 @@ export class DocumentEffects {
       return new SetDocumentsMessage({
         status: ActionStatus.Success,
         action: DocumentEffectsActionTypes.Load,
+        corelationId: coId,
         message: 'documents loaded'
       });
     }),
@@ -86,21 +88,23 @@ export class DocumentEffects {
         new SetDocumentsMessage({
           status: ActionStatus.Fail,
           action: DocumentEffectsActionTypes.Load,
+          corelationId:coId,
           message: err
         })
       )
     )
-  );
+  ))();
 
   @Effect()
-  ShowDocument: Observable<Action> = this.actions$.pipe(
+  ShowDocument: Observable<Action> =((coId=-1)=> this.actions$.pipe(
     ofType<DocumentEffectsShow>(DocumentEffectsActionTypes.Show),
     tap(action => this.store.dispatch(new SetCurrentDocumentId({ id: action.payload.number }))),
     tap(action =>
       this.store.dispatch(
         new SetDocumentsMessage({
           action: DocumentEffectsActionTypes.Show,
-          status: ActionStatus.Start
+          status: ActionStatus.Start,
+          corelationId:coId= Date.now()
         })
       )
     ),
@@ -135,7 +139,8 @@ export class DocumentEffects {
           _ =>
             new SetDocumentsMessage({
               action: DocumentEffectsActionTypes.Show,
-              status: ActionStatus.Success
+              status: ActionStatus.Success,
+              corelationId: coId
             })
         )
       );
@@ -145,20 +150,22 @@ export class DocumentEffects {
         new SetDocumentsMessage({
           status: ActionStatus.Fail,
           action: DocumentEffectsActionTypes.Show,
+          corelationId: coId,
           message: err
         })
       )
     )
-  );
+  ))();
 
   @Effect()
-  NewDocument: Observable<Action> = this.actions$.pipe(
+  NewDocument: Observable<Action> = ((coId=-1)=>this.actions$.pipe(
     ofType<DocumentEffectsNew>(DocumentEffectsActionTypes.New),
     tap(action =>
       this.store.dispatch(
         new SetDocumentsMessage({
           action: DocumentEffectsActionTypes.New,
-          status: ActionStatus.Start
+          status: ActionStatus.Start,
+          corelationId:coId = Date.now()
         })
       )
     ),
@@ -175,7 +182,8 @@ export class DocumentEffects {
       action => this.store.dispatch(new SetCurrentDocumentId({ id: num }));
       return new SetDocumentsMessage({
         action: DocumentEffectsActionTypes.New,
-        status: ActionStatus.Success
+        status: ActionStatus.Success,
+        corelationId: coId
       });
     }),
     catchError(err =>
@@ -183,20 +191,22 @@ export class DocumentEffects {
         new SetDocumentsMessage({
           status: ActionStatus.Fail,
           action: DocumentEffectsActionTypes.New,
+          corelationId: coId,
           message: err
         })
       )
     )
-  );
+  ))();
 
   @Effect()
-  SaveDocument: Observable<Action> = this.actions$.pipe(
+  SaveDocument: Observable<Action> = ((coId=-1)=>this.actions$.pipe(
     ofType<DocumentEffectsSave>(DocumentEffectsActionTypes.Save),
     tap(action => {
       return this.store.dispatch(
         new SetDocumentsMessage({
           action: DocumentEffectsActionTypes.Save,
-          status: ActionStatus.Start
+          status: ActionStatus.Start,
+          corelationId:coId=Date.now()
         })
       );
     }),
@@ -214,11 +224,11 @@ export class DocumentEffects {
             (<any>doc).metaData = meta;
             newTitle = meta.title;
             format = meta.format || format;
-            return this.saveNew(repo, newTitle, content, format);;
+            return this.saveNew(repo, newTitle, content, format,coId);;
           })
         );
       } else {
-        return this.edit(repo, doc, newTitle, content, format);;
+        return this.edit(repo, doc, newTitle, content, format,coId);;
       }
     }),
     catchError(err =>
@@ -226,13 +236,14 @@ export class DocumentEffects {
         new SetDocumentsMessage({
           status: ActionStatus.Fail,
           action: DocumentEffectsActionTypes.Save,
+          corelationId:coId,
           message: err.message + err.stack
         })
       )
     )
-  );
+  ))();
 
-  saveNew = (repo: Repository, title: string, content: string, format: string) => {
+  saveNew = (repo: Repository, title: string, content: string, format: string,coId:number) => {
     return repo.issue.create({ title }).pipe(
       switchMap(issue => {
         let id = issue.number;
@@ -257,7 +268,8 @@ export class DocumentEffects {
                     this.snackbar.open('New document saved!', 'OK');
                     return new SetDocumentsMessage({
                       status: ActionStatus.Success,
-                      action: DocumentEffectsActionTypes.Save
+                      action: DocumentEffectsActionTypes.Save,
+                      corelationId:coId
                     });
                   })
                 );
@@ -269,7 +281,7 @@ export class DocumentEffects {
     );
   };
 
-  edit = (repo: Repository, doc: Document, newTitle: string, content: string, format: string) => {
+  edit = (repo: Repository, doc: Document, newTitle: string, content: string, format: string,coId:number) => {
     const changeTitle = doc.metaData ? newTitle !== doc.metaData.title : true;
     return repo
       .updateFile(
@@ -309,7 +321,8 @@ export class DocumentEffects {
                   this.modifyUrlAfterSaved(doc.number, newTitle, format);
                   return new SetDocumentsMessage({
                     status: ActionStatus.Success,
-                    action: DocumentEffectsActionTypes.Save
+                    action: DocumentEffectsActionTypes.Save,
+                    corelationId:coId
                   });
                 })
               );
@@ -332,13 +345,14 @@ export class DocumentEffects {
     this.location.go(url);
   }
   @Effect()
-  DeleteDocument: Observable<Action> = this.actions$.pipe(
+  DeleteDocument: Observable<Action> = ((coId=Date.now())=>this.actions$.pipe(
     ofType<DocumentEffectsDelete>(DocumentEffectsActionTypes.Delete),
     tap(action =>
       this.store.dispatch(
         new SetDocumentsMessage({
           action: DocumentEffectsActionTypes.Delete,
-          status: ActionStatus.Start
+          status: ActionStatus.Start,
+          corelationId:coId=Date.now()
         })
       )
     ),
@@ -354,6 +368,7 @@ export class DocumentEffects {
                 new SetDocumentsMessage({
                   status: ActionStatus.Success,
                   action: DocumentEffectsActionTypes.Delete,
+                  corelationId:coId,
                   message: `document: ${title} deleted`
                 })
               );
@@ -368,9 +383,10 @@ export class DocumentEffects {
         new SetDocumentsMessage({
           status: ActionStatus.Fail,
           action: DocumentEffectsActionTypes.Delete,
+          corelationId:coId,
           message: err
         })
       )
     )
-  );
+  ))();
 }

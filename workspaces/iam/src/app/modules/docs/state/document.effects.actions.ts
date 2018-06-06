@@ -45,7 +45,7 @@ export interface DocumentActionStatus {
   action: DocumentEffectsActionTypes;
   message?: string;
   context?: any;
-  /// todo: add corelationId;
+  corelationId?: number;
 }
 
 export function getActionStatus(
@@ -71,9 +71,12 @@ export function monitorActionStatus(
     timeOutMonitor<DocumentActionStatus, DocumentActionStatus>(
       due,
       v => v.status === ActionStatus.Start,
-      (start, v) => v.status === ActionStatus.Success || v.status === ActionStatus.Fail,
+      (start, v) =>
+        start &&
+        v.corelationId === start.corelationId &&
+        (v.status === ActionStatus.Success || v.status === ActionStatus.Fail),
       start => {
-        if(timeOutHander) timeOutHander(new TimeoutError);
+        if (timeOutHander) timeOutHander(new TimeoutError());
         return {
           status: ActionStatus.Fail,
           action: start.action,

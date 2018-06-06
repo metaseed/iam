@@ -29,7 +29,8 @@ import {
   getDocumentsState,
   DocumentEffectsLoad,
   DocumentEffectsDelete,
-  ActionStatus
+  ActionStatus,
+  monitorActionStatus
 } from './state';
 import { DocSearchComponent } from './doc-search/doc-search.component';
 import { switchIfEmit } from '../core/operators/switchIfEmit';
@@ -42,7 +43,7 @@ export class DocsComponent {
   @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;
 
   defaultTimeoutHandler = err => this.snackBar.open(err.message, 'ok', { duration: 6000 });
-  isLoaded$ =getActionStatus(DocumentEffectsActionTypes.Load, this.store);
+  isLoaded$ =monitorActionStatus(DocumentEffectsActionTypes.Load, this.store,60000,this.defaultTimeoutHandler);
 
   private initDocs$ = this.store.pipe(select(getDocumentsState));
   docs$: Observable<Document[]>;
