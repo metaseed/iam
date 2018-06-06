@@ -43,7 +43,9 @@ export class DocsComponent {
   @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;
 
   defaultTimeoutHandler = err => this.snackBar.open(err.message, 'ok', { duration: 6000 });
-  isLoaded$ =monitorActionStatus(DocumentEffectsActionTypes.Load, this.store,60000,this.defaultTimeoutHandler);
+  isLoadDone$ =monitorActionStatus(DocumentEffectsActionTypes.Load, this.store,60000,this.defaultTimeoutHandler).pipe(map(v=>{
+    return v.status === ActionStatus.Fail || v.status === ActionStatus.Success
+  }));
 
   private initDocs$ = this.store.pipe(select(getDocumentsState));
   docs$: Observable<Document[]>;
