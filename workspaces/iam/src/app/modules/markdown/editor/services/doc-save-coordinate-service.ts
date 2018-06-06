@@ -5,7 +5,7 @@ import { Subject, BehaviorSubject, Observable } from 'rxjs';
 import { filter, auditTime, takeUntil, combineLatest } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import * as docs from '../../../docs';
-import { selectEditorState, selectSavedContentState } from '../../state';
+import { selectEditorState } from '../../state';
 import { selectDocumentActionStatus } from '../../../docs/state/document.reducer';
 import {
   DocumentEffectsSave,

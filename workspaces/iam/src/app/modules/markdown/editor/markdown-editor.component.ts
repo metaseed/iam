@@ -2,11 +2,10 @@ import { Component, OnInit, Input, Output, ViewChild } from '@angular/core';
 import { MarkdownEditorService } from './index';
 import { EventEmitter } from '@angular/core';
 import { Scrollable } from 'core';
-import * as markdown from '../reducers';
-import * as fromEdit from '../actions/edit';
+import * as fromEdit from '../state/actions/edit';
 import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
-import * as fromMarkdown from './../reducers';
-import { DocumentMode } from './../reducers/document';
+import * as fromMarkdown from './../state';
+import { DocumentMode } from './../state/reducers/document';
 import { DocSaveCoordinateService } from './services/doc-save-coordinate-service';
 import { Observable, Subject } from 'rxjs';
 import { map, filter, switchMap, debounceTime, take, takeUntil } from 'rxjs/Operators';
@@ -16,6 +15,7 @@ import { DocService } from 'docs';
 import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
 import { MatDialog } from '@angular/material';
 import { Subscription, of } from 'rxjs';
+import { DocumentEffectsSave } from '../../docs/state';
 
 @Component({
   selector: 'ms-markdown-editor',
@@ -49,7 +49,7 @@ export class MarkdownEditorComponent implements OnInit {
     private dialog: MatDialog,
     private editorService: MarkdownEditorService,
     private docSaveCoordinater: DocSaveCoordinateService,
-    private store: Store<markdown.State>,
+    private store: Store<fromMarkdown.State>,
     private docSerivce: DocService
   ) {
     editorService.editorLoaded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
@@ -83,7 +83,7 @@ export class MarkdownEditorComponent implements OnInit {
             .pipe(
               map(value => {
                 if (value === 'Yes') {
-                  this.docSerivce.save(this.codeMirrorComponent.value);
+                  this.store.dispatch(new DocumentEffectsSave({content:this.codeMirrorComponent.value}))
                   return false;
                 } else {
                   return true;

@@ -1,8 +1,8 @@
 import { Component, Input, AfterViewInit } from '@angular/core';
 import { Scrollable } from 'core';
 import { ViewChild } from '@angular/core';
-import * as markdown from '../reducers';
-import * as fromView from '../actions/view';
+import * as markdown from '../state';
+import * as fromView from '../state/actions/view';
 import { Store, select } from '@ngrx/store';
 import { DocService } from 'docs';
 import { ElementRef } from '@angular/core';

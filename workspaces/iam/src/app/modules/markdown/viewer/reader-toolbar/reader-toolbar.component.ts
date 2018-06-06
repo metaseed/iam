@@ -1,16 +1,15 @@
 import { Component, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { DocumentRef, Scrollable } from 'core';
 import { Store } from '@ngrx/store';
-import * as fromDocument from '../../reducers/document';
-import * as document from '../../actions/document';
-import * as reducers from '../../reducers';
-import * as fromView from '../../reducers/view';
+import * as fromDocument from '../../state/reducers/document';
+import * as document from '../../state/actions/document';
+import * as fromView from '../../state/reducers/view';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { MarkdownViewerComponent } from '../markdown-viewer.component';
 import { select } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import * as fromMarkdown from './../../reducers';
-import { DocumentMode } from './../../reducers/document';
+import * as fromMarkdown from './../../state';
+import { DocumentMode } from './../../state/reducers/document';
 import { MatToolbar } from '@angular/material';
 @Component({
   selector: 'ms-reader-toolbar',
@@ -43,14 +42,14 @@ export class ReaderToolbarComponent {
   isScrollDown: boolean | null = null;
   isPositionFixed: boolean;
   isEditMode: boolean;
-  constructor(private store: Store<reducers.State>) {}
+  constructor(private store: Store<fromMarkdown.State>) {}
 
   isScrollDown$;
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
   editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState));
   editWithView: boolean;
   ngOnInit() {
-    this.isScrollDown$ = this.store.pipe(select(reducers.selectViewScrollDownState));
+    this.isScrollDown$ = this.store.pipe(select(fromMarkdown.selectViewScrollDownState));
     this.isScrollDown$.subscribe(value => {
       this.isScrollDown = value.isDown;
       if (this.toolbar)

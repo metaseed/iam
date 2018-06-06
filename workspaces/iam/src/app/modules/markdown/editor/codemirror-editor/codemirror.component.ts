@@ -25,8 +25,8 @@ import "codemirror/addon/search/jump-to-line";
 import { MarkdownEditorService } from "../services/markdown.editor.service";
 import { Scrollable } from "core";
 import { Store } from "@ngrx/store";
-import * as markdown from "../../reducers";
-import * as fromEdit from "../../actions/edit";
+import * as markdown from "../../state";
+import * as fromEdit from "../../state/actions/edit";
 import { KeyMap } from "../editor-toolbar/keymap";
 /**
  * Usage : <codemirror [(ngModel)]="markdown" [config]="{...}"></codemirror>

@@ -6,19 +6,18 @@ import { Subscription } from 'rxjs';
 import { DocService } from 'docs';
 import { MarkdownEditorService } from '../../editor/index';
 import { CommandService, Command, DocumentRef } from '../../../core/index';
-import * as fromMarkdown from './../../reducers';
-import { DocumentMode } from './../../reducers/document';
+import * as fromMarkdown from '../../state';
+import { DocumentMode } from '../../state/reducers/document';
 import { Store, select, State } from '@ngrx/store';
-import * as doc from '../../actions/document';
-import * as edit from '../../actions/edit';
+import * as doc from '../../state/actions/document';
+import * as edit from '../../state/actions/edit';
 import { OnDestroy } from '@angular/core';
 import { ObservableMedia } from '@angular/flex-layout';
-import * as reducers from '../../reducers';
 import * as CodeMirror from 'codemirror';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';
 import { MatToolbar, MatDialog } from '@angular/material';
-import { DocumentEffectsSave } from '../../../docs/state';
+import { DocumentEffectsSave, DocumentEffectsNew } from '../../../docs/state';
 
 @Component({
   selector: 'editor-toolbar',
@@ -52,7 +51,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   @ViewChild('toolbar') toolbar: MatToolbar;
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
-  documentMode$ = this.store.pipe(select(reducers.selectDocumentModeState));
+  documentMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
   isScrollDown = null;
   isPositionFixed: boolean;
   isScrollDown$;
@@ -67,9 +66,9 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
         this.isPositionFixed =
           value.scroll.target.scrollTop > this.toolbar._elementRef.nativeElement.offsetHeight;
     };
-    this.isScrollDown$ = this.store.pipe(select(reducers.selectEditScrollDownState));
+    this.isScrollDown$ = this.store.pipe(select(fromMarkdown.selectEditScrollDownState));
     this.isScrollDown$.subscribe(scrollHandler);
-    this.isScrollDown_view$ = this.store.pipe(select(reducers.selectViewScrollDownState));
+    this.isScrollDown_view$ = this.store.pipe(select(fromMarkdown.selectViewScrollDownState));
     this.isScrollDown_view$.subscribe(scrollHandler);
     this.docMode$.subscribe(mode => {
       switch (mode) {
@@ -94,8 +93,8 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     private _commandService: CommandService,
     private _docRef: DocumentRef,
     private _domSanitizer: DomSanitizer,
-    private store: Store<reducers.State>,
-    private state: State<reducers.State>,
+    private store: Store<fromMarkdown.State>,
+    private state: State<fromMarkdown.State>,
     public docSaver: DocSaveCoordinateService
   ) {
     this._editorService.editorLoaded$.subscribe(editor => {
@@ -169,7 +168,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   };
 
   new = () => {
-    this.docService.newDoc();
+    this.store.dispatch(new DocumentEffectsNew({format:'md'}));
   };
 
   previewPanelClick(event: Event) {

@@ -7,12 +7,12 @@ import { DocService } from 'docs';
 import { MarkdownEditorService } from '../../../editor/index';
 import { CommandService, Command, DocumentRef } from 'core';
 import { Store, select } from '@ngrx/store';
-import { State } from '../../../reducers';
-import * as doc from '../../../actions/document';
-import * as edit from '../../../actions/edit';
+import { State } from '../../../state';
+import * as doc from '../../../state/actions/document';
+import * as edit from '../../../state/actions/edit';
 import { OnDestroy } from '@angular/core';
 import { ObservableMedia } from '@angular/flex-layout';
-import * as fromMarkdown from '../../../reducers';
+import * as fromMarkdown from '../../../state';
 import * as CodeMirror from 'codemirror';
 import { HtmlParser } from '@angular/compiler';
 @Component({
