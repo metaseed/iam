@@ -42,9 +42,9 @@ export function reducer(state = initialState, action: EditActions) {
     case EditActionTypes.EditorUnloaded: {
       return { ...state, editor: null };
     }
-    case EditActionTypes.ContentChanged: {
-      return {...state,...action.payload};
-    }
+    // case EditActionTypes.ContentChanged: {
+    //   return {...state,...action.payload};
+    // }
     default:
       return state;
   }
@@ -53,4 +53,4 @@ export function reducer(state = initialState, action: EditActions) {
 export const getSave = (state: State) => state.save;
 export const getScrollDown = (state: State) => state.scrollDown;
 export const getEditor = (state: State) => state.editor;
-export const getContent = (state: State) => state.content;
+// export const getSavedContent = (state: State) => state.content;

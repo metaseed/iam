@@ -14,10 +14,8 @@ import {
 import { LoadDocuments, SetDocumentsMessage, DeleteDocument } from './document.actions';
 import { GithubStorage, Repository, EditIssueParams } from '../../../storage/github';
 import { switchMap, catchError, map, tap, take, retry, combineLatest } from 'rxjs/operators';
-import { DocumentActionTypes } from '../../markdown/actions/document';
 import { DocMeta } from '../models/doc-meta';
 import { Document } from '../models/document';
-import { State } from '../../markdown/reducers/document';
 import {
   getDocumentEntitiesState,
   DocumentEffectsShow,
@@ -34,6 +32,7 @@ import { base64Encode } from 'core';
 import { MatSnackBar } from '@angular/material';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { State } from '.';
 
 @Injectable()
 export class DocumentEffects {
