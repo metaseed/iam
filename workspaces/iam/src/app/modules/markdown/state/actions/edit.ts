@@ -9,16 +9,6 @@ export enum EditActionTypes {
   // ContentChanged = '[Edit] Content Changed'
 }
 
-export class EditorLoaded implements Action {
-  readonly type = EditActionTypes.EditorLoaded;
-  constructor(public payload: { editor: CodeMirror.Editor }) {}
-}
-
-export class EditorUnloaded implements Action {
-  readonly type = EditActionTypes.EditorUnloaded;
-  constructor(public payload: { editor: CodeMirror.Editor }) {}
-}
-
 // export class ContentChanged implements Action {
 //   readonly type = EditActionTypes.ContentChanged;
 //   constructor(public payload: { content: string }) {}
@@ -38,4 +28,4 @@ export class ScrollDown implements Action {
   readonly type = EditActionTypes.ScrollDown;
   constructor(public payload: { scroll: any; isDown: boolean }) {}
 }
-export type EditActions = Save | LockScrollWithView | ScrollDown |EditorLoaded | EditorUnloaded;
+export type EditActions = Save | LockScrollWithView | ScrollDown;

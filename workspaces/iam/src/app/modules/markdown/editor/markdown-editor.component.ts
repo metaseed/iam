@@ -52,8 +52,7 @@ export class MarkdownEditorComponent implements OnInit {
     private store: Store<fromMarkdown.State>,
     private docSerivce: DocService
   ) {
-    this.store
-      .select(fromMarkdown.selectEditorState)
+    this.editorService.editorLoaded$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         setTimeout(() => (this.editorLoaded = true), 0);

@@ -37,7 +37,7 @@ export const selectEditLockScrollWithViewState = createSelector(
   selectEditState,
   state => state.lockScrollWithView
 );
-export const selectEditorState = createSelector(selectEditState, fromEdit.getEditor);
+// export const selectEditorState = createSelector(selectEditState, fromEdit.getEditor);
 // export const selectSavedContentState = createSelector(selectEditState, fromEdit.getSavedContent);
 
 export const selectViewState = createSelector(selectMarkdownState, state => state.view);

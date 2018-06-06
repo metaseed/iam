@@ -98,8 +98,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     private state: State<fromMarkdown.State>,
     public docSaver: DocSaveCoordinateService
   ) {
-    this.store
-      .select(fromMarkdown.selectEditorState)
+    this._editorService.editorLoaded$
       .pipe(takeUntil(this.destroy$))
       .subscribe(editor => {
         this.editor = editor;

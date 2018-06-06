@@ -53,8 +53,7 @@ export class CodemirrorToolbarComponent implements OnInit {
       });
     this._subscription = _commandService.commands.subscribe(c => this.handleCommand(c));
     let me = this;
-    this.store
-      .select(fromMarkdown.selectEditorState)
+    this._editorService.editorLoaded$
       .pipe(takeUntil(this.destroy$))
       .subscribe((editor: CodeMirror.Editor) => {
         if (!CodemirrorToolbarComponent.COMMANDS_CONFIG) {

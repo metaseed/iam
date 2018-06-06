@@ -5,7 +5,6 @@ import { Subject, BehaviorSubject, Observable } from 'rxjs';
 import { filter, auditTime, takeUntil, combineLatest } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import * as docs from '../../../docs';
-import { selectEditorState } from '../../state';
 import { selectDocumentActionStatus } from '../../../docs/state/document.reducer';
 import {
   DocumentEffectsSave,
@@ -21,7 +20,7 @@ export class DocSaveCoordinateService implements OnDestroy {
   isDirty$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   isSaving: boolean;
 
-  private editor$ = this.store.pipe(select(selectEditorState));
+  private editor$ = this.editorService.editorLoaded$;
   private contentGeneration: number;
   private destroy$ = new Subject();
 

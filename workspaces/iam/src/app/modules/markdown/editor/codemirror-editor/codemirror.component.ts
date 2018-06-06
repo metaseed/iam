@@ -6,34 +6,35 @@ import {
   EventEmitter,
   ViewEncapsulation,
   forwardRef
-} from "@angular/core";
-import { NG_VALUE_ACCESSOR } from "@angular/forms";
+} from '@angular/core';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 // import 'codemirror/addon/dialog/dialog.css'
 
-import * as CodeMirror from "codemirror";
+import * as CodeMirror from 'codemirror';
 // import 'codemirror/addon/scroll/simplescrollbars';
-import "codemirror/addon/display/fullscreen";
-import "codemirror/mode/gfm/gfm";
-import "codemirror/addon/dialog/dialog";
-import "codemirror/mode/javascript/javascript";
-import "codemirror/addon/search/searchcursor";
-import "codemirror/addon/search/search";
-import "codemirror/addon/scroll/annotatescrollbar";
-import "codemirror/addon/search/matchesonscrollbar";
-import "codemirror/addon/search/jump-to-line";
+import 'codemirror/addon/display/fullscreen';
+import 'codemirror/mode/gfm/gfm';
+import 'codemirror/addon/dialog/dialog';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/addon/search/searchcursor';
+import 'codemirror/addon/search/search';
+import 'codemirror/addon/scroll/annotatescrollbar';
+import 'codemirror/addon/search/matchesonscrollbar';
+import 'codemirror/addon/search/jump-to-line';
 
-import { MarkdownEditorService } from "../services/markdown.editor.service";
-import { Scrollable } from "core";
-import { Store } from "@ngrx/store";
-import * as markdown from "../../state";
-import * as fromEdit from "../../state/actions/edit";
-import { KeyMap } from "../editor-toolbar/keymap";
+import { MarkdownEditorService } from '../services/markdown.editor.service';
+import { Scrollable } from 'core';
+import { Store } from '@ngrx/store';
+import * as markdown from '../../state';
+import * as fromEdit from '../../state/actions/edit';
+import { KeyMap } from '../editor-toolbar/keymap';
+import { Subject } from 'rxjs';
 /**
  * Usage : <codemirror [(ngModel)]="markdown" [config]="{...}"></codemirror>
  */
 @Component({
-  selector: "codemirror",
-  styleUrls: ["./codemirror.component.scss"],
+  selector: 'codemirror',
+  styleUrls: ['./codemirror.component.scss'],
 
   providers: [
     {
@@ -57,19 +58,16 @@ export class CodemirrorComponent {
   @Output() focus = new EventEmitter();
   @Output() blur = new EventEmitter();
 
-  @ViewChild("host") host;
+  @ViewChild('host') host;
 
   @Output() instance = null;
 
-  _value = "";
+  _value = '';
 
   /**
    * Constructor
    */
-  constructor(
-    private service: MarkdownEditorService,
-    private store: Store<markdown.State>
-  ) {}
+  constructor(private service: MarkdownEditorService, private store: Store<markdown.State>) {}
 
   get value() {
     return this._value;
@@ -83,12 +81,12 @@ export class CodemirrorComponent {
     }
   }
 
-  @ViewChild("scroll") scroll;
+  @ViewChild('scroll') scroll;
 
   ngAfterViewInit() {
     this.config = this.config || {
       mode: {
-        name: "gfm",
+        name: 'gfm',
         highlightFormatting: true
       },
       lineNumbers: true,
@@ -96,26 +94,25 @@ export class CodemirrorComponent {
       lineWrapping: true,
       extraKeys: {
         F11: function(cm) {
-          cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+          cm.setOption('fullScreen', !cm.getOption('fullScreen'));
         },
         Esc: function(cm) {
-          if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+          if (cm.getOption('fullScreen')) cm.setOption('fullScreen', false);
         }
         // "Ctrl-F": "findPersistent"
       }
     };
     this.codemirrorInit(this.config);
-    this.store.dispatch(new fromEdit.EditorLoaded({editor:this.instance}));
-    new Scrollable(
-      this.scroll.nativeElement.children[1].lastChild
-    ).isScrollDown$.subscribe(e => {
+    this.service.editorLoaded$.next(this.instance);
+    new Scrollable(this.scroll.nativeElement.children[1].lastChild).isScrollDown$.subscribe(e => {
       this.store.dispatch(new fromEdit.ScrollDown(e));
       // console.log(e)
     });
   }
+  destroy$ = new Subject();
 
   ngOnDestroy() {
-    this.store.dispatch(new fromEdit.EditorUnloaded(this.instance));
+    this.destroy$.next();
   }
 
   /**
@@ -125,15 +122,15 @@ export class CodemirrorComponent {
     this.instance = CodeMirror.fromTextArea(this.host.nativeElement, config);
     this.instance.setValue(this._value);
 
-    this.instance.on("change", () => {
+    this.instance.on('change', () => {
       this.updateValue(this.instance.getValue());
     });
 
-    this.instance.on("focus", () => {
+    this.instance.on('focus', () => {
       this.focus.emit();
     });
 
-    this.instance.on("blur", () => {
+    this.instance.on('blur', () => {
       this.blur.emit();
     });
     new KeyMap(this.instance);
@@ -142,7 +139,6 @@ export class CodemirrorComponent {
   refresh() {
     this.instance.refresh();
   }
-
 
   /**
    * Value update process
@@ -159,7 +155,7 @@ export class CodemirrorComponent {
    */
   writeValue(value) {
     if (value !== undefined && this.instance) {
-      this._value = value || "";
+      this._value = value || '';
       this.instance.setValue(this._value);
       if (value) this.service.docLoaded$.next(this.instance);
     }

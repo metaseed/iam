@@ -36,12 +36,6 @@ export function reducer(state = initialState, action: EditActions) {
         lockScrollWithView: action.payload
       };
     }
-    case EditActionTypes.EditorLoaded: {
-      return { ...state, ...action.payload };
-    }
-    case EditActionTypes.EditorUnloaded: {
-      return { ...state, editor: null };
-    }
     // case EditActionTypes.ContentChanged: {
     //   return {...state,...action.payload};
     // }
@@ -52,5 +46,5 @@ export function reducer(state = initialState, action: EditActions) {
 
 export const getSave = (state: State) => state.save;
 export const getScrollDown = (state: State) => state.scrollDown;
-export const getEditor = (state: State) => state.editor;
+// export const getEditor = (state: State) => state.editor;
 // export const getSavedContent = (state: State) => state.content;
