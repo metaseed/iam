@@ -1,5 +1,4 @@
 import { fromByteArray } from 'base64-js';
-import { map } from 'lodash';
 declare var TextDecoder;
 declare var TextEncoder;
 
@@ -54,7 +53,7 @@ const radix = alphabet.length;
 const array = new Uint32Array(uidLength);
 export function uid() {
     crypto.getRandomValues(array);
-    return map(array, value => alphabet[value % radix]).join('');
+    return array.map(value => <any>alphabet[value % radix]).join('');
 }
 export function hash(str) {
     let hash = 0;
