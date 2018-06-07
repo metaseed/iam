@@ -47,9 +47,9 @@ export const switchIfEmit = (switchTester: (T) => boolean = undefined) => <T>(
         const innerSubscription = innerObservable.subscribe(item => {
           if (lastInnerObservable && lastInnerObservable !== innerObservable) {
             if (!switchTester || (switchTester && switchTester(item))) {
-              const sourceSubscription = (<any>lastInnerObservable).subscription;
-              subscription.remove(sourceSubscription);
-              sourceSubscription.unsubscribe();
+              const tracedInnerSubscription = (<any>lastInnerObservable).subscription;
+              subscription.remove(tracedInnerSubscription);
+              tracedInnerSubscription.unsubscribe();
               (<any>lastInnerObservable).subscription = undefined;
             }
           }

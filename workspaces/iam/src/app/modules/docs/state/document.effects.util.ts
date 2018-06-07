@@ -31,7 +31,7 @@ export function getContent(repo: Repository, number: number, title: string, form
   );
 }
 
-export const NEW_DOC_ID = 0xffffffff;
+export const NEW_DOC_ID = Number.POSITIVE_INFINITY;
 
 export function getContentUrl(issueNum, title) {
   return `https://metaseed.github.io/iam/doc?id=${issueNum}&title=${encodeURIComponent(title)}`;

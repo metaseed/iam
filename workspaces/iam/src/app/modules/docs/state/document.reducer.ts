@@ -80,6 +80,5 @@ export const {
   selectTotal,
 } = adapter.getSelectors();
 
-
 export const selectCurrentDocumentId = (state: State) => state.currentDocumentId;
 export const selectDocumentActionStatus = (state:State) => state.actionStatus;

@@ -35,7 +35,6 @@ export class DocumentEffectsSave implements Action {
 }
 
 export enum ActionStatus {
-  Init = 'Init',
   Start = 'Start',
   Success = 'Success',
   Fail = 'Fail'
@@ -51,11 +50,10 @@ export interface DocumentActionStatus {
 export function getActionStatus(
   action: DocumentEffectsActionTypes,
   store: Store<State>
-): Observable<ActionStatus> {
+): Observable<DocumentActionStatus> {
   return store.pipe(
     select(getDocumentActionStatusState),
-    ofActionType(action),
-    map(msg => msg.status)
+    ofActionType(action)
   );
 }
 

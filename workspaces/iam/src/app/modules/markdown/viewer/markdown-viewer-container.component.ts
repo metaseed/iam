@@ -1,19 +1,22 @@
 import { Component, Input, AfterViewInit } from '@angular/core';
-import { Scrollable } from 'core';
+import { Scrollable, MSG_DISPLAY_TIMEOUT, NET_COMMU_TIMEOUT } from 'core';
 import { ViewChild } from '@angular/core';
 import * as markdown from '../state';
 import * as fromView from '../state/actions/view';
 import { Store, select } from '@ngrx/store';
 import { DocService } from 'docs';
 import { ElementRef } from '@angular/core';
-import { Subscription, of, Subject } from 'rxjs';
+import { Subscription, of, Subject, merge } from 'rxjs';
 import {
   getDocumentActionStatusState,
   DocumentEffectsActionTypes,
   DocumentActionTypes,
-  ActionStatus
+  ActionStatus,
+  monitorActionStatus,
+  getActionStatus
 } from '../../docs/state';
-import { filter, takeLast, takeUntil } from 'rxjs/operators';
+import { filter, takeLast, takeUntil, map, mergeAll } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material';
 @Component({
   selector: 'markdown-viewer-container',
   templateUrl: './markdown-viewer-container.component.html',
@@ -25,11 +28,33 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
   @Input() markdown: string;
   @Input() hideToolbar: false;
   @ViewChild('viewContainerDiv') viewerContainerDiv: ElementRef;
-  docLoaded = false;
   isEditorScrollDown$;
   isLockScrollWithView$;
   isLockScrollWithView;
-  constructor(private store: Store<markdown.State>, private _docService: DocService) {}
+
+  defaultTimeoutHandler = err =>
+    this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
+  isLoadDone$ = merge(
+    monitorActionStatus(
+      DocumentEffectsActionTypes.Show,
+      this.store,
+      NET_COMMU_TIMEOUT,
+      this.defaultTimeoutHandler
+    ).pipe(
+      map(v => {
+        return v.status === ActionStatus.Fail || v.status === ActionStatus.Success;
+      })
+    ),
+    getActionStatus(DocumentEffectsActionTypes.New, this.store).pipe(
+      map(v => v.status === ActionStatus.Success || v.status === ActionStatus.Fail)
+    )
+  ).pipe(takeUntil(this.destroy$));
+
+  constructor(
+    private store: Store<any>,
+    private _docService: DocService,
+    private snackBar: MatSnackBar
+  ) {}
   isScrollDown = false;
   ngAfterViewInit() {
     this.isEditorScrollDown$ = this.store.pipe(select(markdown.selectEditScrollDownState));
@@ -54,19 +79,6 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
       }
     });
 
-    this.store
-      .select(getDocumentActionStatusState)
-      .pipe(
-        filter(status => status && status.action === DocumentEffectsActionTypes.Show),
-        takeUntil(this.destroy$)
-      )
-      .subscribe(status => {
-        if (status.status === ActionStatus.Start) {
-          this.docLoaded = false;
-        } else {
-          this.docLoaded = true;
-        }
-      });
     new Scrollable(this.viewerContainerDiv.nativeElement).isScrollDown$
       .pipe(takeUntil(this.destroy$))
       .subscribe(e => {

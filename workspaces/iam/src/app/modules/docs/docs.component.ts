@@ -7,7 +7,7 @@ import { NgSpinKitModule } from 'ng-spin-kit';
 import { DocSearchService } from './services/doc-search.service';
 import { State } from './state/document.reducer';
 import { Store, select } from '@ngrx/store';
-import { Observable, TimeoutError, of, from } from 'rxjs';
+import { Observable, TimeoutError, of, from, Subject } from 'rxjs';
 import {
   map,
   filter,
@@ -20,12 +20,12 @@ import {
   distinctUntilChanged,
   combineLatest,
   tap,
-  mergeAll
+  mergeAll,
+  takeUntil
 } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import {
   DocumentEffectsActionTypes,
-  getActionStatus,
   getDocumentsState,
   DocumentEffectsLoad,
   DocumentEffectsDelete,
@@ -34,22 +34,34 @@ import {
 } from './state';
 import { DocSearchComponent } from './doc-search/doc-search.component';
 import { switchIfEmit } from '../core/operators/switchIfEmit';
+import { NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT } from 'core';
 @Component({
   selector: 'docs',
   templateUrl: './docs.component.html',
   styleUrls: ['./docs.component.scss']
 })
 export class DocsComponent {
+  private destroy$ = new Subject();
+
   @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;
 
-  defaultTimeoutHandler = err => this.snackBar.open(err.message, 'ok', { duration: 6000 });
-  isLoadDone$ =monitorActionStatus(DocumentEffectsActionTypes.Load, this.store,60000,this.defaultTimeoutHandler).pipe(map(v=>{
-    return v.status === ActionStatus.Fail || v.status === ActionStatus.Success
-  }));
+  defaultTimeoutHandler = err =>
+    this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
+  isLoadDone$ = monitorActionStatus(
+    DocumentEffectsActionTypes.Load,
+    this.store,
+    NET_COMMU_TIMEOUT,
+    this.defaultTimeoutHandler
+  ).pipe(
+    takeUntil(this.destroy$),
+    map(v => {
+      return v.status === ActionStatus.Fail || v.status === ActionStatus.Success;
+    })
+  );
 
   private initDocs$ = this.store.pipe(select(getDocumentsState));
   docs$: Observable<Document[]>;
-  ActionStatus=ActionStatus;
+  ActionStatus = ActionStatus;
   constructor(
     private store: Store<State>,
     public docService: DocService,
@@ -63,16 +75,11 @@ export class DocsComponent {
     });
   }
 
-  private refresh() {
-
-  }
+  private refresh() {}
 
   ngOnInit() {
     this.refresh();
     const filteredDocs$ = this.docSearch.Search.pipe(
-      tap(a => {
-        console.warn(a);
-      }),
       debounceTime(500),
       distinctUntilChanged(),
       combineLatest(this.initDocs$),
@@ -82,6 +89,10 @@ export class DocsComponent {
     );
 
     this.docs$ = from([this.initDocs$, filteredDocs$]).pipe(switchIfEmit());
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
   }
 
   showDoc(doc: Document) {

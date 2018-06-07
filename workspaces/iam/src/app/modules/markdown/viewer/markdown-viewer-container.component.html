@@ -1,7 +1,7 @@
 <ms-reader-toolbar>
 </ms-reader-toolbar>
 <ms-reading-position-indicator *ngIf="isScrollDown" [element]="viewContainerDiv"></ms-reading-position-indicator>
-<sk-three-bounce [isRunning]="!docLoaded"></sk-three-bounce>
+<sk-three-bounce [isRunning]="!(isLoadDone$|async)"></sk-three-bounce>
 
 <div style="position:relative;height:100%;">
   <div class="viewer-container" #viewContainerDiv>

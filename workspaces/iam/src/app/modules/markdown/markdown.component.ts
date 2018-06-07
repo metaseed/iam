@@ -30,9 +30,7 @@ import { Document } from '../docs/models/document';
   styleUrls: ['./markdown.component.scss']
 })
 export class MarkdownComponent implements OnInit, OnDestroy {
-  private docShowSub: any;
-  private _doc: any;
-  private destroy$ = new Subject();
+  declear
   isFullScreen: boolean;
   fixEditButton = false;
   isEditMode = false;
@@ -44,24 +42,37 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   @ViewChild('viewerDiv') viewerDiv: ElementRef;
   @ViewChild('editorDiv') editorDiv: ElementRef;
 
+  private destroy$ = new Subject();
 
-  docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState),takeUntil(this.destroy$))
-  editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState),takeUntil(this.destroy$))
-  gtsmBreakPoint = false
+  docMode$ = this.store.pipe(
+    select(fromMarkdown.selectDocumentModeState),
+    takeUntil(this.destroy$)
+  );
+  editWithView$ = this.store.pipe(
+    select(fromMarkdown.selectDocumentShowPreviewState),
+    takeUntil(this.destroy$)
+  );
+  gtsmBreakPoint = false;
 
-  markdown:string;
-  markdown$ = this.store.select<Document>(getCurrentDocumentState).pipe(
-    map(doc => {
-      if (doc && doc.content){
-        return base64Decode(doc.content.content);
-      }
-      else {
-        return '';
-      }
-    })
-  ).subscribe(content=>{
-    this.markdown = content;
-  });
+  markdown: string;
+  markdown$ = this.store
+    .select<Document>(getCurrentDocumentState)
+    .pipe(
+      map(doc => {
+        if (doc && doc.content) {
+          return base64Decode(doc.content.content);
+        } else {
+          return '';
+        }
+      })
+    )
+    .subscribe(content => {
+      this.markdown = content;
+    });
+
+  private docShowSub: any;
+  private _doc: any;
+
   constructor(
     private _docService: DocService,
     private _el: ElementRef,
@@ -76,22 +87,25 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     private media: ObservableMedia,
     private docRef: DocumentRef
   ) {
-    media.asObservable().pipe(combineLatest(this.editWithView$),takeUntil(this.destroy$)).subscribe(([change,editWithView]) => {
-      if (!['xs', 'sm'].includes(change.mqAlias)) {
-        this.gtsmBreakPoint = true;
-        if (editWithView === null || editWithView === undefined) {
-          this.store.dispatch(new doc.ShowPreview());
+    media
+      .asObservable()
+      .pipe(
+        combineLatest(this.editWithView$),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(([change, editWithView]) => {
+        if (!['xs', 'sm'].includes(change.mqAlias)) {
+          this.gtsmBreakPoint = true;
+          if (editWithView === null || editWithView === undefined) {
+            this.store.dispatch(new doc.ShowPreview());
+          }
+        } else {
+          this.gtsmBreakPoint = false;
         }
-      } else {
-        this.gtsmBreakPoint = false;
-      }
-    });
-
+      });
   }
 
-  ngOnInit() {
-
-  }
+  ngOnInit() {}
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -106,21 +120,18 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-
     this.route.queryParamMap
       .pipe(
         tap(params => {
-          if (this.router.url.startsWith( '/doc/new')) {
+          if (this.router.url.startsWith('/doc/new')) {
             let format = params.get('f');
-            this.store.dispatch(new DocumentEffectsNew({format}));
+            this.store.dispatch(new DocumentEffectsNew({ format }));
             this.store.dispatch(new document.EditMode());
           } else {
             let title = params.get('title');
             let num = +params.get('id');
             let format = params.get('f');
-            this.store.dispatch(
-              new DocumentEffectsShow({ number:num, title, format })
-            );
+            this.store.dispatch(new DocumentEffectsShow({ number: num, title, format }));
           }
         }),
         take(1)
@@ -129,7 +140,8 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   }
 
   showDemo() {
-    this._http.get(`${this.baseHref}assets/markdown.md`, { responseType: 'text' }).subscribe(a => {
-    });
+    this._http
+      .get(`${this.baseHref}assets/markdown.md`, { responseType: 'text' })
+      .subscribe(a => {});
   }
 }

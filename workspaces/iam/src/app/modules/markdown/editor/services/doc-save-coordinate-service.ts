@@ -48,11 +48,11 @@ export class DocSaveCoordinateService implements OnDestroy {
         takeUntil(this.destroy$),
         combineLatest(this.editor$)
       )
-      .subscribe(([status, editor]) => {
-        if (status === ActionStatus.Start) {
+      .subscribe(([as, editor]) => {
+        if (as.status === ActionStatus.Start) {
           this.docSavedHandler(editor);
           this.isSaving = true;
-        } else if (status === ActionStatus.Success || status === ActionStatus.Fail) {
+        } else if (as.status === ActionStatus.Success || as.status === ActionStatus.Fail) {
           this.isSaving = false;
         }
       });

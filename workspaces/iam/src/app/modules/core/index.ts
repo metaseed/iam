@@ -11,3 +11,4 @@ export * from "./core.module";
 export * from "./services/scrollable";
 export * from "./services/dialog/dialog.service";
 export * from "./services/logger.service";
+export * from './const';

@@ -178,7 +178,7 @@ export class DocumentEffects {
         }
       };
       this.store.dispatch(new AddDocument({ collectionDocument: <any>doc }));
-      action => this.store.dispatch(new SetCurrentDocumentId({ id: num }));
+      this.store.dispatch(new SetCurrentDocumentId({ id: num }));
       return new SetDocumentsMessage({
         action: DocumentEffectsActionTypes.New,
         status: ActionStatus.Success,
