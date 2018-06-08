@@ -7,7 +7,7 @@ import { NgSpinKitModule } from 'ng-spin-kit';
 import { DocSearchService } from './services/doc-search.service';
 import { State } from './state/document.reducer';
 import { Store, select } from '@ngrx/store';
-import { Observable, TimeoutError, of, from, Subject } from 'rxjs';
+import { Observable, TimeoutError, of, from, Subject, merge } from 'rxjs';
 import {
   map,
   filter,
@@ -26,7 +26,7 @@ import {
 import { MatSnackBar } from '@angular/material';
 import {
   DocumentEffectsActionTypes,
-  getDocumentsState,
+  selectDocumentsState,
   DocumentEffectsLoad,
   DocumentEffectsDelete,
   ActionStatus,
@@ -47,19 +47,24 @@ export class DocsComponent {
 
   defaultTimeoutHandler = err =>
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
-  isLoadDone$ = monitorActionStatus(
-    DocumentEffectsActionTypes.Load,
-    this.store,
-    NET_COMMU_TIMEOUT,
-    this.defaultTimeoutHandler
-  ).pipe(
-    takeUntil(this.destroy$),
-    map(v => {
-      return v.status === ActionStatus.Fail || v.status === ActionStatus.Success;
-    })
+
+  private loadFromStoreDirectly$ = new Subject<boolean>();
+  isLoadDone$ = merge(
+    this.loadFromStoreDirectly$,
+    monitorActionStatus(
+      DocumentEffectsActionTypes.Load,
+      this.store,
+      NET_COMMU_TIMEOUT,
+      this.defaultTimeoutHandler
+    ).pipe(
+      takeUntil(this.destroy$),
+      map(v => {
+        return v.status === ActionStatus.Fail || v.status === ActionStatus.Success;
+      })
+    )
   );
 
-  private initDocs$ = this.store.pipe(select(getDocumentsState));
+  private initDocs$ = this.store.pipe(select(selectDocumentsState));
   docs$: Observable<Document[]>;
   ActionStatus = ActionStatus;
   constructor(
@@ -68,27 +73,40 @@ export class DocsComponent {
     private docSearchService: DocSearchService,
     private router: Router,
     private snackBar: MatSnackBar
-  ) {
+  ) {}
+
+  private refresh() {
     this.store.dispatch(new DocumentEffectsLoad());
-    this.initDocs$.subscribe(a => {
-      console.log(a);
-    });
   }
 
-  private refresh() {}
-
   ngOnInit() {
-    this.refresh();
+    let isSearching;
     const filteredDocs$ = this.docSearch.Search.pipe(
-      debounceTime(500),
+      debounceTime(280),
       distinctUntilChanged(),
+      tap(keyword=>{
+        if(keyword.trim()===''){
+          isSearching = false;
+        }
+        isSearching = true;
+      }),
       combineLatest(this.initDocs$),
       map(([keyword, docs]) => {
         return this.docSearchService.search(docs, keyword);
       })
     );
 
-    this.docs$ = from([this.initDocs$, filteredDocs$]).pipe(switchIfEmit());
+    this.docs$ = from([this.initDocs$, filteredDocs$]).pipe(
+      switchIfEmit(),
+      tap(docs => {
+        if (docs.length <= 1 && !isSearching) {
+          // 0: initial value ; 1: nav back from url doc show; potential problem: if only 1 doc created, we will always query not from store but first store then from net.
+          this.refresh();
+        } else {
+          this.loadFromStoreDirectly$.next(true);
+        }
+      })
+    );
   }
 
   ngOnDestroy() {

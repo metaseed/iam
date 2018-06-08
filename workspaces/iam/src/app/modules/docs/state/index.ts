@@ -21,13 +21,29 @@ export interface DocsState {
   document: fromDocument.State;
 }
 export const reducers: ActionReducerMap<DocsState> = {
-  document: fromDocument.reducer,
+  document: fromDocument.reducer
 };
 
-export const getDocsState = createFeatureSelector<DocsState>('docs');
-export const getDocumentState = createSelector(getDocsState,state=>state.document);
-export const getDocumentsState = createSelector(getDocumentState,fromDocument.selectAll);
-export const getDocumentEntitiesState = createSelector(getDocumentState,fromDocument.selectEntities);
-export const getCurrentDocumentIdState = createSelector(getDocumentState,fromDocument.selectCurrentDocumentId);
-export const getCurrentDocumentState = createSelector(getDocumentEntitiesState, getCurrentDocumentIdState,(entities,id)=>entities[id]);
-export const getDocumentActionStatusState = createSelector(getDocumentState,fromDocument.selectDocumentActionStatus);
+export const selectDocsState = createFeatureSelector<DocsState>('docs');
+export const selectDocumentState = createSelector(selectDocsState, state => state.document);
+export const selectDocumentsState = createSelector(selectDocumentState, fromDocument.selectAll);
+export const selectDocumentEntitiesState = createSelector(
+  selectDocumentState,
+  fromDocument.selectEntities
+);
+export const selectCurrentDocumentIdState = createSelector(
+  selectDocumentState,
+  fromDocument.selectCurrentDocumentId
+);
+export const selectCurrentDocumentState = createSelector(
+  selectDocumentEntitiesState,
+  selectCurrentDocumentIdState,
+  (entities, id) => entities[id]
+);
+export const selectDocumentActionStatusState = createSelector(
+  selectDocumentState,
+  fromDocument.selectDocumentActionStatus
+);
+export const getDocumentByIdSeletor = (id: number) => {
+  return createSelector(selectDocumentEntitiesState, entities => entities[id]);
+};

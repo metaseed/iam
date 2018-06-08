@@ -6,9 +6,9 @@ import { APP_BASE_HREF } from '@angular/common';
 import { take, map, timeout, tap, takeUntil, combineLatest } from 'rxjs/operators';
 import { DocService } from 'docs';
 import { MarkdownEditorService } from './editor/index';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { base64Decode, DocumentRef, Scrollable } from 'core';
-import { Store, select } from '@ngrx/store';
+import { Store, select, State } from '@ngrx/store';
 import * as fromMarkdown from './state';
 import * as fromView from './state/actions/view';
 import { DocumentMode } from './state/reducers/document';
@@ -19,9 +19,15 @@ import { ObservableMedia, MediaChange } from '@angular/flex-layout';
 import { OnDestroy } from '@angular/core';
 import { MarkdownViewerContainerComponent } from './viewer/markdown-viewer-container.component';
 import { HasElementRef } from '@angular/material/core/typings/common-behaviors/color';
-import { Observable, Subscription, Subject } from 'rxjs';
+import { Observable, Subscription, Subject, merge } from 'rxjs';
 import { DocSaveCoordinateService } from './editor/services/doc-save-coordinate-service';
-import { DocumentEffectsShow, getCurrentDocumentState, DocumentEffectsNew } from '../docs/state';
+import {
+  DocumentEffectsShow,
+  selectCurrentDocumentState,
+  DocumentEffectsNew,
+  getDocumentByIdSeletor,
+  SetCurrentDocumentId
+} from '../docs/state';
 import { Document } from '../docs/models/document';
 
 @Component({
@@ -30,7 +36,7 @@ import { Document } from '../docs/models/document';
   styleUrls: ['./markdown.component.scss']
 })
 export class MarkdownComponent implements OnInit, OnDestroy {
-  declear
+  declear;
   isFullScreen: boolean;
   fixEditButton = false;
   isEditMode = false;
@@ -54,24 +60,9 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   );
   gtsmBreakPoint = false;
 
-  markdown: string;
-  markdown$ = this.store
-    .select<Document>(getCurrentDocumentState)
-    .pipe(
-      map(doc => {
-        if (doc && doc.content) {
-          return base64Decode(doc.content.content);
-        } else {
-          return '';
-        }
-      })
-    )
-    .subscribe(content => {
-      this.markdown = content;
-    });
+  markdown$: Observable<string>;
 
   private docShowSub: any;
-  private _doc: any;
 
   constructor(
     private _docService: DocService,
@@ -84,6 +75,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private store: Store<fromMarkdown.State>,
+    private state: State<fromMarkdown.State>,
     private media: ObservableMedia,
     private docRef: DocumentRef
   ) {
@@ -105,9 +97,24 @@ export class MarkdownComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.markdown$ = merge(
+      this.store.select<Document>(selectCurrentDocumentState).pipe(
+        map(doc => {
+          if (doc && doc.content) {
+            return base64Decode(doc.content.content);
+          } else {
+            return '';
+          }
+        })
+      ),
+      <Observable<string>>this.editor.markdownChange
+    );
+  }
 
   ngOnDestroy() {
+    this.store.dispatch(new SetCurrentDocumentId({id:undefined}));
+
     this.destroy$.next();
   }
 
@@ -131,12 +138,21 @@ export class MarkdownComponent implements OnInit, OnDestroy {
             let title = params.get('title');
             let num = +params.get('id');
             let format = params.get('f');
-            this.store.dispatch(new DocumentEffectsShow({ number: num, title, format }));
+            let doc = getDocumentByIdSeletor(num)(this.state.value);
+            if (doc && doc.content) {
+              this.store.dispatch(new SetCurrentDocumentId({ id: num }));
+            } else {
+              this.refresh(num, title, format);
+            }
           }
         }),
         take(1)
       )
       .subscribe();
+  }
+
+  refresh(num, title, format) {
+    this.store.dispatch(new DocumentEffectsShow({ number: num, title, format }));
   }
 
   showDemo() {

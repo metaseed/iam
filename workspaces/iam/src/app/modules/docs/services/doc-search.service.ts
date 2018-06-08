@@ -14,7 +14,7 @@ export class DocSearchService {
 
   constructor() {}
 
-  search(docs, keyword: string) {
+  search(docs:Document[], keyword: string) {
     if(keyword.trim()==''){
       return docs;
     }

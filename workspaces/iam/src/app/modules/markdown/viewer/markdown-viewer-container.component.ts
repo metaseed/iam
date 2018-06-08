@@ -8,7 +8,7 @@ import { DocService } from 'docs';
 import { ElementRef } from '@angular/core';
 import { Subscription, of, Subject, merge } from 'rxjs';
 import {
-  getDocumentActionStatusState,
+  selectDocumentActionStatusState,
   DocumentEffectsActionTypes,
   DocumentActionTypes,
   ActionStatus,

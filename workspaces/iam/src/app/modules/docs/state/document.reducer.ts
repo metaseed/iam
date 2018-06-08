@@ -13,7 +13,7 @@ export const adapter: EntityAdapter<Document> = createEntityAdapter<Document>({s
 
 export const initialState: State = adapter.getInitialState({
   // additional entity state properties
-  currentDocumentId: null
+  currentDocumentId: undefined
 });
 export function reducer(
   state = initialState,

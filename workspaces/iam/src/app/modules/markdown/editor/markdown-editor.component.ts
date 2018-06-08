@@ -29,7 +29,7 @@ export class MarkdownEditorComponent implements OnInit {
   editorLoaded = false;
   destroy$ = new Subject();
 
-  @Output() markdownChange = new EventEmitter();
+  @Output() markdownChange = new EventEmitter<string>();
 
   @ViewChild(CodemirrorComponent) codeMirrorComponent: CodemirrorComponent;
 

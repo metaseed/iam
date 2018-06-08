@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Observable, defer, of, throwError } from 'rxjs';
 import { Action, Store } from '@ngrx/store';
-
+import {State as StoreState} from '@ngrx/store';
 import { getContent, NEW_DOC_ID, getContentUrl } from './document.effects.util';
 import { Database } from '../../db/database';
 import {
@@ -17,10 +17,10 @@ import { switchMap, catchError, map, tap, take, retry, combineLatest } from 'rxj
 import { DocMeta } from '../models/doc-meta';
 import { Document } from '../models/document';
 import {
-  getDocumentEntitiesState,
+  selectDocumentEntitiesState,
   DocumentEffectsShow,
   SetCurrentDocumentId,
-  getCurrentDocumentState,
+  selectCurrentDocumentState,
   AddDocument,
   UpdateDocument,
   DocumentEffectsNew,
@@ -32,12 +32,13 @@ import { base64Encode } from 'core';
 import { MatSnackBar } from '@angular/material';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { State } from '.';
+import { State } from './document.reducer';
 
 @Injectable()
 export class DocumentEffects {
   constructor(
     private actions$: Actions,
+    private state: StoreState<State>,
     private db: Database,
     private storage: GithubStorage,
     private snackbar: MatSnackBar,
@@ -74,7 +75,9 @@ export class DocumentEffects {
           docList.push(d);
         }
       });
-      this.store.dispatch(new LoadDocuments({ collectionDocuments: docList }));
+      if(docList.length) {
+        this.store.dispatch(new LoadDocuments({ collectionDocuments: docList }));
+      }
       return new SetDocumentsMessage({
         status: ActionStatus.Success,
         action: DocumentEffectsActionTypes.Load,
@@ -109,14 +112,9 @@ export class DocumentEffects {
     ),
     combineLatest(this.storage.init()),
     switchMap(([action, repo]) => {
-      let document: Document;
       const actionDoc = action.payload;
-      this.store
-        .select(getDocumentEntitiesState)
-        .pipe(take(1))
-        .subscribe(documents => {
-          document = documents[actionDoc.number];
-        });
+      const documents = selectDocumentEntitiesState(this.state.value);
+      let document = documents[actionDoc.number];
       let curDoc = document ? { ...document } : { ...action.payload };
       const num = +actionDoc.number;
       const title = actionDoc.title;
@@ -209,7 +207,7 @@ export class DocumentEffects {
         })
       );
     }),
-    combineLatest(this.storage.init(), this.store.select(getCurrentDocumentState)),
+    combineLatest(this.storage.init(), this.store.select(selectCurrentDocumentState)),
     switchMap(([action, repo, doc]) => {
       const content = action.payload.content;
       let format = action.payload.format;
