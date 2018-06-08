@@ -24,7 +24,8 @@ import {
   AddDocument,
   UpdateDocument,
   DocumentEffectsNew,
-  DocumentEffectsSave
+  DocumentEffectsSave,
+  UpsertDocuments,
 } from 'app/modules/docs/state';
 import { DocService } from '../services/doc.service';
 import { format } from 'util';
@@ -68,15 +69,19 @@ export class DocumentEffects {
     switchMap(([a, repo]) => repo.issue.list('open')),
     map((docs: Document[]) => {
       let docList = new Array<Document>();
+      const docDic = selectDocumentEntitiesState(this.state.value);
       docs.forEach(d => {
         let meta = DocMeta.deSerialize(d.body);
         if (meta) {
           d.metaData = meta;
           docList.push(d);
         }
+        if(docList[d.number]){
+          d.content = docList[d.number].content;
+        }
       });
       if(docList.length) {
-        this.store.dispatch(new LoadDocuments({ collectionDocuments: docList }));
+        this.store.dispatch(new UpsertDocuments({ collectionDocuments: docList }));
       }
       return new SetDocumentsMessage({
         status: ActionStatus.Success,
