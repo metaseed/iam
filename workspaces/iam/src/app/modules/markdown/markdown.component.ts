@@ -3,7 +3,7 @@ import { Component, OnInit, ViewChild, Inject, HostListener, ElementRef } from '
 import { MarkdownViewerComponent } from './viewer/markdown-viewer.component';
 import { HttpClient } from '@angular/common/http';
 import { APP_BASE_HREF } from '@angular/common';
-import { take, map, timeout, tap, takeUntil, combineLatest } from 'rxjs/operators';
+import { take, map, timeout, tap, takeUntil, combineLatest, share } from 'rxjs/operators';
 import { DocService } from 'docs';
 import { MarkdownEditorService } from './editor/index';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
@@ -109,7 +109,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
         })
       ),
       <Observable<string>>this.editor.markdownChange
-    );
+    ).pipe(share());
   }
 
   ngOnDestroy() {
