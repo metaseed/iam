@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef } from '@angular/core';
 import { Document } from './models/document';
 import { DocService } from './services/doc.service';
 import { Router } from '@angular/router';
@@ -7,7 +7,7 @@ import { NgSpinKitModule } from 'ng-spin-kit';
 import { DocSearchService } from './services/doc-search.service';
 import { State } from './state/document.reducer';
 import { Store, select } from '@ngrx/store';
-import { Observable, TimeoutError, of, from, Subject, merge } from 'rxjs';
+import { Observable, TimeoutError, of, from, Subject, merge, Scheduler, asyncScheduler } from 'rxjs';
 import {
   map,
   filter,
@@ -21,7 +21,8 @@ import {
   combineLatest,
   tap,
   mergeAll,
-  takeUntil
+  takeUntil,
+  observeOn
 } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import {
@@ -35,6 +36,9 @@ import {
 import { DocSearchComponent } from './doc-search/doc-search.component';
 import { switchIfEmit } from '../core/operators/switchIfEmit';
 import { NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT } from 'core';
+import { PAN_ACTION_DELTY, PAN_ACTION_SCROLL_TRIGGER } from './const';
+
+
 @Component({
   selector: 'docs',
   templateUrl: './docs.component.html',
@@ -44,6 +48,7 @@ export class DocsComponent {
   private destroy$ = new Subject();
 
   @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;
+  @ViewChild('scrollDiv') scrollDiv:ElementRef;
 
   defaultTimeoutHandler = err =>
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
@@ -58,20 +63,24 @@ export class DocsComponent {
       this.defaultTimeoutHandler
     ).pipe(
       takeUntil(this.destroy$),
+      observeOn(asyncScheduler),
       map(v => {
         return v.status === ActionStatus.Fail || v.status === ActionStatus.Success;
       })
     )
   );
 
+
+
   onPanEnd(ev) {
-    this.refresh();
+    if (ev.deltaY > PAN_ACTION_DELTY && this.scrollDiv.nativeElement.scrollTop < PAN_ACTION_SCROLL_TRIGGER) {
+      this.refresh();
+    } else if(ev.deltaY< -PAN_ACTION_DELTY) {
+
+    }
     console.log(ev);
   }
 
-  onPanDown(ev) {
-    //this.refresh()
-  }
   private initDocs$ = this.store.pipe(select(selectDocumentsState));
   docs$: Observable<Document[]>;
   ActionStatus = ActionStatus;

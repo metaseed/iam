@@ -155,6 +155,15 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     this.store.dispatch(new DocumentEffectsShow({ number: num, title, format }));
   }
 
+  onRefresh(event) {
+    if(this.router.url.startsWith('/doc/new')) return;
+    const params = this.router.parseUrl(this.router.url).queryParams;
+    let title = params['title'];
+    let num = +params['id'];
+    let format = params['f'];
+    this.refresh(num,title,format);
+  }
+
   showDemo() {
     this._http
       .get(`${this.baseHref}assets/markdown.md`, { responseType: 'text' })

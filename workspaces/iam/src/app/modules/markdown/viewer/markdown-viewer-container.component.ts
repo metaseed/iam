@@ -1,4 +1,4 @@
-import { Component, Input, AfterViewInit } from '@angular/core';
+import { Component, Input, AfterViewInit, Output } from '@angular/core';
 import { Scrollable, MSG_DISPLAY_TIMEOUT, NET_COMMU_TIMEOUT } from 'core';
 import { ViewChild } from '@angular/core';
 import * as markdown from '../state';
@@ -17,6 +17,9 @@ import {
 } from '../../docs/state';
 import { filter, takeLast, takeUntil, map, mergeAll } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
+// import { PAN_ACTION_DELTY, PAN_ACTION_SCROLL_TRIGGER } from '../../docs/const';
+import { EventEmitter } from '@angular/core';
+import { PAN_ACTION_DELTY, PAN_ACTION_SCROLL_TRIGGER } from '../../docs/const';
 @Component({
   selector: 'markdown-viewer-container',
   templateUrl: './markdown-viewer-container.component.html',
@@ -27,6 +30,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
 
   @Input() markdown: string;
   @Input() hideToolbar: false;
+  @Output() refresh = new EventEmitter();
   @ViewChild('viewContainerDiv') viewerContainerDiv: ElementRef;
   isEditorScrollDown$;
   isLockScrollWithView$;
@@ -85,6 +89,15 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
         this.store.dispatch(new fromView.ScrollDown(e));
         this.isScrollDown = e.isDown;
       });
+  }
+
+  onPanEnd(ev) {
+    if (ev.deltaY > PAN_ACTION_DELTY && this.viewerContainerDiv.nativeElement.scrollTop < PAN_ACTION_SCROLL_TRIGGER) {
+      this.refresh.emit();
+    } else if(ev.deltaY< -PAN_ACTION_DELTY) {
+
+    }
+    console.log(ev);
   }
 
   ngOnDestroy() {

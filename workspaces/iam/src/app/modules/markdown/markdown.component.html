@@ -6,7 +6,7 @@
       <ms-markdown-editor [markdown]="markdown$ | async"></ms-markdown-editor>
     </div>
     <div #viewerDiv class="split-pane-content-secondary" style="height: 100%">
-      <markdown-viewer-container [markdown]="markdown$ | async"></markdown-viewer-container>
+      <markdown-viewer-container (refresh)="onRefresh($event)" [markdown]="markdown$ | async"></markdown-viewer-container>
     </div>
   </vertical-split-pane>
   <div class="md-footer ">words:</div>
