@@ -6,7 +6,7 @@ import * as fromView from '../state/actions/view';
 import { Store, select } from '@ngrx/store';
 import { DocService } from 'docs';
 import { ElementRef } from '@angular/core';
-import { Subscription, of, Subject, merge } from 'rxjs';
+import { Subscription, of, Subject, merge, asyncScheduler } from 'rxjs';
 import {
   selectDocumentActionStatusState,
   DocumentEffectsActionTypes,
@@ -15,7 +15,7 @@ import {
   monitorActionStatus,
   getActionStatus
 } from '../../docs/state';
-import { filter, takeLast, takeUntil, map, mergeAll } from 'rxjs/operators';
+import { filter, takeLast, takeUntil, map, mergeAll, observeOn } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 // import { PAN_ACTION_DELTY, PAN_ACTION_SCROLL_TRIGGER } from '../../docs/const';
 import { EventEmitter } from '@angular/core';
@@ -47,7 +47,8 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
     ).pipe(
       map(v => {
         return v.status === ActionStatus.Fail || v.status === ActionStatus.Success;
-      })
+      }),
+      observeOn(asyncScheduler)
     ),
     getActionStatus(DocumentEffectsActionTypes.New, this.store).pipe(
       map(v => v.status === ActionStatus.Success || v.status === ActionStatus.Fail)
