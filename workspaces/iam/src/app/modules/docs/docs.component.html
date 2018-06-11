@@ -1,7 +1,7 @@
 <div style="height:100vh;overflow-y:auto;">
   <div style="margin-bottom:5.5rem">
     <iam-doc-search></iam-doc-search>
-    <doc-list-item [documents]="docs$ | async" (onShow)="showDoc($event)" (onDelete)="deleteDoc($event)"></doc-list-item>
+    <doc-list-item [documents]="docs$ | async" (onShow)="showDoc($event)" (pandown)="onPanDown($event)" (panend)="onPanEnd($event)" (onDelete)="deleteDoc($event)"></doc-list-item>
     <sk-wave [isRunning]="!(isLoadDone$ | async)"></sk-wave>
   </div>
 </div>

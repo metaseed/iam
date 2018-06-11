@@ -64,6 +64,14 @@ export class DocsComponent {
     )
   );
 
+  onPanEnd(ev) {
+    this.refresh();
+    console.log(ev);
+  }
+
+  onPanDown(ev) {
+    //this.refresh()
+  }
   private initDocs$ = this.store.pipe(select(selectDocumentsState));
   docs$: Observable<Document[]>;
   ActionStatus = ActionStatus;
