@@ -1,10 +1,10 @@
 {
   "configVersion": 1,
-  "index": "/iam/index.html",
   "appData": {
     "name": "i'm",
     "description": "i'm writing your professional life"
   },
+  "index": "/iam/index.html",
   "assetGroups": [
     {
       "name": "app",
@@ -12,16 +12,7 @@
       "updateMode": "prefetch",
       "urls": [
         "/iam/favicon.ico",
-        "/iam/index.html",
-        "/iam/0.4f29d50d92ef690b7ba7.chunk.js",
-        "/iam/1.aa4e578f17f69467a6e6.chunk.js",
-        "/iam/2.2daa4aa4d39d85fec97e.chunk.js",
-        "/iam/3.a106068c84d45bef052f.chunk.js",
-        "/iam/7.807039f30c11aec07390.chunk.js",
-        "/iam/inline.bfb0b0eb093a79a8c157.bundle.js",
-        "/iam/main.ea689215fb84d3628151.bundle.js",
-        "/iam/polyfills.6a2be7faf48cef81d6bb.bundle.js",
-        "/iam/styles.93b2c9c09b02b6491b94.bundle.css"
+        "/iam/index.html"
       ],
       "patterns": []
     },
@@ -31,7 +22,6 @@
       "updateMode": "prefetch",
       "urls": [
         "/iam/assets/config.json",
-        "/iam/assets/markdown.md",
         "/iam/assets/icons/android-icon-192x192.png",
         "/iam/assets/icons/apple-icon-180x180.png",
         "/iam/assets/icons/favicon-16x16.png",
@@ -39,7 +29,7 @@
         "/iam/assets/icons/favicon-96x96.png",
         "/iam/assets/icons/ms-icon-310x310.png",
         "/iam/assets/js/prettify.js",
-        "/iam/assets/monaco-editor/vs/loader.js",
+        "/iam/assets/markdown.md",
         "/iam/assets/monaco-editor/vs/base/worker/workerMain.js",
         "/iam/assets/monaco-editor/vs/basic-languages/src/bat.js",
         "/iam/assets/monaco-editor/vs/basic-languages/src/coffee.js",
@@ -74,6 +64,8 @@
         "/iam/assets/monaco-editor/vs/basic-languages/src/vb.js",
         "/iam/assets/monaco-editor/vs/basic-languages/src/xml.js",
         "/iam/assets/monaco-editor/vs/basic-languages/src/yaml.js",
+        "/iam/assets/monaco-editor/vs/editor/contrib/suggest/browser/media/String_16x.svg",
+        "/iam/assets/monaco-editor/vs/editor/contrib/suggest/browser/media/String_inverse_16x.svg",
         "/iam/assets/monaco-editor/vs/editor/editor.main.css",
         "/iam/assets/monaco-editor/vs/editor/editor.main.js",
         "/iam/assets/monaco-editor/vs/editor/editor.main.nls.de.js",
@@ -89,8 +81,6 @@
         "/iam/assets/monaco-editor/vs/editor/editor.main.nls.tr.js",
         "/iam/assets/monaco-editor/vs/editor/editor.main.nls.zh-cn.js",
         "/iam/assets/monaco-editor/vs/editor/editor.main.nls.zh-tw.js",
-        "/iam/assets/monaco-editor/vs/editor/contrib/suggest/browser/media/String_16x.svg",
-        "/iam/assets/monaco-editor/vs/editor/contrib/suggest/browser/media/String_inverse_16x.svg",
         "/iam/assets/monaco-editor/vs/editor/standalone/browser/quickOpen/symbol-sprite.svg",
         "/iam/assets/monaco-editor/vs/language/css/cssMode.js",
         "/iam/assets/monaco-editor/vs/language/css/cssWorker.js",
@@ -100,7 +90,8 @@
         "/iam/assets/monaco-editor/vs/language/json/jsonWorker.js",
         "/iam/assets/monaco-editor/vs/language/typescript/lib/typescriptServices.js",
         "/iam/assets/monaco-editor/vs/language/typescript/src/mode.js",
-        "/iam/assets/monaco-editor/vs/language/typescript/src/worker.js"
+        "/iam/assets/monaco-editor/vs/language/typescript/src/worker.js",
+        "/iam/assets/monaco-editor/vs/loader.js"
       ],
       "patterns": []
     },
@@ -140,27 +131,17 @@
     }
   ],
   "hashTable": {
-    "/iam/0.4f29d50d92ef690b7ba7.chunk.js": "35ad6ab7ccf6675d6e867c2046383bba41797255",
-    "/iam/assets/config.json": "616eb30e2d0a01ed671d9b013391e56f403f4e4e",
-    "/iam/1.aa4e578f17f69467a6e6.chunk.js": "44ebeeb749418951959699de81e8c47133fa70d8",
-    "/iam/assets/markdown.md": "faeca483f797afd32badf4969dfc9f77704fb95e",
-    "/iam/2.2daa4aa4d39d85fec97e.chunk.js": "72bd0a31b15479dc33934fd1e7bcdad75b31c727",
-    "/iam/assets/icons/android-icon-192x192.png": "2a4f79ce3e023275f8463130c6fdfbcb4d90eb85",
-    "/iam/3.a106068c84d45bef052f.chunk.js": "7a983cfbeaea949aa5461793d098e5d087331e1f",
-    "/iam/assets/icons/apple-icon-180x180.png": "95c3f6f7e84edf4e4eaae457ca7281ee09e96da9",
-    "/iam/7.807039f30c11aec07390.chunk.js": "0bdf6f0942d2cafbef8683fddba32fc123fff287",
-    "/iam/assets/icons/favicon-16x16.png": "0af74a7cd69409728f0ae6bf366509084be70b63",
-    "/iam/inline.bfb0b0eb093a79a8c157.bundle.js": "a00719d7529cbd584331f3a597a62b20cc795891",
-    "/iam/assets/icons/favicon-32x32.png": "91a82608d88962932b0dd3ea32f01275c5c9c4ce",
-    "/iam/main.ea689215fb84d3628151.bundle.js": "018c0844f441f910589dc3619aebff1943b53851",
-    "/iam/assets/icons/favicon-96x96.png": "6d45ca36b0788329f6d5564e07b5ccd8001b7df1",
-    "/iam/polyfills.6a2be7faf48cef81d6bb.bundle.js": "a216d6ad754f3396915295d349cda6c96b199a9f",
-    "/iam/assets/icons/ms-icon-310x310.png": "e26d0159771bf479b7a39f5c62bbb8228df0e4fa",
-    "/iam/styles.93b2c9c09b02b6491b94.bundle.css": "d029f1f28fb37f81eab141745644931484b477e1",
-    "/iam/assets/js/prettify.js": "4bd1e40c55b5514ebb1772bbb288c19d9ead6ca8",
     "/iam/favicon.ico": "7fa29ec2415f03fba638317f83a61265d5050d9f",
-    "/iam/assets/monaco-editor/vs/loader.js": "3b45b96b5a02fb0e138d53b65fe5fcb5bf5460d1",
-    "/iam/index.html": "dfdbb2a7d160a6623170d8f73dfd55cf5fa5f12c",
+    "/iam/assets/config.json": "4e15dd87bfc5f46b5ba3a078aa470ab5253773c3",
+    "/iam/index.html": "eaece9ed29835c0decf3b2c1a703b8ad23ff6b72",
+    "/iam/assets/icons/android-icon-192x192.png": "2a4f79ce3e023275f8463130c6fdfbcb4d90eb85",
+    "/iam/assets/icons/apple-icon-180x180.png": "95c3f6f7e84edf4e4eaae457ca7281ee09e96da9",
+    "/iam/assets/icons/favicon-16x16.png": "0af74a7cd69409728f0ae6bf366509084be70b63",
+    "/iam/assets/icons/favicon-32x32.png": "91a82608d88962932b0dd3ea32f01275c5c9c4ce",
+    "/iam/assets/icons/favicon-96x96.png": "6d45ca36b0788329f6d5564e07b5ccd8001b7df1",
+    "/iam/assets/icons/ms-icon-310x310.png": "e26d0159771bf479b7a39f5c62bbb8228df0e4fa",
+    "/iam/assets/js/prettify.js": "4bd1e40c55b5514ebb1772bbb288c19d9ead6ca8",
+    "/iam/assets/markdown.md": "faeca483f797afd32badf4969dfc9f77704fb95e",
     "/iam/assets/monaco-editor/vs/base/worker/workerMain.js": "a41e04695f31034d1bf42a5d3b17e066524c6b2d",
     "/iam/assets/monaco-editor/vs/basic-languages/src/bat.js": "0a78549ddf8b4648ce6cc86d1a9d2edd0f36a528",
     "/iam/assets/monaco-editor/vs/basic-languages/src/coffee.js": "2641a051ca97dc7f68cb9a6313fde0a9c848c01d",
@@ -195,6 +176,8 @@
     "/iam/assets/monaco-editor/vs/basic-languages/src/vb.js": "78b83b145091654eaf12364b53319ca33b8cd4f3",
     "/iam/assets/monaco-editor/vs/basic-languages/src/xml.js": "4643292faa5bb91db53d33a445a89617ed48a764",
     "/iam/assets/monaco-editor/vs/basic-languages/src/yaml.js": "8d704d8ad55c8f281d31fd9b7543a4d4cec049eb",
+    "/iam/assets/monaco-editor/vs/editor/contrib/suggest/browser/media/String_16x.svg": "8d79b23037deb6586e4954305dcb4caee14afbd2",
+    "/iam/assets/monaco-editor/vs/editor/contrib/suggest/browser/media/String_inverse_16x.svg": "deadc5357a26852d872bffa77d1aa19108603b25",
     "/iam/assets/monaco-editor/vs/editor/editor.main.css": "3fd3f7591d57ae7d7c1432dad109c6751a1025ea",
     "/iam/assets/monaco-editor/vs/editor/editor.main.js": "5c5ee63fb5695d6e461084ec728b7ccd4c839f27",
     "/iam/assets/monaco-editor/vs/editor/editor.main.nls.de.js": "18bb3971632309679e0462a96db6cc98c8b1136c",
@@ -210,8 +193,6 @@
     "/iam/assets/monaco-editor/vs/editor/editor.main.nls.tr.js": "a1378ac9832b420bb88e6c665d96021ec6443bf0",
     "/iam/assets/monaco-editor/vs/editor/editor.main.nls.zh-cn.js": "cfca08d367655b7e73d7a2bb3f211fad24d57d38",
     "/iam/assets/monaco-editor/vs/editor/editor.main.nls.zh-tw.js": "21066b517f51921c5441941b72de41036497b77f",
-    "/iam/assets/monaco-editor/vs/editor/contrib/suggest/browser/media/String_16x.svg": "8d79b23037deb6586e4954305dcb4caee14afbd2",
-    "/iam/assets/monaco-editor/vs/editor/contrib/suggest/browser/media/String_inverse_16x.svg": "deadc5357a26852d872bffa77d1aa19108603b25",
     "/iam/assets/monaco-editor/vs/editor/standalone/browser/quickOpen/symbol-sprite.svg": "b33619c9dfd65d3f2e5a5fcb767a752123d51607",
     "/iam/assets/monaco-editor/vs/language/css/cssMode.js": "3935a8c69a9c856bea86f947818c060f5376fbbd",
     "/iam/assets/monaco-editor/vs/language/css/cssWorker.js": "1ba3ee9720fa9cbde979aa58a9a76c0c518df9ca",
@@ -221,6 +202,25 @@
     "/iam/assets/monaco-editor/vs/language/json/jsonWorker.js": "5a044c9926b5e2fdf2cd3be62676331b700bb583",
     "/iam/assets/monaco-editor/vs/language/typescript/lib/typescriptServices.js": "c43695db6392db647214ea55c3ee6d0c6cd60af8",
     "/iam/assets/monaco-editor/vs/language/typescript/src/mode.js": "4f40c0701972032f0e86469b3a7216210104b9bf",
-    "/iam/assets/monaco-editor/vs/language/typescript/src/worker.js": "f98231417a65e4cead5968025d27853700b9a5d4"
-  }
+    "/iam/assets/monaco-editor/vs/language/typescript/src/worker.js": "f98231417a65e4cead5968025d27853700b9a5d4",
+    "/iam/assets/monaco-editor/vs/loader.js": "3b45b96b5a02fb0e138d53b65fe5fcb5bf5460d1"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^\\/]*\\.[^\\/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^\\/]*__[^\\/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^\\/]*__[^\\/]*\\/.*$"
+    }
+  ]
 }

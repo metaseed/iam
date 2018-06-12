@@ -5,5 +5,12 @@
     "ctrl+h": ["Heading"],
     "ctrl+right": ["AppComponent.Forward", "MainComponent.MoveRight"],
     "ctrl+m f": ["Focus"]
+  },
+
+  "storage": {
+    "github": {
+      "userName":"metasong",
+      "dataRepoName":"iam-data"
+    }
   }
 }
