@@ -73,10 +73,12 @@ export class DocsComponent {
 
 
   onPanEnd(ev) {
-    if (ev.deltaY > PAN_ACTION_DELTY && this.scrollDiv.nativeElement.scrollTop < PAN_ACTION_SCROLL_TRIGGER) {
+    if (ev.deltaY > PAN_ACTION_DELTY ) {
+      if(this.scrollDiv.nativeElement.scrollTop < PAN_ACTION_SCROLL_TRIGGER)
       this.refresh();
     } else if(ev.deltaY< -PAN_ACTION_DELTY) {
-
+      //if(this.scrollDiv.nativeElement.scrollTop < PAN_ACTION_SCROLL_TRIGGER)
+      this.store.dispatch(new DocumentEffectsLoad({isLoadMore:true}));
     }
     console.log(ev);
   }

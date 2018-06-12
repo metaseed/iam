@@ -11,7 +11,7 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private auth: AuthService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
-    if (req.url.startsWith('githubapi')) {
+    if (req.url.startsWith('githubapi')|| req.url.startsWith('https://api.github.com')) {
       const authToken = this.auth.getToken();
 
       const authReq = req.clone({

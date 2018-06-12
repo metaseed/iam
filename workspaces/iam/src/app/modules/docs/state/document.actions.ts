@@ -15,7 +15,8 @@ export enum DocumentActionTypes {
   DeleteDocuments = '[Document] Delete Documents',
   ClearDocuments = '[Document] Clear Documents',
   SetCurrentDocumentId = '[Document] Set Current CollectoinDocument Id',
-  SetDocumentStatus = '[Document] Set Status'
+  SetDocumentStatus = '[Document] Set Status',
+  SetPageInfo = '[Document] Set Pageinfo'
 }
 
 export class LoadDocuments implements Action {
@@ -86,6 +87,14 @@ export class SetDocumentsMessage implements Action {
   constructor(public payload: DocumentActionStatus) {}
 }
 
+export class PageInfo {
+  nextLink:string;
+}
+export class SetPageInfo implements Action {
+  readonly type = DocumentActionTypes.SetPageInfo;
+  constructor(public payload: PageInfo){}
+}
+
 export type DocumentActions =
   | LoadDocuments
   | AddDocument
@@ -98,4 +107,5 @@ export type DocumentActions =
   | DeleteDocuments
   | ClearDocuments
   | SetCurrentDocumentId
-  | SetDocumentsMessage;
+  | SetDocumentsMessage
+  | SetPageInfo

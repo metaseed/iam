@@ -1,19 +1,21 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import { Document } from '../models/document';
-import { DocumentActions, DocumentActionTypes } from './document.actions';
+import { DocumentActions, DocumentActionTypes, PageInfo } from './document.actions';
 import { DocumentEffectsActionTypes, DocumentActionStatus, ActionStatus } from './document.effects.actions';
 
 export interface State extends EntityState<Document> {
   // additional entities state properties
   currentDocumentId: number;
-  actionStatus?: DocumentActionStatus
+  pageInfo:PageInfo
+  actionStatus?: DocumentActionStatus,
 }
 
 export const adapter: EntityAdapter<Document> = createEntityAdapter<Document>({selectId:e=>e.number, sortComparer: (a: Document, b: Document)=> a.updated_at <  b.updated_at?1:-1});
 
 export const initialState: State = adapter.getInitialState({
   // additional entity state properties
-  currentDocumentId: undefined
+  currentDocumentId: undefined,
+  pageInfo:{nextLink:undefined}
 });
 export function reducer(
   state = initialState,
@@ -66,6 +68,9 @@ export function reducer(
     case DocumentActionTypes.SetDocumentStatus: {
       return {...state, actionStatus:action.payload}
     }
+    case DocumentActionTypes.SetPageInfo: {
+      return {...state, pageInfo:action.payload}
+    }
 
     default: {
       return state;
@@ -82,3 +87,4 @@ export const {
 
 export const selectCurrentDocumentId = (state: State) => state.currentDocumentId;
 export const selectDocumentActionStatus = (state:State) => state.actionStatus;
+export const selectDocumentPageInfo = (state:State) => state.pageInfo;

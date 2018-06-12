@@ -60,6 +60,11 @@ export class Issue extends Requestable {
       params:{state: state}, observe:'response'
     });
   }
+  listMore(url) {
+    return this.http.get(url, {
+       observe:'response'
+    });
+  }
   // https://developer.github.com/v3/issues/#edit-an-issue
   edit(number, params: EditIssueParams) {
     return this.request(

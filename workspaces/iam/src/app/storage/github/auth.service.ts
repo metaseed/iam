@@ -13,6 +13,4 @@ export class AuthService {
         return 'Basic ' + base64Encode(this.userInfo.name + ':' + this.userInfo.password);
     }
   }
-
-
 }
