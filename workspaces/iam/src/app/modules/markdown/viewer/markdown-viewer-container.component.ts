@@ -45,10 +45,10 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
       NET_COMMU_TIMEOUT,
       this.defaultTimeoutHandler
     ).pipe(
+      observeOn(asyncScheduler),
       map(v => {
         return v.status === ActionStatus.Fail || v.status === ActionStatus.Success;
       }),
-      observeOn(asyncScheduler)
     ),
     getActionStatus(DocumentEffectsActionTypes.New, this.store).pipe(
       map(v => v.status === ActionStatus.Success || v.status === ActionStatus.Fail)
