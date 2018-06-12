@@ -34,6 +34,7 @@ import { MatSnackBar } from '@angular/material';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { State } from './document.reducer';
+import { HttpResponse } from '@angular/common/http';
 
 @Injectable()
 export class DocumentEffects {
@@ -67,7 +68,9 @@ export class DocumentEffects {
     ),
     combineLatest(this.storage.init()),
     switchMap(([a, repo]) => repo.issue.list('open')),
-    map((docs: Document[]) => {
+    map((resp:HttpResponse<Document[]>) => {
+      const link = resp.headers.get('Link');
+      const docs = resp.body;
       let docList = new Array<Document>();
       const docDic = selectDocumentEntitiesState(this.state.value);
       docs.forEach(d => {

@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/Common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/Common/http';
 import { Const } from '../model/const';
 import { UserInfo } from '../user-info';
 import { Requestable } from '../requestable';
@@ -42,7 +42,7 @@ export class Issue extends Requestable {
   updated_at: string;
   closed_by: User;
 
-  constructor(http: HttpClient, private repository: string, userInfo: UserInfo) {
+  constructor(private http: HttpClient, private repository: string, userInfo: UserInfo) {
     super(http, userInfo);
   }
 
@@ -56,8 +56,8 @@ export class Issue extends Requestable {
   }
   // https://developer.github.com/v3/issues/#list-issues-for-a-repository
   list(state: 'open' | 'closed' | 'all') {
-    return this.request('GET', `/repos/${this._userInfo.name}/${this.repository}/issues`, {
-      state: state
+    return this.http.get(`githubapi/repos/${this._userInfo.name}/${this.repository}/issues`, {
+      params:{state: state}, observe:'response'
     });
   }
   // https://developer.github.com/v3/issues/#edit-an-issue
