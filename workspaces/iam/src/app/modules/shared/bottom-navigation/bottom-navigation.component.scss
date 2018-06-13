@@ -1,22 +1,19 @@
-
-.mat-tab-links {
-  align-items: center;
-}
-
 .mat-tab-nav-bar {
+  justify-content: space-around;
   display: flex;
-  .mat-tab-link {
-    padding: 0 1.2rem;
-    flex-direction: column;
-    line-height: 1.6rem;
-    font-size: 1.2rem;
-    height: auto;
-    &:hover {
-      text-decoration: none;
-    }
-    .mat-icon {
-      width:2.8rem;
-      height: 2.8rem;
-    }
+    .mat-tab-link {
+      padding: 0 1.2rem;
+      flex-direction: column;
+      line-height: 1.6rem;
+      font-size: 1.2rem;
+      min-width: inherit;
+      height: auto;
+      &:hover {
+        text-decoration: none;
+      }
+      .mat-icon {
+        width: 2.8rem;
+        height: 2.8rem;
+      }
   }
 }

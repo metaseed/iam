@@ -48,7 +48,6 @@ export class DocsComponent {
   private destroy$ = new Subject();
 
   @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;
-  @ViewChild('scrollDiv') scrollDiv:ElementRef;
 
   defaultTimeoutHandler = err =>
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
@@ -74,10 +73,11 @@ export class DocsComponent {
 
   onPanEnd(ev) {
     if (ev.deltaY > PAN_ACTION_DELTY ) {
-      if(this.scrollDiv.nativeElement.scrollTop < PAN_ACTION_SCROLL_TRIGGER)
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      if(scrollTop < PAN_ACTION_SCROLL_TRIGGER)
       this.refresh();
     } else if(ev.deltaY< -PAN_ACTION_DELTY) {
-      //if(this.scrollDiv.nativeElement.scrollTop < PAN_ACTION_SCROLL_TRIGGER)
+      if ((window.innerHeight + window.pageYOffset) >= document.body.offsetHeight)
       this.store.dispatch(new DocumentEffectsLoad({isLoadMore:true}));
     }
     console.log(ev);

@@ -1,8 +1,6 @@
 <div style="margin-bottom:5.5rem">
-  <div style="height:100vh;overflow-y:auto;" #scrollDiv>
     <iam-doc-search></iam-doc-search>
     <sk-wave [isRunning]="!(isLoadDone$ | async)"></sk-wave>
     <doc-list-item [documents]="docs$ | async" (onShow)="showDoc($event)" (panend)="onPanEnd($event)"
       (onDelete)="deleteDoc($event)"></doc-list-item>
-  </div>
 </div>
