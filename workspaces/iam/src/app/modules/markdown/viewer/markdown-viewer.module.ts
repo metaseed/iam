@@ -8,7 +8,7 @@ import { SharedModule } from "shared";
 import { ReaderToolbarComponent } from "./reader-toolbar/reader-toolbar.component";
 import { MaterialModule } from "material";
 import { RouterModule } from "@angular/router";
-import { MarkdownViewerContainerComponent } from "app/modules/markdown/viewer/markdown-viewer-container.component";
+import { MarkdownViewerContainerComponent } from "./markdown-viewer-container.component";
 import { NgSpinKitModule } from "ng-spin-kit";
 import { DocumentRef } from "core";
 import { ObservableMedia } from "@angular/flex-layout";

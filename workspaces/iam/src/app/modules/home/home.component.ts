@@ -73,12 +73,11 @@ export class HomeComponent {
       this.defaultTimeoutHandler
     ).pipe(
       takeUntil(this.destroy$),
-      observeOn(asyncScheduler),
       map(v => {
         return v.status === ActionStatus.Fail || v.status === ActionStatus.Success;
       })
     )
-  );
+  ).pipe(observeOn(asyncScheduler));
 
   isLoadMoreDone$ = from([
     of(true),
