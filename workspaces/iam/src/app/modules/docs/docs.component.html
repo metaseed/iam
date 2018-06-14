@@ -1,6 +1,7 @@
-<div style="margin-bottom:5.5rem">
+<div style="margin-bottom:5.5rem" #touchDiv>
     <iam-doc-search></iam-doc-search>
     <sk-wave [isRunning]="!(isLoadDone$ | async)"></sk-wave>
-    <doc-list-item [documents]="docs$ | async" (onShow)="showDoc($event)" (panend)="onPanEnd($event)"
+    <doc-list-item [documents]="docs$ | async" (onShow)="showDoc($event)">
       (onDelete)="deleteDoc($event)"></doc-list-item>
+      <sk-wave [isRunning]="!(isLoadMoreDone$ | async)"></sk-wave>
 </div>

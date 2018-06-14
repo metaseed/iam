@@ -7,7 +7,16 @@ import { NgSpinKitModule } from 'ng-spin-kit';
 import { DocSearchService } from './services/doc-search.service';
 import { State } from './state/document.reducer';
 import { Store, select } from '@ngrx/store';
-import { Observable, TimeoutError, of, from, Subject, merge, Scheduler, asyncScheduler } from 'rxjs';
+import {
+  Observable,
+  TimeoutError,
+  of,
+  from,
+  Subject,
+  merge,
+  Scheduler,
+  asyncScheduler
+} from 'rxjs';
 import {
   map,
   filter,
@@ -22,7 +31,9 @@ import {
   tap,
   mergeAll,
   takeUntil,
-  observeOn
+  observeOn,
+  share,
+  startWith
 } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import {
@@ -38,7 +49,6 @@ import { switchIfEmit } from '../core/operators/switchIfEmit';
 import { NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT } from 'core';
 import { PAN_ACTION_DELTY, PAN_ACTION_SCROLL_TRIGGER } from './const';
 
-
 @Component({
   selector: 'docs',
   templateUrl: './docs.component.html',
@@ -48,6 +58,7 @@ export class DocsComponent {
   private destroy$ = new Subject();
 
   @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;
+  @ViewChild('touchDiv') touchDiv: ElementRef;
 
   defaultTimeoutHandler = err =>
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
@@ -69,23 +80,27 @@ export class DocsComponent {
     )
   );
 
-
-
-  onPanEnd(ev) {
-    if (ev.deltaY > PAN_ACTION_DELTY ) {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      if(scrollTop < PAN_ACTION_SCROLL_TRIGGER)
-      this.refresh();
-    } else if(ev.deltaY< -PAN_ACTION_DELTY) {
-      if ((window.innerHeight + window.pageYOffset) >= document.body.offsetHeight)
-      this.store.dispatch(new DocumentEffectsLoad({isLoadMore:true}));
-    }
-    console.log(ev);
-  }
+  isLoadMoreDone$ = from([
+    of(true),
+    monitorActionStatus(
+      DocumentEffectsActionTypes.Load,
+      this.store,
+      NET_COMMU_TIMEOUT,
+      this.defaultTimeoutHandler
+    ).pipe(
+      takeUntil(this.destroy$),
+      filter(a => a.context && a.context.isLoadMore === true),
+      observeOn(asyncScheduler),
+      map(v => {
+        return v.status === ActionStatus.Fail || v.status === ActionStatus.Success;
+      })
+    )
+  ]).pipe(switchIfEmit());
 
   private initDocs$ = this.store.pipe(select(selectDocumentsState));
   docs$: Observable<Document[]>;
   ActionStatus = ActionStatus;
+
   constructor(
     private store: Store<State>,
     public docService: DocService,
@@ -98,13 +113,50 @@ export class DocsComponent {
     this.store.dispatch(new DocumentEffectsLoad());
   }
 
+  private panToRefresh() {
+    let startY: number;
+    let refreshStarted;
+    this.touchDiv.nativeElement.addEventListener(
+      'touchstart',
+      e => {
+        startY = e.touches[0].pageY;
+        refreshStarted = false;
+      },
+      { passive: true }
+    );
+    this.touchDiv.nativeElement.addEventListener(
+      'touchmove',
+      e => {
+        const y = e.touches[0].pageY;
+        const scrollTop =
+          window.pageXOffset === undefined
+            ? document.scrollingElement.scrollTop
+            : window.pageYOffset;
+        if (scrollTop === 0 && !refreshStarted && y > startY + PAN_ACTION_SCROLL_TRIGGER) {
+          refreshStarted = true;
+          this.refresh();
+        }
+        if (
+          window.innerHeight + window.pageYOffset >= document.body.offsetHeight &&
+          !refreshStarted &&
+          startY - y > PAN_ACTION_DELTY
+        ) {
+          this.store.dispatch(new DocumentEffectsLoad({ isLoadMore: true }));
+          refreshStarted = true;
+        }
+      },
+      { passive: true }
+    );
+  }
+
   ngOnInit() {
+    this.panToRefresh();
     let isSearching;
     const filteredDocs$ = this.docSearch.Search.pipe(
       debounceTime(280),
       distinctUntilChanged(),
-      tap(keyword=>{
-        if(keyword.trim()===''){
+      tap(keyword => {
+        if (keyword.trim() === '') {
           isSearching = false;
         }
         isSearching = true;
