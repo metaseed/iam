@@ -145,9 +145,8 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   };
 
   togglePreview() {
-    this.markdown.showPreviewPanel = !this.markdown.showPreviewPanel;
     this.editorResize();
-    const markdownState: fromMarkdown.MarkdownState = this.state.getValue().markdown;
+    const markdownState: fromMarkdown.MarkdownState = this.state.value.markdown;
     if (markdownState.document.showPreview) {
       this.store.dispatch(new doc.HidePreview());
     } else {

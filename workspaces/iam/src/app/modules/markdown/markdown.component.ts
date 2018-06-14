@@ -39,7 +39,6 @@ import { Utilities } from '../core/utils';
 export class MarkdownComponent implements OnInit, OnDestroy {
   isFullScreen: boolean;
   fixEditButton = false;
-  showPreviewPanel = true;
   @ViewChild(MarkdownEditorComponent) editor: MarkdownEditorComponent;
   @ViewChild(MarkdownViewerContainerComponent) viewer: MarkdownViewerContainerComponent;
   @ViewChild('viewerDiv') viewerDiv: ElementRef;
@@ -58,21 +57,24 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   );
 
   isScreenWide$ = this.utils.isScreenWide$;
-  showView$ = this.showEdit$.pipe(
-    combineLatest(this.isScreenWide$),
-    map(([isShowEdit, wide]) => {
-      if (isShowEdit) {
-        if (!wide) {
-          return false;
+  showView$ = merge(
+    this.showEdit$.pipe(
+      combineLatest(this.isScreenWide$),
+      map(([isShowEdit, wide]) => {
+        if (isShowEdit) {
+          if (!wide) {
+            this.store.dispatch(new doc.HidePreview());
+            return false;
+          }
         }
-      }
-      return true;
-    })
+        this.store.dispatch(new doc.ShowPreview());
+        return true;
+      })
+    ),
+    this.store.select(fromMarkdown.selectDocumentShowPreviewState)
   );
 
   markdown$: Observable<string>;
-
-  private docShowSub: any;
 
   constructor(
     private _docService: DocService,
@@ -86,7 +88,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     private router: Router,
     private store: Store<fromMarkdown.State>,
     private state: State<fromMarkdown.State>,
-    private utils:Utilities,
+    private utils: Utilities,
     private docRef: DocumentRef
   ) {}
 
