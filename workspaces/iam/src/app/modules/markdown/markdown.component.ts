@@ -29,7 +29,7 @@ import {
   SetCurrentDocumentId
 } from '../home/state';
 import { Document } from '../home/models/document';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Utilities } from '../core/utils';
 
 @Component({
   selector: 'ms-markdown',
@@ -37,13 +37,9 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
   styleUrls: ['./markdown.component.scss']
 })
 export class MarkdownComponent implements OnInit, OnDestroy {
-  declear;
   isFullScreen: boolean;
   fixEditButton = false;
-  isEditMode = false;
-  isNewDoc = false;
   showPreviewPanel = true;
-  DocumentMode = DocumentMode;
   @ViewChild(MarkdownEditorComponent) editor: MarkdownEditorComponent;
   @ViewChild(MarkdownViewerContainerComponent) viewer: MarkdownViewerContainerComponent;
   @ViewChild('viewerDiv') viewerDiv: ElementRef;
@@ -61,10 +57,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     })
   );
 
-  isScreenWide$ = this.breakpointObserver
-    .observe([Breakpoints.Handset, Breakpoints.TabletPortrait])
-    .pipe(map(b => !b.matches));
-
+  isScreenWide$ = this.utils.isScreenWide$;
   showView$ = this.showEdit$.pipe(
     combineLatest(this.isScreenWide$),
     map(([isShowEdit, wide]) => {
@@ -76,8 +69,6 @@ export class MarkdownComponent implements OnInit, OnDestroy {
       return true;
     })
   );
-
-  gtsmBreakPoint = false;
 
   markdown$: Observable<string>;
 
@@ -95,10 +86,9 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     private router: Router,
     private store: Store<fromMarkdown.State>,
     private state: State<fromMarkdown.State>,
-    private breakpointObserver: BreakpointObserver,
+    private utils:Utilities,
     private docRef: DocumentRef
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.markdown$ = merge(
@@ -117,7 +107,6 @@ export class MarkdownComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.store.dispatch(new SetCurrentDocumentId({ id: undefined }));
-
     this.destroy$.next();
   }
 

@@ -1,4 +1,4 @@
-<mat-toolbar [ngClass]="{'tool-bar':gtsmBreakpoint}" style="width: 100%;background:#eeeeee;height: 3.8rem;">
+<mat-toolbar [ngClass]="{'tool-bar':!(isScreenWide$|async)}" style="width: 100%;background:#eeeeee;height: 3.8rem;">
   <!-- <div class="btn-group"> -->
     <button mat-icon-button title="Bold" (click)="insertContent('Bold')" *ngIf="!_hideIcons.Bold">
       <mat-icon>format_bold</mat-icon>

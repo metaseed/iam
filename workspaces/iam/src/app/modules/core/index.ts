@@ -1,6 +1,6 @@
 export * from "./services/command.service";
 export * from "./config/config.service";
-export * from "./utils";
+export * from "./utils/utility-functions";
 export * from "./services/update.service";
 export * from "./window-ref";
 export * from "./document-ref";

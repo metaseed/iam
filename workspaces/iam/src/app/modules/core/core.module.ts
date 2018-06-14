@@ -12,6 +12,7 @@ import { DocumentRef } from './document-ref';
 import { ScrollService } from './services/scroll/scroll.service';
 import { ScrollSpyService } from './services/scroll/scroll-spy.service';
 import { ConfigService } from './config/config.service';
+import { Utilities } from './utils';
 @NgModule({
   imports: [CommonModule, HotkeyModule],
   declarations: [],
@@ -25,7 +26,8 @@ import { ConfigService } from './config/config.service';
     CopierService,
     DialogService,
     ScrollService,
-    ScrollSpyService
+    ScrollSpyService,
+    Utilities
   ]
 })
 export class CoreModule {}

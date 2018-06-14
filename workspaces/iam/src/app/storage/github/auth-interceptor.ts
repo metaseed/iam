@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpHandler, HttpRequest } from '@angular/common/http';
 import { Const } from './model/const';
 import { AuthService } from './auth.service';
-import { Media } from './media';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {

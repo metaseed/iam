@@ -15,6 +15,7 @@ import { ObservableMedia } from "@angular/flex-layout";
 import { TocComponent } from "./elements/toc/toc.component";
 import { ElementsModule } from "./elements/elements.module";
 import { TocService } from "./services/toc.service";
+import { Utilities } from "../../core/utils";
 
 @NgModule({
   declarations: [
@@ -49,7 +50,7 @@ export class MarkdownViewerModule {
         {
           provide: MarkdownViewerService,
           useFactory: configureMarkdownService,
-          deps: [Router, DocumentRef, ObservableMedia, "MarkdownConfig"]
+          deps: [Router, DocumentRef,Utilities, "MarkdownConfig"]
         }
       ]
     };
@@ -59,8 +60,8 @@ export class MarkdownViewerModule {
 export function configureMarkdownService(
   router: Router,
   document: DocumentRef,
-  media: ObservableMedia,
+  utils:Utilities,
   config: MarkdownConfig
 ) {
-  return new MarkdownViewerService(router, document, media, config);
+  return new MarkdownViewerService(router, document, utils, config);
 }

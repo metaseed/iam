@@ -18,7 +18,8 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';
 import { MatToolbar, MatDialog } from '@angular/material';
 import { DocumentEffectsSave, DocumentEffectsNew } from '../../../home/state';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, map } from 'rxjs/operators';
+import { Utilities } from '../../../core/utils';
 
 @Component({
   selector: 'editor-toolbar',
@@ -59,7 +60,6 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   isScrollDown_view$;
   destroy$ = new Subject();
   isEditMode = false;
-  gtsmBreakpoint = false;
   ngOnInit() {
     const scrollHandler = value => {
       this.isScrollDown = value.isDown;
@@ -84,9 +84,12 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  isScreenWide$=this.utils.isScreenWide$;
+
   constructor(
     private dialog: MatDialog,
-    private media: ObservableMedia,
+    private utils:Utilities,
     public markdown: MarkdownComponent,
     private _editorService: MarkdownEditorService,
     public docService: DocService,
@@ -102,16 +105,6 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe(editor => {
         this.editor = editor;
-      });
-    media
-      .asObservable()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(change => {
-        if (!['xs', 'sm'].includes(change.mqAlias)) {
-          this.gtsmBreakpoint = false;
-        } else {
-          this.gtsmBreakpoint = true;
-        }
       });
     (<any>CodeMirror).commands.save = this.save;
     let cmds = (<any>CodeMirror).commands;

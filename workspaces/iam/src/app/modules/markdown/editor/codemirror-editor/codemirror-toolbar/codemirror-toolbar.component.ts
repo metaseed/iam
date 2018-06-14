@@ -15,7 +15,8 @@ import { ObservableMedia } from '@angular/flex-layout';
 import * as fromMarkdown from '../../../state';
 import * as CodeMirror from 'codemirror';
 import { HtmlParser } from '@angular/compiler';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, map } from 'rxjs/operators';
+import { Utilities } from '../../../../core/utils';
 @Component({
   selector: 'ms-codemirror-toolbar',
   templateUrl: './codemirror-toolbar.component.html',
@@ -26,14 +27,14 @@ export class CodemirrorToolbarComponent implements OnInit {
   destroy$ = new Subject();
   _subscription: Subscription;
   _options: any;
-  gtsmBreakpoint = false;
   editor: CodeMirror.Editor;
   doc: CodeMirror.Doc;
+  isScreenWide$ = this.utils.isScreenWide$;
 
   constructor(
-    private media: ObservableMedia,
     public markdown: MarkdownComponent,
     private _editorService: MarkdownEditorService,
+    private utils:Utilities,
     private _docService: DocService,
     private _renderer: Renderer,
     private _commandService: CommandService,
@@ -41,16 +42,6 @@ export class CodemirrorToolbarComponent implements OnInit {
     private _domSanitizer: DomSanitizer,
     private store: Store<State>
   ) {
-    media
-      .asObservable()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(change => {
-        if (!['xs', 'sm'].includes(change.mqAlias)) {
-          this.gtsmBreakpoint = false;
-        } else {
-          this.gtsmBreakpoint = true;
-        }
-      });
     this._subscription = _commandService.commands.subscribe(c => this.handleCommand(c));
     let me = this;
     this._editorService.editorLoaded$
