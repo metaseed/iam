@@ -4,11 +4,9 @@ body {
   overscroll-behavior-y: contain;
 }
 
-$fa-font-path: '~font-awesome/fonts';
 // $icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap';
 // @import '~bootstrap/scss/bootstrap';
 @import '~markdown-it-latex/src/katex.css';
-@import '~font-awesome/scss/font-awesome';
 @import '~prismjs/themes/prism';
 @import '~prismjs/plugins/line-numbers/prism-line-numbers';
 @media all and (min-width: 960px) {

@@ -1,55 +1,34 @@
 <mat-toolbar [ngClass]="{'tool-bar':gtsmBreakpoint}" style="width: 100%;background:#eeeeee;height: 3.8rem;">
   <!-- <div class="btn-group"> -->
     <button mat-icon-button title="Bold" (click)="insertContent('Bold')" *ngIf="!_hideIcons.Bold">
-      <mat-icon fontSet="fa" class="fa-bold"></mat-icon>
+      <mat-icon>format_bold</mat-icon>
     </button>
 
     <button mat-icon-button title="Italic" (click)="insertContent('Italic')" *ngIf="!_hideIcons.Italic">
-      <mat-icon fontSet="fa" class="fa-italic"></mat-icon>
+      <mat-icon >format_italic</mat-icon>
     </button>
     <button mat-icon-button title="Heading" (click)="insertContent('Heading')" *ngIf="!_hideIcons.Heading">
-      <mat-icon fontSet="fa" class="fa-header"></mat-icon>
+      <mat-icon >title</mat-icon>
     </button>
     <button mat-icon-button title="Refrence" (click)="insertContent('Reference')" *ngIf="!_hideIcons.Refrence">
-      <mat-icon fontSet="fa" class="fa-quote-left"></mat-icon>
+      <mat-icon >format_quote</mat-icon>
     </button>
 
     <button mat-icon-button title="Unordered List" (click)="insertContent('Ul')" *ngIf="!_hideIcons.Ul">
-      <mat-icon fontSet="fa" class="fa-list-ul"></mat-icon>
+      <mat-icon >format_list_bulleted</mat-icon>
     </button>
     <button mat-icon-button title="Ordered List" (click)="insertContent('Ol')" *ngIf="!_hideIcons.Ol">
-      <mat-icon fontSet="fa" class="fa-list-ol"></mat-icon>
+      <mat-icon >format_list_numbered</mat-icon>
     </button>
 
     <button mat-icon-button title="Code Block" (click)="insertContent('Code')" *ngIf="!_hideIcons.Code">
-      <mat-icon fontSet="fa" class="fa-file-code-o"></mat-icon>
+      <mat-icon >code</mat-icon>
     </button>
     <button mat-icon-button title="Link" (click)="insertContent('Link')" *ngIf="!_hideIcons.Link">
-      <mat-icon fontSet="fa" class="fa-link"></mat-icon>
+      <mat-icon >link</mat-icon>
     </button>
     <button mat-icon-button title="Image" (click)="insertContent('Image')" *ngIf="!_hideIcons.Image">
-      <mat-icon fontSet="fa" class="fa-image"></mat-icon>
+      <mat-icon >image</mat-icon>
     </button>
-  <!-- </div>
 
-  <div class="btn-group" style="float: right">
-    <button class="btn btn-default" style="width: 40px" type="button" title="More" (click)="menu.open()" *ngIf="!_hideIcons.More">
-      <!-- <mat-icon class="material-icons md-18">more_vert</mat-icon> -->
-      <!-- <mat-icon fontSet="fa" class="fa-ellipsis-v"></mat-icon>
-    </button> -->
-    <!-- <mdc-menu #menu (select)="more($event)">
-      <mdc-menu-item id="1" [disabled]="true">Item 2</mdc-menu-item>
-      <mdc-menu-item id="2">Item 3</mdc-menu-item>
-      <mdc-menu-divider></mdc-menu-divider>
-      <mdc-menu-item id="3">Item 4</mdc-menu-item>
-    </mdc-menu> -->
-    <!-- <button mat-icon-button title="Undo" (click)="command('Undo')" *ngIf="!_hideIcons.Undo">
-
-      <mat-icon class="material-icons md-18">undo</mat-icon>
-    </button>
-    <button mat-icon-button title="Redo" (click)="command('Redo')" *ngIf="!_hideIcons.Redo">
-
-      <mat-icon class="material-icons md-18">redo</mat-icon>
-    </button> -->
-  <!-- </div> -->
 </mat-toolbar>
