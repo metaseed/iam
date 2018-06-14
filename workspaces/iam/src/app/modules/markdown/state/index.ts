@@ -4,7 +4,7 @@ import * as fromEdit from './reducers/edit';
 import * as fromView from './reducers/view';
 
 import { createSelector, createFeatureSelector } from '@ngrx/store';
-import { getContent } from '../../docs/state/document.effects.util';
+import { getContent } from '../../home/state/document.effects.util';
 export interface State extends fromRoot.State {
   markdown: MarkdownState;
 }
