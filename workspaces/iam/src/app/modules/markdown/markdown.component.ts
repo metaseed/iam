@@ -30,6 +30,7 @@ import {
 } from '../home/state';
 import { Document } from '../home/models/document';
 import { Utilities } from '../core/utils';
+import { MarkdownService } from './markdown.service';
 
 @Component({
   selector: 'ms-markdown',
@@ -77,6 +78,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   markdown$: Observable<string>;
 
   constructor(
+    private markdownSerive:MarkdownService,
     private _docService: DocService,
     private _el: ElementRef,
     private _editorService: MarkdownEditorService,
@@ -136,26 +138,13 @@ export class MarkdownComponent implements OnInit, OnDestroy {
             if (doc && doc.content) {
               this.store.dispatch(new SetCurrentDocumentId({ id: num }));
             } else {
-              this.refresh(num, title, format);
+              this.markdownSerive.refresh(num, title, format);
             }
           }
         }),
         take(1)
       )
       .subscribe();
-  }
-
-  refresh(num, title, format) {
-    this.store.dispatch(new DocumentEffectsShow({ number: num, title, format }));
-  }
-
-  onRefresh(event) {
-    if (this.router.url.startsWith('/doc/new')) return;
-    const params = this.router.parseUrl(this.router.url).queryParams;
-    let title = params['title'];
-    let num = +params['id'];
-    let format = params['f'];
-    this.refresh(num, title, format);
   }
 
   showDemo() {

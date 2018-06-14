@@ -13,6 +13,9 @@ import { StoreModule } from "@ngrx/store";
 import * as fromState from "./state";
 import { MarkdownEditorComponent } from "./editor/markdown-editor.component";
 import { SharedModule } from "shared";
+import { EffectsModule } from "@ngrx/effects";
+import { MarkdownEffects } from "./markdown.effects";
+import { MarkdownService } from "./markdown.service";
 @NgModule({
   imports: [
     CommonModule,
@@ -24,10 +27,11 @@ import { SharedModule } from "shared";
     StoreModule.forFeature("markdown", fromState.reducers),
     MarkdownEditorModule,
     SharedModule,
-    MarkdownViewerModule.forChild()
+    MarkdownViewerModule.forChild(),
+    EffectsModule.forFeature([MarkdownEffects])
   ],
   declarations: [MarkdownComponent],
-  providers: [],
+  providers: [MarkdownService],
   exports: [MarkdownEditorModule, MarkdownViewerModule, MarkdownComponent]
 })
 export class MarkdownModule {

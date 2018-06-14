@@ -20,11 +20,11 @@
         more_vert
       </mat-icon>
     </button>
-    <mat-menu #menu (select)="more($event)">
-      <button id="0">Item 1</button>
-      <button id="1" [disabled]="true">Item 2</button>
-      <button id="2">Item 3</button>
-      <button id="3">Item 4</button>
+    <mat-menu #menu>
+      <button mat-menu-item (click)="onRefresh($event)"><mat-icon>refresh</mat-icon><span>Refresh</span></button>
+      <button mat-menu-item [disabled]="true">Item 2</button>
+      <button mat-menu-item>Item 3</button>
+      <button mat-menu-item>Item 4</button>
     </mat-menu>
 
   </mat-toolbar-row>

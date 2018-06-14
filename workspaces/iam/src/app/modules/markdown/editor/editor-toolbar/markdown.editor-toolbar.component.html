@@ -20,7 +20,6 @@
     </button>
 
 
-    <!--visibility_off-->
     <button mat-icon-button (click)="save()" [class.save-button]="(docSaver.isDirty$ | async) && !docSaver.isSaving" [class.saving]="docSaver.isSaving">
       <mat-icon>save</mat-icon>
     </button>

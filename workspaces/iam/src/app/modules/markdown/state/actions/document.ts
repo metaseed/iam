@@ -4,6 +4,7 @@ export enum DocumentActionTypes {
     EditMode = '[Document] edit mode',
     ViewMode = '[Document] view mode',
     ShowPreview = '[Document] show preview',
+    Refresh = '[Document] Refresh',
     HidePreview = '[Document] hide preview'
 }
 
@@ -20,6 +21,10 @@ export class ShowPreview implements Action {
 }
 export class HidePreview implements Action {
     readonly type = DocumentActionTypes.HidePreview;
+}
+
+export class RefreshAction implements Action {
+  readonly type = DocumentActionTypes.Refresh;
 }
 
 export type DocumentActions = EditMode | ViewMode | ShowPreview | HidePreview;

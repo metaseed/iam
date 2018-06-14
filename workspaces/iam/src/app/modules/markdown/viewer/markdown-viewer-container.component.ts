@@ -30,7 +30,6 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
 
   @Input() markdown: string;
   @Input() hideToolbar: false;
-  @Output() refresh = new EventEmitter();
   @ViewChild('viewContainerDiv') viewerContainerDiv: ElementRef;
   isEditorScrollDown$;
   isLockScrollWithView$;
@@ -93,17 +92,6 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
         this.store.dispatch(new fromView.ScrollDown(e));
         this.isScrollDown = e.isDown;
       });
-  }
-
-  onPanEnd(ev) {
-    if (
-      ev.deltaY > PAN_ACTION_DELTY &&
-      this.viewerContainerDiv.nativeElement.scrollTop < PAN_ACTION_SCROLL_TRIGGER
-    ) {
-      this.refresh.emit();
-    } else if (ev.deltaY < -PAN_ACTION_DELTY) {
-    }
-    console.log(ev);
   }
 
   ngOnDestroy() {
