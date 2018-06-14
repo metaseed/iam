@@ -1,4 +1,4 @@
-<div [class.fullscreen]="isFullScreen">
+<div class="markdown-container" [class.fullscreen]="isFullScreen">
   <editor-toolbar></editor-toolbar>
   <vertical-split-pane primary-component-minsize="100" secondary-component-minsize="100" [primary-component-toggled-off]="!(showEdit$ | async)"
     [secondary-component-toggled-off]="!(showView$ | async)" local-storage-key="iam-md-split-pane" primary-component-initialratio="0.5">

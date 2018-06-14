@@ -38,6 +38,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
 
   defaultTimeoutHandler = err =>
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
+
   isLoadDone$ = merge(
     monitorActionStatus(
       DocumentEffectsActionTypes.Show,
@@ -45,15 +46,17 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
       NET_COMMU_TIMEOUT,
       this.defaultTimeoutHandler
     ).pipe(
-      observeOn(asyncScheduler),
       map(v => {
         return v.status === ActionStatus.Fail || v.status === ActionStatus.Success;
-      }),
+      })
     ),
     getActionStatus(DocumentEffectsActionTypes.New, this.store).pipe(
       map(v => v.status === ActionStatus.Success || v.status === ActionStatus.Fail)
     )
-  ).pipe(takeUntil(this.destroy$));
+  ).pipe(
+    takeUntil(this.destroy$),
+    observeOn(asyncScheduler)
+  );
 
   constructor(
     private store: Store<any>,
@@ -93,10 +96,12 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
   }
 
   onPanEnd(ev) {
-    if (ev.deltaY > PAN_ACTION_DELTY && this.viewerContainerDiv.nativeElement.scrollTop < PAN_ACTION_SCROLL_TRIGGER) {
+    if (
+      ev.deltaY > PAN_ACTION_DELTY &&
+      this.viewerContainerDiv.nativeElement.scrollTop < PAN_ACTION_SCROLL_TRIGGER
+    ) {
       this.refresh.emit();
-    } else if(ev.deltaY< -PAN_ACTION_DELTY) {
-
+    } else if (ev.deltaY < -PAN_ACTION_DELTY) {
     }
     console.log(ev);
   }
