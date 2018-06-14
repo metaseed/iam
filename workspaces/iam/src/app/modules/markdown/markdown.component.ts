@@ -29,6 +29,7 @@ import {
   SetCurrentDocumentId
 } from '../home/state';
 import { Document } from '../home/models/document';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'ms-markdown',
@@ -54,10 +55,28 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     select(fromMarkdown.selectDocumentModeState),
     takeUntil(this.destroy$)
   );
-  editWithView$ = this.store.pipe(
-    select(fromMarkdown.selectDocumentShowPreviewState),
-    takeUntil(this.destroy$)
+  showEdit$ = this.docMode$.pipe(
+    map(mode => {
+      return mode === DocumentMode.Edit;
+    })
   );
+
+  isScreenWide$ = this.breakpointObserver
+    .observe([Breakpoints.Handset, Breakpoints.TabletPortrait])
+    .pipe(map(b => !b.matches));
+
+  showView$ = this.showEdit$.pipe(
+    combineLatest(this.isScreenWide$),
+    map(([isShowEdit, wide]) => {
+      if (isShowEdit) {
+        if (!wide) {
+          return false;
+        }
+      }
+      return true;
+    })
+  );
+
   gtsmBreakPoint = false;
 
   markdown$: Observable<string>;
@@ -76,25 +95,9 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     private router: Router,
     private store: Store<fromMarkdown.State>,
     private state: State<fromMarkdown.State>,
-    private media: ObservableMedia,
+    private breakpointObserver: BreakpointObserver,
     private docRef: DocumentRef
   ) {
-    media
-      .asObservable()
-      .pipe(
-        combineLatest(this.editWithView$),
-        takeUntil(this.destroy$)
-      )
-      .subscribe(([change, editWithView]) => {
-        if (!['xs', 'sm'].includes(change.mqAlias)) {
-          this.gtsmBreakPoint = true;
-          if (editWithView === null || editWithView === undefined) {
-            this.store.dispatch(new doc.ShowPreview());
-          }
-        } else {
-          this.gtsmBreakPoint = false;
-        }
-      });
   }
 
   ngOnInit() {
@@ -113,7 +116,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.store.dispatch(new SetCurrentDocumentId({id:undefined}));
+    this.store.dispatch(new SetCurrentDocumentId({ id: undefined }));
 
     this.destroy$.next();
   }
@@ -156,12 +159,12 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   }
 
   onRefresh(event) {
-    if(this.router.url.startsWith('/doc/new')) return;
+    if (this.router.url.startsWith('/doc/new')) return;
     const params = this.router.parseUrl(this.router.url).queryParams;
     let title = params['title'];
     let num = +params['id'];
     let format = params['f'];
-    this.refresh(num,title,format);
+    this.refresh(num, title, format);
   }
 
   showDemo() {
