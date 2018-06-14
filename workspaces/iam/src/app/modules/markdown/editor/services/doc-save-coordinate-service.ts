@@ -1,17 +1,17 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Document } from '../../../docs/models/document';
+import { Document } from '../../../home/models/document';
 import { MarkdownEditorService } from './markdown.editor.service';
 import { Subject, BehaviorSubject, Observable } from 'rxjs';
 import { filter, auditTime, takeUntil, combineLatest } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
-import * as docs from '../../../docs';
-import { selectDocumentActionStatus } from '../../../docs/state/document.reducer';
+import * as docs from '../../../home';
+import { selectDocumentActionStatus } from '../../../home/state/document.reducer';
 import {
   DocumentEffectsSave,
   getActionStatus,
   DocumentEffectsActionTypes,
   ActionStatus
-} from '../../../docs/state';
+} from '../../../home/state';
 
 @Injectable()
 export class DocSaveCoordinateService implements OnDestroy {

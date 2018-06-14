@@ -4,7 +4,7 @@ import { MarkdownViewerComponent } from './viewer/markdown-viewer.component';
 import { HttpClient } from '@angular/common/http';
 import { APP_BASE_HREF } from '@angular/common';
 import { take, map, timeout, tap, takeUntil, combineLatest, share } from 'rxjs/operators';
-import { DocService } from 'docs';
+import { DocService } from 'home';
 import { MarkdownEditorService } from './editor/index';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { base64Decode, DocumentRef, Scrollable } from 'core';
@@ -27,8 +27,8 @@ import {
   DocumentEffectsNew,
   getDocumentByIdSeletor,
   SetCurrentDocumentId
-} from '../docs/state';
-import { Document } from '../docs/models/document';
+} from '../home/state';
+import { Document } from '../home/models/document';
 
 @Component({
   selector: 'ms-markdown',

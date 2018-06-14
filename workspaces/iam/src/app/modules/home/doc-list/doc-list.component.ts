@@ -2,14 +2,14 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Document } from '../models/document';
 import { DocService } from '../services/doc.service';
 import { MatDialog } from '@angular/material';
-import { DeleteAlertDialog } from 'app/modules/docs/doc-list-item/dialog.component';
+import { DeleteAlertDialog } from '../doc-list/dialog.component';
 
 @Component({
-  selector: 'doc-list-item',
-  templateUrl: './doc-list-item.component.html',
-  styleUrls: ['./doc-list-item.component.scss']
+  selector: 'doc-list',
+  templateUrl: './doc-list.component.html',
+  styleUrls: ['./doc-list.component.scss']
 })
-export class DocItemComponent implements OnInit {
+export class DocListComponent implements OnInit {
   private docs;
 
   @Output() onDelete = new EventEmitter<Document>();

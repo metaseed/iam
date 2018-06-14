@@ -4,7 +4,7 @@ import { ViewChild } from '@angular/core';
 import * as markdown from '../state';
 import * as fromView from '../state/actions/view';
 import { Store, select } from '@ngrx/store';
-import { DocService } from 'docs';
+import { DocService } from 'home';
 import { ElementRef } from '@angular/core';
 import { Subscription, of, Subject, merge, asyncScheduler } from 'rxjs';
 import {
@@ -14,12 +14,12 @@ import {
   ActionStatus,
   monitorActionStatus,
   getActionStatus
-} from '../../docs/state';
+} from '../../home/state';
 import { filter, takeLast, takeUntil, map, mergeAll, observeOn } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 // import { PAN_ACTION_DELTY, PAN_ACTION_SCROLL_TRIGGER } from '../../docs/const';
 import { EventEmitter } from '@angular/core';
-import { PAN_ACTION_DELTY, PAN_ACTION_SCROLL_TRIGGER } from '../../docs/const';
+import { PAN_ACTION_DELTY, PAN_ACTION_SCROLL_TRIGGER } from '../../home/const';
 @Component({
   selector: 'markdown-viewer-container',
   templateUrl: './markdown-viewer-container.component.html',

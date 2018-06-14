@@ -11,11 +11,11 @@ import { Observable, Subject } from 'rxjs';
 import { map, filter, switchMap, debounceTime, take, takeUntil } from 'rxjs/Operators';
 import { Store, select } from '@ngrx/store';
 import { DialogService } from 'core';
-import { DocService } from 'docs';
+import { DocService } from 'home';
 import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
 import { MatDialog } from '@angular/material';
 import { Subscription, of } from 'rxjs';
-import { DocumentEffectsSave } from '../../docs/state';
+import { DocumentEffectsSave } from '../../home/state';
 
 @Component({
   selector: 'ms-markdown-editor',

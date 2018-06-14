@@ -3,7 +3,7 @@ import { MarkdownComponent } from '../../../markdown.component';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { Subscription, Subject } from 'rxjs';
-import { DocService } from 'docs';
+import { DocService } from 'home';
 import { MarkdownEditorService } from '../../../editor/index';
 import { CommandService, Command, DocumentRef } from 'core';
 import { Store, select } from '@ngrx/store';

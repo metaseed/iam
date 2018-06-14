@@ -7,7 +7,7 @@ import { HotkeyModule } from "@metaseed/angular-hotkey";
 import { CoreModule } from "core";
 import { HttpClientModule } from "@angular/common/http";
 import { StoreModule } from "@ngrx/store";
-import { DocsModule } from "docs";
+import { HomeModule } from "home";
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { APP_BASE_HREF, PlatformLocation } from "@angular/common";
@@ -46,7 +46,7 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
     FormsModule,
     StorageModule,
     CoreModule,
-    DocsModule,
+    HomeModule,
     SharedModule,
     DBModule.provideDB(schema),
     MaterialModule,

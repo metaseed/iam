@@ -11,7 +11,7 @@
     "baseUrl": "./src",
     "paths": {
       "packages/*": ["../packages/*"],
-      "docs": ["app/modules/docs"],
+      "home": ["app/modules/home"],
       "markdown": ["app/modules/markdown"],
       "core": ["app/modules/core"],
       "shared": ["app/modules/shared"],

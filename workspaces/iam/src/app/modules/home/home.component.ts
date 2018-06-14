@@ -50,11 +50,11 @@ import { NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT } from 'core';
 import { PAN_ACTION_DELTY, PAN_ACTION_SCROLL_TRIGGER } from './const';
 
 @Component({
-  selector: 'docs',
-  templateUrl: './docs.component.html',
-  styleUrls: ['./docs.component.scss']
+  selector: 'home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss']
 })
-export class DocsComponent {
+export class HomeComponent {
   private destroy$ = new Subject();
 
   @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;

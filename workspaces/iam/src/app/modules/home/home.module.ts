@@ -4,24 +4,24 @@ import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
-import { DocsComponent } from './docs.component';
+import { HomeComponent } from './home.component';
 import { NewDocComponent } from './new-doc/new-doc.component';
-import { DocItemComponent } from './doc-list-item/doc-list-item.component';
+import { DocListComponent } from './doc-list/doc-list.component';
 import { DocService } from './services/doc.service';
 import { MaterialModule } from '../../modules/material/material.module';
 import { NgSpinKitModule } from 'ng-spin-kit';
-import { DeleteAlertDialog } from 'app/modules/docs/doc-list-item/dialog.component';
+import { DeleteAlertDialog } from './doc-list/dialog.component';
 import { DocSearchComponent } from './doc-search/doc-search.component';
 import { DocSearchService } from './services/doc-search.service';
 import { StoreModule } from '@ngrx/store';
 import * as fromState from './state';
 import { EffectsModule } from '@ngrx/effects';
 import { DocumentEffects } from './state/document.effects';
-import { DocDeleteComponent } from './doc-list-item/doc-delete/doc-delete.component';
+import { DocDeleteComponent } from './doc-list/doc-delete/doc-delete.component';
 const routes: Routes = [
   {
     path: 'docs',
-    component: DocsComponent
+    component: HomeComponent
   }
 ];
 
@@ -39,13 +39,13 @@ const routes: Routes = [
   declarations: [
     DeleteAlertDialog,
     NewDocComponent,
-    DocsComponent,
-    DocItemComponent,
+    HomeComponent,
+    DocListComponent,
     DocSearchComponent,
     DocDeleteComponent
   ],
-  exports: [DocsComponent],
+  exports: [HomeComponent],
   providers: [DocService, DocSearchService],
   entryComponents: [DeleteAlertDialog]
 })
-export class DocsModule {}
+export class HomeModule {}

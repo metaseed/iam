@@ -29,7 +29,7 @@ import {
   SetPageInfo,
   selectDocumensPageInfoState,
   PageInfo
-} from 'app/modules/docs/state';
+} from 'app/modules/home/state';
 import { DocService } from '../services/doc.service';
 import { format } from 'util';
 import { base64Encode } from 'core';

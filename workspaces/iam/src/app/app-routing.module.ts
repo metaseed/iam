@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SelectivePreloadingStrategy } from './selective-preloading-strategy';
 import { CanDeactivateGuard } from './can-deactivate-guard.service';
-import { DocsComponent } from 'docs';
+import { HomeComponent } from 'home';
 import { MarkdownComponent } from './modules/markdown/markdown.component';
 
 const appRoutes: Routes = [
@@ -31,7 +31,7 @@ const appRoutes: Routes = [
     loadChildren:'app/modules/me/me.module#MeModule'
   },
 
-  { path: 'home', component: DocsComponent },
+  { path: 'home', component: HomeComponent },
   { path: '', redirectTo:'/home', pathMatch:'full'},
   { path: '**', component: NotFoundComponent }
 ];

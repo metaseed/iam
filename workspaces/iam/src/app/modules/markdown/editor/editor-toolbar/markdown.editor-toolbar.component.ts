@@ -3,7 +3,7 @@ import { MarkdownComponent } from '../../markdown.component';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { Subscription, Subject } from 'rxjs';
-import { DocService } from 'docs';
+import { DocService } from 'home';
 import { MarkdownEditorService } from '../../editor/index';
 import { CommandService, Command, DocumentRef } from '../../../core/index';
 import * as fromMarkdown from '../../state';
@@ -17,7 +17,7 @@ import * as CodeMirror from 'codemirror';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';
 import { MatToolbar, MatDialog } from '@angular/material';
-import { DocumentEffectsSave, DocumentEffectsNew } from '../../../docs/state';
+import { DocumentEffectsSave, DocumentEffectsNew } from '../../../home/state';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
