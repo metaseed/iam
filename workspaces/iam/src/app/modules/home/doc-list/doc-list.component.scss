@@ -1,31 +1,35 @@
-// @import "~@angular-mdc/theme/material";
 .done-true {
   text-decoration: line-through;
   color: #ccc;
 }
 
-.doc-card-container,
-.doc-card {
-  width: 100%;
-  max-width: 400px;
-  height: 180px;
-  margin-top: 3px;
+.doc-card-container {
+  display: flex;
+  flex-flow: row wrap;
+  box-sizing: border-box;
+  justify-content: space-around;
+  .doc-card {
+    width: 100%;
+    max-width: 400px;
+    margin-top: 3px;
+    display: flex;
+    flex-grow:1;
+    flex-direction: column;
+    justify-content: space-between;
+    &__row {
+      display: flex;
+      border-top-left-radius: inherit;
+    }
+
+    &__info {
+      display: flex;
+      flex-direction: column;
+      padding: 8px 16px;
+    }
+  }
 }
 
-.doc-card__row {
-  display: flex;
-  border-top-left-radius: inherit;
-  // @include mdc-rtl {
-  //   border-top-left-radius: 0;
-  //   border-top-right-radius: inherit;
-  // }
-}
 
-.doc-card__info {
-  display: flex;
-  flex-direction: column;
-  padding: 8px 16px;
-}
 
 // .doc-card:hover {
 //   left: .1em;

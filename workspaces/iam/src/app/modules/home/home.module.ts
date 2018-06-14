@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { HomeComponent } from './home.component';
 import { NewDocComponent } from './new-doc/new-doc.component';
@@ -30,7 +29,6 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     MaterialModule,
-    FlexLayoutModule,
     NgSpinKitModule,
     StoreModule.forFeature<fromState.DocsState>('docs', fromState.reducers ),
     EffectsModule.forFeature([DocumentEffects])
