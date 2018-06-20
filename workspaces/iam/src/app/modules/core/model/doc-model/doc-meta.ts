@@ -4,13 +4,15 @@ import picaLib from 'pica';
 const pica = picaLib();
 export class DocMeta {
   static width: 400;
-
+  public updated_at: string; // in issues
+  public tags:any; // in issue as labels
+  public _context:any; // issue obj;
   constructor(
     public contentId: string, // sha of file
     public title: string,
     public summary: string,
     public imageData: string,
-    public format = 'md' // sufix
+    public format = 'md', // sufix
   ) {}
 
   static serialize(

@@ -12,7 +12,7 @@ import {
   DocumentEffectsDelete
 } from './document.effects.actions';
 import { LoadDocuments, SetDocumentsMessage, DeleteDocument } from './document.actions';
-import { GithubStorage, Repository, EditIssueParams } from 'net-storage';
+import { GithubStorage, Repository, EditIssueParams, Issue } from 'net-storage';
 import { switchMap, catchError, map, tap, take, retry, combineLatest } from 'rxjs/operators';
 import { DocMeta, Document } from 'core';
 import {
@@ -82,7 +82,7 @@ export class DocumentEffects {
           else return of('end of the document list');
         }
       }),
-      map((resp: HttpResponse<Document[]> | string) => {
+      map((resp: HttpResponse<Issue[]> | string) => {
         if (typeof resp === 'string') {
           return new SetDocumentsMessage({
             status: ActionStatus.Success,
@@ -100,17 +100,21 @@ export class DocumentEffects {
         } else {
           this.store.dispatch(new SetPageInfo({ nextLink: '' }));
         }
-        const docs = resp.body;
+        const issueList = resp.body;
         let docList = new Array<Document>();
         const docDic = selectDocumentEntitiesState(this.state.value);
-        docs.forEach(d => {
-          let meta = DocMeta.deSerialize(d.body);
+        issueList.forEach(issue => {
+          const meta = DocMeta.deSerialize(issue.body);
+          meta.updated_at = issue.updated_at;
+          meta.tags = issue.labels;
+          meta._context = issue;
+          const doc:Document = {number:issue.number,metaData:meta};
           if (meta) {
-            d.metaData = meta;
-            docList.push(d);
+            docList.push(doc);
           }
-          if (docList[d.number]) {
-            d.content = docList[d.number].content;
+          const num = issue.number;
+          if (docDic[num]) {
+            doc.content = docDic[num].content;
           }
         });
         if (docList.length) {
