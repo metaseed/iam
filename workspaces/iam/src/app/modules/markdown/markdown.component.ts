@@ -28,7 +28,7 @@ import {
   getDocumentByIdSeletor,
   SetCurrentDocumentId
 } from '../home/state';
-import { Document } from '../home/models/document';
+import { Document } from 'core';
 import { Utilities } from '../core/utils';
 import { MarkdownService } from './markdown.service';
 

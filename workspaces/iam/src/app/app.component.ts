@@ -1,8 +1,5 @@
 import { Component } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Repository } from "./storage/github/index";
-import { GithubStorage } from "./storage/github/github";
-import { UserInfo } from "./storage/github/user-info";
 import { UpdateService } from "core";
 import { environment } from "../environments/environment";
 @Component({

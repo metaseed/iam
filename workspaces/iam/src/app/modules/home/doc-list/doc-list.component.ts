@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Document } from '../models/document';
-import { DocService } from '../services/doc.service';
+import { Document } from 'core';
 import { MatDialog } from '@angular/material';
 import { DeleteAlertDialog } from '../doc-list/dialog.component';
 

@@ -1,7 +1,7 @@
-import { Repository } from "../../../storage/github";
+import { Repository } from 'net-storage';
 import { DocService } from "../services/doc.service";
 import { catchError, switchMap } from "rxjs/operators";
-import { DocMeta, Document, DocumentContent } from "../models";
+import { DocMeta, Document, DocumentContent } from 'core';
 import { of, throwError, Observable } from "rxjs";
 
 export function getContent(repo: Repository, number: number, title: string, format: string, state = 0 ): Observable<DocumentContent> {

@@ -9,11 +9,8 @@ import { map, flatMap, take } from 'rxjs/operators';
 
 import { base64Encode, ConfigService, ConfigModel } from 'core';
 
-import { Document } from '../models/document';
-import { GithubStorage, UserInfo, EditIssueParams } from '../../../storage/github/index';
-import { Repository } from '../../../storage/github/repository';
-import { DocMeta } from '../models/doc-meta';
-import { Content } from '../../../storage/github/model/content';
+import { Document,DocMeta } from 'core';
+import { Repository, Content, GithubStorage, UserInfo, EditIssueParams } from 'net-storage';
 import { Store } from '@ngrx/store';
 import { State } from '../state/document.reducer';
 import { DocumentEffectsDelete, DocumentEffectsLoad } from '../state/document.effects.actions';

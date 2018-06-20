@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as Fuse from 'fuse.js';
-import { Document } from '../models/document';
+import { Document } from 'core';
 
 @Injectable()
 export class DocSearchService {

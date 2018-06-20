@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild, ElementRef } from '@angular/core';
-import { Document } from './models/document';
+import { Document } from 'core';
 import { DocService } from './services/doc.service';
 import { Router } from '@angular/router';
 import { NavigationExtras } from '@angular/router/src/router';

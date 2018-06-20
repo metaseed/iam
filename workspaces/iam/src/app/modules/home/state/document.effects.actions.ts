@@ -3,7 +3,6 @@ import { Observable, TimeoutError, UnaryFunction, of, asyncScheduler } from 'rxj
 import { State } from './document.reducer';
 import { filter, timeout, map, catchError, tap } from 'rxjs/operators';
 import { selectDocumentActionStatusState } from 'app/modules/home/state';
-import { Content } from '../../../storage/github/model/content';
 import { timeOutMonitor } from '../../core/operators';
 
 export enum DocumentEffectsActionTypes {

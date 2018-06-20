@@ -19,7 +19,7 @@ import { StoreDevtoolsModule } from "@ngrx/store-devtools";
 import { SharedModule } from "shared";
 import { EffectsModule } from '@ngrx/effects';
 import { AppEffects } from './app.effects';
-import { StorageModule } from "./storage/storage.module";
+import { StorageModule } from "./modules/net-storage/storage.module";
 import { DBModule } from "./modules/db/database-engine";
 import { schema } from "./modules/db/schema";
 /**

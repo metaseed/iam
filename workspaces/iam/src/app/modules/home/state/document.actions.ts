@@ -1,7 +1,7 @@
 import { Action } from '@ngrx/store';
 import { Update } from '@ngrx/entity';
-import { Document } from '../models/document';
-import { DocumentEffectsActions, DocumentEffectsActionTypes, DocumentActionStatus } from './document.effects.actions';
+import { Document } from 'core';
+import { DocumentActionStatus } from './document.effects.actions';
 
 export enum DocumentActionTypes {
   LoadDocuments = '[Document] Load Documents',

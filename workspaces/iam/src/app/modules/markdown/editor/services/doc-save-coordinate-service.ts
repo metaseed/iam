@@ -1,11 +1,8 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Document } from '../../../home/models/document';
 import { MarkdownEditorService } from './markdown.editor.service';
-import { Subject, BehaviorSubject, Observable } from 'rxjs';
-import { filter, auditTime, takeUntil, combineLatest } from 'rxjs/operators';
-import { Store, select } from '@ngrx/store';
-import * as docs from '../../../home';
-import { selectDocumentActionStatus } from '../../../home/state/document.reducer';
+import { Subject, BehaviorSubject } from 'rxjs';
+import { auditTime, takeUntil, combineLatest } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 import {
   DocumentEffectsSave,
   getActionStatus,
@@ -40,7 +37,7 @@ export class DocSaveCoordinateService implements OnDestroy {
     });
 
     this.editorService.contentChanged$.pipe(takeUntil(this.destroy$),combineLatest(this.editor$)).subscribe(
-      ([c,editor])=>this.checkDirty(editor)
+      ([,editor])=>this.checkDirty(editor)
     )
 
     getActionStatus(DocumentEffectsActionTypes.Save, this.store)

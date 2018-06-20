@@ -1,5 +1,5 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
-import { Document } from '../models/document';
+import { Document } from 'core';
 import { DocumentActions, DocumentActionTypes, PageInfo } from './document.actions';
 import { DocumentEffectsActionTypes, DocumentActionStatus, ActionStatus } from './document.effects.actions';
 
