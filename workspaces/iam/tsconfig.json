@@ -11,6 +11,7 @@
     "baseUrl": "./src",
     "paths": {
       "packages/*": ["../packages/*"],
+      "net-storage":["app/modules/net-storage"],
       "home": ["app/modules/home"],
       "markdown": ["app/modules/markdown"],
       "core": ["app/modules/core"],

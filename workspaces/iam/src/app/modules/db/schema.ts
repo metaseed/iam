@@ -1,4 +1,4 @@
-import { DBSchema } from './database';
+import { DBSchema } from './database-engine';
 
 export const schema: DBSchema = {
   version: 1,
@@ -6,7 +6,7 @@ export const schema: DBSchema = {
   stores: {
     documents: {
       autoIncrement: true,
-      primaryKey: 'id',
+      primaryKey: 'num',
     },
   },
 };

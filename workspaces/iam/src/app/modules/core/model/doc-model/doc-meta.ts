@@ -1,5 +1,6 @@
 import { Observable, of } from 'rxjs';
 import picaLib from 'pica';
+
 const pica = picaLib();
 export class DocMeta {
   static width: 400;

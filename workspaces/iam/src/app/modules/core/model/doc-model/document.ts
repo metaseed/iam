@@ -1,6 +1,5 @@
-import { Issue } from "../../../storage/github/issues/issue";
 import { DocMeta } from "./doc-meta";
-import { Content } from "../../../storage/github/model/content";
+import { Issue,Content } from 'net-storage';
 
 export interface DocumentContent extends Pick<Content,'content'|'sha'> {}
 
@@ -10,5 +9,5 @@ interface _Document {
   contentGeneration: number; // for content modification
 }
 
-export interface Document extends Pick<Issue,'id'|'title'|'body'|'labels'|'number'|'updated_at'|'state'>, _Document {
+export interface Document extends Pick<Issue,'number'|'title'|'body'|'labels'|'updated_at'|'state'>, _Document {
 }

@@ -1,5 +1,5 @@
-import { Observable, Observer, Subscriber, Subject, from } from 'rxjs';
-import { mergeMap, map, tap } from 'rxjs/operators';
+import { Observable, Observer, Subject, from } from 'rxjs';
+import { mergeMap, tap, share, shareReplay } from 'rxjs/operators';
 import { InjectionToken, Inject, Injectable, NgModule, ModuleWithProviders } from '@angular/core';
 // ngrx/db 2.2.0-beta.0 modified to support rxjs 6
 
@@ -74,6 +74,13 @@ export class Database {
     });
   }
 
+  private _open$;
+  getSharedOpen$(dbName: string) {
+    if (this._open$) return this._open$;
+
+    return (this._open$ = this.open(dbName).pipe(shareReplay()));
+  }
+
   open(
     dbName: string,
     version: number = 1,
@@ -137,7 +144,12 @@ export class Database {
     );
   }
 
-  get(storeName: string, key: any): Observable<any> {
+  private request(
+    storeName: string,
+    txnMode: IDBTransactionMode,
+    action: (store: IDBObjectStore, ...params) => IDBRequest,
+    onRequestSuccess?: (observer: Observer<any>) => (ev) => void
+  ): Observable<any> {
     const open$ = this.open(this._schema.name);
 
     return open$.pipe(
@@ -145,75 +157,138 @@ export class Database {
         return new Observable((txnObserver: Observer<any>) => {
           const recordSchema = this._schema.stores[storeName];
           const mapper = this._mapRecord(recordSchema);
-          const txn = db.transaction([storeName], IDB_TXN_READ);
+          const txn = db.transaction([storeName], txnMode);
           const objectStore = txn.objectStore(storeName);
 
-          const getRequest = objectStore.get(key);
+          const request = action(objectStore);
 
-          const onTxnError = (err: any) => txnObserver.error(err);
+          const onTxnReqError = (err: any) => txnObserver.error(err);
           const onTxnComplete = () => txnObserver.complete();
-          const onRecordFound = (ev: any) => txnObserver.next(getRequest.result);
+          const onReqSuccess = onRequestSuccess
+            ? onRequestSuccess(txnObserver)
+            : (ev: any) => txnObserver.next(request.result);
 
           txn.addEventListener(IDB_COMPLETE, onTxnComplete);
-          txn.addEventListener(IDB_ERROR, onTxnError);
+          txn.addEventListener(IDB_ERROR, onTxnReqError);
 
-          getRequest.addEventListener(IDB_SUCCESS, onRecordFound);
-          getRequest.addEventListener(IDB_ERROR, onTxnError);
+          request.addEventListener(IDB_SUCCESS, onReqSuccess);
+          request.addEventListener(IDB_ERROR, onTxnReqError);
 
           return () => {
-            getRequest.removeEventListener(IDB_SUCCESS, onRecordFound);
-            getRequest.removeEventListener(IDB_ERROR, onTxnError);
+            request.removeEventListener(IDB_SUCCESS, onReqSuccess);
+            request.removeEventListener(IDB_ERROR, onTxnReqError);
             txn.removeEventListener(IDB_COMPLETE, onTxnComplete);
-            txn.removeEventListener(IDB_ERROR, onTxnError);
+            txn.removeEventListener(IDB_ERROR, onTxnReqError);
           };
         });
       })
     );
   }
 
-  query(storeName: string, predicate?: (rec: any) => boolean): Observable<any> {
-    const open$ = this.open(this._schema.name);
-
-    return mergeMap.call(open$, (db: IDBDatabase) => {
-      return new Observable((txnObserver: Observer<any>) => {
-        const txn = db.transaction([storeName], IDB_TXN_READ);
-        const objectStore = txn.objectStore(storeName);
-
-        const getRequest = objectStore.openCursor();
-
-        const onTxnError = (err: any) => txnObserver.error(err);
-        const onRecordFound = (ev: any) => {
-          let cursor = ev.target.result;
-          if (cursor) {
-            if (predicate) {
-              const match = predicate(cursor.value);
-              if (match) {
-                txnObserver.next(cursor.value);
-              }
-            } else {
-              txnObserver.next(cursor.value);
-            }
-            cursor.continue();
-          } else {
-            txnObserver.complete();
-          }
-        };
-
-        txn.addEventListener(IDB_ERROR, onTxnError);
-
-        getRequest.addEventListener(IDB_SUCCESS, onRecordFound);
-        getRequest.addEventListener(IDB_ERROR, onTxnError);
-
-        return () => {
-          getRequest.removeEventListener(IDB_SUCCESS, onRecordFound);
-          getRequest.removeEventListener(IDB_ERROR, onTxnError);
-          txn.removeEventListener(IDB_ERROR, onTxnError);
-        };
-      });
+  delete(storeName: string, key): Observable<any> {
+    return this.request(storeName, IDB_TXN_READWRITE, store => {
+      return store.delete(key);
     });
   }
 
-  executeWrite(storeName: string, actionType: string, records: any[]): Observable<any> {
+  get(storeName: string, key: any): Observable<any> {
+    return this.request(storeName, IDB_TXN_READ, store => {
+      return store.get(key);
+    });
+  }
+
+  count<T>(storeName: string, keyRange: IDBKeyRange): Observable<T> {
+    return this.request(storeName, IDB_TXN_READ, store => {
+      return store.count(keyRange);
+    });
+  }
+
+  countAll<T>(storeName: string): Observable<T> {
+    return this.request(storeName, IDB_TXN_READ, store => {
+      return store.count();
+    });
+  }
+
+  getByPage<T>(
+    storeName: string,
+    pageIndex: number,
+    pageSize: number,
+    predicate?: (rec: any) => boolean
+  ): Observable<T> {
+    return this.request(
+      storeName,
+      IDB_TXN_READ,
+      store => {
+        return store.openCursor();
+      },
+      (txnObserver, advanced?, counter = 0) => ev => {
+        let cursor = ev.target.result;
+        if (cursor) {
+          if (!advanced) {
+            cursor.advance(pageIndex * pageSize);
+            advanced = true;
+          }
+          if (predicate) {
+            const match = predicate(cursor.value);
+            if (match) {
+              txnObserver.next(cursor.value);
+              counter++;
+            }
+          } else {
+            txnObserver.next(cursor.value);
+            counter++;
+          }
+          if (counter === pageSize) {
+            txnObserver.complete();
+          } else {
+            cursor.continue();
+          }
+        } else {
+          txnObserver.complete();
+        }
+      }
+    );
+  }
+  query<T>(
+    storeName: string,
+    keyRange: IDBKeyRange,
+    direction: IDBCursorDirection,
+    maxNum?: number,
+    predicate?: (rec: any) => boolean
+  ): Observable<T> {
+    return this.request(
+      storeName,
+      IDB_TXN_READ,
+      store => {
+        return store.openCursor();
+      },
+      (txnObserver, counter = 0) => ev => {
+        let cursor = ev.target.result;
+        if (cursor) {
+          if (predicate) {
+            const match = predicate(cursor.value);
+            if (match) {
+              txnObserver.next(cursor.value);
+              counter++;
+            }
+          } else {
+            txnObserver.next(cursor.value);
+            counter++;
+          }
+
+          if (maxNum && counter === maxNum) {
+            txnObserver.complete();
+          } else {
+            cursor.continue();
+          }
+        } else {
+          txnObserver.complete();
+        }
+      }
+    );
+  }
+
+  executeWrite(storeName: string, actionName: string, records: any[]): Observable<any> {
     const changes = this.changes;
     const open$ = this.open(this._schema.name);
 
@@ -235,12 +310,12 @@ export class Database {
             return new Observable((reqObserver: Observer<any>) => {
               let req: any;
               if (recordSchema.primaryKey) {
-                req = objectStore[actionType](record);
+                req = objectStore[actionName](record);
               } else {
                 let $key = record['$key'];
-                let $record = (Object as any).assign({}, record);
+                let $record = Object.assign({}, record);
                 delete $record.key;
-                req = objectStore[actionType]($record, $key);
+                req = objectStore[actionName]($record, $key);
               }
               req.addEventListener(IDB_SUCCESS, () => {
                 let $key = req.result;
@@ -253,7 +328,7 @@ export class Database {
           };
 
           let requestSubscriber = from(records)
-            .pipe(makeRequest)
+            .pipe(mergeMap(makeRequest))
             .subscribe(txnObserver);
 
           return () => {

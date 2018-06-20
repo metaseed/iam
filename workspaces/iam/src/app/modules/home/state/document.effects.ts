@@ -4,7 +4,7 @@ import { Observable, defer, of, throwError } from 'rxjs';
 import { Action, Store } from '@ngrx/store';
 import { State as StoreState } from '@ngrx/store';
 import { getContent, NEW_DOC_ID, getContentUrl } from './document.effects.util';
-import { Database } from '../../db/database';
+import { Database } from '../../db/database-engine';
 import {
   DocumentEffectsLoad,
   DocumentEffectsActionTypes,
@@ -12,10 +12,9 @@ import {
   DocumentEffectsDelete
 } from './document.effects.actions';
 import { LoadDocuments, SetDocumentsMessage, DeleteDocument } from './document.actions';
-import { GithubStorage, Repository, EditIssueParams } from '../../../storage/github';
+import { GithubStorage, Repository, EditIssueParams } from 'net-storage';
 import { switchMap, catchError, map, tap, take, retry, combineLatest } from 'rxjs/operators';
-import { DocMeta } from '../models/doc-meta';
-import { Document } from '../models/document';
+import { DocMeta,Document } from 'core';
 import {
   selectDocumentEntitiesState,
   DocumentEffectsShow,
@@ -77,7 +76,7 @@ export class DocumentEffects {
       }),
       combineLatest(this.storage.init()),
       switchMap(([a, repo]) => {
-        if (!isLoadMore) return repo.issue.list('open');
+        if (!isLoadMore) return repo.issue.listWithResponse('open');
         else {
           if (pageInfo.nextLink) return repo.issue.listMore(pageInfo.nextLink);
           else return of('end of the document list');

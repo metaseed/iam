@@ -48,21 +48,36 @@ export class Issue extends Requestable {
 
   // https://developer.github.com/v3/issues/#create-an-issue
   create(data: IssueData): Observable<Issue> {
-    return <Observable<Issue>>this.request(
-      'POST',
-      `/repos/${this._userInfo.name}/${this.repository}/issues`,
-      data
+    return <Observable<Issue>>(
+      this.request('POST', `/repos/${this._userInfo.name}/${this.repository}/issues`, data)
     );
   }
   // https://developer.github.com/v3/issues/#list-issues-for-a-repository
-  list(state: 'open' | 'closed' | 'all') {
+  listWithResponse(
+    state: 'open' | 'closed' | 'all' = 'open',
+    pageNumber: number = 1,
+    pageSize: number = 30
+  ) {
     return this.http.get(`githubapi/repos/${this._userInfo.name}/${this.repository}/issues`, {
-      params:{state: state}, observe:'response'
+      params: { state: state, page: pageNumber.toString(), per_page: pageSize.toString() },
+      observe: 'response'
     });
+  }
+  list(
+    state: 'open' | 'closed' | 'all' = 'open',
+    pageNumber: number = 1,
+    pageSize: number = 30
+  ): Observable<Issue> {
+    return <Observable<Issue>>this.http.get(
+      `githubapi/repos/${this._userInfo.name}/${this.repository}/issues`,
+      {
+        params: { state: state, page: pageNumber.toString(), per_page: pageSize.toString() }
+      }
+    );
   }
   listMore(url) {
     return this.http.get(url, {
-       observe:'response'
+      observe: 'response'
     });
   }
   // https://developer.github.com/v3/issues/#edit-an-issue
@@ -73,10 +88,12 @@ export class Issue extends Requestable {
       params
     );
   }
-  get(issueNumber: number):Observable<Issue> {
-    return <Observable<Issue>>this.request<Issue>(
-      'GET',
-      `/repos/${this._userInfo.name}/${this.repository}/issues/${issueNumber}`
+  get(issueNumber: number): Observable<Issue> {
+    return <Observable<Issue>>(
+      this.request<Issue>(
+        'GET',
+        `/repos/${this._userInfo.name}/${this.repository}/issues/${issueNumber}`
+      )
     );
   }
 }
