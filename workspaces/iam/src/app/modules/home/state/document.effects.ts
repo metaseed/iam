@@ -14,7 +14,7 @@ import {
 import { LoadDocuments, SetDocumentsMessage, DeleteDocument } from './document.actions';
 import { GithubStorage, Repository, EditIssueParams } from 'net-storage';
 import { switchMap, catchError, map, tap, take, retry, combineLatest } from 'rxjs/operators';
-import { DocMeta,Document } from 'core';
+import { DocMeta, Document } from 'core';
 import {
   selectDocumentEntitiesState,
   DocumentEffectsShow,
@@ -124,8 +124,8 @@ export class DocumentEffects {
           message: 'documents loaded'
         });
       }),
-      catchError(err =>
-        of(
+      catchError((err, caught) => {
+        this.store.dispatch(
           new SetDocumentsMessage({
             status: ActionStatus.Fail,
             action: DocumentEffectsActionTypes.Load,
@@ -133,8 +133,9 @@ export class DocumentEffects {
             context: { isLoadMore },
             message: err
           })
-        )
-      )
+        );
+        return caught;
+      })
     );
   })();
 
@@ -184,16 +185,17 @@ export class DocumentEffects {
           )
         );
       }),
-      catchError(err =>
-        of(
+      catchError((err, caught) => {
+        this.store.dispatch(
           new SetDocumentsMessage({
             status: ActionStatus.Fail,
             action: DocumentEffectsActionTypes.Show,
             corelationId: coId,
             message: err
           })
-        )
-      )
+        );
+        return caught;
+      })
     ))();
 
   @Effect()
@@ -226,16 +228,17 @@ export class DocumentEffects {
           corelationId: coId
         });
       }),
-      catchError(err =>
-        of(
+      catchError((err, caught) => {
+        this.store.dispatch(
           new SetDocumentsMessage({
             status: ActionStatus.Fail,
             action: DocumentEffectsActionTypes.New,
             corelationId: coId,
             message: err
           })
-        )
-      )
+        );
+        return caught;
+      })
     ))();
 
   @Effect()
@@ -273,16 +276,17 @@ export class DocumentEffects {
           return this.edit(repo, doc, newTitle, content, format, coId);
         }
       }),
-      catchError(err =>
-        of(
+      catchError((err, caught) => {
+        this.store.dispatch(
           new SetDocumentsMessage({
             status: ActionStatus.Fail,
             action: DocumentEffectsActionTypes.Save,
             corelationId: coId,
             message: err.message + err.stack
           })
-        )
-      )
+        );
+        return caught;
+      })
     ))();
 
   saveNew = (repo: Repository, title: string, content: string, format: string, coId: number) => {
@@ -428,15 +432,16 @@ export class DocumentEffects {
           })
         );
       }),
-      catchError(err =>
-        of(
+      catchError((err, caught) => {
+        this.store.dispatch(
           new SetDocumentsMessage({
             status: ActionStatus.Fail,
             action: DocumentEffectsActionTypes.Delete,
             corelationId: coId,
             message: err
           })
-        )
-      )
+        );
+        return caught;
+      })
     ))();
 }
