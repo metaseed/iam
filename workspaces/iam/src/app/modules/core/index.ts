@@ -13,3 +13,4 @@ export * from "./services/dialog/dialog.service";
 export * from "./services/logger.service";
 export * from './const';
 export * from './model';
+export * from './state';

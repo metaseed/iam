@@ -1,13 +1,13 @@
-import { Repository } from 'net-storage';
+import { Repository, Content } from 'net-storage';
 import { DocService } from "../services/doc.service";
 import { catchError, switchMap } from "rxjs/operators";
 import { DocMeta, Document, DocContent } from 'core';
 import { of, throwError, Observable } from "rxjs";
 
-export function getContent(repo: Repository, number: number, title: string, format: string, state = 0 ): Observable<DocContent> {
+export function getContent(repo: Repository, number: number, title: string, format: string, state = 0 ): Observable<Content> {
   let content = `${DocService.FolderName}/${title}_${number}.${format}`;
   if (!format) content = `${DocService.FolderName}/${title}_${number}`;
-  return (<Observable<DocContent>>(repo.getContents(content))).pipe( // from url
+  return (<Observable<Content>>(repo.getContents(content))).pipe( // from url
     catchError(err => {
       if (err.status === 404) {
         if (state===0) {

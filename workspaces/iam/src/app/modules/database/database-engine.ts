@@ -1,4 +1,4 @@
-import { Observable, Observer, Subject, from } from 'rxjs';
+import { Observable, Observer, Subject, from, of } from 'rxjs';
 import { mergeMap, tap, share, shareReplay } from 'rxjs/operators';
 import { InjectionToken, Inject, Injectable, NgModule, ModuleWithProviders } from '@angular/core';
 // ngrx/db 2.2.0-beta.0 modified to support rxjs 6
@@ -75,19 +75,16 @@ export class Database {
   }
 
   private _open$;
-  getSharedOpen$(dbName: string) {
-    if (this._open$) return this._open$;
-
-    return (this._open$ = this.open(dbName).pipe(shareReplay()));
-  }
 
   open(
     dbName: string,
     version: number = 1,
     upgradeHandler?: DBUpgradeHandler
   ): Observable<IDBDatabase> {
+    if (this._open$) return this._open$;
+
     const idb = this._idb;
-    return Observable.create((observer: Observer<any>) => {
+    return (this._open$ = Observable.create((observer: Observer<any>) => {
       const openReq = idb.open(dbName, this._schema.version);
 
       const onSuccess = (event: any) => {
@@ -112,7 +109,7 @@ export class Database {
         openReq.removeEventListener(IDB_ERROR, onError);
         openReq.removeEventListener(IDB_UPGRADE_NEEDED, onUpgradeNeeded);
       };
-    });
+    }).pipe(shareReplay(1)));
   }
 
   deleteDatabase(dbName: string): Observable<any> {
@@ -136,11 +133,11 @@ export class Database {
     });
   }
 
-  insert(storeName: string, records: any[], notify: boolean = true): Observable<any> {
-    const write$ = this.executeWrite(storeName, 'put', records);
+  upsert<T>(storeName: string, records: T[], notify: boolean = true): Observable<T> {
+    const write$ = this.executeWrite<T>(storeName, 'put', records);
 
     return write$.pipe(
-      tap((payload: any) => (notify ? this.changes.next({ type: DB_INSERT, payload }) : {}))
+      tap((payload: T) => (notify ? this.changes.next({ type: DB_INSERT, payload }) : {}))
     );
   }
 
@@ -249,6 +246,7 @@ export class Database {
       }
     );
   }
+
   query<T>(
     storeName: string,
     keyRange: IDBKeyRange,
@@ -256,11 +254,12 @@ export class Database {
     maxNum?: number,
     predicate?: (rec: any) => boolean
   ): Observable<T> {
+    if (maxNum <= 0) return of(undefined);
     return this.request(
       storeName,
       IDB_TXN_READ,
       store => {
-        return store.openCursor();
+        return store.openCursor(keyRange, direction);
       },
       (txnObserver, counter = 0) => ev => {
         let cursor = ev.target.result;
@@ -288,13 +287,13 @@ export class Database {
     );
   }
 
-  executeWrite(storeName: string, actionName: string, records: any[]): Observable<any> {
+  executeWrite<T>(storeName: string, actionName: string, records: T[]): Observable<T> {
     const changes = this.changes;
     const open$ = this.open(this._schema.name);
 
     return open$.pipe(
-      mergeMap((db: IDBDatabase) => {
-        return new Observable((txnObserver: Observer<any>) => {
+      mergeMap(db => {
+        return new Observable((txnObserver: Observer<T>) => {
           const recordSchema = this._schema.stores[storeName];
           const mapper = this._mapRecord(recordSchema);
           const txn = db.transaction([storeName], IDB_TXN_READWRITE);
@@ -343,17 +342,5 @@ export class Database {
 
   compare(a: any, b: any): number {
     return this._idb.cmp(a, b);
-  }
-}
-
-@NgModule({
-  providers: [Database, { provide: DatabaseBackend, useFactory: getIDBFactory }]
-})
-export class DBModule {
-  static provideDB(schema: DBSchema): ModuleWithProviders {
-    return {
-      ngModule: DBModule,
-      providers: [{ provide: IDB_SCHEMA, useValue: schema }]
-    };
   }
 }

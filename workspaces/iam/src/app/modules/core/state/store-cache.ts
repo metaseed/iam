@@ -1,14 +1,17 @@
-import { DataTables, ICache } from '../model';
+import { DataTables, ICache, DocMeta } from '../model';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { DatabaseCache } from 'database';
 
-// @Injectable()
-// export class StoreCache implements ICache {
-//   docMetaData: { hightKey: number; lowKey: number };
+@Injectable()
+export class StoreCache implements ICache {
+  docMetaData: { hightKey: number; lowKey: number };
 
-//   init(private nextLevelCache: ICache) {}
+  constructor(public nextLevelCache:DatabaseCache){}
 
-//   readBulkDocMeta(key: number, isBelowTheKey = true): Observable<> {
+  readBulkDocMeta(key: number, isBelowTheKey = true): Observable<DocMeta[]> {
 
-//   }
-// }
+    const ob = this.nextLevelCache.readBulkDocMeta(key,isBelowTheKey);
+    return ob;
+  }
+}

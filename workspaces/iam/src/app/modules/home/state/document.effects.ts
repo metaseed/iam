@@ -4,7 +4,6 @@ import { Observable, defer, of, throwError } from 'rxjs';
 import { Action, Store } from '@ngrx/store';
 import { State as StoreState } from '@ngrx/store';
 import { getContent, NEW_DOC_ID, getContentUrl } from './document.effects.util';
-import { Database } from '../../db/database-engine';
 import {
   DocumentEffectsLoad,
   DocumentEffectsActionTypes,
@@ -12,7 +11,7 @@ import {
   DocumentEffectsDelete
 } from './document.effects.actions';
 import { LoadDocuments, SetDocumentsMessage, DeleteDocument } from './document.actions';
-import { GithubStorage, Repository, EditIssueParams, Issue } from 'net-storage';
+import { GithubStorage, Repository, EditIssueParams, Issue, GithubCache } from 'net-storage';
 import { switchMap, catchError, map, tap, take, retry, combineLatest } from 'rxjs/operators';
 import { DocMeta, Document } from 'core';
 import {
@@ -37,24 +36,21 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { State, selectDocumentPageInfo } from './document.reducer';
 import { HttpResponse } from '@angular/common/http';
+import { StoreCache } from 'core';
 
 @Injectable()
 export class DocumentEffects {
   constructor(
     private actions$: Actions,
     private state: StoreState<State>,
-    private db: Database,
     private storage: GithubStorage,
     private snackbar: MatSnackBar,
     private store: Store<State>,
     private location: Location,
-    private router: Router
-  ) {}
-
-  @Effect({ dispatch: false })
-  openDB$: Observable<any> = defer(() => {
-    return this.db.open('iam_db');
-  });
+    private router: Router,
+    private storeCache: StoreCache,
+  ) {
+  }
 
   @Effect()
   LoadDocuments: Observable<Action> = ((coId = -1) => {
@@ -105,9 +101,10 @@ export class DocumentEffects {
         const docDic = selectDocumentEntitiesState(this.state.value);
         issueList.forEach(issue => {
           const meta = DocMeta.deSerialize(issue.body);
-          meta.number;
+          meta.number = meta.number || issue.number;
           meta.tags = issue.labels;
           meta.updateDate = meta.updateDate || new Date(issue.updated_at);
+          meta.createDate = meta.createDate || new Date(issue.created_at);
           meta._context = issue;
           const doc: Document = { number: issue.number, metaData: meta };
           if (meta) {

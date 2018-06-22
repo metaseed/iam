@@ -1,7 +1,6 @@
 import { DocMeta } from "./doc-meta";
 import { Issue,Content } from 'net-storage';
-
-export interface DocContent extends Pick<Content,'content'|'sha'> {}
+import { DocContent } from "./doc-content";
 
 interface _Document {
   metaData: DocMeta;

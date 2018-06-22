@@ -16,16 +16,17 @@ export class DocMeta {
 
   private constructor(
     public number: number,
+    public title: string,
     public version: Version,
     public createDate: Date, //utc time
-    public updateDate: Date,//utc time
-    public title: string,
+    public updateDate: Date, //utc time
     public summary: string,
     public imageData: string,
     public contentId: string, // sha of file
     public tags: any, // in issue as labels
     public format = 'md' // sufix
   ) {}
+
   private serialize(contentUrl: string) {
     return `
 <!-- type:iam
@@ -37,6 +38,7 @@ export class DocMeta {
 > please visit: **[${this.title}](${contentUrl})**
 `;
   }
+
   static getFirstLine(text) {
     var index = text.indexOf('\n');
     if (index === -1) index = undefined;
@@ -78,14 +80,25 @@ export class DocMeta {
     contentId: string,
     contentUrl: string,
     format: string,
-    createDate:Date
+    createDate: Date
   ) {
     const title = DocMeta.getTitle(content);
     const summary = DocMeta.getSummary(content);
     const picUrl = DocMeta.getFirstPicture(content);
     const version = DocMeta.getVersion(content);
     const tags = DocMeta.getTags(content);
-    const meta = new DocMeta(number, version,createDate, new Date(), title, summary, picUrl, contentId, format, tags);
+    const meta = new DocMeta(
+      number,
+      title,
+      version,
+      createDate,
+      new Date(),
+      summary,
+      picUrl,
+      contentId,
+      format,
+      tags
+    );
     const metaStr = meta.serialize(contentUrl);
     return { meta, metaStr };
   }
