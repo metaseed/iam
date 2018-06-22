@@ -36,9 +36,12 @@ export class DocSaveCoordinateService implements OnDestroy {
       this.docLoadedHandler(editor);
     });
 
-    this.editorService.contentChanged$.pipe(takeUntil(this.destroy$),combineLatest(this.editor$)).subscribe(
-      ([,editor])=>this.checkDirty(editor)
-    )
+    this.editorService.contentChanged$
+      .pipe(
+        takeUntil(this.destroy$),
+        combineLatest(this.editor$)
+      )
+      .subscribe(([, editor]) => this.checkDirty(editor));
 
     getActionStatus(DocumentEffectsActionTypes.Save, this.store)
       .pipe(
@@ -68,7 +71,11 @@ export class DocSaveCoordinateService implements OnDestroy {
   }
 
   private checkDirty(editor) {
-    this.isDirty$.next(!editor.getDoc().isClean(this.contentGeneration));
+    const oldValue = this.isDirty$.value;
+    const isDirty = !editor.getDoc().isClean(this.contentGeneration);
+    if (oldValue != isDirty) {
+      this.isDirty$.next(isDirty);
+    }
   }
 
   ngOnDestroy() {

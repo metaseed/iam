@@ -2,64 +2,40 @@ import { Observable, of } from 'rxjs';
 import picaLib from 'pica';
 
 const pica = picaLib();
+
+export class Version {
+  major: number;
+  minor: number;
+  revison: number;
+}
+
 export class DocMeta {
   static width: 400;
-  public updated_at: string; // in issues
-  public tags:any; // in issue as labels
-  public _context:any; // issue obj;
-  constructor(
-    public contentId: string, // sha of file
+
+  public _context: any; // issue obj;
+
+  private constructor(
+    public number: number,
+    public version: Version,
+    public createDate: Date, //utc time
+    public updateDate: Date,//utc time
     public title: string,
     public summary: string,
     public imageData: string,
-    public format = 'md', // sufix
+    public contentId: string, // sha of file
+    public tags: any, // in issue as labels
+    public format = 'md' // sufix
   ) {}
-
-  static serialize(
-    title: string,
-    summary: string,
-    imageUrl: string,
-    contentId: string,
-    contentUrl: string,
-    format:string
-  ) {
-    //         if (imageUrl) {
-    //             let o = Observable.bindCallback(DocMeta.convertImgToDataUrlViaCanvas);
-    //             return o(imageUrl, 'image/png', 100)
-    //                 // .catch(e => {
-    //                 //     return Observable.of({});
-    //                 // })
-    //                 .map((v: string) => {
-    //                     let contentLink = contentUrl ? `[${contentUrl}](${contentUrl})` : '';
-    //                     return [`
-    // <!-- type:iam
-    //     {
-    //         "title": "${title}",
-    //         "summary": "${summary}",
-    //         "imageData":"${v}",
-    //         "contentId":"${contentId}"
-    //     }
-    // -->
-    //         ${contentLink}
-    // `, new DocMeta(contentId, title, summary, v)];
-    //                 });
-    //         }
-    return of([
-      `
+  private serialize(contentUrl: string) {
+    return `
 <!-- type:iam
-    {
-
-        "title": "${title}",
-        "summary": "${summary}",
-        "imageData":"${imageUrl}",
-        "contentId":"${contentId}",
-        "format":"${format}"
-    }
+    ${JSON.stringify(this, (key, value) => {
+      if (key.startsWith('_')) return undefined;
+      return value;
+    })}
 -->
-> please visit: **[${title}](${contentUrl})**
-        `,
-      new DocMeta(contentId, title, summary, imageUrl,format)
-    ]);
+> please visit: **[${this.title}](${contentUrl})**
+`;
   }
   static getFirstLine(text) {
     var index = text.indexOf('\n');
@@ -87,11 +63,31 @@ export class DocMeta {
     if (r && r[1]) return r[1];
     return '';
   }
-  static serializeContent(content: string, contentId: string, contentUrl: string,format:string) {
-    let header = DocMeta.getTitle(content);
-    let summary = DocMeta.getSummary(content);
-    let picUrl = DocMeta.getFirstPicture(content);
-    return DocMeta.serialize(header, summary, picUrl, contentId, contentUrl,format);
+
+  private static getVersion(content: string) {
+    return undefined;
+  }
+
+  private static getTags(content: string) {
+    return undefined;
+  }
+
+  static serializeContent(
+    number: number,
+    content: string,
+    contentId: string,
+    contentUrl: string,
+    format: string,
+    createDate:Date
+  ) {
+    const title = DocMeta.getTitle(content);
+    const summary = DocMeta.getSummary(content);
+    const picUrl = DocMeta.getFirstPicture(content);
+    const version = DocMeta.getVersion(content);
+    const tags = DocMeta.getTags(content);
+    const meta = new DocMeta(number, version,createDate, new Date(), title, summary, picUrl, contentId, format, tags);
+    const metaStr = meta.serialize(contentUrl);
+    return { meta, metaStr };
   }
 
   static deSerialize(metaData: string) {

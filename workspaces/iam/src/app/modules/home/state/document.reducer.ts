@@ -10,7 +10,7 @@ export interface State extends EntityState<Document> {
   actionStatus?: DocumentActionStatus,
 }
 
-export const adapter: EntityAdapter<Document> = createEntityAdapter<Document>({selectId:e=>e.number, sortComparer: (a: Document, b: Document)=> a.metaData && a.metaData.updated_at <  b.metaData.updated_at?1:-1});
+export const adapter: EntityAdapter<Document> = createEntityAdapter<Document>({selectId:e=>e.number, sortComparer: (a: Document, b: Document)=> a.metaData && a.metaData.updateDate <  b.metaData.updateDate?1:-1});
 
 export const initialState: State = adapter.getInitialState({
   // additional entity state properties

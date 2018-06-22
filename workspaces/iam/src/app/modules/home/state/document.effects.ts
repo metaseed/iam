@@ -105,10 +105,11 @@ export class DocumentEffects {
         const docDic = selectDocumentEntitiesState(this.state.value);
         issueList.forEach(issue => {
           const meta = DocMeta.deSerialize(issue.body);
-          meta.updated_at = issue.updated_at;
+          meta.number;
           meta.tags = issue.labels;
+          meta.updateDate = meta.updateDate || new Date(issue.updated_at);
           meta._context = issue;
-          const doc:Document = {number:issue.number,metaData:meta};
+          const doc: Document = { number: issue.number, metaData: meta };
           if (meta) {
             docList.push(doc);
           }
@@ -300,15 +301,18 @@ export class DocumentEffects {
         return repo.newFile(`${DocService.FolderName}/${title}_${id}.${format}`, content).pipe(
           switchMap(file => {
             let url = getContentUrl(id, title);
-            return DocMeta.serializeContent(content, file.content.sha, url, format).pipe(
-              switchMap(([metaString, metaData]) => {
+            return of(
+              DocMeta.serializeContent(id, content, file.content.sha, url, format, new Date())
+            ).pipe(
+              switchMap(r => {
+                const { meta, metaStr } = r;
                 let data: EditIssueParams = {
                   title: title,
-                  body: <string>metaString
+                  body: metaStr
                 };
                 return repo.issue.edit(id, data).pipe(
                   map((doc: Document) => {
-                    doc.metaData = <DocMeta>metaData;
+                    doc.metaData = meta;
                     this.store.dispatch(
                       new UpdateDocument({
                         collectionDocument: { id: doc.number, changes: <any>doc }
@@ -349,11 +353,20 @@ export class DocumentEffects {
       .pipe(
         switchMap(file => {
           let url = getContentUrl(doc.number, newTitle);
-          return DocMeta.serializeContent(content, file.content.sha, url, format).pipe(
-            switchMap(([metaString, metaData]) => {
+          return of(
+            DocMeta.serializeContent(
+              doc.number,
+              content,
+              file.content.sha,
+              url,
+              format,
+              doc.metaData.createDate
+            )
+          ).pipe(
+            switchMap(({ meta, metaStr }) => {
               let data: EditIssueParams = {
                 title: newTitle,
-                body: <string>metaString
+                body: metaStr
               };
               return repo.issue.edit(doc.number, data).pipe(
                 tap(d => {
@@ -368,7 +381,7 @@ export class DocumentEffects {
                   }
                 }),
                 map(a => {
-                  doc.metaData = <DocMeta>metaData;
+                  doc.metaData = meta;
                   this.store.dispatch(
                     new UpdateDocument({
                       collectionDocument: { id: doc.number, changes: <any>doc }

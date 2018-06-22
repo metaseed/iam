@@ -26,7 +26,7 @@ export class DatabaseCacheService implements ICache {
           if (c < (pageIndex+1)*pageSize) {
 
             if (this.nextLevelCache) {
-              // this.nextLevelCache.
+                this.nextLevelCache.readDocMetaByPage(pageIndex,pageSize).subscribe()
             }
             isEnd = true;
           }
