@@ -12,7 +12,7 @@ import {
 } from './document.effects.actions';
 import { LoadDocuments, SetDocumentsMessage, DeleteDocument } from './document.actions';
 import { GithubStorage, Repository, EditIssueParams, Issue, GithubCache } from 'net-storage';
-import { switchMap, catchError, map, tap, take, retry, combineLatest } from 'rxjs/operators';
+import { switchMap, catchError, map, tap, take, retry, combineLatest, last } from 'rxjs/operators';
 import { DocMeta, Document } from 'core';
 import {
   selectDocumentEntitiesState,
@@ -24,9 +24,8 @@ import {
   DocumentEffectsNew,
   DocumentEffectsSave,
   UpsertDocuments,
-  SetPageInfo,
-  selectDocumensPageInfoState,
-  PageInfo
+  selectKeyRangeLowState,
+  selectKeyRangeHighState
 } from 'app/modules/home/state';
 import { DocService } from '../services/doc.service';
 import { format } from 'util';
@@ -34,7 +33,7 @@ import { base64Encode } from 'core';
 import { MatSnackBar } from '@angular/material';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { State, selectDocumentPageInfo } from './document.reducer';
+import { State, selectDocumentsKeyRangeHigh } from './document.reducer';
 import { HttpResponse } from '@angular/common/http';
 import { StoreCache } from 'core';
 
@@ -48,83 +47,44 @@ export class DocumentEffects {
     private store: Store<State>,
     private location: Location,
     private router: Router,
-    private storeCache: StoreCache,
-  ) {
-  }
+    private storeCache: StoreCache
+  ) {}
 
   @Effect()
   LoadDocuments: Observable<Action> = ((coId = -1) => {
-    let pageInfo: PageInfo;
-    let isLoadMore: boolean;
+    let keyRangeHigh: number;
+    let keyRangeLow: number;
+    let isBelowRange: boolean;
+
     return this.actions$.pipe(
       ofType<DocumentEffectsLoad>(DocumentEffectsActionTypes.Load),
       tap(action => {
-        pageInfo = selectDocumensPageInfoState(this.state.value);
-        isLoadMore = action.payload.isLoadMore;
+        keyRangeHigh = selectKeyRangeHighState(this.state.value);
+        keyRangeLow = selectKeyRangeLowState(this.state.value);
+        isBelowRange = action.payload.isBelowRange;
+
         this.store.dispatch(
           new SetDocumentsMessage({
             action: DocumentEffectsActionTypes.Load,
             status: ActionStatus.Start,
-            context: { isLoadMore },
             corelationId: (coId = Date.now())
           })
         );
       }),
-      combineLatest(this.storage.init()),
-      switchMap(([a, repo]) => {
-        if (!isLoadMore) return repo.issue.listWithResponse('open');
-        else {
-          if (pageInfo.nextLink) return repo.issue.listMore(pageInfo.nextLink);
-          else return of('end of the document list');
-        }
-      }),
-      map((resp: HttpResponse<Issue[]> | string) => {
-        if (typeof resp === 'string') {
-          return new SetDocumentsMessage({
-            status: ActionStatus.Success,
-            action: DocumentEffectsActionTypes.Load,
-            corelationId: coId,
-            context: { isLoadMore, end: true },
-            message: resp
-          });
-        }
-        const link = resp.headers.get('Link');
-        const next = link.split(',').filter(e => e.endsWith('rel="next"'));
-        if (next.length !== 0) {
-          const nextLink = next[0].match(/ *<([^>]+)/)[1];
-          this.store.dispatch(new SetPageInfo({ nextLink }));
-        } else {
-          this.store.dispatch(new SetPageInfo({ nextLink: '' }));
-        }
-        const issueList = resp.body;
-        let docList = new Array<Document>();
-        const docDic = selectDocumentEntitiesState(this.state.value);
-        issueList.forEach(issue => {
-          const meta = DocMeta.deSerialize(issue.body);
-          meta.number = meta.number || issue.number;
-          meta.tags = issue.labels;
-          meta.updateDate = meta.updateDate || new Date(issue.updated_at);
-          meta.createDate = meta.createDate || new Date(issue.created_at);
-          meta._context = issue;
-          const doc: Document = { number: issue.number, metaData: meta };
-          if (meta) {
-            docList.push(doc);
-          }
-          const num = issue.number;
-          if (docDic[num]) {
-            doc.content = docDic[num].content;
-          }
-        });
-        if (docList.length) {
-          this.store.dispatch(new UpsertDocuments({ collectionDocuments: docList }));
-        }
-        return new SetDocumentsMessage({
-          status: ActionStatus.Success,
-          action: DocumentEffectsActionTypes.Load,
-          corelationId: coId,
-          context: { isLoadMore },
-          message: 'documents loaded'
-        });
+      switchMap(_ => {
+        const key = isBelowRange ? keyRangeLow : keyRangeHigh;
+        return this.storeCache.readBulkDocMeta(key, isBelowRange).pipe(
+          last(),
+          map(
+            _ =>
+              new SetDocumentsMessage({
+                status: ActionStatus.Success,
+                action: DocumentEffectsActionTypes.Load,
+                corelationId: coId,
+                message: 'documents loaded'
+              })
+          )
+        );
       }),
       catchError((err, caught) => {
         this.store.dispatch(
@@ -132,7 +92,6 @@ export class DocumentEffects {
             status: ActionStatus.Fail,
             action: DocumentEffectsActionTypes.Load,
             corelationId: coId,
-            context: { isLoadMore },
             message: err
           })
         );

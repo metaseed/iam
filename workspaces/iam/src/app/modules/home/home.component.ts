@@ -109,7 +109,7 @@ export class HomeComponent {
   ) {}
 
   private refresh() {
-    this.store.dispatch(new DocumentEffectsLoad());
+    this.store.dispatch(new DocumentEffectsLoad({isBelowRange:false}));
   }
 
   private panToRefresh() {
@@ -140,7 +140,7 @@ export class HomeComponent {
           !refreshStarted &&
           startY - y > PAN_ACTION_DELTY
         ) {
-          this.store.dispatch(new DocumentEffectsLoad({ isLoadMore: true }));
+          this.store.dispatch(new DocumentEffectsLoad({ isBelowRange:true }));
           refreshStarted = true;
         }
       },

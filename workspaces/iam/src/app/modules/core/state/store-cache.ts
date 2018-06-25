@@ -21,7 +21,7 @@ export class StoreCache implements ICache {
     private state: StoreState<State>
   ) {}
 
-  readBulkDocMeta(key: number, isBelowTheKey = true): Observable<DocMeta[]> {
+  readBulkDocMeta(key: number, isBelowTheKey = true) {
     return this.nextLevelCache.readBulkDocMeta(key, isBelowTheKey).pipe(
       tap(metaArray => {
         if (metaArray[0] && metaArray[0].isDeleted) {

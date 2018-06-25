@@ -1,8 +1,8 @@
 import { Database } from './database-engine';
 import { Injectable } from '@angular/core';
 import { Document, DocMeta } from 'core';
-import { Observable, throwError, combineLatest, of, from } from 'rxjs';
-import { toArray, tap, switchMap, concat, map } from 'rxjs/operators';
+import { Observable, throwError, combineLatest, of, from,concat } from 'rxjs';
+import { toArray, tap, switchMap, map } from 'rxjs/operators';
 import { ICache, DataTables } from 'core';
 import { GithubCache } from 'net-storage';
 
@@ -13,6 +13,14 @@ export class DatabaseCache implements ICache {
   constructor(private db: Database, public nextLevelCache: GithubCache) {}
 
   readBulkDocMeta(key: number, isBelowTheKey: boolean): Observable<DocMeta[]> {
+    let refreshFirstPage = false;
+    if(!isBelowTheKey) {
+      if(key === Number.MAX_VALUE) {
+        /// refresh the first page
+        refreshFirstPage = true;
+      }
+    }
+    // if key === undefined: initial fetch get from the max num
     const keyRange = isBelowTheKey
       ? IDBKeyRange.upperBound(key)
       : IDBKeyRange.lowerBound(key, true);
@@ -56,7 +64,11 @@ export class DatabaseCache implements ICache {
         return from([docMetaDelete, docMetaUpsert]);
       })
     );
-    return FromDB$.pipe(concat(update$));
+
+    if(refreshFirstPage) {
+      return update$;
+    }
+    return concat(FromDB$,update$);
   }
 }
 // todo: up low key state value;

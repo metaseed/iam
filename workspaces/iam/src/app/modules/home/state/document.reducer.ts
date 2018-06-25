@@ -1,26 +1,32 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import { Document } from 'core';
-import { DocumentActions, DocumentActionTypes, PageInfo } from './document.actions';
-import { DocumentEffectsActionTypes, DocumentActionStatus, ActionStatus } from './document.effects.actions';
+import { DocumentActions, DocumentActionTypes} from './document.actions';
+import {
+  DocumentEffectsActionTypes,
+  DocumentActionStatus,
+  ActionStatus
+} from './document.effects.actions';
 
 export interface State extends EntityState<Document> {
   // additional entities state properties
   currentDocumentId: number;
-  pageInfo:PageInfo
-  actionStatus?: DocumentActionStatus,
+  actionStatus?: DocumentActionStatus;
+  keyRangeHigh: number; // undefined:initial, Number.MAX_VALUE highest number, no newest
+  keyRangeLow?: number;  // undefined: lowest number, no oldest
 }
 
-export const adapter: EntityAdapter<Document> = createEntityAdapter<Document>({selectId:e=>e.number, sortComparer: (a: Document, b: Document)=> a.metaData && a.metaData.updateDate <  b.metaData.updateDate?1:-1});
+export const adapter: EntityAdapter<Document> = createEntityAdapter<Document>({
+  selectId: e => e.number,
+  sortComparer: (a: Document, b: Document) =>
+    a.metaData && a.metaData.updateDate < b.metaData.updateDate ? 1 : -1
+});
 
 export const initialState: State = adapter.getInitialState({
   // additional entity state properties
   currentDocumentId: undefined,
-  pageInfo:{nextLink:undefined}
+  keyRangeHigh:undefined
 });
-export function reducer(
-  state = initialState,
-  action: DocumentActions
-): State {
+export function reducer(state = initialState, action: DocumentActions): State {
   switch (action.type) {
     case DocumentActionTypes.AddDocument: {
       return adapter.addOne(action.payload.collectionDocument, state);
@@ -66,10 +72,14 @@ export function reducer(
     }
 
     case DocumentActionTypes.SetDocumentStatus: {
-      return {...state, actionStatus:action.payload}
+      return { ...state, actionStatus: action.payload };
     }
-    case DocumentActionTypes.SetPageInfo: {
-      return {...state, pageInfo:action.payload}
+    case DocumentActionTypes.SetKeyRangeHigh: {
+      return { ...state,  ...action.payload };
+    }
+
+    case DocumentActionTypes.SetKeyRangeLow: {
+      return { ...state,  ...action.payload };
     }
 
     default: {
@@ -78,13 +88,9 @@ export function reducer(
   }
 }
 
-export const {
-  selectIds,
-  selectEntities,
-  selectAll,
-  selectTotal,
-} = adapter.getSelectors();
+export const { selectIds, selectEntities, selectAll, selectTotal } = adapter.getSelectors();
 
 export const selectCurrentDocumentId = (state: State) => state.currentDocumentId;
-export const selectDocumentActionStatus = (state:State) => state.actionStatus;
-export const selectDocumentPageInfo = (state:State) => state.pageInfo;
+export const selectDocumentActionStatus = (state: State) => state.actionStatus;
+export const selectDocumentsKeyRangeLow = (state: State) => state.keyRangeLow;
+export const selectDocumentsKeyRangeHigh = (state: State) => state.keyRangeHigh;

@@ -15,7 +15,7 @@ export enum DocumentEffectsActionTypes {
 
 export class DocumentEffectsLoad implements Action {
   readonly type = DocumentEffectsActionTypes.Load;
-  constructor(public payload={isLoadMore:false}){}
+  constructor(public payload={isBelowRange:true}){}
 }
 export class DocumentEffectsDelete implements Action {
   readonly type = DocumentEffectsActionTypes.Delete;

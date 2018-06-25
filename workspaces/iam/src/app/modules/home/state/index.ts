@@ -44,10 +44,17 @@ export const selectDocumentActionStatusState = createSelector(
   selectDocumentState,
   fromDocument.selectDocumentActionStatus
 );
-export const selectDocumensPageInfoState = createSelector(
+
+export const selectKeyRangeHighState = createSelector(
   selectDocumentState,
-  fromDocument.selectDocumentPageInfo
+  fromDocument.selectDocumentsKeyRangeHigh
 );
+
+export const selectKeyRangeLowState = createSelector(
+  selectDocumentState,
+  fromDocument.selectDocumentsKeyRangeLow
+);
+
 export const getDocumentByIdSeletor = (id: number) => {
   return createSelector(selectDocumentEntitiesState, entities => entities[id]);
 };

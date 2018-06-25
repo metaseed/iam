@@ -21,7 +21,12 @@ export class GithubCache implements ICache {
 
   nextLevelCache: ICache;
 
+  /// (...,key] (key,...]
   readBulkDocMeta(key: number, isBulkBelowTheKey: boolean): Observable<DocMeta[]> {
+    if(key === undefined || key === Number.MAX_VALUE) {
+      this.highestKey = undefined;
+    }
+
     return new Observable(observer => {
       const subscription = new Subscription();
       let page: number;
@@ -95,8 +100,8 @@ export class GithubCache implements ICache {
       const isInLastPage = isLastPage(page);
 
       if (isInFirstPage) {
+        // only get first page(page1)
         if (!isBulkBelowTheKey || keyNearPageFloor) {
-          // only get first page(page1)
           if (page1Observable) {
             const sub = page1Observable.subscribe(undefined, undefined, () => observer.complete());
             subscription.add(sub);
