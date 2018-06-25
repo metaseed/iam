@@ -1,5 +1,5 @@
 import { Observable, Observer, Subject, from, of } from 'rxjs';
-import { mergeMap, tap, share, shareReplay } from 'rxjs/operators';
+import { mergeMap, tap, share, shareReplay, filter } from 'rxjs/operators';
 import { InjectionToken, Inject, Injectable, NgModule, ModuleWithProviders } from '@angular/core';
 // ngrx/db 2.2.0-beta.0 modified to support rxjs 6
 
@@ -133,8 +133,21 @@ export class Database {
     });
   }
 
-  upsert<T>(storeName: string, records: T[], notify: boolean = true): Observable<T> {
-    const write$ = this.executeWrite<T>(storeName, 'put', records);
+  upsert<T>(
+    storeName: string,
+    records: T[],
+    notify: boolean = true,
+    predicate: (T) => boolean = undefined
+  ): Observable<T> {
+    const write$ = this.executeWrite<T>(storeName, 'put', records, predicate);
+
+    return write$.pipe(
+      tap((payload: T) => (notify ? this.changes.next({ type: DB_INSERT, payload }) : {}))
+    );
+  }
+
+  deleteBulk<T>(storeName: string, records: Array<T>, notify: boolean = true) {
+    const write$ = this.executeWrite<T>(storeName, 'delete', records,undefined);
 
     return write$.pipe(
       tap((payload: T) => (notify ? this.changes.next({ type: DB_INSERT, payload }) : {}))
@@ -287,7 +300,12 @@ export class Database {
     );
   }
 
-  executeWrite<T>(storeName: string, actionName: string, records: T[]): Observable<T> {
+  executeWrite<T>(
+    storeName: string,
+    actionName: string,
+    records: T[],
+    predicate: (T) => boolean
+  ): Observable<T> {
     const changes = this.changes;
     const open$ = this.open(this._schema.name);
 
@@ -327,7 +345,13 @@ export class Database {
           };
 
           let requestSubscriber = from(records)
-            .pipe(mergeMap(makeRequest))
+            .pipe(
+              filter(record => {
+                if (predicate) return predicate(record);
+                return true;
+              }),
+              mergeMap(makeRequest)
+            )
             .subscribe(txnObserver);
 
           return () => {

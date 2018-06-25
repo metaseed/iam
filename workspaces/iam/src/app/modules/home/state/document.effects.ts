@@ -411,6 +411,7 @@ export class DocumentEffects {
 
     this.location.go(url);
   }
+
   @Effect()
   DeleteDocument: Observable<Action> = ((coId = Date.now()) =>
     this.actions$.pipe(

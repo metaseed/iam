@@ -24,7 +24,8 @@ export class DocMeta {
     public imageData: string,
     public contentId: string, // sha of file
     public tags: any, // in issue as labels
-    public format = 'md' // sufix
+    public format = 'md', // sufix
+    public isDeleted = false
   ) {}
 
   private serialize(contentUrl: string) {
@@ -96,8 +97,8 @@ export class DocMeta {
       summary,
       picUrl,
       contentId,
-      format,
-      tags
+      tags,
+      format
     );
     const metaStr = meta.serialize(contentUrl);
     return { meta, metaStr };
