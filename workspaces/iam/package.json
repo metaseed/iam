@@ -74,7 +74,7 @@
     "pica": "^4.0.1",
     "prismjs": "^1.13.0",
     "quill": "^1.3.6",
-    "rxjs": "^6.1.0",
+    "rxjs": "^6.2.1",
     "zone.js": "^0.8.19"
   },
   "devDependencies": {

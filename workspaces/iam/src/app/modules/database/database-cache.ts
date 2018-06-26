@@ -1,8 +1,8 @@
-import { Database } from './database-engine';
+import { Database, ModifyAction } from './database-engine';
 import { Injectable } from '@angular/core';
 import { Document, DocMeta } from 'core';
 import { Observable, throwError, combineLatest, of, from,concat } from 'rxjs';
-import { toArray, tap, switchMap, map } from 'rxjs/operators';
+import { toArray, tap, switchMap, map, count } from 'rxjs/operators';
 import { ICache, DataTables } from 'core';
 import { GithubCache } from 'net-storage';
 
@@ -30,45 +30,43 @@ export class DatabaseCache implements ICache {
       .query<DocMeta>(DataTables.DocumentMeta, keyRange, dir, DB_PAGE_SIZE)
       .pipe(toArray());
 
+      const docMetaUpsert = new Array<DocMeta>();
+      const docMetaDelete = new Array<DocMeta>();
     // only notify the change in the later array: add, remove, modify
-    const fromNext$ = this.nextLevelCache.readBulkDocMeta(key, isBelowTheKey);
+    const fromNext$ = this.nextLevelCache.readBulkDocMeta(key, isBelowTheKey).pipe(
+      switchMap(records => {
 
-    const update$ = combineLatest(FromDB$, fromNext$).pipe(
-      switchMap(([arrayInDB, arrayFromNet]) => {
-        const docMetaUpsert = new Array<DocMeta>();
-        const docMetaDelete = new Array<DocMeta>();
-
-        arrayFromNet.forEach(fromNet => {
-          if (fromNet.isDeleted) {
-            const indb = arrayInDB.find(v => v.number === fromNet.number);
-            if (indb) docMetaDelete.push(indb);
+        return this.db.executeModify(DataTables.DocumentMeta,records,(dbRecord,record)=>{
+          if(record.isDeleted){
+            if(dbRecord) {
+              docMetaDelete.push(dbRecord);
+              return ModifyAction.delete;
+            }
+            else {
+              return ModifyAction.none;
+            }
           } else {
-            const indb = arrayInDB.find(v => v.number === fromNet.number);
-            if (indb) {
-              if (indb.updateDate < fromNet.updateDate) {
-                docMetaUpsert.push(indb);
+            if(dbRecord) {
+              if(dbRecord.updateDate<record.updateDate) {
+                docMetaUpsert.push(record);
+                return ModifyAction.put;
               }
-            } else {
-              docMetaUpsert.push(indb);
+            }else {
+              docMetaUpsert.push(record);
+              return ModifyAction.add;
             }
           }
         });
 
-        this.db
-          .upsert(DataTables.DocumentMeta, docMetaUpsert)
-          .subscribe(a => console.log('writeDB:' + a.number));
-        this.db
-          .delete(DataTables.DocumentMeta, docMetaDelete)
-          .subscribe(a => console.log('deleted:' + a.number));
-
-        return from([docMetaDelete, docMetaUpsert]);
-      })
+      }),
+      count(),
+      switchMap(_=>from([docMetaDelete, docMetaUpsert]))
     );
 
     if(refreshFirstPage) {
-      return update$;
+      return fromNext$;
     }
-    return concat(FromDB$,update$);
+    return concat(FromDB$,fromNext$);
   }
 }
 // todo: up low key state value;

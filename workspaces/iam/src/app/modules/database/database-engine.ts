@@ -15,6 +15,12 @@ export const DB_INSERT = 'DB_INSERT';
 
 export const DatabaseBackend = new InjectionToken('IndexedDBBackend');
 export const IDB_SCHEMA = new InjectionToken('IDB_SCHEMA');
+export enum ModifyAction {
+  put,
+  add,
+  delete,
+  none
+}
 
 export interface DBUpgradeHandler {
   (db: IDBDatabase): void;
@@ -147,7 +153,7 @@ export class Database {
   }
 
   deleteBulk<T>(storeName: string, records: Array<T>, notify: boolean = true) {
-    const write$ = this.executeWrite<T>(storeName, 'delete', records,undefined);
+    const write$ = this.executeWrite<T>(storeName, 'delete', records, undefined);
 
     return write$.pipe(
       tap((payload: T) => (notify ? this.changes.next({ type: DB_INSERT, payload }) : {}))
@@ -352,6 +358,104 @@ export class Database {
               }),
               mergeMap(makeRequest)
             )
+            .subscribe(txnObserver);
+
+          return () => {
+            requestSubscriber.unsubscribe();
+            txn.removeEventListener(IDB_COMPLETE, onTxnComplete);
+            txn.removeEventListener(IDB_ERROR, onTxnError);
+          };
+        });
+      })
+    );
+  }
+
+  executeModify<T>(
+    storeName: string,
+    records: T[],
+    actionMap: (recordInDB: T, record: T) => ModifyAction
+  ): Observable<T> {
+    const changes = this.changes;
+    const open$ = this.open(this._schema.name);
+
+    return open$.pipe(
+      mergeMap(db => {
+        return new Observable((txnObserver: Observer<T>) => {
+          const recordSchema = this._schema.stores[storeName];
+          const mapper = this._mapRecord(recordSchema);
+          const txn = db.transaction([storeName], IDB_TXN_READWRITE);
+          const objectStore = txn.objectStore(storeName);
+
+          const onTxnError = (err: any) => txnObserver.error(err);
+          const onTxnComplete = () => txnObserver.complete();
+
+          txn.addEventListener(IDB_COMPLETE, onTxnComplete);
+          txn.addEventListener(IDB_ERROR, onTxnError);
+
+          const makeRequest = record => {
+            return new Observable((reqObserver: Observer<T>) => {
+              let req: IDBRequest;
+              let key = recordSchema.primaryKey;
+              if (key) {
+                req = objectStore.get(record[key]);
+              } else {
+                key = record['$key'];
+                req = objectStore.get(key);
+              }
+
+              req.addEventListener(IDB_ERROR, (err: any) => {
+                reqObserver.error(err);
+              });
+              req.addEventListener(IDB_SUCCESS, _ => {
+                const indb = req.result;
+                const action = actionMap(indb, record);
+                let request: IDBRequest;
+
+                switch (action) {
+                  case ModifyAction.add:
+                  case ModifyAction.put:
+                    if (recordSchema.primaryKey) {
+                      request = (<any>objectStore[action])(record);
+                    } else {
+                      let $key = record['$key'];
+                      let $record = Object.assign({}, record);
+                      delete $record.key;
+                      request = (<any>objectStore[action])($record, $key);
+                    }
+
+                    request.addEventListener(IDB_SUCCESS, () => {
+                      let $key = request.result;
+                      reqObserver.next(mapper({ $key, record }));
+                    });
+                    request.addEventListener(IDB_ERROR, (err: any) => {
+                      reqObserver.error(err);
+                    });
+                    break;
+
+                  case ModifyAction.delete:
+                    key = recordSchema.primaryKey || record['$key'];
+                    request = objectStore.delete(indb[key]);
+                    request.onerror = err => reqObserver.error(err);
+                    request.onsuccess = _ => {
+                      console.log('delete in db');
+                      reqObserver.next(indb);
+                    };
+                    break;
+
+                  case ModifyAction.none:
+                    console.log('no action in db.');
+                    break;
+
+                  default:
+                    throw new Error('action type error, must be one of ModifyAction value.');
+                    break;
+                }
+              });
+            });
+          };
+
+          let requestSubscriber = from(records)
+            .pipe(mergeMap(makeRequest))
             .subscribe(txnObserver);
 
           return () => {

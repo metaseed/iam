@@ -1,8 +1,8 @@
 import { ICache, DataTables, DocMeta } from 'core';
-import { Observable, throwError, Subscription, concat, asyncScheduler } from 'rxjs';
+import { Observable, throwError, Subscription, concat, asyncScheduler, of } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { GithubStorage } from './github';
-import { switchMap, map, toArray } from 'rxjs/operators';
+import { switchMap, map, toArray, count, startWith } from 'rxjs/operators';
 import { Document } from 'core';
 import { AsyncScheduler } from 'rxjs/internal/scheduler/AsyncScheduler';
 import { Issue } from './issues/issue';
@@ -23,125 +23,111 @@ export class GithubCache implements ICache {
 
   /// (...,key] (key,...]
   readBulkDocMeta(key: number, isBulkBelowTheKey: boolean): Observable<DocMeta[]> {
-    if(key === undefined || key === Number.MAX_VALUE) {
+    if (key === undefined || key === Number.MAX_VALUE) {
       this.highestKey = undefined;
     }
+    let page: number;
+    let keyNearPageFloor: boolean;
 
-    return new Observable(observer => {
-      const subscription = new Subscription();
-      let page: number;
-      let keyNearPageFloor: boolean;
-
-      const getMetaData = (
-        page,
-        isBelowTheKey,
-        isNearPageFloor = undefined /*undefined: only this page*/
-      ) => {
-        const mapIssueToMeta = (issue: Issue, i) => {
-          const meta = DocMeta.deSerialize(issue.body);
-          meta.number = meta.number || issue.number;
-          meta.tags = issue.labels;
-          meta.updateDate = meta.updateDate || new Date(issue.updated_at);
-          meta.createDate = meta.createDate || new Date(issue.created_at);
-          meta.isDeleted =  !!issue.closed_at;
-          meta._context = issue;
-          if (i === 0 && page === 1) {
-            this.highestKey = meta.number;
-          }
-          return meta;
-        };
-
-        const getPageData = page =>
-          this.githubStorage.init().pipe(
-            switchMap(repo => {
-              return repo.issue.list('all', page, GITHUB_PAGE_SIZE);
-            }),
-            map(mapIssueToMeta),
-            toArray()
-          );
-
-        const d = getPageData(page);
-        if (isNearPageFloor === undefined) {
-          return d;
+    const getMetaData = (
+      page,
+      isBelowTheKey,
+      isNearPageFloor = undefined /*undefined: only this page*/
+    ) => {
+      const mapIssueToMeta = (issue: Issue, i) => {
+        const meta = DocMeta.deSerialize(issue.body);
+        meta.number = meta.number || issue.number;
+        meta.tags = issue.labels;
+        meta.updateDate = meta.updateDate || new Date(issue.updated_at);
+        meta.createDate = meta.createDate || new Date(issue.created_at);
+        meta.isDeleted = !!issue.closed_at;
+        meta._context = issue;
+        if (i === 0 && page === 1) {
+          this.highestKey = meta.number;
         }
-        if (isBelowTheKey && !isNearPageFloor) {
-          return concat(d, getPageData(page + 1));
-        }
-        if (!isBelowTheKey && isNearPageFloor) {
-          return concat(d, getPageData(page - 1));
-        }
-        return d;
+        return meta;
       };
 
-      const getPageNum = key => Math.floor((this.highestKey - key) / GITHUB_PAGE_SIZE) + 1; // index start from 1
-
-      const isNearPageFloor = (key, page) =>
-        (this.highestKey - key) / GITHUB_PAGE_SIZE + 1 - page < 0.5;
-
-      const isLastPage = page => page === Math.floor(this.highestKey / GITHUB_PAGE_SIZE);
-      const isFirstPage = page => page === 1;
-
-      let page1Observable: Observable<DocMeta[]>;
-
-      if (!this.highestKey) {
-        page = 1;
-        page1Observable = getMetaData(page, isBulkBelowTheKey);
-        const sub = page1Observable.subscribe(
-          docMetaArray => observer.next(docMetaArray),
-          err => observer.error(err)
+      const getPageData = page =>
+        this.githubStorage.init().pipe(
+          switchMap(repo => {
+            return repo.issue.list('all', page, GITHUB_PAGE_SIZE);
+          }),
+          map(mapIssueToMeta),
+          toArray()
         );
-        subscription.add(sub);
-      } else {
-        page = getPageNum(key);
-        keyNearPageFloor = isNearPageFloor(key, page);
+
+      const d = getPageData(page);
+      if (isNearPageFloor === undefined) {
+        return d;
       }
+      if (isBelowTheKey && !isNearPageFloor) {
+        return concat(d, getPageData(page + 1));
+      }
+      if (!isBelowTheKey && isNearPageFloor) {
+        return concat(d, getPageData(page - 1));
+      }
+      return d;
+    };
 
-      const isInFirstPage = isFirstPage(page);
-      const isInLastPage = isLastPage(page);
+    const getPageNum = (key, highestKey) => Math.floor((highestKey - key) / GITHUB_PAGE_SIZE) + 1; // index start from 1
 
-      if (isInFirstPage) {
-        // only get first page(page1)
-        if (!isBulkBelowTheKey || keyNearPageFloor) {
-          if (page1Observable) {
-            const sub = page1Observable.subscribe(undefined, undefined, () => observer.complete());
-            subscription.add(sub);
-            return subscription;
-          } else {
-            const subData = getMetaData(page, isBulkBelowTheKey).subscribe(observer);
-            subscription.add(subData);
+    const isNearPageFloor = (key, page, highestKey) =>
+      (highestKey - key) / GITHUB_PAGE_SIZE + 1 - page < 0.5;
+
+    const isLastPage = (page, highestKey) =>
+      page === Math.floor(this.highestKey / GITHUB_PAGE_SIZE);
+    const isFirstPage = page => page === 1;
+
+    const getHighestKey = () => {
+      if (!this.highestKey) {
+        return getMetaData(1, isBulkBelowTheKey).pipe(
+          map(a => {
+            return { highestKey: this.highestKey, metaArray: a };
+          })
+        );
+      }
+      return of({ highestKey: this.highestKey, metaArray: null });
+    };
+
+    return getHighestKey().pipe(
+      switchMap(({ highestKey, metaArray }) => {
+        page = getPageNum(key, highestKey);
+        keyNearPageFloor = isNearPageFloor(key, page, highestKey);
+        const isInFirstPage = isFirstPage(page);
+        const isInLastPage = isLastPage(page, highestKey);
+
+        if (isInFirstPage) {
+          // only get first page(page1)
+          if (!isBulkBelowTheKey || keyNearPageFloor) {
+            if (metaArray) {
+              return of(metaArray);
+            } else {
+              return getMetaData(page, isBulkBelowTheKey);
+            }
           }
         }
-      }
 
-      if (isInLastPage) {
-        if (isBulkBelowTheKey || !keyNearPageFloor) {
-          // only get last page
-          if (isInFirstPage && page1Observable) {
-            const sub = page1Observable.subscribe(undefined, undefined, () => observer.complete());
-            subscription.add(sub);
-            return subscription;
-          } else {
-            const subData = getMetaData(page, isBulkBelowTheKey).subscribe(observer);
-            subscription.add(subData);
+        if (isInLastPage) {
+          if (isBulkBelowTheKey || !keyNearPageFloor) {
+            // only get last page
+            if (isInFirstPage && metaArray) {
+              // only one page, so last is also first
+              return of(metaArray);
+            } else {
+              // get last page
+              return getMetaData(page, isBulkBelowTheKey);
+            }
           }
         }
-      }
 
-      if (page1Observable) {
-        const sub = page1Observable.subscribe(undefined, undefined, () => {
-          const subData = getMetaData(page, isBulkBelowTheKey, keyNearPageFloor).subscribe(
-            observer
-          );
-          subscription.add(subData);
-        });
-        subscription.add(sub);
-        return subscription;
-      }
+        if (metaArray) {
+          // with first page
+          return getMetaData(page, isBulkBelowTheKey, keyNearPageFloor).pipe(startWith(metaArray));
+        }
 
-      const subData = getMetaData(page, isBulkBelowTheKey, keyNearPageFloor).subscribe(observer);
-      subscription.add(subData);
-
-      return subscription;
-    });
+        return getMetaData(page, isBulkBelowTheKey, keyNearPageFloor);
+      })
+    );
   }
 }
