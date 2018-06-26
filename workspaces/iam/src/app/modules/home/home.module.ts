@@ -17,6 +17,8 @@ import * as fromState from './state';
 import { EffectsModule } from '@ngrx/effects';
 import { DocumentEffects } from './state/document.effects';
 import { DocDeleteComponent } from './doc-list/doc-delete/doc-delete.component';
+import { GithubStorageModule } from '../net-storage/github/github-storage.module';
+import { DatabaseModule } from 'database';
 const routes: Routes = [
   {
     path: 'docs',
@@ -30,6 +32,8 @@ const routes: Routes = [
     FormsModule,
     MaterialModule,
     NgSpinKitModule,
+    GithubStorageModule,
+    DatabaseModule.provideDB(),
     StoreModule.forFeature<fromState.DocsState>('docs', fromState.reducers ),
     EffectsModule.forFeature([DocumentEffects])
     //RouterModule.forChild(routes),

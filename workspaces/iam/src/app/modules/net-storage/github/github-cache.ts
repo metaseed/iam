@@ -21,6 +21,11 @@ export class GithubCache implements ICache {
 
   nextLevelCache: ICache;
 
+  init(nextLevelCache: ICache) {
+    this.nextLevelCache = nextLevelCache;
+    return this;
+  }
+
   /// (...,key] (key,...]
   readBulkDocMeta(key: number, isBulkBelowTheKey: boolean): Observable<DocMeta[]> {
     if (key === undefined || key === Number.MAX_VALUE) {

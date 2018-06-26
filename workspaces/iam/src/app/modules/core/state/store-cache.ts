@@ -15,11 +15,16 @@ import {
 export class StoreCache implements ICache {
   docMetaData: { hightKey: number; lowKey: number };
 
+  public nextLevelCache: ICache;
   constructor(
-    public nextLevelCache: DatabaseCache,
     private store: Store<State>,
     private state: StoreState<State>
   ) {}
+
+  init(nextLevelCache: ICache):ICache{
+    this.nextLevelCache = nextLevelCache;
+    return this;
+  }
 
   readBulkDocMeta(key: number, isBelowTheKey = true) {
     return this.nextLevelCache.readBulkDocMeta(key, isBelowTheKey).pipe(

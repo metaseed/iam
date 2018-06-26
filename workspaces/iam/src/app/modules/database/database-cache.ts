@@ -1,7 +1,7 @@
 import { Database, ModifyAction } from './database-engine';
 import { Injectable } from '@angular/core';
 import { Document, DocMeta } from 'core';
-import { Observable, throwError, combineLatest, of, from,concat } from 'rxjs';
+import { Observable, throwError, combineLatest, of, from, concat } from 'rxjs';
 import { toArray, tap, switchMap, map, count } from 'rxjs/operators';
 import { ICache, DataTables } from 'core';
 import { GithubCache } from 'net-storage';
@@ -10,12 +10,19 @@ const DB_PAGE_SIZE = 20;
 export interface IterableDocuments extends IterableIterator<Observable<Document>> {}
 @Injectable()
 export class DatabaseCache implements ICache {
-  constructor(private db: Database, public nextLevelCache: GithubCache) {}
+  public nextLevelCache: ICache;
+
+  constructor(private db: Database) {}
+
+  init(nextLevelCache: ICache) {
+    this.nextLevelCache = nextLevelCache;
+    return this;
+  }
 
   readBulkDocMeta(key: number, isBelowTheKey: boolean): Observable<DocMeta[]> {
     let refreshFirstPage = false;
-    if(!isBelowTheKey) {
-      if(key === Number.MAX_VALUE) {
+    if (!isBelowTheKey) {
+      if (key === Number.MAX_VALUE) {
         /// refresh the first page
         refreshFirstPage = true;
       }
@@ -30,43 +37,40 @@ export class DatabaseCache implements ICache {
       .query<DocMeta>(DataTables.DocumentMeta, keyRange, dir, DB_PAGE_SIZE)
       .pipe(toArray());
 
-      const docMetaUpsert = new Array<DocMeta>();
-      const docMetaDelete = new Array<DocMeta>();
+    const docMetaUpsert = new Array<DocMeta>();
+    const docMetaDelete = new Array<DocMeta>();
     // only notify the change in the later array: add, remove, modify
     const fromNext$ = this.nextLevelCache.readBulkDocMeta(key, isBelowTheKey).pipe(
       switchMap(records => {
-
-        return this.db.executeModify(DataTables.DocumentMeta,records,(dbRecord,record)=>{
-          if(record.isDeleted){
-            if(dbRecord) {
+        return this.db.executeModify(DataTables.DocumentMeta, records, (dbRecord, record) => {
+          if (record.isDeleted) {
+            if (dbRecord) {
               docMetaDelete.push(dbRecord);
               return ModifyAction.delete;
-            }
-            else {
+            } else {
               return ModifyAction.none;
             }
           } else {
-            if(dbRecord) {
-              if(dbRecord.updateDate<record.updateDate) {
+            if (dbRecord) {
+              if (dbRecord.updateDate < record.updateDate) {
                 docMetaUpsert.push(record);
                 return ModifyAction.put;
               }
-            }else {
+            } else {
               docMetaUpsert.push(record);
               return ModifyAction.add;
             }
           }
         });
-
       }),
       count(),
-      switchMap(_=>from([docMetaDelete, docMetaUpsert]))
+      switchMap(_ => from([docMetaDelete, docMetaUpsert]))
     );
 
-    if(refreshFirstPage) {
+    if (refreshFirstPage) {
       return fromNext$;
     }
-    return concat(FromDB$,fromNext$);
+    return concat(FromDB$, fromNext$);
   }
 }
 // todo: up low key state value;

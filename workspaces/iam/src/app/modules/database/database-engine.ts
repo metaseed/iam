@@ -448,7 +448,6 @@ export class Database {
 
                   default:
                     throw new Error('action type error, must be one of ModifyAction value.');
-                    break;
                 }
               });
             });

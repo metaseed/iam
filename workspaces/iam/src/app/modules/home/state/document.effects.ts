@@ -36,6 +36,7 @@ import { Router } from '@angular/router';
 import { State, selectDocumentsKeyRangeHigh } from './document.reducer';
 import { HttpResponse } from '@angular/common/http';
 import { StoreCache } from 'core';
+import { DatabaseCache } from 'database';
 
 @Injectable()
 export class DocumentEffects {
@@ -47,8 +48,12 @@ export class DocumentEffects {
     private store: Store<State>,
     private location: Location,
     private router: Router,
-    private storeCache: StoreCache
-  ) {}
+    private storeCache: StoreCache,
+    private dbCache:DatabaseCache,
+    private githubCache:GithubCache
+  ) {
+    storeCache.init(dbCache.init(githubCache.init(undefined)));
+  }
 
   @Effect()
   LoadDocuments: Observable<Action> = ((coId = -1) => {

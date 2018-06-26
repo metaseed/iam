@@ -13,6 +13,7 @@ import { ScrollService } from './services/scroll/scroll.service';
 import { ScrollSpyService } from './services/scroll/scroll-spy.service';
 import { ConfigService } from './config/config.service';
 import { Utilities } from './utils';
+import { StoreCache } from './state';
 @NgModule({
   imports: [CommonModule, HotkeyModule],
   declarations: [],
@@ -27,6 +28,7 @@ import { Utilities } from './utils';
     DialogService,
     ScrollService,
     ScrollSpyService,
+    StoreCache,
     Utilities
   ]
 })

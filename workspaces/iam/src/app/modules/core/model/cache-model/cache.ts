@@ -13,6 +13,8 @@ export interface ICache {
    * @param key
    * @param isBelowTheKey
    */
+  init(nextLevelCache: ICache):ICache;
+
   readBulkDocMeta(key: number, isBelowTheKey:boolean): Observable<DocMeta[]>;
   nextLevelCache: ICache;
 }

@@ -1,20 +1,18 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CoreModule } from 'core';
 import { DBSchema, Database, DatabaseBackend, getIDBFactory, IDB_SCHEMA } from './database-engine';
-import { schema } from './schema';
-
-
+import { schema as dbSchema } from './schema';
+import { DatabaseCache } from './database-cache';
 
 @NgModule({
-  providers: [Database, { provide: DatabaseBackend, useFactory: getIDBFactory }]
+  providers: [Database, DatabaseCache, { provide: DatabaseBackend, useFactory: getIDBFactory }]
 })
 export class DatabaseModule {
-  static provideDB(schema: DBSchema): ModuleWithProviders {
+  static provideDB(schema?: DBSchema): ModuleWithProviders {
+    if(schema) schema = dbSchema;
     return {
       ngModule: DatabaseModule,
-      providers: [{ provide: IDB_SCHEMA, useValue: schema }]
+      providers: [DatabaseCache,{ provide: IDB_SCHEMA, useValue: schema }]
     };
   }
 }
-
-
