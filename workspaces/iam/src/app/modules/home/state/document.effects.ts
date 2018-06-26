@@ -92,6 +92,7 @@ export class DocumentEffects {
         );
       }),
       catchError((err, caught) => {
+        console.error(err);
         this.store.dispatch(
           new SetDocumentsMessage({
             status: ActionStatus.Fail,
@@ -152,6 +153,7 @@ export class DocumentEffects {
         );
       }),
       catchError((err, caught) => {
+        console.error(err);
         this.store.dispatch(
           new SetDocumentsMessage({
             status: ActionStatus.Fail,
@@ -195,6 +197,7 @@ export class DocumentEffects {
         });
       }),
       catchError((err, caught) => {
+        console.error(err);
         this.store.dispatch(
           new SetDocumentsMessage({
             status: ActionStatus.Fail,
@@ -243,6 +246,7 @@ export class DocumentEffects {
         }
       }),
       catchError((err, caught) => {
+        console.error(err);
         this.store.dispatch(
           new SetDocumentsMessage({
             status: ActionStatus.Fail,
@@ -412,6 +416,7 @@ export class DocumentEffects {
         );
       }),
       catchError((err, caught) => {
+        console.error(err);
         this.store.dispatch(
           new SetDocumentsMessage({
             status: ActionStatus.Fail,

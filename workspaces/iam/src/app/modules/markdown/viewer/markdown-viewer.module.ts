@@ -11,8 +11,6 @@ import { RouterModule } from "@angular/router";
 import { MarkdownViewerContainerComponent } from "./markdown-viewer-container.component";
 import { NgSpinKitModule } from "ng-spin-kit";
 import { DocumentRef } from "core";
-import { ObservableMedia } from "@angular/flex-layout";
-import { TocComponent } from "./elements/toc/toc.component";
 import { ElementsModule } from "./elements/elements.module";
 import { TocService } from "./services/toc.service";
 import { Utilities } from "../../core/utils";

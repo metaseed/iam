@@ -39,18 +39,26 @@ export class GithubCache implements ICache {
       isBelowTheKey,
       isNearPageFloor = undefined /*undefined: only this page*/
     ) => {
-      const mapIssueToMeta = (issue: Issue, i) => {
-        const meta = DocMeta.deSerialize(issue.body);
-        meta.number = meta.number || issue.number;
-        meta.tags = issue.labels;
-        meta.updateDate = meta.updateDate || new Date(issue.updated_at);
-        meta.createDate = meta.createDate || new Date(issue.created_at);
-        meta.isDeleted = !!issue.closed_at;
-        meta._context = issue;
-        if (i === 0 && page === 1) {
-          this.highestKey = meta.number;
-        }
-        return meta;
+      const mapIssueToMeta = (issues: Issue[], i) => {
+        const docMetaArray = issues.map(issue => {
+          let meta: DocMeta;
+          if (!!issue.closed_at) {
+            meta = <DocMeta>{ number: issue.number };
+          } else {
+            meta = DocMeta.deSerialize(issue.body);
+            meta.number = meta.number || issue.number;
+            meta.tags = issue.labels;
+            meta.updateDate = meta.updateDate || new Date(issue.updated_at);
+            meta.createDate = meta.createDate || new Date(issue.created_at);
+            meta.isDeleted = !!issue.closed_at;
+          }
+          meta._context = issue;
+          if (i === 0 && page === 1) {
+            this.highestKey = meta.number;
+          }
+          return meta;
+        });
+        return docMetaArray;
       };
 
       const getPageData = page =>
@@ -58,8 +66,7 @@ export class GithubCache implements ICache {
           switchMap(repo => {
             return repo.issue.list('all', page, GITHUB_PAGE_SIZE);
           }),
-          map(mapIssueToMeta),
-          toArray()
+          map(mapIssueToMeta)
         );
 
       const d = getPageData(page);

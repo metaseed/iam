@@ -27,10 +27,11 @@ export class DatabaseCache implements ICache {
         refreshFirstPage = true;
       }
     }
-    // if key === undefined: initial fetch get from the max num
-    const keyRange = isBelowTheKey
-      ? IDBKeyRange.upperBound(key)
-      : IDBKeyRange.lowerBound(key, true);
+
+    let keyRange: IDBKeyRange =undefined; // initial fetch
+    if (key !== undefined) {
+      keyRange = isBelowTheKey ? IDBKeyRange.upperBound(key) : IDBKeyRange.lowerBound(key, true);
+    }
     const dir = isBelowTheKey ? 'next' : 'prev';
 
     const FromDB$ = this.db

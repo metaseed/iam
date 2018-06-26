@@ -11,8 +11,6 @@ import { DocumentMode } from '../../state/reducers/document';
 import { Store, select, State } from '@ngrx/store';
 import * as doc from '../../state/actions/document';
 import * as edit from '../../state/actions/edit';
-import { OnDestroy } from '@angular/core';
-import { ObservableMedia } from '@angular/flex-layout';
 import * as CodeMirror from 'codemirror';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';

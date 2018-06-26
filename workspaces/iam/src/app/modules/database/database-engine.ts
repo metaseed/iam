@@ -16,10 +16,10 @@ export const DB_INSERT = 'DB_INSERT';
 export const DatabaseBackend = new InjectionToken('IndexedDBBackend');
 export const IDB_SCHEMA = new InjectionToken('IDB_SCHEMA');
 export enum ModifyAction {
-  put,
-  add,
-  delete,
-  none
+  put = 'put',
+  add = 'add',
+  delete = 'delete',
+  none = 'none'
 }
 
 export interface DBUpgradeHandler {
@@ -69,8 +69,6 @@ export class Database {
       }
       this._createObjectStore(db, storeName, this._schema.stores[storeName]);
     }
-    observer.next(db);
-    observer.complete();
   }
 
   private _createObjectStore(db: IDBDatabase, key: string, schema: DBStore) {
@@ -394,14 +392,11 @@ export class Database {
 
           const makeRequest = record => {
             return new Observable((reqObserver: Observer<T>) => {
-              let req: IDBRequest;
               let key = recordSchema.primaryKey;
-              if (key) {
-                req = objectStore.get(record[key]);
-              } else {
+              if (!key) {
                 key = record['$key'];
-                req = objectStore.get(key);
               }
+              let req = objectStore.get(key);
 
               req.addEventListener(IDB_ERROR, (err: any) => {
                 reqObserver.error(err);

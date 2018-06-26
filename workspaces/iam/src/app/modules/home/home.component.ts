@@ -109,7 +109,7 @@ export class HomeComponent {
   ) {}
 
   private refresh() {
-    this.store.dispatch(new DocumentEffectsLoad({isBelowRange:false}));
+    this.store.dispatch(new DocumentEffectsLoad({isBelowRange:true}));
   }
 
   private panToRefresh() {

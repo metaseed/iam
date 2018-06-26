@@ -111,7 +111,8 @@ export class DocMeta {
     try {
       let meta = <DocMeta>JSON.parse(jsonString[1]);
       return meta;
-    } catch {
+    } catch(err) {
+      console.error(err)
       return null;
     }
   }

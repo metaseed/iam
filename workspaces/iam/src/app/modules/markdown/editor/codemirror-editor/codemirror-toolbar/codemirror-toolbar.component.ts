@@ -11,7 +11,6 @@ import { State } from '../../../state';
 import * as doc from '../../../state/actions/document';
 import * as edit from '../../../state/actions/edit';
 import { OnDestroy } from '@angular/core';
-import { ObservableMedia } from '@angular/flex-layout';
 import * as fromMarkdown from '../../../state';
 import * as CodeMirror from 'codemirror';
 import { HtmlParser } from '@angular/compiler';

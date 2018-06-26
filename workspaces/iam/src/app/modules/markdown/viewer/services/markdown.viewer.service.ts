@@ -50,7 +50,6 @@ import { Router } from '@angular/router';
 //import latex from 'markdown-it-katex';
 import { Mermaid } from './markdown-it-plugins/mermaid';
 import { CopierService } from 'core';
-import { ObservableMedia, MediaChange } from '@angular/flex-layout';
 import { Subscription } from 'rxjs';
 import { getAddr } from '../utils/getUri';
 import { Utilities } from '../../../core/utils';

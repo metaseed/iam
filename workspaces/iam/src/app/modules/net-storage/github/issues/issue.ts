@@ -67,8 +67,8 @@ export class Issue extends Requestable {
     state: 'open' | 'closed' | 'all' = 'open',
     pageNumber: number = 1,
     pageSize: number = 30
-  ): Observable<Issue> {
-    return <Observable<Issue>>this.http.get(
+  ): Observable<Issue[]> {
+    return <Observable<Issue[]>>this.http.get(
       `githubapi/repos/${this._userInfo.name}/${this.repository}/issues`,
       {
         params: { state: state, page: pageNumber.toString(), per_page: pageSize.toString() }

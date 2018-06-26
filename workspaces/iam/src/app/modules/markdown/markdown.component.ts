@@ -15,7 +15,6 @@ import { DocumentMode } from './state/reducers/document';
 import * as document from './state/actions/document';
 import { ChangeDetectorRef } from '@angular/core';
 import { MarkdownEditorComponent } from './editor/markdown-editor.component';
-import { ObservableMedia, MediaChange } from '@angular/flex-layout';
 import { OnDestroy } from '@angular/core';
 import { MarkdownViewerContainerComponent } from './viewer/markdown-viewer-container.component';
 import { HasElementRef } from '@angular/material/core/typings/common-behaviors/color';
