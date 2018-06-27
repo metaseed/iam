@@ -42,16 +42,13 @@ export class GithubCache implements ICache {
       const mapIssueToMeta = (issues: Issue[], i) => {
         const docMetaArray = issues.map(issue => {
           let meta: DocMeta;
-          if (!!issue.closed_at) {
-            meta = <DocMeta>{ number: issue.number };
-          } else {
-            meta = DocMeta.deSerialize(issue.body);
-            meta.number = meta.number || issue.number;
-            meta.tags = issue.labels;
-            meta.updateDate = meta.updateDate || new Date(issue.updated_at);
-            meta.createDate = meta.createDate || new Date(issue.created_at);
-            meta.isDeleted = !!issue.closed_at;
-          }
+          meta = DocMeta.deSerialize(issue.body);
+          if (!meta) meta = <DocMeta>{};
+          meta.number = meta.number || issue.number;
+          meta.tags = issue.labels;
+          meta.updateDate = meta.updateDate || new Date(issue.updated_at);
+          meta.createDate = meta.createDate || new Date(issue.created_at);
+          meta.isDeleted = !!issue.closed_at;
           meta._context = issue;
           if (i === 0 && page === 1) {
             this.highestKey = meta.number;
@@ -104,6 +101,7 @@ export class GithubCache implements ICache {
 
     return getHighestKey().pipe(
       switchMap(({ highestKey, metaArray }) => {
+        if (key === undefined || key === Number.MAX_VALUE) key = this.highestKey;
         page = getPageNum(key, highestKey);
         keyNearPageFloor = isNearPageFloor(key, page, highestKey);
         const isInFirstPage = isFirstPage(page);

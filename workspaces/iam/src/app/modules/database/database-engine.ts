@@ -392,7 +392,7 @@ export class Database {
 
           const makeRequest = record => {
             return new Observable((reqObserver: Observer<T>) => {
-              let key = recordSchema.primaryKey;
+              let key = record[recordSchema.primaryKey];
               if (!key) {
                 key = record['$key'];
               }

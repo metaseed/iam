@@ -36,7 +36,7 @@ export class StoreCache implements ICache {
             new UpsertDocuments({
               collectionDocuments: metaArray.map(meta => {
                 const docDic = selectDocumentEntitiesState(this.state.value);
-                const content = docDic[meta.number].content;
+                const content = docDic[meta.number]&& docDic[meta.number].content;
                 return { number: meta.number, metaData: meta, content };
               })
             })

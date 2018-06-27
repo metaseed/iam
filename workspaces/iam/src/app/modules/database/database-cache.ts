@@ -2,7 +2,7 @@ import { Database, ModifyAction } from './database-engine';
 import { Injectable } from '@angular/core';
 import { Document, DocMeta } from 'core';
 import { Observable, throwError, combineLatest, of, from, concat } from 'rxjs';
-import { toArray, tap, switchMap, map, count } from 'rxjs/operators';
+import { toArray, tap, switchMap, map, count, withLatestFrom } from 'rxjs/operators';
 import { ICache, DataTables } from 'core';
 import { GithubCache } from 'net-storage';
 
@@ -42,7 +42,8 @@ export class DatabaseCache implements ICache {
     const docMetaDelete = new Array<DocMeta>();
     // only notify the change in the later array: add, remove, modify
     const fromNext$ = this.nextLevelCache.readBulkDocMeta(key, isBelowTheKey).pipe(
-      switchMap(records => {
+      withLatestFrom(FromDB$),
+      switchMap(([records,sentRecords]) => {
         return this.db.executeModify(DataTables.DocumentMeta, records, (dbRecord, record) => {
           if (record.isDeleted) {
             if (dbRecord) {
@@ -56,6 +57,11 @@ export class DatabaseCache implements ICache {
               if (dbRecord.updateDate < record.updateDate) {
                 docMetaUpsert.push(record);
                 return ModifyAction.put;
+              } else {
+                if(!sentRecords.some(v=>v.number === record.number)) {
+                  docMetaUpsert.push(record);
+                }
+                return ModifyAction.none;
               }
             } else {
               docMetaUpsert.push(record);

@@ -15,6 +15,12 @@ export interface ICache {
    */
   init(nextLevelCache: ICache):ICache;
 
+  /**
+   *
+   * @param key   undefined: initial fetch
+   *              Number.MAX_VALUE: refresh
+   * @param isBelowTheKey
+   */
   readBulkDocMeta(key: number, isBelowTheKey:boolean): Observable<DocMeta[]>;
   nextLevelCache: ICache;
 }
