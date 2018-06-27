@@ -1,13 +1,19 @@
 import { DBSchema } from './database-engine';
 
 export const schema: DBSchema = {
-  version: 5,
+  version: 1,
   name: 'iam_db_cache',
   stores: {
-    documents: {
+    document: {
       autoIncrement: true,
-      primaryKey: 'number',
+      primaryKey: 'key',
     },
+
+    doc_meta: {
+      autoIncrement: true,
+      primaryKey: 'key',
+
+    }
 
   },
 };

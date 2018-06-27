@@ -1,11 +1,14 @@
-import { ICache, DataTables, DocMeta } from 'core';
+import { ICache, DataTables, DocMeta, DocContent } from 'core';
 import { Observable, throwError, Subscription, concat, asyncScheduler, of } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { GithubStorage } from './github';
-import { switchMap, map, toArray, count, startWith, tap } from 'rxjs/operators';
+import { switchMap, map, toArray, count, startWith, tap, catchError } from 'rxjs/operators';
 import { Document } from 'core';
 import { AsyncScheduler } from 'rxjs/internal/scheduler/AsyncScheduler';
 import { Issue } from './issues/issue';
+import { Repository } from './repository';
+import { DocService } from 'home';
+import { Content } from 'net-storage';
 
 const GITHUB_PAGE_SIZE = 50;
 const FIRST_PAGE_READY_TO_REFRESH = 5 * 60 * 1000;
@@ -20,6 +23,21 @@ export class GithubCache implements ICache {
   }
 
   nextLevelCache: ICache;
+
+  private _issueToDocMeta= (issue:Issue) =>{
+    let meta: DocMeta;
+    meta = DocMeta.deSerialize(issue.body);
+    if (!meta) meta = {} as DocMeta;
+    meta.key = meta.key || issue.number;
+    meta.tags = issue.labels;
+    meta.updateDate = meta.updateDate || new Date(issue.updated_at);
+    meta.createDate = meta.createDate || new Date(issue.created_at);
+    // meta.format = meta.format || 'md';
+    meta.isDeleted = !!issue.closed_at;
+    meta._context = issue;
+    return meta;
+  }
+
 
   init(nextLevelCache: ICache) {
     this.nextLevelCache = nextLevelCache;
@@ -41,17 +59,9 @@ export class GithubCache implements ICache {
     ) => {
       const mapIssueToMeta = (issues: Issue[], i) => {
         const docMetaArray = issues.map(issue => {
-          let meta: DocMeta;
-          meta = DocMeta.deSerialize(issue.body);
-          if (!meta) meta = <DocMeta>{};
-          meta.number = meta.number || issue.number;
-          meta.tags = issue.labels;
-          meta.updateDate = meta.updateDate || new Date(issue.updated_at);
-          meta.createDate = meta.createDate || new Date(issue.created_at);
-          meta.isDeleted = !!issue.closed_at;
-          meta._context = issue;
+          const meta = this._issueToDocMeta(issue);
           if (i === 0 && page === 1) {
-            this.highestKey = meta.number;
+            this.highestKey = meta.key;
           }
           return meta;
         });
@@ -140,5 +150,47 @@ export class GithubCache implements ICache {
       }),
       // tap(a=>console.log(a),err=>console.error(err),()=>console.warn('aaaa')),
     );
+  }
+
+  readDocMeta(key:number) {
+
+  }
+
+  readDocContent(key: number, title: string, format: string): Observable<DocContent> {
+    const getContent=(repo: Repository, number: number, title: string, format: string, state = 0 )=>{
+      let uri = `${DocService.FolderName}/${title}_${number}`;
+      if (format) uri = `${uri}.${format}`;
+
+      let docMeta:DocMeta;
+
+      return (<Observable<Content>>(repo.getContents(uri))).pipe( // directly get DocContent
+        map(c=>{ return {content:new DocContent(key,c.sha,c.content),metaOptional:docMeta }}),
+        catchError(err => {
+          if (err.status === 404) {
+            if (state===0) {
+              state=1;
+              return repo.issue.get(number).pipe(
+                switchMap(issue => {
+                  let meta = this._issueToDocMeta(issue);
+                  docMeta = meta;
+                  return getContent(repo, number, meta.title, meta.format, state);// using the parameters from net via key; means title, format or format is modifyed.
+                })
+              );
+            } else if(format && state===1) {
+              state=2; // stop
+              return getContent(repo,number,title,'',state); // try to geting DocContent saved without format sufix;
+            } else {
+              return throwError('getContents should stop!');
+            }
+          }
+        })
+      );
+    }
+    return this.githubStorage.init().pipe(
+      switchMap(repo => {
+        return getContent(repo,key,title,format);
+      }),
+    );
+
   }
 }

@@ -1,11 +1,15 @@
 import { Observable } from "rxjs";
-import { DocMeta } from "../doc-model";
+import { DocMeta, DocContent } from "../doc-model";
 
 export enum DataTables {
-  DocumentMeta = 'documents'
+  DocumentMeta = 'doc_meta',
+  Document = 'document'
 }
 
 export interface ICache {
+
+  nextLevelCache: ICache;
+
   /**
    * isBelowKey =
    *  true:  the result include the record at key.
@@ -22,7 +26,8 @@ export interface ICache {
    * @param isBelowTheKey
    */
   readBulkDocMeta(key: number, isBelowTheKey:boolean): Observable<DocMeta[]>;
-  nextLevelCache: ICache;
+
+  readDocContent(key:number, title:string, format: string): Observable<DocContent>;
 }
 
 

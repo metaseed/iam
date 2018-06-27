@@ -113,7 +113,7 @@ export class Database {
         openReq.removeEventListener(IDB_ERROR, onError);
         openReq.removeEventListener(IDB_UPGRADE_NEEDED, onUpgradeNeeded);
       };
-    }).pipe(shareReplay(1)));
+    }).pipe(shareReplay(1))); // may have problem. source complete??
   }
 
   deleteDatabase(dbName: string): Observable<any> {
@@ -205,7 +205,7 @@ export class Database {
     });
   }
 
-  get(storeName: string, key: any): Observable<any> {
+  get<T>(storeName: string, key: any): Observable<T> {
     return this.request(storeName, IDB_TXN_READ, store => {
       return store.get(key);
     });

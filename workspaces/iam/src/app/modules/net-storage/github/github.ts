@@ -42,32 +42,40 @@ export class GithubStorage extends Requestable {
   init(): Observable<Repository> {
     if (this._repo) return this._repo;
 
-    return (this._repo = this.configService.config$.lift(
-      (_ => { //IIFE
-        const me = this;
-        let replayObservable: ReplaySubject<Repository>;
-        let hasError = false;
-        return function(this: Subscriber<Repository>, source: Observable<ConfigModel>) { // called every time when subscribe
-          if (!replayObservable) {
-            replayObservable = new ReplaySubject(1);
-            source.pipe(switchMap(config => {
-              let user = config.storage.github.userName;
-              let name = config.storage.github.dataRepoName;
-              return me.getRepos(user, name).pipe(
-                catchError(err => {
-                  if (err.status === 404) {
-                    return me.newRepos(name);
-                  } else {
-                    return throwError(err);
-                  }
-                })
-              );
-            })).subscribe(o=>replayObservable.next(o));
-          }
-          return replayObservable.subscribe(this);
-        };
-      })()
-    ).pipe(take<Repository>(1)));
+    return (this._repo = this.configService.config$
+      .lift(
+        (_ => {
+          //IIFE
+          const me = this;
+          let replayObservable: ReplaySubject<Repository>;
+          let hasError = false;
+          return function(this: Subscriber<Repository>, source: Observable<ConfigModel>) {
+            // called every time when subscribe
+            if (!replayObservable) {
+              replayObservable = new ReplaySubject(1);
+              source
+                .pipe(
+                  switchMap(config => {
+                    let user = config.storage.github.userName;
+                    let name = config.storage.github.dataRepoName;
+                    return me.getRepos(user, name).pipe(
+                      catchError(err => {
+                        if (err.status === 404) {
+                          return me.newRepos(name);
+                        } else {
+                          return throwError(err);
+                        }
+                      })
+                    );
+                  })
+                )
+                .subscribe(o => replayObservable.next(o));
+            }
+            return replayObservable.subscribe(this);
+          };
+        })()
+      )
+      .pipe(take<Repository>(1)/*solve never complet problem of replay subject*/));
   }
 
   private getRepos(user: string, name: string): Observable<Repository> {

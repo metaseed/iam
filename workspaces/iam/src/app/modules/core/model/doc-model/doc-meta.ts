@@ -15,7 +15,7 @@ export class DocMeta {
   public _context: any; // issue obj;
 
   private constructor(
-    public number: number,
+    public key: number,
     public title: string,
     public version: Version,
     public createDate: Date, //utc time
@@ -76,7 +76,7 @@ export class DocMeta {
   }
 
   static serializeContent(
-    number: number,
+    key: number,
     content: string,
     contentId: string,
     contentUrl: string,
@@ -89,7 +89,7 @@ export class DocMeta {
     const version = DocMeta.getVersion(content);
     const tags = DocMeta.getTags(content);
     const meta = new DocMeta(
-      number,
+      key,
       title,
       version,
       createDate,
