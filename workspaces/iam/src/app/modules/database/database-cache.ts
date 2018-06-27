@@ -42,6 +42,7 @@ export class DatabaseCache implements ICache {
     const docMetaDelete = new Array<DocMeta>();
     // only notify the change in the later array: add, remove, modify
     const fromNext$ = this.nextLevelCache.readBulkDocMeta(key, isBelowTheKey).pipe(
+      // tap(a=>console.log(a),err=>console.error(err),()=>console.warn('aaaa')),
       withLatestFrom(FromDB$),
       switchMap(([records,sentRecords]) => {
         return this.db.executeModify(DataTables.DocumentMeta, records, (dbRecord, record) => {
@@ -68,10 +69,10 @@ export class DatabaseCache implements ICache {
               return ModifyAction.add;
             }
           }
-        });
+        })
       }),
       count(),
-      switchMap(_ => from([docMetaDelete, docMetaUpsert]))
+      switchMap(_ =>  from([docMetaDelete, docMetaUpsert]))
     );
 
     if (refreshFirstPage) {

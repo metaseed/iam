@@ -7,7 +7,8 @@ import {
   tap,
   shareReplay,
   withLatestFrom,
-  switchMap
+  switchMap,
+  take
 } from 'rxjs/operators';
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -66,7 +67,7 @@ export class GithubStorage extends Requestable {
           return replayObservable.subscribe(this);
         };
       })()
-    ));
+    ).pipe(take<Repository>(1)));
   }
 
   private getRepos(user: string, name: string): Observable<Repository> {

@@ -2,7 +2,7 @@ import { ICache, DataTables, DocMeta } from 'core';
 import { Observable, throwError, Subscription, concat, asyncScheduler, of } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { GithubStorage } from './github';
-import { switchMap, map, toArray, count, startWith } from 'rxjs/operators';
+import { switchMap, map, toArray, count, startWith, tap } from 'rxjs/operators';
 import { Document } from 'core';
 import { AsyncScheduler } from 'rxjs/internal/scheduler/AsyncScheduler';
 import { Issue } from './issues/issue';
@@ -137,7 +137,8 @@ export class GithubCache implements ICache {
         }
 
         return getMetaData(page, isBulkBelowTheKey, keyNearPageFloor);
-      })
+      }),
+      // tap(a=>console.log(a),err=>console.error(err),()=>console.warn('aaaa')),
     );
   }
 }

@@ -12,7 +12,7 @@ import {
 } from './document.effects.actions';
 import { LoadDocuments, SetDocumentsMessage, DeleteDocument } from './document.actions';
 import { GithubStorage, Repository, EditIssueParams, Issue, GithubCache } from 'net-storage';
-import { switchMap, catchError, map, tap, take, retry, combineLatest, last } from 'rxjs/operators';
+import { switchMap, catchError, map, tap, take, retry, combineLatest, last, count } from 'rxjs/operators';
 import { DocMeta, Document } from 'core';
 import {
   selectDocumentEntitiesState,
@@ -79,7 +79,7 @@ export class DocumentEffects {
       switchMap(_ => {
         const key = isBelowRange ? keyRangeLow : keyRangeHigh;
         return this.storeCache.readBulkDocMeta(key, isBelowRange).pipe(
-          last(),
+          count(),
           map(
             _ =>
               new SetDocumentsMessage({

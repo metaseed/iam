@@ -385,7 +385,9 @@ export class Database {
           const objectStore = txn.objectStore(storeName);
 
           const onTxnError = (err: any) => txnObserver.error(err);
-          const onTxnComplete = () => txnObserver.complete();
+          const onTxnComplete = () => {
+            txnObserver.complete();
+          };
 
           txn.addEventListener(IDB_COMPLETE, onTxnComplete);
           txn.addEventListener(IDB_ERROR, onTxnError);
@@ -421,6 +423,7 @@ export class Database {
                     request.addEventListener(IDB_SUCCESS, () => {
                       let $key = request.result;
                       reqObserver.next(mapper({ $key, record }));
+                      reqObserver.complete();
                     });
                     request.addEventListener(IDB_ERROR, (err: any) => {
                       reqObserver.error(err);
@@ -432,16 +435,19 @@ export class Database {
                     request = objectStore.delete(indb[key]);
                     request.onerror = err => reqObserver.error(err);
                     request.onsuccess = _ => {
-                      console.log('delete in db');
+                      // console.log('delete in db');
                       reqObserver.next(indb);
+                      reqObserver.complete();
                     };
                     break;
 
                   case ModifyAction.none:
-                    console.log('no action in db.');
+                    // console.log('no action in db.');
+                    reqObserver.complete();
                     break;
 
                   default:
+                    reqObserver.complete();
                     throw new Error('action type error, must be one of ModifyAction value.');
                 }
               });
@@ -449,7 +455,10 @@ export class Database {
           };
 
           let requestSubscriber = from(records)
-            .pipe(mergeMap(makeRequest))
+            .pipe(
+              mergeMap(makeRequest),
+              // tap(a => console.log(a), err => console.error(err), () => console.warn('aaaabbbb'))
+            )
             .subscribe(txnObserver);
 
           return () => {

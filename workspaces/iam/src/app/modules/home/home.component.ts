@@ -60,8 +60,10 @@ export class HomeComponent {
   @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;
   @ViewChild('touchDiv') touchDiv: ElementRef;
 
-  defaultTimeoutHandler = err =>
+  defaultTimeoutHandler = (action:DocumentEffectsActionTypes,info?:string) => err=>{
+    console.warn(err.message+' action:'+action + (info?`--${info}`:''));
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
+  }
 
   private loadFromStoreDirectly$ = new Subject<boolean>();
   isLoadDone$ = merge(
@@ -70,7 +72,7 @@ export class HomeComponent {
       DocumentEffectsActionTypes.Load,
       this.store,
       NET_COMMU_TIMEOUT,
-      this.defaultTimeoutHandler
+      this.defaultTimeoutHandler(DocumentEffectsActionTypes.Load)
     ).pipe(
       takeUntil(this.destroy$),
       map(v => {
@@ -85,7 +87,7 @@ export class HomeComponent {
       DocumentEffectsActionTypes.Load,
       this.store,
       NET_COMMU_TIMEOUT,
-      this.defaultTimeoutHandler
+      this.defaultTimeoutHandler(DocumentEffectsActionTypes.Load,'load-more')
     ).pipe(
       takeUntil(this.destroy$),
       filter(a => a.context && a.context.isLoadMore === true),
