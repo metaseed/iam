@@ -14,22 +14,21 @@ export interface ICache {
    * isBelowKey =
    *  true:  the result include the record at key.
    *  false: the result not include the record at key.
-   * @param key
    * @param isBelowTheKey
    */
   init(nextLevelCache: ICache):ICache;
 
   /**
    *
-   * @param key   undefined: initial fetch
+   * @param id   undefined: initial fetch
    *              Number.MAX_VALUE: refresh
    * @param isBelowTheKey
    */
-  readBulkDocMeta(key: number, isBelowTheKey:boolean): Observable<DocMeta[]>;
+  readBulkDocMeta(id: number, isBelowTheKey:boolean): Observable<DocMeta[]>;
 
-  readDocMeta(key: number, checkNextCache?:boolean):Observable<DocMeta>;
+  readDocMeta(id: number, checkNextCache?:boolean):Observable<DocMeta>;
 
-  readDocContent(key:number, title:string, format: string): Observable<DocContent>;
+  readDocContent(id:number, title:string, format: string): Observable<DocContent>;
 }
 
 

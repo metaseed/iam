@@ -28,7 +28,7 @@ export class GithubCache implements ICache {
     let meta: DocMeta;
     meta = DocMeta.deSerialize(issue.body);
     if (!meta) meta = {} as DocMeta;
-    meta.key = meta.key || issue.number;
+    meta.id = meta.id || issue.number;
     meta.tags = issue.labels;
     meta.updateDate = meta.updateDate || new Date(issue.updated_at);
     meta.createDate = meta.createDate || new Date(issue.created_at);
@@ -44,8 +44,8 @@ export class GithubCache implements ICache {
   }
 
   /// (...,key] (key,...]
-  readBulkDocMeta(key: number, isBulkBelowTheKey: boolean): Observable<DocMeta[]> {
-    if (key === undefined || key === Number.MAX_VALUE) {
+  readBulkDocMeta(id: number, isBulkBelowTheKey: boolean): Observable<DocMeta[]> {
+    if (id === undefined || id === Number.MAX_VALUE) {
       this.highestKey = undefined;
     }
     let page: number;
@@ -60,7 +60,7 @@ export class GithubCache implements ICache {
         const docMetaArray = issues.map(issue => {
           const meta = this._issueToDocMeta(issue);
           if (i === 0 && page === 1) {
-            this.highestKey = meta.key;
+            this.highestKey = meta.id;
           }
           return meta;
         });
@@ -88,10 +88,10 @@ export class GithubCache implements ICache {
       return d;
     };
 
-    const getPageNum = (key, highestKey) => Math.floor((highestKey - key) / GITHUB_PAGE_SIZE) + 1; // index start from 1
+    const getPageNum = (id, highestKey) => Math.floor((highestKey - id) / GITHUB_PAGE_SIZE) + 1; // index start from 1
 
-    const isNearPageFloor = (key, page, highestKey) =>
-      (highestKey - key) / GITHUB_PAGE_SIZE + 1 - page < 0.5;
+    const isNearPageFloor = (id, page, highestKey) =>
+      (highestKey - id) / GITHUB_PAGE_SIZE + 1 - page < 0.5;
 
     const isLastPage = (page, highestKey) =>
       page === Math.floor(this.highestKey / GITHUB_PAGE_SIZE);
@@ -110,9 +110,9 @@ export class GithubCache implements ICache {
 
     return getHighestKey().pipe(
       switchMap(({ highestKey, metaArray }) => {
-        if (key === undefined || key === Number.MAX_VALUE) key = this.highestKey;
-        page = getPageNum(key, highestKey);
-        keyNearPageFloor = isNearPageFloor(key, page, highestKey);
+        if (id === undefined || id === Number.MAX_VALUE) id = this.highestKey;
+        page = getPageNum(id, highestKey);
+        keyNearPageFloor = isNearPageFloor(id, page, highestKey);
         const isInFirstPage = isFirstPage(page);
         const isInLastPage = isLastPage(page, highestKey);
 
@@ -151,42 +151,44 @@ export class GithubCache implements ICache {
     );
   }
 
-  readDocMeta(key: number, checkNextCache = false) {
+  readDocMeta(id: number, checkNextCache = false) {
     return this.githubStorage.init().pipe(
-      switchMap(repo => repo.issue.get(key)),
+      switchMap(repo => repo.issue.get(id)),
       map(issue => this._issueToDocMeta(issue))
     );
   }
 
-  readDocContent(key: number, title: string, format: string): Observable<DocContent> {
+  readDocContent(id: number, title: string, format: string): Observable<DocContent> {
     const getContent = (
       repo: Repository,
-      key: number,
+      id: number,
       title: string,
       format: string,
-      state = 0
+      state = 0,
+      isDeleted=false
     ) => {
-      let uri = `${DocService.FolderName}/${title}_${key}`;
+      let uri = `${DocService.FolderName}/${title}_${id}`;
       if (format) uri = `${uri}.${format}`;
 
       let docMeta: DocMeta;
+      if(isDeleted) return of(new DocContent(id,undefined,undefined,isDeleted));
 
       return (<Observable<Content>>repo.getContents(uri)).pipe(
         // directly get DocContent
-        map(c => new DocContent(key, c.sha, c.content)),
+        map(c => new DocContent(id, c.content,c.sha)),
         catchError(err => {
           if (err.status === 404) {
             if (state === 0) {
               state = 1;
-              this.readDocMeta(key).pipe(
+              this.readDocMeta(id).pipe(
                 switchMap(meta => {
                   docMeta = meta;
-                  return getContent(repo, key, meta.title, meta.format, state); // using the parameters from net via key; means title, format or format is modifyed.
+                  return getContent(repo, id, meta.title, meta.format, state,meta.isDeleted); // using the parameters from net via key; means title, format or format is modifyed.
                 })
               );
             } else if (format && state === 1) {
               state = 2; // stop
-              return getContent(repo, key, title, '', state); // try to geting DocContent saved without format sufix;
+              return getContent(repo, id, title, '', state); // try to geting DocContent saved without format sufix;
             } else {
               return throwError('getContents should stop!');
             }
@@ -196,7 +198,7 @@ export class GithubCache implements ICache {
     };
     return this.githubStorage.init().pipe(
       switchMap(repo => {
-        return getContent(repo, key, title, format);
+        return getContent(repo, id, title, format);
       })
     );
   }

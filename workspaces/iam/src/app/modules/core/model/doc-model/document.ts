@@ -3,11 +3,11 @@ import { Issue,Content } from 'net-storage';
 import { DocContent } from "./doc-content";
 
 interface IDocument {
-  key:number;
+  id:number;
   metaData: DocMeta;
   content?: DocContent;
 }
 
 export class Document implements IDocument {
-  constructor(public key:number,public metaData:DocMeta,public content:DocContent){}
+  constructor(public id:number,public metaData:DocMeta,public content:DocContent){}
 }

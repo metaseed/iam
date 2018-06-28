@@ -15,7 +15,7 @@ export class DocMeta {
   public _context: any; // issue obj;
 
   private constructor(
-    public key: number,
+    public id: number,
     public title: string,
     public version: Version,
     public createDate: Date, //utc time

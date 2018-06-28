@@ -77,7 +77,7 @@ export class DatabaseCache implements ICache {
                 return ModifyAction.put;
               } else {
                 // same
-                if (cacheRecords && !cacheRecords.some(v => v.key === record.key)) {
+                if (cacheRecords && !cacheRecords.some(v => v.id === record.id)) {
                   // not in quick cache data
                   docMetaUpsert.push(record);
                 }
@@ -101,7 +101,7 @@ export class DatabaseCache implements ICache {
     return concat(FromDB$, fromNext$);
   }
 
-  cacheRead<T extends { key: number }>(
+  cacheRead<T extends { id: number }>(
     table: DataTables,
     cache$: Observable<T>,
     nextCache$: Observable<T>,
@@ -114,7 +114,7 @@ export class DatabaseCache implements ICache {
       filter(fromNext => {
         if (shouldDelete(inCache, fromNext)) {
           this.db
-            .delete(table, fromNext.key)
+            .delete(table, fromNext.id)
             .pipe(
               subscribeOn(asyncScheduler),
               catchError(err => {
@@ -141,10 +141,10 @@ export class DatabaseCache implements ICache {
     return concat<T>(cache$, nextCache$);
   }
 
-  readDocMeta(key: number, checkNextCache?: boolean): Observable<DocMeta> {
-    const cache$ = this.db.get<DocMeta>(DataTables.DocMeta, key);
+  readDocMeta(id: number, checkNextCache?: boolean): Observable<DocMeta> {
+    const cache$ = this.db.get<DocMeta>(DataTables.DocMeta, id);
 
-    const nextCache$ = this.nextLevelCache.readDocMeta(key);
+    const nextCache$ = this.nextLevelCache.readDocMeta(id);
 
     return this.cacheRead<DocMeta>(
       DataTables.DocContent,
@@ -155,10 +155,10 @@ export class DatabaseCache implements ICache {
     );
   }
 
-  readDocContent(key: number, title: string, format: string): Observable<DocContent> {
-    const cache$ = this.db.get<DocContent>(DataTables.DocContent, key);
+  readDocContent(id: number, title: string, format: string): Observable<DocContent> {
+    const cache$ = this.db.get<DocContent>(DataTables.DocContent, id);
 
-    const nextCache$ = this.nextLevelCache.readDocContent(key, title, format);
+    const nextCache$ = this.nextLevelCache.readDocContent(id, title, format);
 
     return this.cacheRead<DocContent>(
       DataTables.DocContent,

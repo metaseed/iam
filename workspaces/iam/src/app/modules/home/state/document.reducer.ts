@@ -16,7 +16,7 @@ export interface State extends EntityState<Document> {
 }
 
 export const adapter: EntityAdapter<Document> = createEntityAdapter<Document>({
-  selectId: e => e.number,
+  selectId: e => e.id,
   sortComparer: (a: Document, b: Document) =>
     a.metaData && a.metaData.updateDate < b.metaData.updateDate ? 1 : -1
 });

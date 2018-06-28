@@ -7,7 +7,7 @@ import { DocumentEffectsShow } from "../home/state";
 export class MarkdownService {
   constructor(private store:Store<State>){}
   refresh(num, title, format) {
-    this.store.dispatch(new DocumentEffectsShow({ number: num, title, format }));
+    this.store.dispatch(new DocumentEffectsShow({ id: num, title, format }));
   }
 
 }

@@ -27,7 +27,7 @@ export class DocumentEffectsNew implements Action {
 }
 export class DocumentEffectsShow implements Action {
   readonly type = DocumentEffectsActionTypes.Show;
-  constructor(public payload: { key: number; title?: string; format?: string }) {}
+  constructor(public payload: { id: number; title?: string; format?: string }) {}
 }
 export class DocumentEffectsSave implements Action {
   readonly type = DocumentEffectsActionTypes.Save;

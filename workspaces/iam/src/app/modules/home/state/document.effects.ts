@@ -120,7 +120,7 @@ export class DocumentEffects {
   ShowDocument: Observable<Action> = ((coId = -1) =>
     this.actions$.pipe(
       ofType<DocumentEffectsShow>(DocumentEffectsActionTypes.Show),
-      tap(action => this.store.dispatch(new SetCurrentDocumentId({ id: action.payload.key }))),
+      tap(action => this.store.dispatch(new SetCurrentDocumentId({ id: action.payload.id }))),
       tap(action =>
         this.store.dispatch(
           new SetDocumentsMessage({
@@ -133,7 +133,7 @@ export class DocumentEffects {
       switchMap(action => {
         const actionDoc = action.payload;
         return this.storeCache
-          .readDocContent(actionDoc.key, actionDoc.title, actionDoc.format)
+          .readDocContent(actionDoc.id, actionDoc.title, actionDoc.format)
           .pipe(
             map(
               _ =>
@@ -175,7 +175,7 @@ export class DocumentEffects {
       map(action => {
         let num = NEW_DOC_ID;
         let doc = {
-          number: num,
+          id: num,
           format: action.payload.format,
           content: {
             content: base64Encode('# Title\n*summery*\n')
@@ -225,7 +225,7 @@ export class DocumentEffects {
         if (!newTitle) return throwError(new Error('Must define a title!'));
         if (!doc.metaData || !doc.metaData.contentId) {
           //from url show and save
-          return repo.issue.get(doc.key).pipe(
+          return repo.issue.get(doc.id).pipe(
             switchMap(doc => {
               let meta = DocMeta.deSerialize(doc.body);
               (<any>doc).metaData = meta;
@@ -273,7 +273,7 @@ export class DocumentEffects {
                     doc.metaData = meta;
                     this.store.dispatch(
                       new UpdateDocument({
-                        collectionDocument: { id: doc.key, changes: <any>doc }
+                        collectionDocument: { id: doc.id, changes: <any>doc }
                       })
                     );
                     this.modifyUrlAfterSaved(id, title, format);
@@ -304,16 +304,16 @@ export class DocumentEffects {
     const changeTitle = doc.metaData ? newTitle !== doc.metaData.title : true;
     return repo
       .updateFile(
-        `${DocService.FolderName}/${newTitle}_${doc.key}.${format}`,
+        `${DocService.FolderName}/${newTitle}_${doc.id}.${format}`,
         content,
         doc.metaData.contentId
       )
       .pipe(
         switchMap(file => {
-          let url = getContentUrl(doc.key, newTitle);
+          let url = getContentUrl(doc.id, newTitle);
           return of(
             DocMeta.serializeContent(
-              doc.key,
+              doc.id,
               content,
               file.content.sha,
               url,
@@ -326,12 +326,12 @@ export class DocumentEffects {
                 title: newTitle,
                 body: metaStr
               };
-              return repo.issue.edit(doc.key, data).pipe(
+              return repo.issue.edit(doc.id, data).pipe(
                 tap(d => {
                   if (changeTitle) {
                     repo
                       .delFileViaSha(
-                        `${DocService.FolderName}/${doc.metaData.title}_${doc.key}.${format}`,
+                        `${DocService.FolderName}/${doc.metaData.title}_${doc.id}.${format}`,
                         doc.metaData.contentId
                       )
                       .pipe(take(1))
@@ -342,11 +342,11 @@ export class DocumentEffects {
                   doc.metaData = meta;
                   this.store.dispatch(
                     new UpdateDocument({
-                      collectionDocument: { id: doc.key, changes: <any>doc }
+                      collectionDocument: { id: doc.id, changes: <any>doc }
                     })
                   );
                   this.snackbar.open('Saved!', 'OK');
-                  this.modifyUrlAfterSaved(doc.key, newTitle, format);
+                  this.modifyUrlAfterSaved(doc.id, newTitle, format);
                   return new SetDocumentsMessage({
                     status: ActionStatus.Success,
                     action: DocumentEffectsActionTypes.Save,

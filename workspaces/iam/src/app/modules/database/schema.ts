@@ -6,12 +6,12 @@ export const schema: DBSchema = {
   stores: {
     document: {
       autoIncrement: true,
-      primaryKey: 'key',
+      primaryKey: 'id',
     },
 
     doc_meta: {
       autoIncrement: true,
-      primaryKey: 'key',
+      primaryKey: 'id',
 
     }
 

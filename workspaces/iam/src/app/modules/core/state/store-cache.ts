@@ -30,14 +30,14 @@ export class StoreCache implements ICache {
     return this.nextLevelCache.readBulkDocMeta(key, isBelowTheKey).pipe(
       tap(metaArray => {
         if (metaArray[0] && metaArray[0].isDeleted) {
-          this.store.dispatch(new DeleteDocuments({ ids: metaArray.map(m => m.key) }));
+          this.store.dispatch(new DeleteDocuments({ ids: metaArray.map(m => m.id) }));
         } else {
           this.store.dispatch(
             new UpsertDocuments({
               collectionDocuments: metaArray.map(meta => {
                 const docDic = selectDocumentEntitiesState(this.state.value);
-                const content = docDic[meta.key] && docDic[meta.key].content;
-                return new Document(meta.key, meta, content);
+                const content = docDic[meta.id] && docDic[meta.id].content;
+                return new Document(meta.id, meta, content);
               })
             })
           );
@@ -51,31 +51,31 @@ export class StoreCache implements ICache {
   }
 
   // todo: handle show from url.
-  readDocContent(key: number, title: string, format: string): Observable<DocContent> {
-    return this.nextLevelCache.readDocContent(key, title, format).pipe(
+  readDocContent(id: number, title: string, format: string): Observable<DocContent> {
+    return this.nextLevelCache.readDocContent(id, title, format).pipe(
       tap(docContent => {
         // no data in next level, but the next level cache should further fetch from its next level. we would receive it.
         if (!docContent) return;
         if (docContent.isDeleted) {
-          this.store.dispatch(new DeleteDocument({ id: docContent.key }));
+          this.store.dispatch(new DeleteDocument({ id: docContent.id }));
         }
 
         const documents = selectDocumentEntitiesState(this.state.value);
-        let document = documents[key];
+        let document = documents[id];
 
-        if (document && document.content.sha === docContent.sha) return; // nothing changed.
+        if (document && document.content && document.content.sha === docContent.sha) return; // nothing changed.
 
         this.nextLevelCache
-          .readDocMeta(key)
+          .readDocMeta(id)
           .pipe(
             tap(meta => {
-              const doc = new Document(key, meta, docContent);
+              const doc = new Document(id, meta, docContent);
               if (!document) {
                 this.store.dispatch(new AddDocument({ collectionDocument: doc }));
               } else {
                 this.store.dispatch(
                   new UpdateDocument({
-                    collectionDocument: { id: document.key, changes: doc }
+                    collectionDocument: { id: document.id, changes: doc }
                   })
                 );
               }

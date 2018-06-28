@@ -188,7 +188,7 @@ export class HomeComponent {
   showDoc(doc: Document) {
     let navigationExtras: NavigationExtras = {
       queryParams: {
-        id: doc.number,
+        id: doc.id,
         title: doc.metaData.title,
         f: doc.metaData.format || 'md'
       }
@@ -197,6 +197,6 @@ export class HomeComponent {
   }
 
   deleteDoc(doc: Document) {
-    this.store.dispatch(new DocumentEffectsDelete({ number: doc.number, title: doc.metaData.title }));
+    this.store.dispatch(new DocumentEffectsDelete({ key: doc.id, title: doc.metaData.title }));
   }
 }
