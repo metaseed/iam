@@ -2,10 +2,12 @@ import { DocMeta } from "./doc-meta";
 import { Issue,Content } from 'net-storage';
 import { DocContent } from "./doc-content";
 
-interface _Document {
+interface IDocument {
+  key:number;
   metaData: DocMeta;
   content?: DocContent;
 }
 
-export interface Document extends Pick<Issue,'number'>, _Document {
+export class Document implements IDocument {
+  constructor(public key:number,public metaData:DocMeta,public content:DocContent){}
 }

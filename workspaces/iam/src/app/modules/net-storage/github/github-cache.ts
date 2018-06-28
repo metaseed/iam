@@ -151,7 +151,7 @@ export class GithubCache implements ICache {
     );
   }
 
-  readTableRow(key: number, checkNextCache = false) {
+  readDocMeta(key: number, checkNextCache = false) {
     return this.githubStorage.init().pipe(
       switchMap(repo => repo.issue.get(key)),
       map(issue => this._issueToDocMeta(issue))
@@ -173,14 +173,12 @@ export class GithubCache implements ICache {
 
       return (<Observable<Content>>repo.getContents(uri)).pipe(
         // directly get DocContent
-        map(c => {
-          return { content: new DocContent(key, c.sha, c.content), metaOptional: docMeta };
-        }),
+        map(c => new DocContent(key, c.sha, c.content)),
         catchError(err => {
           if (err.status === 404) {
             if (state === 0) {
               state = 1;
-              this.readTableRow(key).pipe(
+              this.readDocMeta(key).pipe(
                 switchMap(meta => {
                   docMeta = meta;
                   return getContent(repo, key, meta.title, meta.format, state); // using the parameters from net via key; means title, format or format is modifyed.

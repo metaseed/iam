@@ -141,7 +141,7 @@ export class DatabaseCache implements ICache {
     return concat<T>(cache$, nextCache$);
   }
 
-  readDocMeta(key: number, checkNextCache?:boolean):Observable<DocMeta> {
+  readDocMeta(key: number, checkNextCache?: boolean): Observable<DocMeta> {
     const cache$ = this.db.get<DocMeta>(DataTables.DocMeta, key);
 
     const nextCache$ = this.nextLevelCache.readDocMeta(key);
@@ -150,11 +150,10 @@ export class DatabaseCache implements ICache {
       DataTables.DocContent,
       cache$,
       nextCache$,
-      (inCache, fromNext) => inCache.updateDate < fromNext.updateDate,
+      (inCache, fromNext) =>  !inCache || inCache.updateDate < fromNext.updateDate,
       (inCache, fromNext) => fromNext.isDeleted
     );
   }
-
 
   readDocContent(key: number, title: string, format: string): Observable<DocContent> {
     const cache$ = this.db.get<DocContent>(DataTables.DocContent, key);
@@ -165,7 +164,14 @@ export class DatabaseCache implements ICache {
       DataTables.DocContent,
       cache$,
       nextCache$,
-      (inCache, fromNext) => inCache.sha !== fromNext.sha,
+      (inCache, fromNext) => {
+        const toUpeate = !inCache || inCache.sha !== fromNext.sha;
+        // if(toUpeate) {
+        //   this.readDocMeta(key).pipe(subscribeOn(asyncScheduler),catchError(err=>{throw err;})).subscribe()
+        // }
+        // should consider case: doc content not modified but doc meta modified?
+        return toUpeate;
+      },
       (inCache, fromNext) => fromNext.isDeleted
     );
   }

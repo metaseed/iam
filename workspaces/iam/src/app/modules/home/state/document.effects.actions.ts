@@ -19,7 +19,7 @@ export class DocumentEffectsLoad implements Action {
 }
 export class DocumentEffectsDelete implements Action {
   readonly type = DocumentEffectsActionTypes.Delete;
-  constructor(public payload: { number: number; title: string }) {}
+  constructor(public payload: { key: number; title: string }) {}
 }
 export class DocumentEffectsNew implements Action {
   readonly type = DocumentEffectsActionTypes.New;
@@ -27,7 +27,7 @@ export class DocumentEffectsNew implements Action {
 }
 export class DocumentEffectsShow implements Action {
   readonly type = DocumentEffectsActionTypes.Show;
-  constructor(public payload: { number: number; title?: string; format?: string }) {}
+  constructor(public payload: { key: number; title?: string; format?: string }) {}
 }
 export class DocumentEffectsSave implements Action {
   readonly type = DocumentEffectsActionTypes.Save;
