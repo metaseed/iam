@@ -211,6 +211,12 @@ export class Database {
     });
   }
 
+  put<T>(storeName: string, record: T): Observable<T> {
+    return this.request(storeName, IDB_TXN_READ, store => {
+      return store.put(record);
+    });
+  }
+
   count<T>(storeName: string, keyRange: IDBKeyRange): Observable<T> {
     return this.request(storeName, IDB_TXN_READ, store => {
       return store.count(keyRange);

@@ -1,8 +1,19 @@
 import { Database, ModifyAction } from './database-engine';
 import { Injectable } from '@angular/core';
 import { Document, DocMeta, DocContent } from 'core';
-import { Observable, throwError, combineLatest, of, from, concat } from 'rxjs';
-import { toArray, tap, switchMap, map, count, withLatestFrom } from 'rxjs/operators';
+import { Observable, throwError, combineLatest, of, from, concat, asyncScheduler } from 'rxjs';
+import {
+  toArray,
+  tap,
+  switchMap,
+  map,
+  count,
+  withLatestFrom,
+  filter,
+  observeOn,
+  subscribeOn,
+  catchError
+} from 'rxjs/operators';
 import { ICache, DataTables } from 'core';
 import { GithubCache } from 'net-storage';
 
@@ -36,12 +47,10 @@ export class DatabaseCache implements ICache {
 
     let cacheRecords: DocMeta[];
 
-    const FromDB$ = this.db
-      .query<DocMeta>(DataTables.DocumentMeta, keyRange, dir, DB_PAGE_SIZE)
-      .pipe(
-        toArray(),
-        tap(a => (cacheRecords = a))
-      );
+    const FromDB$ = this.db.query<DocMeta>(DataTables.DocMeta, keyRange, dir, DB_PAGE_SIZE).pipe(
+      toArray(),
+      tap(a => (cacheRecords = a))
+    );
 
     const docMetaUpsert = new Array<DocMeta>();
     const docMetaDelete = new Array<DocMeta>();
@@ -49,7 +58,7 @@ export class DatabaseCache implements ICache {
     const fromNext$ = this.nextLevelCache.readBulkDocMeta(key, isBelowTheKey).pipe(
       // tap(a=>console.log(a),err=>console.error(err),()=>console.warn('aaaa')),
       switchMap(records => {
-        return this.db.executeModify(DataTables.DocumentMeta, records, (dbRecord, record) => {
+        return this.db.executeModify(DataTables.DocMeta, records, (dbRecord, record) => {
           if (record.isDeleted) {
             if (dbRecord) {
               // to delete
@@ -92,17 +101,73 @@ export class DatabaseCache implements ICache {
     return concat(FromDB$, fromNext$);
   }
 
-  readDocContent(key: number, title: string, format: string): Observable<DocContent> {
-    const fromDB$ = this.db.get<DocContent>(DataTables.Document, key);
+  cacheRead<T extends { key: number }>(
+    table: DataTables,
+    cache$: Observable<T>,
+    nextCache$: Observable<T>,
+    shouldUpeate: (inCache: T, fromNext: T) => boolean,
+    shouldDelete: (inCache: T, fromNext: T) => boolean
+  ) {
+    let inCache: T;
+    cache$.pipe(tap(d => (inCache = d)));
+    nextCache$.pipe(
+      filter(fromNext => {
+        if (shouldDelete(inCache, fromNext)) {
+          this.db
+            .delete(table, fromNext.key)
+            .pipe(
+              subscribeOn(asyncScheduler),
+              catchError(err => {
+                throw err;
+              })
+            )
+            .subscribe();
 
-    const fromNet$ = this.nextLevelCache.readDocContent(key, title, format).pipe(
-      withLatestFrom(fromDB$),
-      map(([fromDb, fromNet]) => {
-        return;
+          return true;
+        } else if (shouldUpeate(inCache, fromNext)) {
+          this.db
+            .put(table, fromNext)
+            .pipe(
+              subscribeOn(asyncScheduler),
+              catchError(err => {
+                throw err;
+              })
+            )
+            .subscribe();
+          return true;
+        } else return false;
       })
     );
+    return concat<T>(cache$, nextCache$);
+  }
 
-    return concat(fromDB$, fromNet$);
+  readDocMeta(key: number, checkNextCache?:boolean):Observable<DocMeta> {
+    const cache$ = this.db.get<DocMeta>(DataTables.DocMeta, key);
+
+    const nextCache$ = this.nextLevelCache.readDocMeta(key);
+
+    return this.cacheRead<DocMeta>(
+      DataTables.DocContent,
+      cache$,
+      nextCache$,
+      (inCache, fromNext) => inCache.updateDate < fromNext.updateDate,
+      (inCache, fromNext) => fromNext.isDeleted
+    );
+  }
+
+
+  readDocContent(key: number, title: string, format: string): Observable<DocContent> {
+    const cache$ = this.db.get<DocContent>(DataTables.DocContent, key);
+
+    const nextCache$ = this.nextLevelCache.readDocContent(key, title, format);
+
+    return this.cacheRead<DocContent>(
+      DataTables.DocContent,
+      cache$,
+      nextCache$,
+      (inCache, fromNext) => inCache.sha !== fromNext.sha,
+      (inCache, fromNext) => fromNext.isDeleted
+    );
   }
 }
 // todo: up low key state value;

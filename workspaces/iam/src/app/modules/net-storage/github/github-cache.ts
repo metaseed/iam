@@ -24,7 +24,7 @@ export class GithubCache implements ICache {
 
   nextLevelCache: ICache;
 
-  private _issueToDocMeta= (issue:Issue) =>{
+  private _issueToDocMeta = (issue: Issue) => {
     let meta: DocMeta;
     meta = DocMeta.deSerialize(issue.body);
     if (!meta) meta = {} as DocMeta;
@@ -36,8 +36,7 @@ export class GithubCache implements ICache {
     meta.isDeleted = !!issue.closed_at;
     meta._context = issue;
     return meta;
-  }
-
+  };
 
   init(nextLevelCache: ICache) {
     this.nextLevelCache = nextLevelCache;
@@ -147,50 +146,60 @@ export class GithubCache implements ICache {
         }
 
         return getMetaData(page, isBulkBelowTheKey, keyNearPageFloor);
-      }),
+      })
       // tap(a=>console.log(a),err=>console.error(err),()=>console.warn('aaaa')),
     );
   }
 
-  readDocMeta(key:number) {
-
+  readTableRow(key: number, checkNextCache = false) {
+    return this.githubStorage.init().pipe(
+      switchMap(repo => repo.issue.get(key)),
+      map(issue => this._issueToDocMeta(issue))
+    );
   }
 
   readDocContent(key: number, title: string, format: string): Observable<DocContent> {
-    const getContent=(repo: Repository, number: number, title: string, format: string, state = 0 )=>{
-      let uri = `${DocService.FolderName}/${title}_${number}`;
+    const getContent = (
+      repo: Repository,
+      key: number,
+      title: string,
+      format: string,
+      state = 0
+    ) => {
+      let uri = `${DocService.FolderName}/${title}_${key}`;
       if (format) uri = `${uri}.${format}`;
 
-      let docMeta:DocMeta;
+      let docMeta: DocMeta;
 
-      return (<Observable<Content>>(repo.getContents(uri))).pipe( // directly get DocContent
-        map(c=>{ return {content:new DocContent(key,c.sha,c.content),metaOptional:docMeta }}),
+      return (<Observable<Content>>repo.getContents(uri)).pipe(
+        // directly get DocContent
+        map(c => {
+          return { content: new DocContent(key, c.sha, c.content), metaOptional: docMeta };
+        }),
         catchError(err => {
           if (err.status === 404) {
-            if (state===0) {
-              state=1;
-              return repo.issue.get(number).pipe(
-                switchMap(issue => {
-                  let meta = this._issueToDocMeta(issue);
+            if (state === 0) {
+              state = 1;
+              this.readTableRow(key).pipe(
+                switchMap(meta => {
                   docMeta = meta;
-                  return getContent(repo, number, meta.title, meta.format, state);// using the parameters from net via key; means title, format or format is modifyed.
+                  return getContent(repo, key, meta.title, meta.format, state); // using the parameters from net via key; means title, format or format is modifyed.
                 })
               );
-            } else if(format && state===1) {
-              state=2; // stop
-              return getContent(repo,number,title,'',state); // try to geting DocContent saved without format sufix;
+            } else if (format && state === 1) {
+              state = 2; // stop
+              return getContent(repo, key, title, '', state); // try to geting DocContent saved without format sufix;
             } else {
               return throwError('getContents should stop!');
             }
           }
         })
       );
-    }
+    };
     return this.githubStorage.init().pipe(
       switchMap(repo => {
-        return getContent(repo,key,title,format);
-      }),
+        return getContent(repo, key, title, format);
+      })
     );
-
   }
 }
