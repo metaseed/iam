@@ -29,7 +29,7 @@ export class StoreCache implements ICache {
     return this;
   }
 
-  createNewDoc(format:DocFormat) {
+  createNewDoc(format: DocFormat) {
     let num = NEW_DOC_ID;
     let doc = {
       id: num,
@@ -40,7 +40,6 @@ export class StoreCache implements ICache {
     };
     this.store.dispatch(new AddDocument({ collectionDocument: <any>doc }));
     this.store.dispatch(new SetCurrentDocumentId({ id: num }));
-
   }
 
   readBulkDocMeta(key: number, isBelowTheKey = true) {
@@ -104,4 +103,15 @@ export class StoreCache implements ICache {
       })
     );
   }
+
+  deleteDoc(id: number) {
+    return this.nextLevelCache.deleteDoc(id).pipe<true>(
+      tap(r => {
+        if (r) {
+          return this.store.dispatch(new DeleteDocument({ id }));
+        }
+      })
+    );
+  }
+
 }

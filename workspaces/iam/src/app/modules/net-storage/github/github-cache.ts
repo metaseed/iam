@@ -165,17 +165,17 @@ export class GithubCache implements ICache {
       title: string,
       format: string,
       state = 0,
-      isDeleted=false
+      isDeleted = false
     ) => {
       let uri = `${DOCUMENTS_FOLDER_NAME}/${title}_${id}`;
       if (format) uri = `${uri}.${format}`;
 
       let docMeta: DocMeta;
-      if(isDeleted) return of(new DocContent(id,undefined,undefined,isDeleted));
+      if (isDeleted) return of(new DocContent(id, undefined, undefined, isDeleted));
 
       return (<Observable<Content>>repo.getContents(uri)).pipe(
         // directly get DocContent
-        map(c => new DocContent(id, c.content,c.sha)),
+        map(c => new DocContent(id, c.content, c.sha)),
         catchError(err => {
           if (err.status === 404) {
             if (state === 0) {
@@ -183,7 +183,7 @@ export class GithubCache implements ICache {
               this.readDocMeta(id).pipe(
                 switchMap(meta => {
                   docMeta = meta;
-                  return getContent(repo, id, meta.title, meta.format, state,meta.isDeleted); // using the parameters from net via key; means title, format or format is modifyed.
+                  return getContent(repo, id, meta.title, meta.format, state, meta.isDeleted); // using the parameters from net via key; means title, format or format is modifyed.
                 })
               );
             } else if (format && state === 1) {
@@ -202,4 +202,22 @@ export class GithubCache implements ICache {
       })
     );
   }
+
+  deleteDoc(id: number) {
+    return this.githubStorage.init().pipe(
+      switchMap(repo => {
+        return repo.issue.edit(id, { state: 'closed' }).pipe(
+          switchMap(issue => {
+            const title = issue.title;
+            return repo.delFile(`${DOCUMENTS_FOLDER_NAME}/${title}_${id}.md`).pipe(
+              map<File,true>(d => {
+                return true;// false is processed by error of observable
+              })
+            );
+          })
+        );
+      })
+    );
+  }
+
 }

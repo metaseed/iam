@@ -111,7 +111,7 @@ export class DatabaseCache implements ICache {
   ) {
     let inCache: T;
     const _cache$ = cache$.pipe(
-      tap(d => (inCache = d)),
+      tap(d => (inCache = d))
       // tapObservable('BBB')
     );
     const _nextCache$ = nextCache$.pipe(
@@ -177,6 +177,19 @@ export class DatabaseCache implements ICache {
         return toUpeate;
       },
       (inCache, fromNext) => fromNext.isDeleted
+    );
+  }
+
+  deleteDoc(id: number) {
+    return this.nextLevelCache.deleteDoc(id).pipe(
+      observeOn(asyncScheduler),
+      switchMap((r:true) =>{
+        return this.db.delete(DataTables.DocMeta, id).pipe(
+          switchMap(_ => {
+            return this.db.delete(DataTables.DocContent, id).pipe(map<any,true>(_=>true));
+          })
+        )}
+      )
     );
   }
 }

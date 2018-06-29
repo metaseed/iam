@@ -94,15 +94,12 @@ export class Repository extends Requestable {
     return this.getSha(path, branch).pipe(
       tap(x => console.log(x), e => console.log(e)),
       flatMap(response => {
-        return this.request('DELETE', `/repos/${this.fullName}/contents/${filePath}`, {
-          message: 'delete file',
-          committer: {
-            name: this._userInfo.name,
-            email: this._userInfo.email
-          },
-          content: base64Encode('delete file'),
-          sha: response['sha'],
-          branch
+        return this._http.delete(`githubapi/repos/${this.fullName}/contents/${filePath}`, {
+          params: {
+            message: 'delete file',
+            sha: response['sha'],
+            branch
+          }
         });
       }),
       tap(x => console.log(x), e => console.log(e)),
@@ -112,15 +109,18 @@ export class Repository extends Requestable {
 
   delFileViaSha(path: string, sha: string, branch: string = 'master') {
     const filePath = path ? encodeURI(path) : '';
-    return this.request('DELETE', `/repos/${this.fullName}/contents/${filePath}`, {
-      message: 'delete file',
-      committer: {
-        name: this._userInfo.name,
-        email: this._userInfo.email
-      },
-      sha: sha,
-      branch
-    }).pipe(tap(x => console.log(x), e => console.log(e)), map(x => <File>x));
+    return this._http
+      .delete(`githubapi/repos/${this.fullName}/contents/${filePath}`, {
+        params: {
+          message: 'delete file',
+          sha: sha,
+          branch
+        }
+      })
+      .pipe(
+        tap(x => console.log(x), e => console.log(e)),
+        map(x => <File>x)
+      );
   }
 
   // https://developer.github.com/v3/repos/contents/#get-contents

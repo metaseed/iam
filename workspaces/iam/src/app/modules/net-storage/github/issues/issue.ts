@@ -82,11 +82,10 @@ export class Issue extends Requestable {
   }
   // https://developer.github.com/v3/issues/#edit-an-issue
   edit(number, params: EditIssueParams) {
-    return this.request(
-      'PATCH',
-      `/repos/${this._userInfo.name}/${this.repository}/issues/${number}`,
+    return this.http.patch(
+      `githubapi/repos/${this._userInfo.name}/${this.repository}/issues/${number}`,
       params
-    );
+    ) as Observable<Issue>;
   }
   get(issueNumber: number): Observable<Issue> {
     return <Observable<Issue>>(

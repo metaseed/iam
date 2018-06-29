@@ -264,7 +264,11 @@ export class DocumentEffects {
   }
 
   @Effect()
-  DeleteDocument: Observable<Action> = ((coId = Date.now()) =>
+  DeleteDocument = this.monitor.do<DocumentEffectsDelete>(DocumentEffectsActionTypes.Delete,
+
+  );
+
+  : Observable<Action> = ((coId = Date.now()) =>
     this.actions$.pipe(
       ofType<DocumentEffectsDelete>(DocumentEffectsActionTypes.Delete),
       tap(action =>
@@ -279,25 +283,7 @@ export class DocumentEffects {
       combineLatest(this.storage.init()),
       switchMap(([action, repo]) => {
         const key = action.payload.key;
-        return repo.issue.edit(key, { state: 'closed' }).pipe(
-          switchMap(issue => {
-            const title = action.payload.title;
-            return repo.delFile(`${DOCUMENTS_FOLDER_NAME}/${title}_${key}.md`).pipe(
-              map(d => {
-                this.store.dispatch(
-                  new SetDocumentsMessage({
-                    status: ActionStatus.Success,
-                    action: DocumentEffectsActionTypes.Delete,
-                    corelationId: coId,
-                    message: `document: ${title} deleted`
-                  })
-                );
-                return new DeleteDocument({ id: key });
-              })
-            );
-          })
-        );
-      }),
+     }),
       catchError((err, caught) => {
         console.error(err);
         this.store.dispatch(

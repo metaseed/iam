@@ -199,15 +199,15 @@ export class Database {
     );
   }
 
-  delete(storeName: string, key): Observable<any> {
+  delete(storeName: string, id): Observable<any> {
     return this.request(storeName, IDB_TXN_READWRITE, store => {
-      return store.delete(key);
+      return store.delete(id);
     });
   }
 
-  get<T>(storeName: string, key: any): Observable<T> {
+  get<T>(storeName: string, id: any): Observable<T> {
     return this.request(storeName, IDB_TXN_READ, store => {
-      return store.get(key);
+      return store.get(id);
     });
   }
 

@@ -29,6 +29,7 @@ export interface ICache {
   readDocMeta(id: number, checkNextCache?:boolean):Observable<DocMeta>;
 
   readDocContent(id:number, title:string, format: string): Observable<DocContent>;
+  deleteDoc(id:number):Observable<true>; // false is processed by observable error hanlder
 }
 
 
