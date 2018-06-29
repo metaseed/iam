@@ -77,7 +77,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   markdown$: Observable<string>;
 
   constructor(
-    private markdownSerive:MarkdownService,
+    private markdownSerive: MarkdownService,
     private _docService: DocService,
     private _el: ElementRef,
     private _editorService: MarkdownEditorService,
@@ -136,9 +136,8 @@ export class MarkdownComponent implements OnInit, OnDestroy {
             let doc = getDocumentByIdSeletor(num)(this.state.value);
             if (doc && doc.content) {
               this.store.dispatch(new SetCurrentDocumentId({ id: num }));
-            } else {
-              this.markdownSerive.refresh(num, title, format);
             }
+            this.markdownSerive.refresh(num, title, format);
           }
         }),
         take(1)

@@ -110,11 +110,11 @@ export class DatabaseCache implements ICache {
     shouldDelete: (inCache: T, fromNext: T) => boolean
   ) {
     let inCache: T;
-    cache$ = cache$.pipe(
+    const _cache$ = cache$.pipe(
       tap(d => (inCache = d)),
       // tapObservable('BBB')
     );
-    nextCache$ = nextCache$.pipe(
+    const _nextCache$ = nextCache$.pipe(
       filter(fromNext => {
         if (shouldDelete(inCache, fromNext)) {
           this.db
@@ -142,7 +142,7 @@ export class DatabaseCache implements ICache {
         } else return false;
       })
     );
-    return concat<T>(cache$, nextCache$).pipe(tapObservable('A'));
+    return concat<T>(_cache$, _nextCache$);
   }
 
   readDocMeta(id: number, checkNextCache?: boolean): Observable<DocMeta> {
