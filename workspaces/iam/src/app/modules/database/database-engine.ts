@@ -212,7 +212,7 @@ export class Database {
   }
 
   put<T>(storeName: string, record: T): Observable<T> {
-    return this.request(storeName, IDB_TXN_READ, store => {
+    return this.request(storeName, IDB_TXN_READWRITE, store => {
       return store.put(record);
     });
   }

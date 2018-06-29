@@ -16,6 +16,7 @@ import {
 } from 'rxjs/operators';
 import { ICache, DataTables } from 'core';
 import { GithubCache } from 'net-storage';
+import { tapObservable } from '../core/utils/debug';
 
 const DB_PAGE_SIZE = 20;
 export interface IterableDocuments extends IterableIterator<Observable<Document>> {}
@@ -109,8 +110,11 @@ export class DatabaseCache implements ICache {
     shouldDelete: (inCache: T, fromNext: T) => boolean
   ) {
     let inCache: T;
-    cache$.pipe(tap(d => (inCache = d)));
-    nextCache$.pipe(
+    cache$ = cache$.pipe(
+      tap(d => (inCache = d)),
+      // tapObservable('BBB')
+    );
+    nextCache$ = nextCache$.pipe(
       filter(fromNext => {
         if (shouldDelete(inCache, fromNext)) {
           this.db
@@ -138,7 +142,7 @@ export class DatabaseCache implements ICache {
         } else return false;
       })
     );
-    return concat<T>(cache$, nextCache$);
+    return concat<T>(cache$, nextCache$).pipe(tapObservable('A'));
   }
 
   readDocMeta(id: number, checkNextCache?: boolean): Observable<DocMeta> {
@@ -150,7 +154,7 @@ export class DatabaseCache implements ICache {
       DataTables.DocContent,
       cache$,
       nextCache$,
-      (inCache, fromNext) =>  !inCache || inCache.updateDate < fromNext.updateDate,
+      (inCache, fromNext) => !inCache || inCache.updateDate < fromNext.updateDate,
       (inCache, fromNext) => fromNext.isDeleted
     );
   }
