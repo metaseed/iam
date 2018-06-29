@@ -20,7 +20,7 @@ export class DocumentEffectsLoad implements Action {
 }
 export class DocumentEffectsDelete implements Action {
   readonly type = DocumentEffectsActionTypes.Delete;
-  constructor(public payload: { key: number; title: string }) {}
+  constructor(public payload: { id: number; title: string }) {}
 }
 export class DocumentEffectsNew implements Action {
   readonly type = DocumentEffectsActionTypes.New;

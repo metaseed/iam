@@ -121,11 +121,11 @@ export class DocumentEffects {
               (<any>doc).metaData = meta;
               newTitle = meta.title;
               format = meta.format || format;
-              return this.saveNew(repo, newTitle, content, format, coId);
+              return this._saveNew(repo, newTitle, content, format, coId);
             })
           );
         } else {
-          return this.edit(repo, doc, newTitle, content, format, coId);
+          return this._edit(repo, doc, newTitle, content, format, coId);
         }
       }),
       catchError((err, caught) => {
@@ -142,7 +142,7 @@ export class DocumentEffects {
       })
     ))();
 
-  saveNew = (repo: Repository, title: string, content: string, format: string, coId: number) => {
+  private _saveNew = (repo: Repository, title: string, content: string, format: string, coId: number) => {
     return repo.issue.create({ title }).pipe(
       switchMap(issue => {
         let id = issue.number;
@@ -166,7 +166,7 @@ export class DocumentEffects {
                         collectionDocument: { id: doc.id, changes: <any>doc }
                       })
                     );
-                    this.modifyUrlAfterSaved(id, title, format);
+                    this._modifyUrlAfterSaved(id, title, format);
                     this.snackbar.open('New document saved!', 'OK');
                     return new SetDocumentsMessage({
                       status: ActionStatus.Success,
@@ -183,7 +183,7 @@ export class DocumentEffects {
     );
   };
 
-  edit = (
+  private _edit = (
     repo: Repository,
     doc: Document,
     newTitle: string,
@@ -236,7 +236,7 @@ export class DocumentEffects {
                     })
                   );
                   this.snackbar.open('Saved!', 'OK');
-                  this.modifyUrlAfterSaved(doc.id, newTitle, format);
+                  this._modifyUrlAfterSaved(doc.id, newTitle, format);
                   return new SetDocumentsMessage({
                     status: ActionStatus.Success,
                     action: DocumentEffectsActionTypes.Save,
@@ -249,7 +249,8 @@ export class DocumentEffects {
         })
       );
   };
-  modifyUrlAfterSaved(num: number, title: string, format: string) {
+
+  private _modifyUrlAfterSaved(num: number, title: string, format: string) {
     const url = this.router
       .createUrlTree(['/doc'], {
         queryParams: {
@@ -264,37 +265,8 @@ export class DocumentEffects {
   }
 
   @Effect()
-  DeleteDocument = this.monitor.do<DocumentEffectsDelete>(DocumentEffectsActionTypes.Delete,
-
+  DeleteDocument = this.monitor.do<DocumentEffectsDelete>(
+    DocumentEffectsActionTypes.Delete,
+    switchMap(a => this.storeCache.deleteDoc(a.payload.id))
   );
-
-  : Observable<Action> = ((coId = Date.now()) =>
-    this.actions$.pipe(
-      ofType<DocumentEffectsDelete>(DocumentEffectsActionTypes.Delete),
-      tap(action =>
-        this.store.dispatch(
-          new SetDocumentsMessage({
-            action: DocumentEffectsActionTypes.Delete,
-            status: ActionStatus.Start,
-            corelationId: (coId = Date.now())
-          })
-        )
-      ),
-      combineLatest(this.storage.init()),
-      switchMap(([action, repo]) => {
-        const key = action.payload.key;
-     }),
-      catchError((err, caught) => {
-        console.error(err);
-        this.store.dispatch(
-          new SetDocumentsMessage({
-            status: ActionStatus.Fail,
-            action: DocumentEffectsActionTypes.Delete,
-            corelationId: coId,
-            message: err
-          })
-        );
-        return caught;
-      })
-    ))();
 }

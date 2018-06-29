@@ -197,6 +197,6 @@ export class HomeComponent {
   }
 
   deleteDoc(doc: Document) {
-    this.store.dispatch(new DocumentEffectsDelete({ key: doc.id, title: doc.metaData.title }));
+    this.store.dispatch(new DocumentEffectsDelete({ id: doc.id, title: doc.metaData.title }));
   }
 }
