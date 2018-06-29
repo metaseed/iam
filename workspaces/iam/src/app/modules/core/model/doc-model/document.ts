@@ -2,10 +2,14 @@ import { DocMeta } from "./doc-meta";
 import { Issue,Content } from 'net-storage';
 import { DocContent } from "./doc-content";
 
-interface IDocument {
+export interface IDocument {
   id:number;
   metaData: DocMeta;
   content?: DocContent;
+}
+
+export enum DocFormat {
+  md='md'
 }
 
 export class Document implements IDocument {

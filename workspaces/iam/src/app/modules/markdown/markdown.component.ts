@@ -7,7 +7,7 @@ import { take, map, timeout, tap, takeUntil, combineLatest, share } from 'rxjs/o
 import { DocService } from 'home';
 import { MarkdownEditorService } from './editor/index';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
-import { base64Decode, DocumentRef, Scrollable } from 'core';
+import { base64Decode, DocumentRef, Scrollable, DocFormat } from 'core';
 import { Store, select, State } from '@ngrx/store';
 import * as fromMarkdown from './state';
 import * as fromView from './state/actions/view';
@@ -126,7 +126,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
       .pipe(
         tap(params => {
           if (this.router.url.startsWith('/doc/new')) {
-            let format = params.get('f');
+            const format = params.get('f') as DocFormat;
             this.store.dispatch(new DocumentEffectsNew({ format }));
             this.store.dispatch(new document.EditMode());
           } else {
@@ -134,9 +134,6 @@ export class MarkdownComponent implements OnInit, OnDestroy {
             let num = +params.get('id');
             let format = params.get('f');
             let doc = getDocumentByIdSeletor(num)(this.state.value);
-            if (doc && doc.content) {
-              this.store.dispatch(new SetCurrentDocumentId({ id: num }));
-            }
             this.markdownSerive.refresh(num, title, format);
           }
         }),

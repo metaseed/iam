@@ -19,6 +19,7 @@ import { DocumentEffects } from './state/document.effects';
 import { DocDeleteComponent } from './doc-list/doc-delete/doc-delete.component';
 import { GithubStorageModule } from '../net-storage/github/github-storage.module';
 import { DatabaseModule } from 'database';
+import { EffectsMoniter } from './state';
 const routes: Routes = [
   {
     path: 'docs',
@@ -47,7 +48,7 @@ const routes: Routes = [
     DocDeleteComponent
   ],
   exports: [HomeComponent],
-  providers: [DocService, DocSearchService],
+  providers: [DocService, DocSearchService,EffectsMoniter],
   entryComponents: [DeleteAlertDialog]
 })
 export class HomeModule {}

@@ -4,6 +4,7 @@ import { State } from './document.reducer';
 import { filter, timeout, map, catchError, tap } from 'rxjs/operators';
 import { timeOutMonitor } from '../../core/operators';
 import { selectDocumentActionStatusState } from './state-selectors';
+import { DocFormat } from 'core';
 
 export enum DocumentEffectsActionTypes {
   Load = '[DocumentEffects] Load',
@@ -23,7 +24,7 @@ export class DocumentEffectsDelete implements Action {
 }
 export class DocumentEffectsNew implements Action {
   readonly type = DocumentEffectsActionTypes.New;
-  constructor(public payload: { format: string }) {}
+  constructor(public payload: { format: DocFormat }) {}
 }
 export class DocumentEffectsShow implements Action {
   readonly type = DocumentEffectsActionTypes.Show;

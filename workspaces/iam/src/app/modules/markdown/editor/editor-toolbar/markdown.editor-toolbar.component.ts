@@ -5,7 +5,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Subscription, Subject } from 'rxjs';
 import { DocService } from 'home';
 import { MarkdownEditorService } from '../../editor/index';
-import { CommandService, Command, DocumentRef } from '../../../core/index';
+import { CommandService, Command, DocumentRef, DocFormat } from '../../../core/index';
 import * as fromMarkdown from '../../state';
 import { DocumentMode } from '../../state/reducers/document';
 import { Store, select, State } from '@ngrx/store';
@@ -164,7 +164,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   };
 
   new = () => {
-    this.store.dispatch(new DocumentEffectsNew({ format: 'md' }));
+    this.store.dispatch(new DocumentEffectsNew({ format: DocFormat.md }));
   };
 
   previewPanelClick(event: Event) {

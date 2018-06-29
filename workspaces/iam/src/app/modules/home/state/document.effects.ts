@@ -1,57 +1,42 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { Observable, defer, of, throwError } from 'rxjs';
+import { Observable, defer, of, throwError, Operator, OperatorFunction, pipe } from 'rxjs';
 import { Action, Store } from '@ngrx/store';
 import { State as StoreState } from '@ngrx/store';
-import { getContent, NEW_DOC_ID, getContentUrl } from './document.effects.util';
+import { getContentUrl } from './document.effects.util';
 import {
   DocumentEffectsLoad,
   DocumentEffectsActionTypes,
   ActionStatus,
   DocumentEffectsDelete
 } from './document.effects.actions';
-import { LoadDocuments, SetDocumentsMessage, DeleteDocument } from './document.actions';
+import { SetDocumentsMessage, DeleteDocument } from './document.actions';
 import { GithubStorage, Repository, EditIssueParams, Issue, GithubCache } from 'net-storage';
-import {
-  switchMap,
-  catchError,
-  map,
-  tap,
-  take,
-  retry,
-  combineLatest,
-  last,
-  count
-} from 'rxjs/operators';
+import { switchMap, catchError, map, tap, take, combineLatest, count } from 'rxjs/operators';
 import { DocMeta, Document } from 'core';
 import {
-  selectDocumentEntitiesState,
   DocumentEffectsShow,
   SetCurrentDocumentId,
   selectCurrentDocumentState,
-  AddDocument,
   UpdateDocument,
   DocumentEffectsNew,
   DocumentEffectsSave,
-  UpsertDocuments,
   selectKeyRangeLowState,
   selectKeyRangeHighState
 } from 'app/modules/home/state';
-import { DocService } from '../services/doc.service';
-import { format } from 'util';
-import { base64Encode } from 'core';
 import { MatSnackBar } from '@angular/material';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { State, selectDocumentsKeyRangeHigh } from './document.reducer';
-import { HttpResponse } from '@angular/common/http';
+import { State } from './document.reducer';
 import { StoreCache } from 'core';
 import { DatabaseCache } from 'database';
 import { DOCUMENTS_FOLDER_NAME } from '../const';
+import { EffectsMoniter } from './document.effects.monitor';
 
 @Injectable()
 export class DocumentEffects {
   constructor(
+    private monitor: EffectsMoniter,
     private actions$: Actions,
     private state: StoreState<State>,
     private storage: GithubStorage,
@@ -67,142 +52,46 @@ export class DocumentEffects {
   }
 
   @Effect()
-  LoadDocuments: Observable<Action> = ((coId = -1) => {
-    let keyRangeHigh: number;
-    let keyRangeLow: number;
-    let isBelowRange: boolean;
+  LoadDocuments = this.monitor.do<DocumentEffectsLoad>(
+    DocumentEffectsActionTypes.Load,
+    (() => {
+      let keyRangeHigh: number;
+      let keyRangeLow: number;
+      let isBelowRange: boolean;
 
-    return this.actions$.pipe(
-      ofType<DocumentEffectsLoad>(DocumentEffectsActionTypes.Load),
-      tap(action => {
-        keyRangeHigh = selectKeyRangeHighState(this.state.value);
-        keyRangeLow = selectKeyRangeLowState(this.state.value);
-        isBelowRange = action.payload.isBelowRange;
-
-        this.store.dispatch(
-          new SetDocumentsMessage({
-            action: DocumentEffectsActionTypes.Load,
-            status: ActionStatus.Start,
-            corelationId: (coId = Date.now())
-          })
-        );
-      }),
-      switchMap(_ => {
-        const key = isBelowRange ? keyRangeLow : keyRangeHigh;
-        return this.storeCache.readBulkDocMeta(key, isBelowRange).pipe(
-          count(),
-          map(
-            _ =>
-              new SetDocumentsMessage({
-                status: ActionStatus.Success,
-                action: DocumentEffectsActionTypes.Load,
-                corelationId: coId,
-                message: 'documents loaded'
-              })
-          )
-        );
-      }),
-      catchError((err, caught) => {
-        console.error(err);
-        this.store.dispatch(
-          new SetDocumentsMessage({
-            status: ActionStatus.Fail,
-            action: DocumentEffectsActionTypes.Load,
-            corelationId: coId,
-            message: err
-          })
-        );
-        return caught;
-      })
-    );
-  })();
+      return pipe(
+        tap<DocumentEffectsLoad>(action => {
+          keyRangeHigh = selectKeyRangeHighState(this.state.value);
+          keyRangeLow = selectKeyRangeLowState(this.state.value);
+          isBelowRange = action.payload.isBelowRange;
+        }),
+        switchMap(_ => {
+          const key = isBelowRange ? keyRangeLow : keyRangeHigh;
+          return this.storeCache.readBulkDocMeta(key, isBelowRange);
+        })
+      );
+    })()
+  );
 
   @Effect()
-  ShowDocument: Observable<Action> = ((coId = -1) =>
-    this.actions$.pipe(
-      ofType<DocumentEffectsShow>(DocumentEffectsActionTypes.Show),
+  ShowDocument = this.monitor.do<DocumentEffectsShow>(
+    DocumentEffectsActionTypes.Show,
+    pipe(
       tap(action => this.store.dispatch(new SetCurrentDocumentId({ id: action.payload.id }))),
-      tap(action =>
-        this.store.dispatch(
-          new SetDocumentsMessage({
-            action: DocumentEffectsActionTypes.Show,
-            status: ActionStatus.Start,
-            corelationId: (coId = Date.now())
-          })
-        )
-      ),
       switchMap(action => {
         const actionDoc = action.payload;
-        return this.storeCache
-          .readDocContent(actionDoc.id, actionDoc.title, actionDoc.format)
-          .pipe(
-            map(
-              _ =>
-                new SetDocumentsMessage({
-                  action: DocumentEffectsActionTypes.Show,
-                  status: ActionStatus.Success,
-                  corelationId: coId
-                })
-            )
-          );
-      }),
-      catchError((err, caught) => {
-        console.error(err);
-        this.store.dispatch(
-          new SetDocumentsMessage({
-            status: ActionStatus.Fail,
-            action: DocumentEffectsActionTypes.Show,
-            corelationId: coId,
-            message: err
-          })
-        );
-        return caught;
+        return this.storeCache.readDocContent(actionDoc.id, actionDoc.title, actionDoc.format);
       })
-    ))();
+    )
+  );
 
   @Effect()
-  NewDocument: Observable<Action> = ((coId = -1) =>
-    this.actions$.pipe(
-      ofType<DocumentEffectsNew>(DocumentEffectsActionTypes.New),
-      tap(action =>
-        this.store.dispatch(
-          new SetDocumentsMessage({
-            action: DocumentEffectsActionTypes.New,
-            status: ActionStatus.Start,
-            corelationId: (coId = Date.now())
-          })
-        )
-      ),
-      map(action => {
-        let num = NEW_DOC_ID;
-        let doc = {
-          id: num,
-          format: action.payload.format,
-          content: {
-            content: base64Encode('# Title\n*summery*\n')
-          }
-        };
-        this.store.dispatch(new AddDocument({ collectionDocument: <any>doc }));
-        this.store.dispatch(new SetCurrentDocumentId({ id: num }));
-        return new SetDocumentsMessage({
-          action: DocumentEffectsActionTypes.New,
-          status: ActionStatus.Success,
-          corelationId: coId
-        });
-      }),
-      catchError((err, caught) => {
-        console.error(err);
-        this.store.dispatch(
-          new SetDocumentsMessage({
-            status: ActionStatus.Fail,
-            action: DocumentEffectsActionTypes.New,
-            corelationId: coId,
-            message: err
-          })
-        );
-        return caught;
-      })
-    ))();
+  NewDocument = this.monitor.do<DocumentEffectsNew>(
+    DocumentEffectsActionTypes.New,
+    tap<DocumentEffectsNew>(a => {
+      this.storeCache.createNewDoc(a.payload.format);
+    })
+  );
 
   @Effect()
   SaveDocument: Observable<Action> = ((coId = -1) =>

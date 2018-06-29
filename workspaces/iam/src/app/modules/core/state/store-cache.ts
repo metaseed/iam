@@ -1,4 +1,4 @@
-import { DataTables, ICache, DocMeta, DocContent, Document } from '../model';
+import { DataTables, ICache, DocMeta, DocContent, Document, DocFormat } from '../model';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DatabaseCache } from 'database';
@@ -11,8 +11,11 @@ import {
   selectDocumentEntitiesState,
   AddDocument,
   UpdateDocument,
-  DeleteDocument
+  DeleteDocument,
+  SetCurrentDocumentId
 } from '../../home/state';
+import { NEW_DOC_ID } from '../../home/const';
+import { base64Encode } from '../utils';
 
 @Injectable()
 export class StoreCache implements ICache {
@@ -24,6 +27,20 @@ export class StoreCache implements ICache {
   init(nextLevelCache: ICache): ICache {
     this.nextLevelCache = nextLevelCache;
     return this;
+  }
+
+  createNewDoc(format:DocFormat) {
+    let num = NEW_DOC_ID;
+    let doc = {
+      id: num,
+      format: format,
+      content: {
+        content: base64Encode('# Title\n*summery*\n')
+      }
+    };
+    this.store.dispatch(new AddDocument({ collectionDocument: <any>doc }));
+    this.store.dispatch(new SetCurrentDocumentId({ id: num }));
+
   }
 
   readBulkDocMeta(key: number, isBelowTheKey = true) {
@@ -50,7 +67,6 @@ export class StoreCache implements ICache {
     return this.nextLevelCache.readDocMeta(key, checkNextCache);
   }
 
-  // todo: handle show from url.
   readDocContent(id: number, title: string, format: string): Observable<DocContent> {
     return this.nextLevelCache.readDocContent(id, title, format).pipe(
       tap(docContent => {
