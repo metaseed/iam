@@ -94,37 +94,40 @@ export class DocumentEffects {
   );
 
   @Effect()
-  SaveDocument = this.monitor.do<DocumentEffectsSave>(DocumentEffectsActionTypes.Save,pipe(
-    combineLatest(this.storage.init(), this.store.select(selectCurrentDocumentState)),
-    switchMap(([action, repo, doc]) => {
-      const content = action.payload.content;
-      let format = action.payload.format;
-      let newTitle = DocMeta.getTitle(action.payload.content);
+  SaveDocument = this.monitor.do<DocumentEffectsSave>(
+    DocumentEffectsActionTypes.Save,
+    pipe(
+      combineLatest(this.storage.init(), this.store.select(selectCurrentDocumentState)),
+      switchMap(([action, repo, doc]) => {
+        const content = action.payload.content;
+        let format = action.payload.format;
+        let newTitle = DocMeta.getTitle(action.payload.content);
 
-      if (!newTitle) return throwError(new Error('Must define a title!'));
-      if (!doc.metaData || !doc.metaData.contentId) {
-        //from url show and save
-        return repo.issue.get(doc.id).pipe(
-          switchMap(doc => {
-            let meta = DocMeta.deSerialize(doc.body);
-            (<any>doc).metaData = meta;
-            newTitle = meta.title;
-            format = meta.format || format;
-            return this._saveNew(repo, newTitle, content, format);
-          })
-        );
-      } else {
-        return this._edit(repo, doc, newTitle, content, format);
-      }
-    })
-  ));
+        if (!newTitle) return throwError(new Error('Must define a title!'));
+        let ob: Observable<Document>;
+        if (!doc.metaData || !doc.metaData.contentSha) {
+          //from url show and save
+          ob = repo.issue.get(doc.id).pipe(
+            switchMap(doc => {
+              let meta = DocMeta.deSerialize(doc.body);
+              (<any>doc).metaData = meta;
+              newTitle = meta.title;
+              format = meta.format || format;
+              const o = this._saveNew(repo, newTitle, content, format);
+              this.snackbar.open('New document saved!', 'OK');
+              return o;
+            })
+          );
+        } else {
+          this._edit(repo, doc, newTitle, content, format);
+          this.snackbar.open('Saved!', 'OK');
+        }
+        return ob;
+      })
+    )
+  );
 
-  private _saveNew = (
-    repo: Repository,
-    title: string,
-    content: string,
-    format: string,
-  ) => {
+  private _saveNew = (repo: Repository, title: string, content: string, format: string) => {
     return repo.issue.create({ title }).pipe(
       switchMap(issue => {
         let id = issue.number;
@@ -150,7 +153,6 @@ export class DocumentEffects {
                       })
                     );
                     this._modifyUrlAfterSaved(id, title, format);
-                    this.snackbar.open('New document saved!', 'OK');
                     return doc;
                   })
                 );
@@ -167,14 +169,14 @@ export class DocumentEffects {
     doc: Document,
     newTitle: string,
     content: string,
-    format: string,
+    format: string
   ) => {
     const changeTitle = doc.metaData ? newTitle !== doc.metaData.title : true;
     return repo
       .updateFile(
         `${DOCUMENTS_FOLDER_NAME}/${newTitle}_${doc.id}.${format}`,
         content,
-        doc.metaData.contentId
+        doc.metaData.contentSha
       )
       .pipe(
         switchMap(file => {
@@ -200,7 +202,7 @@ export class DocumentEffects {
                     repo
                       .delFileViaSha(
                         `${DOCUMENTS_FOLDER_NAME}/${doc.metaData.title}_${doc.id}.${format}`,
-                        doc.metaData.contentId
+                        doc.metaData.contentSha
                       )
                       .pipe(take(1))
                       .subscribe();
@@ -213,7 +215,6 @@ export class DocumentEffects {
                       collectionDocument: { id: doc.id, changes: <any>doc }
                     })
                   );
-                  this.snackbar.open('Saved!', 'OK');
                   this._modifyUrlAfterSaved(doc.id, newTitle, format);
                   return doc;
                 })

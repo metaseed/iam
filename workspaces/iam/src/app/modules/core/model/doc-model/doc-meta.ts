@@ -22,7 +22,7 @@ export class DocMeta {
     public updateDate: Date, //utc time
     public summary: string,
     public imageData: string,
-    public contentId: string, // sha of file
+    public contentSha: string, // sha of file
     public tags: any, // in issue as labels
     public format = 'md', // sufix
     public isDeleted = false
@@ -76,9 +76,9 @@ export class DocMeta {
   }
 
   static serializeContent(
-    key: number,
+    id: number,
     content: string,
-    contentId: string,
+    contentSha: string,
     contentUrl: string,
     format: string,
     createDate: Date
@@ -89,14 +89,14 @@ export class DocMeta {
     const version = DocMeta.getVersion(content);
     const tags = DocMeta.getTags(content);
     const meta = new DocMeta(
-      key,
+      id,
       title,
       version,
       createDate,
       new Date(),
       summary,
       picUrl,
-      contentId,
+      contentSha,
       tags,
       format
     );
@@ -110,9 +110,13 @@ export class DocMeta {
     if (!jsonString) return null;
     try {
       let meta = <DocMeta>JSON.parse(jsonString[1]);
+      if (!meta.contentSha) { // old name is contentId
+        const sha = meta['contentId'];
+        if (sha) meta.contentSha = sha;
+      }
       return meta;
-    } catch(err) {
-      console.error(err)
+    } catch (err) {
+      console.error(err);
       return null;
     }
   }
