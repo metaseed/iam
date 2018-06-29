@@ -15,9 +15,9 @@ import * as CodeMirror from 'codemirror';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';
 import { MatToolbar, MatDialog } from '@angular/material';
-import { DocumentEffectsSave, DocumentEffectsNew } from '../../../home/state';
 import { takeUntil, map } from 'rxjs/operators';
 import { Utilities } from '../../../core/utils';
+import { DocumentEffectsSave, DocumentEffectsNew } from '../../../home/state';
 
 @Component({
   selector: 'editor-toolbar',

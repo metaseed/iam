@@ -17,7 +17,6 @@ import { DocumentEffectsDelete, DocumentEffectsLoad } from '../state/document.ef
 
 @Injectable()
 export class DocService {
-  static FolderName = 'documents';
   private _repoSub$:Observable<Repository>;
 
   constructor(

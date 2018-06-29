@@ -2,8 +2,8 @@ import { Action, Store, select } from '@ngrx/store';
 import { Observable, TimeoutError, UnaryFunction, of, asyncScheduler } from 'rxjs';
 import { State } from './document.reducer';
 import { filter, timeout, map, catchError, tap } from 'rxjs/operators';
-import { selectDocumentActionStatusState } from 'app/modules/home/state';
 import { timeOutMonitor } from '../../core/operators';
+import { selectDocumentActionStatusState } from './state-selectors';
 
 export enum DocumentEffectsActionTypes {
   Load = '[DocumentEffects] Load',

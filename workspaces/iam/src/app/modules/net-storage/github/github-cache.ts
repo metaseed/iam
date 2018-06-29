@@ -7,8 +7,8 @@ import { Document } from 'core';
 import { AsyncScheduler } from 'rxjs/internal/scheduler/AsyncScheduler';
 import { Issue } from './issues/issue';
 import { Repository } from './repository';
-import { DocService } from 'home';
 import { Content } from 'net-storage';
+import { DOCUMENTS_FOLDER_NAME } from '../../home/const';
 
 const GITHUB_PAGE_SIZE = 50;
 const FIRST_PAGE_READY_TO_REFRESH = 5 * 60 * 1000;
@@ -167,7 +167,7 @@ export class GithubCache implements ICache {
       state = 0,
       isDeleted=false
     ) => {
-      let uri = `${DocService.FolderName}/${title}_${id}`;
+      let uri = `${DOCUMENTS_FOLDER_NAME}/${title}_${id}`;
       if (format) uri = `${uri}.${format}`;
 
       let docMeta: DocMeta;

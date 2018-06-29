@@ -47,6 +47,7 @@ import { State, selectDocumentsKeyRangeHigh } from './document.reducer';
 import { HttpResponse } from '@angular/common/http';
 import { StoreCache } from 'core';
 import { DatabaseCache } from 'database';
+import { DOCUMENTS_FOLDER_NAME } from '../const';
 
 @Injectable()
 export class DocumentEffects {
@@ -256,7 +257,7 @@ export class DocumentEffects {
     return repo.issue.create({ title }).pipe(
       switchMap(issue => {
         let id = issue.number;
-        return repo.newFile(`${DocService.FolderName}/${title}_${id}.${format}`, content).pipe(
+        return repo.newFile(`${DOCUMENTS_FOLDER_NAME}/${title}_${id}.${format}`, content).pipe(
           switchMap(file => {
             let url = getContentUrl(id, title);
             return of(
@@ -304,7 +305,7 @@ export class DocumentEffects {
     const changeTitle = doc.metaData ? newTitle !== doc.metaData.title : true;
     return repo
       .updateFile(
-        `${DocService.FolderName}/${newTitle}_${doc.id}.${format}`,
+        `${DOCUMENTS_FOLDER_NAME}/${newTitle}_${doc.id}.${format}`,
         content,
         doc.metaData.contentId
       )
@@ -331,7 +332,7 @@ export class DocumentEffects {
                   if (changeTitle) {
                     repo
                       .delFileViaSha(
-                        `${DocService.FolderName}/${doc.metaData.title}_${doc.id}.${format}`,
+                        `${DOCUMENTS_FOLDER_NAME}/${doc.metaData.title}_${doc.id}.${format}`,
                         doc.metaData.contentId
                       )
                       .pipe(take(1))
@@ -392,7 +393,7 @@ export class DocumentEffects {
         return repo.issue.edit(key, { state: 'closed' }).pipe(
           switchMap(issue => {
             const title = action.payload.title;
-            return repo.delFile(`${DocService.FolderName}/${title}_${key}.md`).pipe(
+            return repo.delFile(`${DOCUMENTS_FOLDER_NAME}/${title}_${key}.md`).pipe(
               map(d => {
                 this.store.dispatch(
                   new SetDocumentsMessage({
