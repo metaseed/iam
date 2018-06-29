@@ -18,7 +18,8 @@ export class EffectsMoniter {
     let coId: number = -1;
     return this.actions$.pipe(
       ofType<T>(action),
-      tap(_ =>
+      tap(_ => {
+        console.log(`%c${action}-${coId}->start`,'background-color:#4285f4')
         this.store.dispatch(
           new SetDocumentsMessage({
             action,
@@ -26,18 +27,24 @@ export class EffectsMoniter {
             corelationId: (coId = Date.now())
           })
         )
+      }
       ),
       pipe,
       map(r => {
-        console.count(action+coId);
-        console.log(r);
-        return new SetDocumentsMessage({
+        const msg = new SetDocumentsMessage({
           action,
           status: ActionStatus.Success,
           corelationId: coId
         });
+        console.log(`%c${action}-${coId}->success`,'background-color:#4285f4')
+        console.count(`${action}-${coId}->success`);
+        console.log(r);
+        return msg;
+        // console.groupEnd()
+
       }),
       catchError((err, caught) => {
+        console.log(`%c${action}-${coId}->error`,'background-color:#4285f4')
         console.error(err);
         this.store.dispatch(
           new SetDocumentsMessage({
