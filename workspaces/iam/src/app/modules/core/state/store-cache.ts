@@ -29,7 +29,7 @@ export class StoreCache implements ICache {
     return this;
   }
 
-  createNewDoc(format: DocFormat) {
+  createDoc(format: DocFormat) {
     let num = NEW_DOC_ID;
     let doc = {
       id: num,

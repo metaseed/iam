@@ -13,13 +13,13 @@ import {
 import { SetDocumentsMessage, DeleteDocument } from './document.actions';
 import { GithubStorage, Repository, EditIssueParams, Issue, GithubCache } from 'net-storage';
 import { switchMap, catchError, map, tap, take, combineLatest, count } from 'rxjs/operators';
-import { DocMeta, Document } from 'core';
+import { DocMeta, Document, DocContent } from 'core';
 import {
   DocumentEffectsShow,
   SetCurrentDocumentId,
   selectCurrentDocumentState,
   UpdateDocument,
-  DocumentEffectsNew,
+  DocumentEffectsCreate,
   DocumentEffectsSave,
   selectKeyRangeLowState,
   selectKeyRangeHighState
@@ -50,6 +50,14 @@ export class DocumentEffects {
   ) {
     storeCache.init(dbCache.init(githubCache.init(undefined)));
   }
+
+  @Effect()
+  CreateDocument = this.monitor.do<DocumentEffectsCreate>(
+    DocumentEffectsActionTypes.Create,
+    tap<DocumentEffectsCreate>(a => {
+      this.storeCache.createDoc(a.payload.format);
+    })
+  );
 
   @Effect()
   LoadDocuments = this.monitor.do<DocumentEffectsLoad>(
@@ -86,63 +94,37 @@ export class DocumentEffects {
   );
 
   @Effect()
-  NewDocument = this.monitor.do<DocumentEffectsNew>(
-    DocumentEffectsActionTypes.New,
-    tap<DocumentEffectsNew>(a => {
-      this.storeCache.createNewDoc(a.payload.format);
+  SaveDocument = this.monitor.do<DocumentEffectsSave>(DocumentEffectsActionTypes.Save,pipe(
+    combineLatest(this.storage.init(), this.store.select(selectCurrentDocumentState)),
+    switchMap(([action, repo, doc]) => {
+      const content = action.payload.content;
+      let format = action.payload.format;
+      let newTitle = DocMeta.getTitle(action.payload.content);
+
+      if (!newTitle) return throwError(new Error('Must define a title!'));
+      if (!doc.metaData || !doc.metaData.contentId) {
+        //from url show and save
+        return repo.issue.get(doc.id).pipe(
+          switchMap(doc => {
+            let meta = DocMeta.deSerialize(doc.body);
+            (<any>doc).metaData = meta;
+            newTitle = meta.title;
+            format = meta.format || format;
+            return this._saveNew(repo, newTitle, content, format);
+          })
+        );
+      } else {
+        return this._edit(repo, doc, newTitle, content, format);
+      }
     })
-  );
+  ));
 
-  @Effect()
-  SaveDocument: Observable<Action> = ((coId = -1) =>
-    this.actions$.pipe(
-      ofType<DocumentEffectsSave>(DocumentEffectsActionTypes.Save),
-      tap(action => {
-        return this.store.dispatch(
-          new SetDocumentsMessage({
-            action: DocumentEffectsActionTypes.Save,
-            status: ActionStatus.Start,
-            corelationId: (coId = Date.now())
-          })
-        );
-      }),
-      combineLatest(this.storage.init(), this.store.select(selectCurrentDocumentState)),
-      switchMap(([action, repo, doc]) => {
-        const content = action.payload.content;
-        let format = action.payload.format;
-        let newTitle = DocMeta.getTitle(action.payload.content);
-
-        if (!newTitle) return throwError(new Error('Must define a title!'));
-        if (!doc.metaData || !doc.metaData.contentId) {
-          //from url show and save
-          return repo.issue.get(doc.id).pipe(
-            switchMap(doc => {
-              let meta = DocMeta.deSerialize(doc.body);
-              (<any>doc).metaData = meta;
-              newTitle = meta.title;
-              format = meta.format || format;
-              return this._saveNew(repo, newTitle, content, format, coId);
-            })
-          );
-        } else {
-          return this._edit(repo, doc, newTitle, content, format, coId);
-        }
-      }),
-      catchError((err, caught) => {
-        console.error(err);
-        this.store.dispatch(
-          new SetDocumentsMessage({
-            status: ActionStatus.Fail,
-            action: DocumentEffectsActionTypes.Save,
-            corelationId: coId,
-            message: err.message + err.stack
-          })
-        );
-        return caught;
-      })
-    ))();
-
-  private _saveNew = (repo: Repository, title: string, content: string, format: string, coId: number) => {
+  private _saveNew = (
+    repo: Repository,
+    title: string,
+    content: string,
+    format: string,
+  ) => {
     return repo.issue.create({ title }).pipe(
       switchMap(issue => {
         let id = issue.number;
@@ -159,20 +141,17 @@ export class DocumentEffects {
                   body: metaStr
                 };
                 return repo.issue.edit(id, data).pipe(
-                  map((doc: Document) => {
-                    doc.metaData = meta;
+                  map(issue => {
+                    const docContent = new DocContent(id, file.content.content, file.content.sha);
+                    let doc = new Document(id, meta, docContent);
                     this.store.dispatch(
                       new UpdateDocument({
-                        collectionDocument: { id: doc.id, changes: <any>doc }
+                        collectionDocument: { id, changes: doc }
                       })
                     );
                     this._modifyUrlAfterSaved(id, title, format);
                     this.snackbar.open('New document saved!', 'OK');
-                    return new SetDocumentsMessage({
-                      status: ActionStatus.Success,
-                      action: DocumentEffectsActionTypes.Save,
-                      corelationId: coId
-                    });
+                    return doc;
                   })
                 );
               })
@@ -189,7 +168,6 @@ export class DocumentEffects {
     newTitle: string,
     content: string,
     format: string,
-    coId: number
   ) => {
     const changeTitle = doc.metaData ? newTitle !== doc.metaData.title : true;
     return repo
@@ -237,11 +215,7 @@ export class DocumentEffects {
                   );
                   this.snackbar.open('Saved!', 'OK');
                   this._modifyUrlAfterSaved(doc.id, newTitle, format);
-                  return new SetDocumentsMessage({
-                    status: ActionStatus.Success,
-                    action: DocumentEffectsActionTypes.Save,
-                    corelationId: coId
-                  });
+                  return doc;
                 })
               );
             })

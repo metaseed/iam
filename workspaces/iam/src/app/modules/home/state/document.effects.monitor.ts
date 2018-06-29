@@ -51,7 +51,7 @@ export class EffectsMoniter {
             status: ActionStatus.Fail,
             action,
             corelationId: coId,
-            message: err
+            message: err.message + err.stack
           })
         );
         return caught;

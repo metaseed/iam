@@ -23,7 +23,7 @@ import { DocSaveCoordinateService } from './editor/services/doc-save-coordinate-
 import {
   DocumentEffectsShow,
   selectCurrentDocumentState,
-  DocumentEffectsNew,
+  DocumentEffectsCreate,
   getDocumentByIdSeletor,
   SetCurrentDocumentId
 } from '../home/state';
@@ -127,7 +127,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
         tap(params => {
           if (this.router.url.startsWith('/doc/new')) {
             const format = params.get('f') as DocFormat;
-            this.store.dispatch(new DocumentEffectsNew({ format }));
+            this.store.dispatch(new DocumentEffectsCreate({ format }));
             this.store.dispatch(new document.EditMode());
           } else {
             let title = params.get('title');

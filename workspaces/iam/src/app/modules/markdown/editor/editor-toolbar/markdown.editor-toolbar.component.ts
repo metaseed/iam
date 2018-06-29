@@ -17,7 +17,7 @@ import { DocSaveCoordinateService } from '../services/doc-save-coordinate-servic
 import { MatToolbar, MatDialog } from '@angular/material';
 import { takeUntil, map } from 'rxjs/operators';
 import { Utilities } from '../../../core/utils';
-import { DocumentEffectsSave, DocumentEffectsNew } from '../../../home/state';
+import { DocumentEffectsSave, DocumentEffectsCreate } from '../../../home/state';
 
 @Component({
   selector: 'editor-toolbar',
@@ -164,7 +164,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   };
 
   new = () => {
-    this.store.dispatch(new DocumentEffectsNew({ format: DocFormat.md }));
+    this.store.dispatch(new DocumentEffectsCreate({ format: DocFormat.md }));
   };
 
   previewPanelClick(event: Event) {

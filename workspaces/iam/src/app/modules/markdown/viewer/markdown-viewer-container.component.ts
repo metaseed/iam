@@ -49,7 +49,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
         return v.status === ActionStatus.Fail || v.status === ActionStatus.Success;
       })
     ),
-    getActionStatus(DocumentEffectsActionTypes.New, this.store).pipe(
+    getActionStatus(DocumentEffectsActionTypes.Create, this.store).pipe(
       map(v => v.status === ActionStatus.Success || v.status === ActionStatus.Fail)
     )
   ).pipe(

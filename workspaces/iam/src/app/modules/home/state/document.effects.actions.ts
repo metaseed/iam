@@ -10,7 +10,7 @@ export enum DocumentEffectsActionTypes {
   Load = '[DocumentEffects] Load',
   Delete = '[DocumentEffects] Delete',
   Show = '[DocumentEffects] Show',
-  New = '[DocumentEffects] New',
+  Create = '[DocumentEffects] New',
   Save = '[DocumentEffects] Save'
 }
 
@@ -22,8 +22,8 @@ export class DocumentEffectsDelete implements Action {
   readonly type = DocumentEffectsActionTypes.Delete;
   constructor(public payload: { id: number; title: string }) {}
 }
-export class DocumentEffectsNew implements Action {
-  readonly type = DocumentEffectsActionTypes.New;
+export class DocumentEffectsCreate implements Action {
+  readonly type = DocumentEffectsActionTypes.Create;
   constructor(public payload: { format: DocFormat }) {}
 }
 export class DocumentEffectsShow implements Action {
@@ -95,6 +95,6 @@ export function ofActionType(actionType: DocumentEffectsActionTypes) {
 export type DocumentEffectsActions =
   | DocumentEffectsLoad
   | DocumentEffectsDelete
-  | DocumentEffectsNew
+  | DocumentEffectsCreate
   | DocumentEffectsSave
   | DocumentEffectsShow;
