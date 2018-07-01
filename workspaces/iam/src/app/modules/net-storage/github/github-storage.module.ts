@@ -6,12 +6,14 @@ import { AuthService } from './auth.service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './auth-interceptor';
 import { GithubCache } from './github-cache';
+import { gitHubCacheUtil } from './github-cache.util';
 
 @NgModule({
   imports: [],
   exports: [],
   providers: [
     GithubStorage,
+    gitHubCacheUtil,
     GithubCache,
     {
       provide: GITHUB_AUTHENTICATION,

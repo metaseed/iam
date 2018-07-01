@@ -174,10 +174,6 @@ export class DatabaseCache implements ICache {
       nextCache$,
       (inCache, fromNext) => {
         const toUpeate = !inCache || inCache.sha !== fromNext.sha;
-        // if(toUpeate) {
-        //   this.readDocMeta(key).pipe(subscribeOn(asyncScheduler),catchError(err=>{throw err;})).subscribe()
-        // }
-        // should consider case: doc content not modified but doc meta modified?
         return toUpeate;
       },
       (inCache, fromNext) => fromNext.isDeleted

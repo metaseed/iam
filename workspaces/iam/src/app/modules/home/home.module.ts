@@ -20,6 +20,7 @@ import { DocDeleteComponent } from './doc-list/doc-delete/doc-delete.component';
 import { GithubStorageModule } from '../net-storage/github/github-storage.module';
 import { DatabaseModule } from 'database';
 import { EffectsMoniter } from './state';
+import { DocEffectsUtil } from './state/document.effects.util';
 const routes: Routes = [
   {
     path: 'docs',
@@ -35,7 +36,7 @@ const routes: Routes = [
     NgSpinKitModule,
     GithubStorageModule,
     DatabaseModule.provideDB(),
-    StoreModule.forFeature<fromState.DocsState>('docs', fromState.reducers ),
+    StoreModule.forFeature<fromState.DocsState>('docs', fromState.reducers),
     EffectsModule.forFeature([DocumentEffects])
     //RouterModule.forChild(routes),
   ],
@@ -48,7 +49,7 @@ const routes: Routes = [
     DocDeleteComponent
   ],
   exports: [HomeComponent],
-  providers: [DocService, DocSearchService,EffectsMoniter],
+  providers: [DocService, DocSearchService, EffectsMoniter, DocEffectsUtil],
   entryComponents: [DeleteAlertDialog]
 })
 export class HomeModule {}
