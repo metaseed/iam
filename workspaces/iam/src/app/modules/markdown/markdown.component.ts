@@ -21,7 +21,7 @@ import { HasElementRef } from '@angular/material/core/typings/common-behaviors/c
 import { Observable, Subscription, Subject, merge } from 'rxjs';
 import { DocSaveCoordinateService } from './editor/services/doc-save-coordinate-service';
 import {
-  DocumentEffectsShow,
+  DocumentEffectsRead,
   selectCurrentDocumentState,
   DocumentEffectsCreate,
   getDocumentByIdSeletor,

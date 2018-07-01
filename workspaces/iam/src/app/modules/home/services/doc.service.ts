@@ -13,7 +13,7 @@ import { Document,DocMeta } from 'core';
 import { Repository, Content, GithubStorage, UserInfo, EditIssueParams } from 'net-storage';
 import { Store } from '@ngrx/store';
 import { State } from '../state/document.reducer';
-import { DocumentEffectsDelete, DocumentEffectsLoad } from '../state/document.effects.actions';
+import { DocumentEffectsDelete, DocumentEffectsReadBulkDocMeta } from '../state/document.effects.actions';
 
 @Injectable()
 export class DocService {

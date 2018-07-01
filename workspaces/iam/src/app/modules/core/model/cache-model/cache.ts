@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { DocMeta, DocContent } from "../doc-model";
+import { DocMeta, DocContent, DocFormat,Document } from "../doc-model";
 
 export enum DataTables {
   DocMeta = 'doc_meta',
@@ -18,6 +18,7 @@ export interface ICache {
    */
   init(nextLevelCache: ICache):ICache;
 
+  CreateDocument(conternt:string, format:DocFormat):Observable<Document>;
   /**
    *
    * @param id   undefined: initial fetch
@@ -29,6 +30,8 @@ export interface ICache {
   readDocMeta(id: number, checkNextCache?:boolean):Observable<DocMeta>;
 
   readDocContent(id:number, title:string, format: string): Observable<DocContent>;
+
+  UpdateDocument(oldDocMeta:DocMeta,content:string):Observable<Document>
   deleteDoc(id:number):Observable<true>; // false is processed by observable error hanlder
 }
 

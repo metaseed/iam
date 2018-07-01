@@ -1,6 +1,6 @@
 import { Database, ModifyAction } from './database-engine';
 import { Injectable } from '@angular/core';
-import { Document, DocMeta, DocContent } from 'core';
+import { Document, DocMeta, DocContent, DocFormat } from 'core';
 import { Observable, throwError, combineLatest, of, from, concat, asyncScheduler } from 'rxjs';
 import {
   toArray,
@@ -29,6 +29,10 @@ export class DatabaseCache implements ICache {
   init(nextLevelCache: ICache) {
     this.nextLevelCache = nextLevelCache;
     return this;
+  }
+
+  CreateDocument(content:string,format:DocFormat) {
+    return this.nextLevelCache.CreateDocument(content,format);
   }
 
   readBulkDocMeta(key: number, isBelowTheKey: boolean): Observable<DocMeta[]> {
@@ -151,7 +155,7 @@ export class DatabaseCache implements ICache {
     const nextCache$ = this.nextLevelCache.readDocMeta(id);
 
     return this.cacheRead<DocMeta>(
-      DataTables.DocContent,
+      DataTables.DocMeta,
       cache$,
       nextCache$,
       (inCache, fromNext) => !inCache || inCache.updateDate < fromNext.updateDate,
@@ -178,6 +182,10 @@ export class DatabaseCache implements ICache {
       },
       (inCache, fromNext) => fromNext.isDeleted
     );
+  }
+
+  UpdateDocument(oldDocMeta:DocMeta,content:string) {
+    return this.nextLevelCache.UpdateDocument(oldDocMeta,content);
   }
 
   deleteDoc(id: number) {

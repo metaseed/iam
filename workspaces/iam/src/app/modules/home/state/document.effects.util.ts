@@ -1,3 +1,20 @@
-export function getContentUrl(issueNum, title) {
-  return `https://metaseed.github.io/iam/doc?id=${issueNum}&title=${encodeURIComponent(title)}`;
+import { Router } from '@angular/router';
+import { Location } from '@angular/common';
+
+export class DocEffectsUtil {
+  constructor(private router: Router, private location: Location) {}
+
+  modifyUrlAfterSaved(num: number, title: string, format: string) {
+    const url = this.router
+      .createUrlTree(['/doc'], {
+        queryParams: {
+          id: num,
+          title: title,
+          f: format
+        }
+      })
+      .toString();
+
+    this.location.go(url);
+  }
 }

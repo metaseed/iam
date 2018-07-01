@@ -1,49 +1,42 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect, ofType } from '@ngrx/effects';
-import { Observable, defer, of, throwError, Operator, OperatorFunction, pipe } from 'rxjs';
-import { Action, Store } from '@ngrx/store';
+import { Effect } from '@ngrx/effects';
+import { throwError, pipe } from 'rxjs';
+import { Store } from '@ngrx/store';
 import { State as StoreState } from '@ngrx/store';
-import { getContentUrl } from './document.effects.util';
 import {
-  DocumentEffectsLoad,
+  DocumentEffectsReadBulkDocMeta,
   DocumentEffectsActionTypes,
-  ActionStatus,
   DocumentEffectsDelete
 } from './document.effects.actions';
-import { SetDocumentsMessage, DeleteDocument } from './document.actions';
-import { GithubStorage, Repository, EditIssueParams, Issue, GithubCache } from 'net-storage';
-import { switchMap, catchError, map, tap, take, combineLatest, count } from 'rxjs/operators';
-import { DocMeta, Document, DocContent } from 'core';
+import { GithubStorage, GithubCache } from 'net-storage';
+import { switchMap, tap, combineLatest } from 'rxjs/operators';
+import { DocMeta } from 'core';
 import {
-  DocumentEffectsShow,
+  DocumentEffectsRead,
   SetCurrentDocumentId,
   selectCurrentDocumentState,
-  UpdateDocument,
   DocumentEffectsCreate,
   DocumentEffectsSave,
   selectKeyRangeLowState,
   selectKeyRangeHighState
 } from 'app/modules/home/state';
 import { MatSnackBar } from '@angular/material';
-import { Location } from '@angular/common';
-import { Router } from '@angular/router';
 import { State } from './document.reducer';
 import { StoreCache } from 'core';
 import { DatabaseCache } from 'database';
-import { DOCUMENTS_FOLDER_NAME } from '../const';
+import { NEW_DOC_ID } from '../const';
 import { EffectsMoniter } from './document.effects.monitor';
+import { DocEffectsUtil } from './document.effects.util';
 
 @Injectable()
 export class DocumentEffects {
   constructor(
     private monitor: EffectsMoniter,
-    private actions$: Actions,
     private state: StoreState<State>,
     private storage: GithubStorage,
     private snackbar: MatSnackBar,
     private store: Store<State>,
-    private location: Location,
-    private router: Router,
+    private util: DocEffectsUtil,
     private storeCache: StoreCache,
     dbCache: DatabaseCache,
     githubCache: GithubCache
@@ -60,15 +53,15 @@ export class DocumentEffects {
   );
 
   @Effect()
-  LoadDocuments = this.monitor.do<DocumentEffectsLoad>(
-    DocumentEffectsActionTypes.Load,
+  ReadDocMetaTable = this.monitor.do<DocumentEffectsReadBulkDocMeta>(
+    DocumentEffectsActionTypes.ReadBulkDocMeta,
     (() => {
       let keyRangeHigh: number;
       let keyRangeLow: number;
       let isBelowRange: boolean;
 
       return pipe(
-        tap<DocumentEffectsLoad>(action => {
+        tap<DocumentEffectsReadBulkDocMeta>(action => {
           keyRangeHigh = selectKeyRangeHighState(this.state.value);
           keyRangeLow = selectKeyRangeLowState(this.state.value);
           isBelowRange = action.payload.isBelowRange;
@@ -82,7 +75,7 @@ export class DocumentEffects {
   );
 
   @Effect()
-  ShowDocument = this.monitor.do<DocumentEffectsShow>(
+  ReadDocument = this.monitor.do<DocumentEffectsRead>(
     DocumentEffectsActionTypes.Show,
     pipe(
       tap(action => this.store.dispatch(new SetCurrentDocumentId({ id: action.payload.id }))),
@@ -93,151 +86,38 @@ export class DocumentEffects {
     )
   );
 
+
+
   @Effect()
   SaveDocument = this.monitor.do<DocumentEffectsSave>(
     DocumentEffectsActionTypes.Save,
     pipe(
       combineLatest(this.storage.init(), this.store.select(selectCurrentDocumentState)),
-      switchMap(([action, repo, doc]) => {
+      switchMap(([action,, doc]) => {
         const content = action.payload.content;
         let format = action.payload.format;
         let newTitle = DocMeta.getTitle(action.payload.content);
 
         if (!newTitle) return throwError(new Error('Must define a title!'));
-        let ob: Observable<Document>;
-        if (!doc.metaData || !doc.metaData.contentSha) {
-          //from url show and save
-          ob = repo.issue.get(doc.id).pipe(
-            switchMap(doc => {
-              let meta = DocMeta.deSerialize(doc.body);
-              (<any>doc).metaData = meta;
-              newTitle = meta.title;
-              format = meta.format || format;
-              const o = this._saveNew(repo, newTitle, content, format);
+
+        if (doc.id === NEW_DOC_ID) {
+          return this.storeCache.CreateDocument(content, format).pipe(
+            tap(doc=> {
+              this.util.modifyUrlAfterSaved(doc.id,newTitle,format);
               this.snackbar.open('New document saved!', 'OK');
-              return o;
             })
           );
         } else {
-          this._edit(repo, doc, newTitle, content, format);
-          this.snackbar.open('Saved!', 'OK');
+          return this.storeCache.UpdateDocument(doc.metaData, content).pipe(
+            tap(doc => {
+              this.util.modifyUrlAfterSaved(doc.id,newTitle,format);
+              this.snackbar.open('Saved!', 'OK');
+            })
+          );
         }
-        return ob;
       })
     )
   );
-
-  private _saveNew = (repo: Repository, title: string, content: string, format: string) => {
-    return repo.issue.create({ title }).pipe(
-      switchMap(issue => {
-        let id = issue.number;
-        return repo.newFile(`${DOCUMENTS_FOLDER_NAME}/${title}_${id}.${format}`, content).pipe(
-          switchMap(file => {
-            let url = getContentUrl(id, title);
-            return of(
-              DocMeta.serializeContent(id, content, file.content.sha, url, format, new Date())
-            ).pipe(
-              switchMap(r => {
-                const { meta, metaStr } = r;
-                let data: EditIssueParams = {
-                  title: title,
-                  body: metaStr
-                };
-                return repo.issue.edit(id, data).pipe(
-                  map(issue => {
-                    const docContent = new DocContent(id, file.content.content, file.content.sha);
-                    let doc = new Document(id, meta, docContent);
-                    this.store.dispatch(
-                      new UpdateDocument({
-                        collectionDocument: { id, changes: doc }
-                      })
-                    );
-                    this._modifyUrlAfterSaved(id, title, format);
-                    return doc;
-                  })
-                );
-              })
-            );
-          })
-        );
-      })
-    );
-  };
-
-  private _edit = (
-    repo: Repository,
-    doc: Document,
-    newTitle: string,
-    content: string,
-    format: string
-  ) => {
-    const changeTitle = doc.metaData ? newTitle !== doc.metaData.title : true;
-    return repo
-      .updateFile(
-        `${DOCUMENTS_FOLDER_NAME}/${newTitle}_${doc.id}.${format}`,
-        content,
-        doc.metaData.contentSha
-      )
-      .pipe(
-        switchMap(file => {
-          let url = getContentUrl(doc.id, newTitle);
-          return of(
-            DocMeta.serializeContent(
-              doc.id,
-              content,
-              file.content.sha,
-              url,
-              format,
-              doc.metaData.createDate
-            )
-          ).pipe(
-            switchMap(({ meta, metaStr }) => {
-              let data: EditIssueParams = {
-                title: newTitle,
-                body: metaStr
-              };
-              return repo.issue.edit(doc.id, data).pipe(
-                tap(d => {
-                  if (changeTitle) {
-                    repo
-                      .delFileViaSha(
-                        `${DOCUMENTS_FOLDER_NAME}/${doc.metaData.title}_${doc.id}.${format}`,
-                        doc.metaData.contentSha
-                      )
-                      .pipe(take(1))
-                      .subscribe();
-                  }
-                }),
-                map(a => {
-                  doc.metaData = meta;
-                  this.store.dispatch(
-                    new UpdateDocument({
-                      collectionDocument: { id: doc.id, changes: <any>doc }
-                    })
-                  );
-                  this._modifyUrlAfterSaved(doc.id, newTitle, format);
-                  return doc;
-                })
-              );
-            })
-          );
-        })
-      );
-  };
-
-  private _modifyUrlAfterSaved(num: number, title: string, format: string) {
-    const url = this.router
-      .createUrlTree(['/doc'], {
-        queryParams: {
-          id: num,
-          title: title,
-          f: format
-        }
-      })
-      .toString();
-
-    this.location.go(url);
-  }
 
   @Effect()
   DeleteDocument = this.monitor.do<DocumentEffectsDelete>(

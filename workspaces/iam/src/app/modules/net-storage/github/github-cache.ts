@@ -1,14 +1,15 @@
-import { ICache, DataTables, DocMeta, DocContent } from 'core';
+import { ICache, DataTables, DocMeta, DocContent, DocFormat } from 'core';
 import { Observable, throwError, Subscription, concat, asyncScheduler, of } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { GithubStorage } from './github';
-import { switchMap, map, toArray, count, startWith, tap, catchError } from 'rxjs/operators';
+import { switchMap, map, toArray, count, startWith, tap, catchError, take } from 'rxjs/operators';
 import { Document } from 'core';
 import { AsyncScheduler } from 'rxjs/internal/scheduler/AsyncScheduler';
-import { Issue } from './issues/issue';
+import { Issue, EditIssueParams } from './issues/issue';
 import { Repository } from './repository';
 import { Content } from 'net-storage';
 import { DOCUMENTS_FOLDER_NAME } from '../../home/const';
+import { gitHubCacheUtil } from './github-cache.util';
 
 const GITHUB_PAGE_SIZE = 50;
 const FIRST_PAGE_READY_TO_REFRESH = 5 * 60 * 1000;
@@ -17,7 +18,7 @@ const FIRST_PAGE_READY_TO_REFRESH = 5 * 60 * 1000;
 export class GithubCache implements ICache {
   private highestKey;
 
-  constructor(private githubStorage: GithubStorage) {
+  constructor(private githubStorage: GithubStorage, private util: gitHubCacheUtil) {
     // refresh the first page every
     asyncScheduler.schedule(_ => (this.highestKey = undefined), FIRST_PAGE_READY_TO_REFRESH);
   }
@@ -41,6 +42,48 @@ export class GithubCache implements ICache {
   init(nextLevelCache: ICache) {
     this.nextLevelCache = nextLevelCache;
     return this;
+  }
+
+  CreateDocument(content: string, format: DocFormat) {
+    const title = DocMeta.getTitle(content);
+    // create docMeta to get an id;
+    return this.githubStorage.init().pipe(
+      switchMap(repo =>
+        repo.issue.create({ title }).pipe(
+          switchMap(issue => {
+            let id = issue.number;
+            // save docContent;
+            return repo.newFile(`${DOCUMENTS_FOLDER_NAME}/${title}_${id}.${format}`, content).pipe(
+              switchMap(file => {
+                let url = this.util.getContentUrl(id, title);
+
+                const { meta, metaStr } = DocMeta.serializeContent(
+                  id,
+                  content,
+                  file.content.sha, // update sha
+                  url,
+                  format,
+                  new Date(issue.created_at)
+                );
+                let data: EditIssueParams = {
+                  title: title,
+                  body: metaStr
+                };
+                // save docMeta to update sha;
+                return repo.issue.edit(id, data).pipe(
+                  map(issue => {
+                    const docContent = new DocContent(id, file.content.content, file.content.sha);
+                    let doc = new Document(id, meta, docContent);
+
+                    return doc;
+                  })
+                );
+              })
+            );
+          })
+        )
+      )
+    );
   }
 
   /// (...,key] (key,...]
@@ -203,6 +246,66 @@ export class GithubCache implements ICache {
     );
   }
 
+  UpdateDocument(oldDocMeta: DocMeta, content: string) {
+    const newTitle = DocMeta.getTitle(content);
+
+    return this.githubStorage.init().pipe(
+      switchMap(repo =>
+        repo
+          // save docContent
+          .updateFile(
+            `${DOCUMENTS_FOLDER_NAME}/${newTitle}_${oldDocMeta.id}.${oldDocMeta.format}`,
+            content,
+            oldDocMeta.contentSha
+          )
+          .pipe(
+            switchMap(file => {
+              let url = this.util.getContentUrl(oldDocMeta.id, newTitle);
+              const { meta, metaStr } = DocMeta.serializeContent(
+                oldDocMeta.id,
+                content,
+                file.content.sha,
+                url,
+                oldDocMeta.format,
+                oldDocMeta.createDate
+              );
+              let data: EditIssueParams = {
+                title: newTitle,
+                body: metaStr
+              };
+
+              // save docMeta
+              return repo.issue.edit(meta.id, data).pipe(
+                tap(d => {
+                  if (newTitle !== oldDocMeta.title) {
+                    repo
+                      // delete old docContent, if title changed.
+                      .delFileViaSha(
+                        `${DOCUMENTS_FOLDER_NAME}/${oldDocMeta.title}_${oldDocMeta.id}.${
+                          oldDocMeta.format
+                        }`,
+                        oldDocMeta.contentSha
+                      )
+                      .pipe(take(1))
+                      .subscribe();
+                  }
+                }),
+                map(a => {
+                  const doc = new Document(
+                    meta.id,
+                    meta,
+                    new DocContent(meta.id, content, file.content.sha)
+                  );
+
+                  return doc;
+                })
+              );
+            })
+          )
+      )
+    );
+  }
+
   deleteDoc(id: number) {
     return this.githubStorage.init().pipe(
       switchMap(repo => {
@@ -210,8 +313,8 @@ export class GithubCache implements ICache {
           switchMap(issue => {
             const title = issue.title;
             return repo.delFile(`${DOCUMENTS_FOLDER_NAME}/${title}_${id}.md`).pipe(
-              map<File,true>(d => {
-                return true;// false is processed by error of observable
+              map<File, true>(d => {
+                return true; // false is processed by error of observable
               })
             );
           })
@@ -219,5 +322,4 @@ export class GithubCache implements ICache {
       })
     );
   }
-
 }

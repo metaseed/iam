@@ -7,15 +7,15 @@ import { selectDocumentActionStatusState } from './state-selectors';
 import { DocFormat } from 'core';
 
 export enum DocumentEffectsActionTypes {
-  Load = '[DocumentEffects] Load',
+  ReadBulkDocMeta = '[DocumentEffects] Load',
   Delete = '[DocumentEffects] Delete',
   Show = '[DocumentEffects] Show',
   Create = '[DocumentEffects] New',
   Save = '[DocumentEffects] Save'
 }
 
-export class DocumentEffectsLoad implements Action {
-  readonly type = DocumentEffectsActionTypes.Load;
+export class DocumentEffectsReadBulkDocMeta implements Action {
+  readonly type = DocumentEffectsActionTypes.ReadBulkDocMeta;
   constructor(public payload={isBelowRange:true}){}
 }
 export class DocumentEffectsDelete implements Action {
@@ -26,13 +26,13 @@ export class DocumentEffectsCreate implements Action {
   readonly type = DocumentEffectsActionTypes.Create;
   constructor(public payload: { format: DocFormat }) {}
 }
-export class DocumentEffectsShow implements Action {
+export class DocumentEffectsRead implements Action {
   readonly type = DocumentEffectsActionTypes.Show;
   constructor(public payload: { id: number; title?: string; format?: string }) {}
 }
 export class DocumentEffectsSave implements Action {
   readonly type = DocumentEffectsActionTypes.Save;
-  constructor(public payload: { content: string; format?: string }) {}
+  constructor(public payload: { content: string; format?: DocFormat }) {}
 }
 
 export enum ActionStatus {
@@ -93,8 +93,8 @@ export function ofActionType(actionType: DocumentEffectsActionTypes) {
 }
 
 export type DocumentEffectsActions =
-  | DocumentEffectsLoad
+  | DocumentEffectsReadBulkDocMeta
   | DocumentEffectsDelete
   | DocumentEffectsCreate
   | DocumentEffectsSave
-  | DocumentEffectsShow;
+  | DocumentEffectsRead;

@@ -39,7 +39,7 @@ import { MatSnackBar } from '@angular/material';
 import {
   DocumentEffectsActionTypes,
   selectDocumentsState,
-  DocumentEffectsLoad,
+  DocumentEffectsReadBulkDocMeta,
   DocumentEffectsDelete,
   ActionStatus,
   monitorActionStatus
@@ -69,10 +69,10 @@ export class HomeComponent {
   isLoadDone$ = merge(
     this.loadFromStoreDirectly$,
     monitorActionStatus(
-      DocumentEffectsActionTypes.Load,
+      DocumentEffectsActionTypes.ReadBulkDocMeta,
       this.store,
       NET_COMMU_TIMEOUT,
-      this.defaultTimeoutHandler(DocumentEffectsActionTypes.Load)
+      this.defaultTimeoutHandler(DocumentEffectsActionTypes.ReadBulkDocMeta)
     ).pipe(
       takeUntil(this.destroy$),
       map(v => {
@@ -84,10 +84,10 @@ export class HomeComponent {
   isLoadMoreDone$ = from([
     of(true),
     monitorActionStatus(
-      DocumentEffectsActionTypes.Load,
+      DocumentEffectsActionTypes.ReadBulkDocMeta,
       this.store,
       NET_COMMU_TIMEOUT,
-      this.defaultTimeoutHandler(DocumentEffectsActionTypes.Load,'load-more')
+      this.defaultTimeoutHandler(DocumentEffectsActionTypes.ReadBulkDocMeta,'load-more')
     ).pipe(
       takeUntil(this.destroy$),
       filter(a => a.context && a.context.isLoadMore === true),
@@ -111,7 +111,7 @@ export class HomeComponent {
   ) {}
 
   private refresh() {
-    this.store.dispatch(new DocumentEffectsLoad({isBelowRange:true}));
+    this.store.dispatch(new DocumentEffectsReadBulkDocMeta({isBelowRange:true}));
   }
 
   private panToRefresh() {
@@ -142,7 +142,7 @@ export class HomeComponent {
           !refreshStarted &&
           startY - y > PAN_ACTION_DELTY
         ) {
-          this.store.dispatch(new DocumentEffectsLoad({ isBelowRange:true }));
+          this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange:true }));
           refreshStarted = true;
         }
       },

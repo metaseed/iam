@@ -14,7 +14,7 @@ import {
   DeleteDocument,
   SetCurrentDocumentId
 } from '../../home/state';
-import { NEW_DOC_ID } from '../../home/const';
+import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../../home/const';
 import { base64Encode } from '../utils';
 
 @Injectable()
@@ -30,16 +30,26 @@ export class StoreCache implements ICache {
   }
 
   createDoc(format: DocFormat) {
-    let num = NEW_DOC_ID;
-    let doc = {
-      id: num,
-      format: format,
-      content: {
-        content: base64Encode('# Title\n*summery*\n')
-      }
-    };
+    const id = NEW_DOC_ID;
+    const doc = new Document(
+      id,
+      undefined,
+      new DocContent(id, base64Encode(DEFAULT_NEW_DOC_CONTENT), undefined)
+    );
     this.store.dispatch(new AddDocument({ collectionDocument: <any>doc }));
-    this.store.dispatch(new SetCurrentDocumentId({ id: num }));
+    this.store.dispatch(new SetCurrentDocumentId({ id: id }));
+  }
+
+  CreateDocument(content: string, format: DocFormat) {
+    return this.nextLevelCache.CreateDocument(content, format).pipe(
+      tap(doc => {
+        this.store.dispatch(
+          new UpdateDocument({
+            collectionDocument: { id: doc.id, changes: doc }
+          })
+        );
+      })
+    );
   }
 
   readBulkDocMeta(key: number, isBelowTheKey = true) {
@@ -104,6 +114,18 @@ export class StoreCache implements ICache {
     );
   }
 
+  UpdateDocument(oldDocMeta: DocMeta, content: string) {
+    return this.nextLevelCache.UpdateDocument(oldDocMeta, content).pipe(
+      tap(doc =>
+        this.store.dispatch(
+          new UpdateDocument({
+            collectionDocument: { id: oldDocMeta.id, changes: doc }
+          })
+        )
+      )
+    );
+  }
+
   deleteDoc(id: number) {
     return this.nextLevelCache.deleteDoc(id).pipe<true>(
       tap(r => {
@@ -113,5 +135,4 @@ export class StoreCache implements ICache {
       })
     );
   }
-
 }
