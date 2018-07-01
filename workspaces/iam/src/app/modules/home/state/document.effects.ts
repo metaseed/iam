@@ -86,8 +86,6 @@ export class DocumentEffects {
     )
   );
 
-
-
   @Effect()
   SaveDocument = this.monitor.do<DocumentEffectsSave>(
     DocumentEffectsActionTypes.Save,

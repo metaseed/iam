@@ -38,7 +38,6 @@ const routes: Routes = [
     DatabaseModule.provideDB(),
     StoreModule.forFeature<fromState.DocsState>('docs', fromState.reducers),
     EffectsModule.forFeature([DocumentEffects])
-    //RouterModule.forChild(routes),
   ],
   declarations: [
     DeleteAlertDialog,

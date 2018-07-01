@@ -130,7 +130,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   save = () => {
     const content = this.editor.getValue();
     this.store.dispatch(new edit.Save(content));
-    this.store.dispatch(new DocumentEffectsSave({ content, format: 'md' }));
+    this.store.dispatch(new DocumentEffectsSave({ content, format: DocFormat.md }));
   };
 
   undo = () => {
