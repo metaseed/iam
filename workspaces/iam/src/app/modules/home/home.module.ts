@@ -27,7 +27,6 @@ const routes: Routes = [
     component: HomeComponent
   }
 ];
-
 @NgModule({
   imports: [
     CommonModule,
