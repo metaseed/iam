@@ -76,7 +76,7 @@ export class Repository extends Requestable {
       },
       content: base64Encode(content)
     }).pipe(
-      tap(x => console.log('newFile' + x), e => console.log('newFile' + e)),
+      tap(x => console.log('newFile', x), e => console.log('newFile', e)),
       map(x => {
         console.log(x);
         return <File>x;

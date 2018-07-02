@@ -72,7 +72,7 @@ export class GithubCache implements ICache {
                 // save docMeta to update sha;
                 return repo.issue.edit(id, data).pipe(
                   map(issue => {
-                    const docContent = new DocContent(id, file.content.content, file.content.sha);
+                    const docContent = new DocContent(id, content, file.content.sha);
                     let doc = new Document(id, meta, docContent);
 
                     return doc;

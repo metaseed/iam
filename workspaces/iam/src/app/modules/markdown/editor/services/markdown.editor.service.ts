@@ -9,4 +9,5 @@ export class MarkdownEditorService {
   refresh() {
     this._editorRefresh$.next();
   }
+
 }

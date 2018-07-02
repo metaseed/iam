@@ -19,4 +19,6 @@ export class DocEffectsUtil {
 
     this.location.go(url);
   }
+
+
 }

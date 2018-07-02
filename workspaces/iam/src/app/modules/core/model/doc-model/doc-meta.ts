@@ -114,6 +114,9 @@ export class DocMeta {
         const sha = meta['contentId'];
         if (sha) meta.contentSha = sha;
       }
+
+      meta.createDate = meta.createDate && new Date(meta.createDate);
+      meta.updateDate = meta.updateDate && new Date(meta.updateDate);
       return meta;
     } catch (err) {
       console.error(err);

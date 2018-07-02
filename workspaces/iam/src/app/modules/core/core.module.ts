@@ -29,7 +29,7 @@ import { StoreCache } from './state';
     ScrollService,
     ScrollSpyService,
     StoreCache,
-    Utilities
+    Utilities,
   ]
 })
 export class CoreModule {}

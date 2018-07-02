@@ -1,6 +1,6 @@
 import { DataTables, ICache, DocMeta, DocContent, Document, DocFormat } from '../model';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { DatabaseCache } from 'database';
 import { tap, catchError } from 'rxjs/operators';
 import { Store, State as StoreState } from '@ngrx/store';
@@ -12,7 +12,10 @@ import {
   AddDocument,
   UpdateDocument,
   DeleteDocument,
-  SetCurrentDocumentId
+  SetCurrentDocumentId,
+  UpsertDocument,
+  selectCurrentDocumentIdState,
+  DocumentEffectsDelete
 } from '../../home/state';
 import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../../home/const';
 import { base64Encode } from '../utils';
@@ -34,20 +37,26 @@ export class StoreCache implements ICache {
     const doc = new Document(
       id,
       undefined,
-      new DocContent(id, base64Encode(DEFAULT_NEW_DOC_CONTENT), undefined)
+      new DocContent(id, DEFAULT_NEW_DOC_CONTENT, undefined)
     );
-    this.store.dispatch(new AddDocument({ collectionDocument: <any>doc }));
+    this.store.dispatch(new AddDocument({ collectionDocument: doc }));
     this.store.dispatch(new SetCurrentDocumentId({ id: id }));
   }
 
   CreateDocument(content: string, format: DocFormat) {
     return this.nextLevelCache.CreateDocument(content, format).pipe(
       tap(doc => {
+        const id = selectCurrentDocumentIdState(this.state.value);
+        if (id === NEW_DOC_ID) {
+          this.store.dispatch(new DocumentEffectsDelete({ id }));
+        }
+
         this.store.dispatch(
-          new UpdateDocument({
-            collectionDocument: { id: doc.id, changes: doc }
+          new AddDocument({
+            collectionDocument: doc
           })
         );
+        this.store.dispatch(new SetCurrentDocumentId({id:doc.id}));
       })
     );
   }
@@ -127,6 +136,10 @@ export class StoreCache implements ICache {
   }
 
   deleteDoc(id: number) {
+    if(id === NEW_DOC_ID) {
+      this.store.dispatch(new DeleteDocument({id}));
+      return of(true) as Observable<true>;
+    }
     return this.nextLevelCache.deleteDoc(id).pipe<true>(
       tap(r => {
         if (r) {
