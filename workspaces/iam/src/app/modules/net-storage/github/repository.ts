@@ -144,7 +144,7 @@ export class Repository extends Requestable {
 
   getReadme(branch: string = 'master') {
     return this.request('GET', `/repos/${this.fullName}/readme`).pipe(
-      map(x => this.decodeContent(<Content | Array<Content>>x));
+      map(x => this.decodeContent(<Content | Array<Content>>x))
     );
   }
 
