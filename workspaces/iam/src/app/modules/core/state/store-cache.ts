@@ -13,7 +13,6 @@ import {
   UpdateDocument,
   DeleteDocument,
   SetCurrentDocumentId,
-  UpsertDocument,
   selectCurrentDocumentIdState,
   DocumentEffectsDelete
 } from '../../home/state';
