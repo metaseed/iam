@@ -17,8 +17,8 @@ import {
   selectCurrentDocumentState,
   DocumentEffectsCreate,
   DocumentEffectsSave,
-  selectKeyRangeLowState,
-  selectKeyRangeHighState
+  selectIdRangeLowState,
+  selectIdRangeHighState
 } from 'app/modules/home/state';
 import { MatSnackBar } from '@angular/material';
 import { State } from './document.reducer';
@@ -27,6 +27,7 @@ import { DatabaseCache } from 'database';
 import { NEW_DOC_ID } from '../const';
 import { EffectsMoniter } from './document.effects.monitor';
 import { DocEffectsUtil } from './document.effects.util';
+import { SetIdRangeLow, SetIdRangeHigh } from './document.actions';
 
 @Injectable()
 export class DocumentEffects {
@@ -41,7 +42,19 @@ export class DocumentEffects {
     dbCache: DatabaseCache,
     githubCache: GithubCache
   ) {
-    storeCache.init(dbCache.init(githubCache.init(undefined)));
+    storeCache.init(
+      dbCache.init(
+        githubCache.init(
+          undefined,
+          id => {
+            this.store.dispatch(new SetIdRangeLow({ idRangeLow: id }));
+          },
+          id => {
+            this.store.dispatch(new SetIdRangeHigh({ idRangeHigh: id }));
+          }
+        )
+      )
+    );
   }
 
   @Effect()
@@ -53,7 +66,7 @@ export class DocumentEffects {
   );
 
   @Effect()
-  ReadDocMetaTable = this.monitor.do<DocumentEffectsReadBulkDocMeta>(
+  ReadBulkDocMeta = this.monitor.do<DocumentEffectsReadBulkDocMeta>(
     DocumentEffectsActionTypes.ReadBulkDocMeta,
     (() => {
       let keyRangeHigh: number;
@@ -62,11 +75,12 @@ export class DocumentEffects {
 
       return pipe(
         tap<DocumentEffectsReadBulkDocMeta>(action => {
-          keyRangeHigh = selectKeyRangeHighState(this.state.value);
-          keyRangeLow = selectKeyRangeLowState(this.state.value);
+          keyRangeHigh = selectIdRangeHighState(this.state.value);
+          keyRangeLow = selectIdRangeLowState(this.state.value);
           isBelowRange = action.payload.isBelowRange;
         }),
         switchMap(_ => {
+          // (low, high]
           const key = isBelowRange ? keyRangeLow : keyRangeHigh;
           return this.storeCache.readBulkDocMeta(key, isBelowRange);
         })

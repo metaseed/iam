@@ -16,8 +16,8 @@ export enum DocumentActionTypes {
   ClearDocuments = '[Document] Clear Documents',
   SetCurrentDocumentId = '[Document] Set Current CollectoinDocument Id',
   SetDocumentStatus = '[Document] Set Status',
-  SetKeyRangeHigh = '[Document] Set Key Range High',
-  SetKeyRangeLow = '[Document] Set Key Range Low'
+  SetIdRangeHigh = '[Document] Set Key Range High',
+  SetIdRangeLow = '[Document] Set Key Range Low'
 }
 
 export class LoadDocuments implements Action {
@@ -88,13 +88,13 @@ export class SetDocumentsMessage implements Action {
   constructor(public payload: DocumentActionStatus) {}
 }
 
-export class SetKeyRangeHigh implements Action {
-  readonly type = DocumentActionTypes.SetKeyRangeHigh;
-  constructor(public payload: { keyRangeHigh: number }) {}
+export class SetIdRangeHigh implements Action {
+  readonly type = DocumentActionTypes.SetIdRangeHigh;
+  constructor(public payload: { idRangeHigh: number }) {}
 }
-export class SetKeyRangeLow implements Action {
-  readonly type = DocumentActionTypes.SetKeyRangeLow;
-  constructor(public payload: { keyRangeLow: number }) {}
+export class SetIdRangeLow implements Action {
+  readonly type = DocumentActionTypes.SetIdRangeLow;
+  constructor(public payload: { idRangeLow: number }) {}
 }
 
 export type DocumentActions =
@@ -110,5 +110,5 @@ export type DocumentActions =
   | ClearDocuments
   | SetCurrentDocumentId
   | SetDocumentsMessage
-  | SetKeyRangeHigh
-  | SetKeyRangeLow
+  | SetIdRangeHigh
+  | SetIdRangeLow

@@ -23,9 +23,9 @@ export interface ICache {
    *
    * @param id   undefined: initial fetch
    *              Number.MAX_VALUE: refresh
-   * @param isBelowTheKey
+   * @param isBelowTheId
    */
-  readBulkDocMeta(id: number, isBelowTheKey:boolean): Observable<DocMeta[]>;
+  readBulkDocMeta(id: number, isBelowTheId:boolean): Observable<DocMeta[]>;
 
   readDocMeta(id: number, checkNextCache?:boolean):Observable<DocMeta>;
 

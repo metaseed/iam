@@ -16,14 +16,18 @@ const FIRST_PAGE_READY_TO_REFRESH = 5 * 60 * 1000;
 
 @Injectable()
 export class GithubCache implements ICache {
-  private highestKey;
+  // used to caculate the which page the key is in.
+  private highestId: number;
 
   constructor(private githubStorage: GithubStorage, private util: gitHubCacheUtil) {
     // refresh the first page every
-    asyncScheduler.schedule(_ => (this.highestKey = undefined), FIRST_PAGE_READY_TO_REFRESH);
+    asyncScheduler.schedule(_ => (this.highestId = undefined), FIRST_PAGE_READY_TO_REFRESH);
   }
 
   nextLevelCache: ICache;
+
+  private _setIdRangeLow?: (id: number) => void;
+  private _setIdRangeHigh?: (id: number) => void;
 
   private _issueToDocMeta = (issue: Issue) => {
     let meta: DocMeta;
@@ -39,8 +43,14 @@ export class GithubCache implements ICache {
     return meta;
   };
 
-  init(nextLevelCache: ICache) {
+  init(
+    nextLevelCache: ICache,
+    setIdRangeLow?: (id: number) => void,
+    setIdRangeHigh?: (id: number) => void
+  ) {
     this.nextLevelCache = nextLevelCache;
+    this._setIdRangeLow = setIdRangeLow;
+    this._setIdRangeHigh = setIdRangeHigh;
     return this;
   }
 
@@ -86,15 +96,15 @@ export class GithubCache implements ICache {
     );
   }
 
-  /// (...,key] (key,...]
-  readBulkDocMeta(id: number, isBulkBelowTheKey: boolean): Observable<DocMeta[]> {
+  /// (...,id] (id,...]
+  readBulkDocMeta(id: number, isBulkBelowTheId: boolean): Observable<DocMeta[]> {
     if (id === undefined || id === Number.MAX_VALUE) {
-      this.highestKey = undefined;
+      this.highestId = undefined; // to get the 1st page to know the hightestId.
     }
     let page: number;
     let keyNearPageFloor: boolean;
 
-    const getMetaData = (
+    const getMetaDataList = (
       page,
       isBelowTheKey,
       isNearPageFloor = undefined /*undefined: only this page*/
@@ -103,7 +113,7 @@ export class GithubCache implements ICache {
         const docMetaArray = issues.map(issue => {
           const meta = this._issueToDocMeta(issue);
           if (i === 0 && page === 1) {
-            this.highestKey = meta.id;
+            this.highestId = meta.id;
           }
           return meta;
         });
@@ -131,66 +141,91 @@ export class GithubCache implements ICache {
       return d;
     };
 
-    const getPageNum = (id, highestKey) => Math.floor((highestKey - id) / GITHUB_PAGE_SIZE) + 1; // index start from 1
+    const getPageNum = (id, highestId) => Math.floor((highestId - id) / GITHUB_PAGE_SIZE) + 1; // page index start from 1, issue.num start from 1 too.
 
-    const isNearPageFloor = (id, page, highestKey) =>
-      (highestKey - id) / GITHUB_PAGE_SIZE + 1 - page < 0.5;
+    const isNearPageFloor = (id, page, highestId) =>
+      (highestId - id) / GITHUB_PAGE_SIZE + 1 - page < 0.5;
 
-    const isLastPage = (page, highestKey) =>
-      page === Math.floor(this.highestKey / GITHUB_PAGE_SIZE);
+    const isLastPage = (page, highestId) => page === Math.floor(this.highestId / GITHUB_PAGE_SIZE);
     const isFirstPage = page => page === 1;
 
-    const getHighestKey = () => {
-      if (!this.highestKey) {
-        return getMetaData(1, isBulkBelowTheKey).pipe(
+    const getHighestId = () => {
+      if (!this.highestId) {
+        return getMetaDataList(1, isBulkBelowTheId).pipe(
           map(a => {
-            return { highestKey: this.highestKey, metaArray: a };
+            return { highestId: this.highestId, metaArray: a };
           })
         );
       }
-      return of({ highestKey: this.highestKey, metaArray: null });
+      return of({ highestId: this.highestId, metaArray: null as DocMeta[] });
     };
 
-    return getHighestKey().pipe(
-      switchMap(({ highestKey, metaArray }) => {
-        if (id === undefined || id === Number.MAX_VALUE) id = this.highestKey;
-        page = getPageNum(id, highestKey);
-        keyNearPageFloor = isNearPageFloor(id, page, highestKey);
+    return getHighestId().pipe(
+      switchMap(({ highestId, metaArray }) => {
+        if (id === undefined || id === Number.MAX_VALUE) id = this.highestId;
+        page = getPageNum(id, highestId);
+        keyNearPageFloor = isNearPageFloor(id, page, highestId);
         const isInFirstPage = isFirstPage(page);
-        const isInLastPage = isLastPage(page, highestKey);
+        const isInLastPage = isLastPage(page, highestId);
+
+        const directlyReturnMetaArray = (metaArray: DocMeta[]) => {
+          if (metaArray.length) {
+            this._setIdRangeHigh(metaArray[0].id);
+            this._setIdRangeLow(metaArray[metaArray.length - 1].id-1);
+          }
+          return of(metaArray);
+        };
+
+        const updateRange = (lastLow?: number, lastHigh?: number)=>(metaArray: DocMeta[]) => {
+          const len = metaArray.length;
+          if (len) {
+            const currentHigh = metaArray[len - 1].id;
+            if (!lastHigh || currentHigh > lastHigh) {
+              lastHigh = currentHigh;
+              this._setIdRangeHigh(currentHigh);
+            }
+            const currentLow = metaArray[0].id-1; // low is not included so -1
+            if (!lastLow || currentLow < lastLow) {
+              lastLow = currentLow;
+              this._setIdRangeLow(currentLow);
+            }
+          }
+        };
 
         if (isInFirstPage) {
           // only get first page(page1)
-          if (!isBulkBelowTheKey || keyNearPageFloor) {
+          if (!isBulkBelowTheId || keyNearPageFloor) {
             if (metaArray) {
-              return of(metaArray);
+              return directlyReturnMetaArray(metaArray);
             } else {
-              return getMetaData(page, isBulkBelowTheKey);
+              return getMetaDataList(page, isBulkBelowTheId).pipe(tap(updateRange()));
             }
           }
         }
 
         if (isInLastPage) {
-          if (isBulkBelowTheKey || !keyNearPageFloor) {
+          if (isBulkBelowTheId || !keyNearPageFloor) {
             // only get last page
             if (isInFirstPage && metaArray) {
               // only one page, so last is also first
-              return of(metaArray);
+              directlyReturnMetaArray(metaArray);
             } else {
               // get last page
-              return getMetaData(page, isBulkBelowTheKey);
+              return getMetaDataList(page, isBulkBelowTheId).pipe(tap(updateRange()));
             }
           }
         }
 
         if (metaArray) {
           // with first page
-          return getMetaData(page, isBulkBelowTheKey, keyNearPageFloor).pipe(startWith(metaArray));
+          return getMetaDataList(page, isBulkBelowTheId, keyNearPageFloor).pipe(
+            tap(updateRange()),
+            startWith(metaArray)
+          );
         }
 
-        return getMetaData(page, isBulkBelowTheKey, keyNearPageFloor);
+        return getMetaDataList(page, isBulkBelowTheId, keyNearPageFloor).pipe(tap(updateRange()));
       })
-      // tap(a=>console.log(a),err=>console.error(err),()=>console.warn('aaaa')),
     );
   }
 
