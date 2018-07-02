@@ -15,7 +15,7 @@ export class EffectsMoniter {
     action: DocumentEffectsActionTypes,
     pipe: OperatorFunction<T, any>
   ) => {
-    let coId: number = -1;
+    let coId: number = Date.now();
     return this.actions$.pipe(
       ofType<T>(action),
       tap(_ => {
@@ -24,7 +24,7 @@ export class EffectsMoniter {
           new SetDocumentsMessage({
             action,
             status: ActionStatus.Start,
-            corelationId: (coId = Date.now())
+            corelationId: (coId = coId)
           })
         )
       }
@@ -36,9 +36,10 @@ export class EffectsMoniter {
           status: ActionStatus.Success,
           corelationId: coId
         });
-        console.log(`%c${action}-${coId}->success`,'background-color:#4285f4')
+        console.groupCollapsed(`%c${action}-${coId}->success`,'background-color:#4285f4');
         console.count(`${action}-${coId}->success`);
-        console.log(r);
+        console.log('result:',r);
+        console.groupEnd();
         return msg;
         // console.groupEnd()
 

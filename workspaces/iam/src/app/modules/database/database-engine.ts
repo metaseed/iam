@@ -158,12 +158,12 @@ export class Database {
     );
   }
 
-  private request(
+  private request<T>(
     storeName: string,
     txnMode: IDBTransactionMode,
     action: (store: IDBObjectStore, ...params) => IDBRequest,
     onRequestSuccess?: (observer: Observer<any>) => (ev) => void
-  ): Observable<any> {
+  ): Observable<T> {
     const open$ = this.open(this._schema.name);
 
     return open$.pipe(
@@ -205,6 +205,12 @@ export class Database {
     });
   }
 
+  add<T>(storeName: string, record:T): Observable<T> {
+    return this.request<T>(storeName, IDB_TXN_READWRITE, store => {
+      return store.add(record);
+    });
+  }
+
   get<T>(storeName: string, id: any): Observable<T> {
     return this.request(storeName, IDB_TXN_READ, store => {
       return store.get(id);
@@ -212,7 +218,7 @@ export class Database {
   }
 
   put<T>(storeName: string, record: T): Observable<T> {
-    return this.request(storeName, IDB_TXN_READWRITE, store => {
+    return this.request<T>(storeName, IDB_TXN_READWRITE, store => {
       return store.put(record);
     });
   }
@@ -325,30 +331,30 @@ export class Database {
           const recordSchema = this._schema.stores[storeName];
           const mapper = this._mapRecord(recordSchema);
           const txn = db.transaction([storeName], IDB_TXN_READWRITE);
-          const objectStore: any = txn.objectStore(storeName);
+          const objectStore = txn.objectStore(storeName);
 
-          const onTxnError = (err: any) => txnObserver.error(err);
+          const onTxnError = (err) => txnObserver.error(err);
           const onTxnComplete = () => txnObserver.complete();
 
           txn.addEventListener(IDB_COMPLETE, onTxnComplete);
           txn.addEventListener(IDB_ERROR, onTxnError);
 
-          const makeRequest = (record: any) => {
+          const makeRequest = (record: T) => {
             return new Observable((reqObserver: Observer<any>) => {
-              let req: any;
+              let req: IDBRequest;
               if (recordSchema.primaryKey) {
                 req = objectStore[actionName](record);
               } else {
                 let $key = record['$key'];
                 let $record = Object.assign({}, record);
-                delete $record.key;
+                delete $record['$key'];
                 req = objectStore[actionName]($record, $key);
               }
               req.addEventListener(IDB_SUCCESS, () => {
                 let $key = req.result;
                 reqObserver.next(mapper({ $key, record }));
               });
-              req.addEventListener(IDB_ERROR, (err: any) => {
+              req.addEventListener(IDB_ERROR, (err) => {
                 reqObserver.error(err);
               });
             });
@@ -406,7 +412,7 @@ export class Database {
               }
               let req = objectStore.get(key);
 
-              req.addEventListener(IDB_ERROR, (err: any) => {
+              req.addEventListener(IDB_ERROR, (err) => {
                 reqObserver.error(err);
               });
               req.addEventListener(IDB_SUCCESS, _ => {
@@ -422,8 +428,8 @@ export class Database {
                     } else {
                       let $key = record['$key'];
                       let $record = Object.assign({}, record);
-                      delete $record.key;
-                      request = (<any>objectStore[action])($record, $key);
+                      delete $record['$key'];
+                      request = (objectStore[action])($record, $key);
                     }
 
                     request.addEventListener(IDB_SUCCESS, () => {
@@ -431,7 +437,7 @@ export class Database {
                       reqObserver.next(mapper({ $key, record }));
                       reqObserver.complete();
                     });
-                    request.addEventListener(IDB_ERROR, (err: any) => {
+                    request.addEventListener(IDB_ERROR, (err) => {
                       reqObserver.error(err);
                     });
                     break;
@@ -441,14 +447,12 @@ export class Database {
                     request = objectStore.delete(indb[key]);
                     request.onerror = err => reqObserver.error(err);
                     request.onsuccess = _ => {
-                      // console.log('delete in db');
                       reqObserver.next(indb);
                       reqObserver.complete();
                     };
                     break;
 
                   case ModifyAction.none:
-                    // console.log('no action in db.');
                     reqObserver.complete();
                     break;
 

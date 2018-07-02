@@ -90,8 +90,8 @@ export class DocumentEffects {
   SaveDocument = this.monitor.do<DocumentEffectsSave>(
     DocumentEffectsActionTypes.Save,
     pipe(
-      combineLatest(this.storage.init(), this.store.select(selectCurrentDocumentState)),
-      switchMap(([action,, doc]) => {
+      switchMap(action => {
+        const doc = selectCurrentDocumentState(this.state.value);
         const content = action.payload.content;
         let format = action.payload.format;
         let newTitle = DocMeta.getTitle(action.payload.content);
@@ -100,15 +100,15 @@ export class DocumentEffects {
 
         if (doc.id === NEW_DOC_ID) {
           return this.storeCache.CreateDocument(content, format).pipe(
-            tap(doc=> {
-              this.util.modifyUrlAfterSaved(doc.id,newTitle,format);
+            tap(doc => {
+              this.util.modifyUrlAfterSaved(doc.id, newTitle, format);
               this.snackbar.open('New document saved!', 'OK');
             })
           );
         } else {
           return this.storeCache.UpdateDocument(doc.metaData, content).pipe(
             tap(doc => {
-              this.util.modifyUrlAfterSaved(doc.id,newTitle,format);
+              this.util.modifyUrlAfterSaved(doc.id, newTitle, format);
               this.snackbar.open('Saved!', 'OK');
             })
           );
