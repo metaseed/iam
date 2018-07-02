@@ -21,16 +21,20 @@ import { GithubStorageModule } from '../net-storage/github/github-storage.module
 import { DatabaseModule } from 'database';
 import { EffectsMoniter } from './state';
 import { DocEffectsUtil } from './state/document.effects.util';
+import { ScrollingModule } from '@angular/cdk-experimental';
+
 const routes: Routes = [
   {
     path: 'docs',
     component: HomeComponent
   }
 ];
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
+    ScrollingModule,
     MaterialModule,
     NgSpinKitModule,
     GithubStorageModule,
