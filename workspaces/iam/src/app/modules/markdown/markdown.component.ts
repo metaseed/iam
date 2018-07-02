@@ -98,7 +98,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
       this.store.select<Document>(selectCurrentDocumentState).pipe(
         map(doc => {
           if (doc && doc.content) {
-            return base64Decode(doc.content.content);
+            return doc.content.content;
           } else {
             return '';
           }

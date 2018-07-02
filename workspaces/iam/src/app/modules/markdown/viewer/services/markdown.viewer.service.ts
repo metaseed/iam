@@ -45,7 +45,7 @@ import * as toc from './markdown-it-plugins/toc';
 import { ContainerPlugin } from './markdown-it-plugins/container';
 import { MarkdownConfig } from '../markdown.config';
 import latex from 'markdown-it-latex';
-import { mergeConf, DocumentRef, base64Encode, base64Decode } from 'core';
+import { mergeConf, DocumentRef, base64Encode } from 'core';
 import { Router } from '@angular/router';
 //import latex from 'markdown-it-katex';
 import { Mermaid } from './markdown-it-plugins/mermaid';

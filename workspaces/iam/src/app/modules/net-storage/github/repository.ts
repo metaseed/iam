@@ -7,7 +7,7 @@ import { File } from './model/file';
 import { HttpClient } from '@angular/common/http';
 import { Issue } from './issues/issue';
 import { from } from 'rxjs';
-import { base64Encode } from 'core';
+import { base64Encode, base64Decode } from 'core';
 import { map, flatMap, tap, catchError } from 'rxjs/operators';
 @Injectable()
 export class Repository extends Requestable {
@@ -123,17 +123,28 @@ export class Repository extends Requestable {
       );
   }
 
+  private decodeContent(content: Content | Array<Content>) {
+    if (Array.isArray(content)) {
+      content.forEach((con: Content) => {
+        if (con.content) con.content = base64Decode(con.content);
+      });
+    } else {
+      if (content.content) content.content = base64Decode(content.content);
+    }
+    return content;
+  }
+
   // https://developer.github.com/v3/repos/contents/#get-contents
   getContents(path: string, branch: string = 'master') {
     path = path ? encodeURI(path) : '';
     return this.request('GET', `/repos/${this.fullName}/contents/${path}`).pipe(
-      map(x => <Content | Array<Content>>x)
+      map(x => this.decodeContent(<Content | Array<Content>>x))
     );
   }
 
   getReadme(branch: string = 'master') {
     return this.request('GET', `/repos/${this.fullName}/readme`).pipe(
-      map(x => <Content | Array<Content>>x)
+      map(x => this.decodeContent(<Content | Array<Content>>x));
     );
   }
 
