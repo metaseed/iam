@@ -110,7 +110,7 @@ export class GithubCache implements ICache {
       isNearPageFloor = undefined /*undefined: only this page*/
     ) => {
       const mapIssueToMeta = (issues: Issue[], i) => {
-        if (issues.length>0 && page === 1) {
+        if (issues.length > 0 && page === 1) {
           this.highestId = issues[0].number;
         }
         const docMetaArray = issues.map(issue => {
@@ -350,6 +350,12 @@ export class GithubCache implements ICache {
           switchMap(issue => {
             const title = issue.title;
             return repo.delFile(`${DOCUMENTS_FOLDER_NAME}/${title}_${id}.md`).pipe(
+              catchError(err => {
+                if (err.status === 404) { // already deleted on other computer.
+                  return of(true);
+                }
+                throw err;
+              }),
               map<File, true>(d => {
                 return true; // false is processed by error of observable
               })
