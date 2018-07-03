@@ -69,7 +69,7 @@ export class GithubStorage extends Requestable {
                     );
                   })
                 )
-                .subscribe(o => replayObservable.next(o));
+                .subscribe(o =>replayObservable.next(o),err=>replayObservable.error(err));
             }
             return replayObservable.subscribe(this);
           };

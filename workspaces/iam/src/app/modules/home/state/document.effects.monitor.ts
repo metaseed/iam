@@ -15,37 +15,46 @@ export class EffectsMoniter {
     action: DocumentEffectsActionTypes,
     pipe: OperatorFunction<T, any>
   ) => {
-    let coId: number = Date.now();
+    let coId: number;
     return this.actions$.pipe(
       ofType<T>(action),
       tap(_ => {
-        console.log(`%c${action}-${coId}->start`,'background-color:#4285f4')
+        coId = Date.now();
+        console.log(`%c${action}-${coId}->start`, 'background-color:#4285f4');
         this.store.dispatch(
           new SetDocumentsMessage({
             action,
             status: ActionStatus.Start,
-            corelationId: (coId = coId)
+            corelationId: coId
           })
-        )
-      }
-      ),
+        );
+      }),
       pipe,
       map(r => {
+        if (!r) {
+          console.groupCollapsed(`%c${action}-${coId}->waiting`, 'background-color:#4285f433');
+          console.count(`${action}-${coId}->waiting`);
+          console.log('result:', r);
+          console.groupEnd();
+          return new SetDocumentsMessage({
+            action,
+            status: ActionStatus.Waiting,
+            corelationId: coId
+          });
+        }
         const msg = new SetDocumentsMessage({
           action,
           status: ActionStatus.Success,
           corelationId: coId
         });
-        console.groupCollapsed(`%c${action}-${coId}->success`,'background-color:#4285f4');
+        console.groupCollapsed(`%c${action}-${coId}->success`, 'background-color:#4285f4');
         console.count(`${action}-${coId}->success`);
-        console.log('result:',r);
+        console.log('result:', r);
         console.groupEnd();
         return msg;
-        // console.groupEnd()
-
       }),
       catchError((err, caught) => {
-        console.log(`%c${action}-${coId}->error`,'background-color:#4285f4')
+        console.log(`%c${action}-${coId}->error`, 'background-color:#4285f4');
         console.error(err);
         this.store.dispatch(
           new SetDocumentsMessage({

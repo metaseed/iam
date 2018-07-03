@@ -40,7 +40,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
 
   isLoadDone$ = merge(
     monitorActionStatus(
-      DocumentEffectsActionTypes.Show,
+      DocumentEffectsActionTypes.ReadDocument,
       this.store,
       NET_COMMU_TIMEOUT,
       this.defaultTimeoutHandler

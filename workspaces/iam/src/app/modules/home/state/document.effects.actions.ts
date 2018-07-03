@@ -9,7 +9,7 @@ import { DocFormat } from 'core';
 export enum DocumentEffectsActionTypes {
   ReadBulkDocMeta = '[DocumentEffects] Load',
   Delete = '[DocumentEffects] Delete',
-  Show = '[DocumentEffects] Show',
+  ReadDocument = '[DocumentEffects] Show',
   Create = '[DocumentEffects] New',
   Save = '[DocumentEffects] Save'
 }
@@ -27,7 +27,7 @@ export class DocumentEffectsCreate implements Action {
   constructor(public payload: { format: DocFormat }) {}
 }
 export class DocumentEffectsRead implements Action {
-  readonly type = DocumentEffectsActionTypes.Show;
+  readonly type = DocumentEffectsActionTypes.ReadDocument;
   constructor(public payload: { id: number; title?: string; format?: string }) {}
 }
 export class DocumentEffectsSave implements Action {
@@ -37,6 +37,7 @@ export class DocumentEffectsSave implements Action {
 
 export enum ActionStatus {
   Start = 'Start',
+  Waiting = 'Waiting',
   Success = 'Success',
   Fail = 'Fail'
 }

@@ -90,7 +90,7 @@ export class DocumentEffects {
 
   @Effect()
   ReadDocument = this.monitor.do<DocumentEffectsRead>(
-    DocumentEffectsActionTypes.Show,
+    DocumentEffectsActionTypes.ReadDocument,
     pipe(
       tap(action => this.store.dispatch(new SetCurrentDocumentId({ id: action.payload.id }))),
       switchMap(action => {

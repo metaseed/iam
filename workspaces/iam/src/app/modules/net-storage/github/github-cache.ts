@@ -110,11 +110,11 @@ export class GithubCache implements ICache {
       isNearPageFloor = undefined /*undefined: only this page*/
     ) => {
       const mapIssueToMeta = (issues: Issue[], i) => {
+        if (issues.length>0 && page === 1) {
+          this.highestId = issues[0].number;
+        }
         const docMetaArray = issues.map(issue => {
           const meta = this._issueToDocMeta(issue);
-          if (i === 0 && page === 1) {
-            this.highestId = meta.id;
-          }
           return meta;
         });
         return docMetaArray;
@@ -171,20 +171,20 @@ export class GithubCache implements ICache {
         const directlyReturnMetaArray = (metaArray: DocMeta[]) => {
           if (metaArray.length) {
             this._setIdRangeHigh(metaArray[0].id);
-            this._setIdRangeLow(metaArray[metaArray.length - 1].id-1);
+            this._setIdRangeLow(metaArray[metaArray.length - 1].id - 1);
           }
           return of(metaArray);
         };
 
-        const updateRange = (lastLow?: number, lastHigh?: number)=>(metaArray: DocMeta[]) => {
+        const updateRange = (lastLow?: number, lastHigh?: number) => (metaArray: DocMeta[]) => {
           const len = metaArray.length;
           if (len) {
-            const currentHigh = metaArray[len - 1].id;
+            const currentHigh = metaArray[0].id;
             if (!lastHigh || currentHigh > lastHigh) {
               lastHigh = currentHigh;
               this._setIdRangeHigh(currentHigh);
             }
-            const currentLow = metaArray[0].id-1; // low is not included so -1
+            const currentLow = metaArray[len - 1].id - 1; // low is not included so -1
             if (!lastLow || currentLow < lastLow) {
               lastLow = currentLow;
               this._setIdRangeLow(currentLow);
@@ -258,7 +258,7 @@ export class GithubCache implements ICache {
           if (err.status === 404) {
             if (state === 0) {
               state = 1;
-              this.readDocMeta(id).pipe(
+              return this.readDocMeta(id).pipe(
                 switchMap(meta => {
                   docMeta = meta;
                   return getContent(repo, id, meta.title, meta.format, state, meta.isDeleted); // using the parameters from net via key; means title, format or format is modifyed.
@@ -270,6 +270,8 @@ export class GithubCache implements ICache {
             } else {
               return throwError('getContents should stop!');
             }
+          } else {
+            throw err;
           }
         })
       );

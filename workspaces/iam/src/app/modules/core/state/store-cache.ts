@@ -33,11 +33,7 @@ export class StoreCache implements ICache {
 
   createDoc(format: DocFormat) {
     const id = NEW_DOC_ID;
-    const doc = new Document(
-      id,
-      undefined,
-      new DocContent(id, DEFAULT_NEW_DOC_CONTENT, undefined)
-    );
+    const doc = new Document(id, undefined, new DocContent(id, DEFAULT_NEW_DOC_CONTENT, undefined));
     this.store.dispatch(new AddDocument({ collectionDocument: doc }));
     this.store.dispatch(new SetCurrentDocumentId({ id: id }));
   }
@@ -55,7 +51,7 @@ export class StoreCache implements ICache {
             collectionDocument: doc
           })
         );
-        this.store.dispatch(new SetCurrentDocumentId({id:doc.id}));
+        this.store.dispatch(new SetCurrentDocumentId({ id: doc.id }));
       })
     );
   }
@@ -63,18 +59,26 @@ export class StoreCache implements ICache {
   readBulkDocMeta(key: number, isBelowTheKey = true) {
     return this.nextLevelCache.readBulkDocMeta(key, isBelowTheKey).pipe(
       tap(metaArray => {
-        if (metaArray[0] && metaArray[0].isDeleted) {
+        if (metaArray.length && metaArray[0] && metaArray[0].isDeleted) {
           this.store.dispatch(new DeleteDocuments({ ids: metaArray.map(m => m.id) }));
         } else {
-          this.store.dispatch(
-            new UpsertDocuments({
-              collectionDocuments: metaArray.map(meta => {
-                const docDic = selectDocumentEntitiesState(this.state.value);
-                const content = docDic[meta.id] && docDic[meta.id].content;
-                return new Document(meta.id, meta, content);
+          const array = new Array<Document>();
+          metaArray.forEach(meta => {
+            const docDic = selectDocumentEntitiesState(this.state.value);
+            const doc = docDic[meta.id];
+
+            if (doc && doc.metaData.updateDate.getTime() === meta.updateDate.getTime()) return;
+
+            const content = doc && doc.content;
+            array.push(new Document(meta.id, meta, content));
+          });
+
+          if (array.length)
+            this.store.dispatch(
+              new UpsertDocuments({
+                collectionDocuments: array
               })
-            })
-          );
+            );
         }
       })
     );
@@ -135,8 +139,8 @@ export class StoreCache implements ICache {
   }
 
   deleteDoc(id: number) {
-    if(id === NEW_DOC_ID) {
-      this.store.dispatch(new DeleteDocument({id}));
+    if (id === NEW_DOC_ID) {
+      this.store.dispatch(new DeleteDocument({ id }));
       return of(true) as Observable<true>;
     }
     return this.nextLevelCache.deleteDoc(id).pipe<true>(

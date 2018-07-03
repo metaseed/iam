@@ -38,7 +38,7 @@ const routes: Routes = [
     MaterialModule,
     NgSpinKitModule,
     GithubStorageModule,
-    DatabaseModule.provideDB(),
+    DatabaseModule,
     StoreModule.forFeature<fromState.DocsState>('docs', fromState.reducers),
     EffectsModule.forFeature([DocumentEffects])
   ],
