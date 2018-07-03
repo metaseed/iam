@@ -26,6 +26,8 @@ export class DocListComponent implements OnInit {
 
   ngOnInit() {}
 
+  trackByFunc = (i, doc) => doc.id;
+
   show(document: Document) {
     this.onShow.emit(document);
   }
