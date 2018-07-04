@@ -1,12 +1,11 @@
 import { Component, OnInit, Injectable } from '@angular/core';
-import { WindowRef } from '../window-ref';
 import { SwUpdate } from '@angular/service-worker';
 import { interval, Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
 
 @Injectable()
 export class UpdateService {
-  constructor(private swUpdate: SwUpdate, public snackBar: MatSnackBar, private winRef: WindowRef) {
+  constructor(private swUpdate: SwUpdate, public snackBar: MatSnackBar) {
     // check update every hour
     interval(1000 * 60 * 60).subscribe(() => this.checkForUpdate());
 
@@ -57,7 +56,7 @@ export class UpdateService {
       .activateUpdate()
       .then(() => {
         console.log('[App] activateUpdate completed');
-        this.winRef.nativeWindow.location.reload();
+        location.reload();
       })
       .catch(err => {
         console.error(err);

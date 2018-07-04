@@ -18,11 +18,11 @@ export class ReadingPositionIndicatorComponent implements OnInit, AfterViewInit 
   @Input() element: HTMLElement;
 
   ngAfterViewInit() {
-    new Scrollable(this.element).scroll$.subscribe(event => {
+    new Scrollable(this.element).scrollEvent$.subscribe(event => {
       this.setProgress(event);
     });
 
-    this._windowRef.resize$.subscribe(event => this.setProgress(event));
+    this._windowRef.resizeEvent$.subscribe(event => this.setProgress(event));
   }
   private setProgress(event) {
     const position = this.Value;

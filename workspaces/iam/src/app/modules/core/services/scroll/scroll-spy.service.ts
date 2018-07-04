@@ -1,24 +1,23 @@
-import { Inject, Injectable } from '@angular/core';
-import { DOCUMENT } from '@angular/platform-browser';
-import { auditTime, distinctUntilChanged, takeUntil, map } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
-import { ScrollService } from './scroll.service';
-import { Observable, fromEvent } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ReplaySubject, Subject } from 'rxjs';
+import { ContainerRef } from '../../dom/container';
 
-export interface ScrollItem {
+export interface IScrollElement {
   element: Element;
   index: number;
 }
 
 export interface ScrollSpyToken {
-  active: Observable<ScrollItem | null>;
+  activeScrollElement$: Observable<IScrollElement | null>;
   isScrollDown$: Observable<any>;
   unspy: () => void;
 }
 
-export class ScrollSpiedElement implements ScrollItem {
-  top = 0;
+export class ScrollSpiedElement implements IScrollElement {
+  top: number;
 
   constructor(public readonly element: Element, public readonly index: number) {}
 
@@ -27,124 +26,72 @@ export class ScrollSpiedElement implements ScrollItem {
   }
 }
 
-export class ScrollSpiedElementGroup {
-  activeScrollItem: ReplaySubject<ScrollItem | null> = new ReplaySubject(1);
-
-  private resizeEvents$: Observable<any>;
-  private scrollEvents$: Observable<any>;
-
+export class ScrollSpiedElementGroup extends ContainerRef {
+  private activeScrollElement = new ReplaySubject<IScrollElement | null>(1);
   private lastMaxScrollTop: number;
   private lastContentHeight: number;
-
   private spiedElements: ScrollSpiedElement[];
   private onStopListening$ = new Subject();
 
+  activeScrollElement$ = this.activeScrollElement.pipe(distinctUntilChanged());
+
   constructor(
     elements: Element[],
-    private _container: HTMLElement | Window = window,
+    container: HTMLElement | Window = window,
     private _topOffset = 0
   ) {
+    super(container);
     this.spiedElements = elements.map((elem, i) => new ScrollSpiedElement(elem, i));
-
-    this.resizeEvents$ = fromEvent(_container, 'resize').pipe(auditTime(300));
-    this.scrollEvents$ = fromEvent(_container, 'scroll').pipe(auditTime(10));
   }
 
   spyOn() {
     this.calibrate();
     this.onScroll();
-    this.scrollEvents$.pipe(takeUntil(this.onStopListening$)).subscribe(this.onScroll);
-    this.resizeEvents$.pipe(takeUntil(this.onStopListening$)).subscribe(this.onResize);
+    this.scrollEvent$.pipe(takeUntil(this.onStopListening$)).subscribe(this.onScroll);
+    this.resizeEvent$.pipe(takeUntil(this.onStopListening$)).subscribe(this.onResize);
   }
 
   unSpy() {
-    this.activeScrollItem.complete();
+    this.activeScrollElement.complete();
     this.onStopListening$.next();
   }
 
   calibrate() {
-    const scrollTop = this.getScrollTop();
+    const scrollTop = this.scrollTop;
     this.spiedElements.forEach(spiedElem => spiedElem.calculateTop(scrollTop, this._topOffset));
     this.spiedElements.sort((a, b) => b.top - a.top); // Sort in descending `top` order.
   }
 
   private onResize = () => {
-    const contentHeight = this.getContentHeight();
-    const viewportHeight = this.getViewportHeight();
-
-    this.lastContentHeight = contentHeight;
-    this.lastMaxScrollTop = contentHeight - viewportHeight;
-
+    this.lastContentHeight = this.contentHeight;
+    this.lastMaxScrollTop = this.maxScrollTop;
     this.calibrate();
   };
 
-  getScrollDown() {
-    let lastValue = this.getScrollTop();
-    return this.scrollEvents$.pipe(
-      map(event => {
-        const currentValue = this.getScrollTop();
-        if (currentValue - lastValue > 0) {
-          lastValue = currentValue;
-          return { scroll: event, isDown: true };
-        }
-        lastValue = currentValue;
-        return { scroll: event, isDown: false };
-      })
-    );
-  }
-
   private onScroll = () => {
-    if (this.lastContentHeight !== this.getContentHeight()) {
+    if (this.lastContentHeight !== this.contentHeight) {
       // Something has caused the scroll height to change.
       // (E.g. image downloaded, accordion expanded/collapsed etc.)
       this.onResize();
     }
 
+    let activeItem: IScrollElement | undefined;
     const maxScrollTop = this.lastMaxScrollTop;
-    let activeItem: ScrollItem | undefined;
-    const scrollTop = this.getScrollTop();
+    const scrollTop = this.scrollTop;
+
     if (scrollTop + 1 >= maxScrollTop) {
       activeItem = this.spiedElements[0];
     } else {
-      this.spiedElements.some(spiedElem => {
-        if (spiedElem.top <= scrollTop) {
-          activeItem = spiedElem;
-          return true;
-        }
-        return false;
-      });
+      activeItem = this.spiedElements.find(spiedElem => spiedElem.top <= scrollTop);
     }
 
-    this.activeScrollItem.next(activeItem || null);
+    this.activeScrollElement.next(activeItem || null);
   };
-
-  private getContentHeight() {
-    if (this._container instanceof HTMLElement) {
-      return this._container.scrollHeight;
-    }
-    return document.body.scrollHeight || Number.MAX_SAFE_INTEGER;
-  }
-
-  private getViewportHeight() {
-    if (this._container instanceof HTMLElement) {
-      return this._container.clientHeight;
-    }
-    return document.body.clientHeight || 0;
-  }
-
-  private getScrollTop() {
-    if (this._container instanceof HTMLElement) {
-      return this._container.scrollTop;
-    }
-    return (window && window.pageYOffset) || 0;
-  }
 }
 
 @Injectable()
 export class ScrollSpyService {
   private spiedElementGroups: ScrollSpiedElementGroup[] = [];
-
-  constructor(@Inject(DOCUMENT) private doc: any, private scrollService: ScrollService) {}
 
   spyOn(
     elements: Element[],
@@ -156,8 +103,8 @@ export class ScrollSpyService {
     spiedGroup.spyOn();
 
     return {
-      active: spiedGroup.activeScrollItem.pipe(distinctUntilChanged()),
-      isScrollDown$: spiedGroup.getScrollDown(),
+      activeScrollElement$: spiedGroup.activeScrollElement$,
+      isScrollDown$: spiedGroup.isScrollDown$,
       unspy: () => this.unspy(spiedGroup)
     };
   }

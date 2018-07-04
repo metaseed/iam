@@ -48,7 +48,7 @@ export class TocService {
       <HTMLElement>docElement,
       60
     );
-    this.scrollSpyToken.active.subscribe(item =>
+    this.scrollSpyToken.activeScrollElement$.subscribe(item =>
       this.activeItemIndex.next(item && item.index)
     );
 

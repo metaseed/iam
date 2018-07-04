@@ -53,7 +53,7 @@ export class MarkdownViewerComponent {
 
   private render(content: string): Observable<void> {
     const targetElement = this.parent.viewerContainerDiv.nativeElement;
-    const docId = getAddr(this.documentRef.nativeDocument.location.href);
+    const docId = getAddr(this.documentRef.document.location.href);
     let addTitleAndToc = () => {
       this.tocService.genToc(targetElement, docId);
     };
@@ -80,7 +80,7 @@ export class MarkdownViewerComponent {
         this.logger.error(
           new Error(
             `[DocViewer] Error preparing document '${getAddr(
-              this.documentRef.nativeDocument.location.href
+              this.documentRef.document.location.href
             )}': ${errorMessage}`
           )
         );
