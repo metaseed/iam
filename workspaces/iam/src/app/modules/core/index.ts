@@ -2,7 +2,7 @@ export * from "./services/command.service";
 export * from "./config/config.service";
 export * from "./utils/utility-functions";
 export * from "./services/update.service";
-export * from './dom/container';
+export * from './dom/container-ref';
 export * from "./dom/window-ref";
 export * from "./dom/document-ref";
 export * from "./services/copier.service";

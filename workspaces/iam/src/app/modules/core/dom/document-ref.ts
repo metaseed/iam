@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/platform-browser';
-import { ContainerRef } from './container';
+import { ContainerRef } from './container-ref';
 
 @Injectable()
 export class DocumentRef extends ContainerRef {

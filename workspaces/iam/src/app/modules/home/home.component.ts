@@ -1,40 +1,28 @@
-import { Component, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Document } from 'core';
 import { DocService } from './services/doc.service';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { NavigationExtras } from '@angular/router/src/router';
-import { NgSpinKitModule } from 'ng-spin-kit';
 import { DocSearchService } from './services/doc-search.service';
 import { State } from './state/document.reducer';
 import { Store, select } from '@ngrx/store';
 import {
   Observable,
-  TimeoutError,
   of,
   from,
   Subject,
   merge,
-  Scheduler,
   asyncScheduler
 } from 'rxjs';
 import {
   map,
   filter,
-  timeout,
-  catchError,
-  switchAll,
-  take,
-  skip,
   debounceTime,
   distinctUntilChanged,
   combineLatest,
   tap,
-  mergeAll,
   takeUntil,
-  observeOn,
-  share,
-  startWith
-} from 'rxjs/operators';
+  observeOn} from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import {
   DocumentEffectsActionTypes,
@@ -47,7 +35,6 @@ import {
 import { DocSearchComponent } from './doc-search/doc-search.component';
 import { switchIfEmit } from '../core/operators/switchIfEmit';
 import { NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT } from 'core';
-import { PAN_ACTION_DELTY, PAN_ACTION_SCROLL_TRIGGER } from './const';
 
 @Component({
   selector: 'home',
@@ -58,7 +45,6 @@ export class HomeComponent {
   private destroy$ = new Subject();
 
   @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;
-  @ViewChild('touchDiv') touchDiv: ElementRef;
 
   defaultTimeoutHandler = (action: DocumentEffectsActionTypes, info?: string) => err => {
     console.warn(err.message + ' action:' + action + (info ? `--${info}` : ''));
@@ -110,46 +96,6 @@ export class HomeComponent {
     private snackBar: MatSnackBar
   ) {}
 
-  private refresh() {
-    this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: true }));
-  }
-
-  private panToRefresh() {
-    let startY: number;
-    let refreshStarted;
-    this.touchDiv.nativeElement.addEventListener(
-      'touchstart',
-      e => {
-        startY = e.touches[0].pageY;
-        refreshStarted = false;
-      },
-      { passive: true }
-    );
-    this.touchDiv.nativeElement.addEventListener(
-      'touchmove',
-      e => {
-        const y = e.touches[0].pageY;
-        const scrollTop =
-          window.pageXOffset === undefined
-            ? document.scrollingElement.scrollTop
-            : window.pageYOffset;
-        if (scrollTop === 0 && !refreshStarted && y > startY + PAN_ACTION_SCROLL_TRIGGER) {
-          refreshStarted = true;
-          this.refresh();
-        }
-        if (
-          window.innerHeight + window.pageYOffset >= document.body.offsetHeight &&
-          !refreshStarted &&
-          startY - y > PAN_ACTION_DELTY
-        ) {
-          this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: true }));
-          refreshStarted = true;
-        }
-      },
-      { passive: true }
-    );
-  }
-
   private _scrollTop;
   private _rememberScrollPosition() {
     if ('scrollRestoration' in history) {
@@ -166,7 +112,6 @@ export class HomeComponent {
   }
 
   ngOnInit() {
-    this.panToRefresh();
     this._rememberScrollPosition();
     let isSearching;
     const filteredDocs$ = this.docSearch.Search.pipe(
@@ -189,7 +134,8 @@ export class HomeComponent {
       tap(docs => {
         if (docs.length <= 1 && !isSearching) {
           // 0: initial value ; 1: nav back from url doc show; potential problem: if only 1 doc created, we will always query not from store but first store then from net.
-          this.refresh();
+    this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: true }));
+
         } else {
           this.loadFromStoreDirectly$.next(true);
         }

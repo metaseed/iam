@@ -3,7 +3,7 @@ import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
 import { Observable } from 'rxjs';
 import { ReplaySubject, Subject } from 'rxjs';
-import { ContainerRef } from '../../dom/container';
+import { ContainerRef } from '../../dom/container-ref';
 
 export interface IScrollElement {
   element: Element;

@@ -1,26 +1,17 @@
 import {
   Component,
   Input,
-  AfterViewInit,
   ElementRef,
   Output,
-  EventEmitter,
-  Injector
-} from '@angular/core';
-import { DomSanitizer, Title, Meta } from '@angular/platform-browser';
+  EventEmitter} from '@angular/core';
+import { Title, Meta } from '@angular/platform-browser';
 import { MarkdownViewerService } from './services/markdown.viewer.service';
 import { Logger, DocumentRef } from 'core';
-import { ViewChild } from '@angular/core';
-import * as view from '../state/reducers/view';
-import { Store } from '@ngrx/store';
-import * as fromView from '../state/actions/view';
-import * as MarkdownIt from 'markdown-it';
 import lozad from '../../../../../packages/lazy-load';
 import { TocComponent } from './elements/toc/toc.component';
 import { of, Observable, timer } from 'rxjs';
 import { TocService } from './services/toc.service';
 import { switchMap, tap, catchError, takeUntil } from 'rxjs/operators';
-import { createCustomElement } from '@angular/elements';
 import { ElementsLoader } from './elements/elements-loader';
 import { getAddr } from './utils/getUri';
 import { MarkdownViewerContainerComponent } from './markdown-viewer-container.component';
@@ -117,12 +108,9 @@ export class MarkdownViewerComponent {
     private logger: Logger,
     private metaService: Meta,
     elementRef: ElementRef,
-    private injector: Injector,
-    private sanitized: DomSanitizer,
     private service: MarkdownViewerService,
     private tocService: TocService,
     private titleService: Title,
-    private store: Store<view.State>,
     private elementsLoader: ElementsLoader
   ) {
     (<any>document).iamMarkdownIsPureViewMode = true;

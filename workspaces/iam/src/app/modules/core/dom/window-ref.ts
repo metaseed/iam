@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ContainerRef } from './container';
+import { ContainerRef } from './container-ref';
 
 @Injectable()
 export class WindowRef extends ContainerRef {
