@@ -21,6 +21,8 @@ import { EffectsModule } from '@ngrx/effects';
 import { AppEffects } from './app.effects';
 import { StorageModule } from "./modules/net-storage/storage.module";
 import { DatabaseModule,schema } from "database";
+import { RouteReuseStrategy } from "@angular/router";
+import { CustomRouteReuseStrategy } from "./routeReuseStrategy";
 /**
  * This function is used internal to get a string instance of the `<base href="" />` value from `index.html`.
  * This is an exported function, instead of a private function or inline lambda, to prevent this error:
@@ -69,7 +71,8 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
       provide: APP_BASE_HREF,
       useFactory: getBaseHref,
       deps: [PlatformLocation]
-    }
+    },
+    { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy },
   ],
   bootstrap: [AppComponent]
 })

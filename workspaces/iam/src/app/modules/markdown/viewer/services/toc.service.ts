@@ -17,6 +17,7 @@ export class TocService {
   activeItemIndex = new ReplaySubject<number | null>(1);
   private scrollSpyToken: ScrollSpyToken | null = null;
   isScrollUp = false;
+
   constructor(
     @Inject(DOCUMENT) private document: any,
     private domSanitizer: DomSanitizer,

@@ -1,7 +1,7 @@
 import { Component, Input, ViewChild, ElementRef } from '@angular/core';
 import { Document } from 'core';
 import { DocService } from './services/doc.service';
-import { Router } from '@angular/router';
+import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { NavigationExtras } from '@angular/router/src/router';
 import { NgSpinKitModule } from 'ng-spin-kit';
 import { DocSearchService } from './services/doc-search.service';
@@ -60,10 +60,10 @@ export class HomeComponent {
   @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;
   @ViewChild('touchDiv') touchDiv: ElementRef;
 
-  defaultTimeoutHandler = (action:DocumentEffectsActionTypes,info?:string) => err=>{
-    console.warn(err.message+' action:'+action + (info?`--${info}`:''));
+  defaultTimeoutHandler = (action: DocumentEffectsActionTypes, info?: string) => err => {
+    console.warn(err.message + ' action:' + action + (info ? `--${info}` : ''));
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
-  }
+  };
 
   private loadFromStoreDirectly$ = new Subject<boolean>();
   isLoadDone$ = merge(
@@ -87,7 +87,7 @@ export class HomeComponent {
       DocumentEffectsActionTypes.ReadBulkDocMeta,
       this.store,
       NET_COMMU_TIMEOUT,
-      this.defaultTimeoutHandler(DocumentEffectsActionTypes.ReadBulkDocMeta,'load-more')
+      this.defaultTimeoutHandler(DocumentEffectsActionTypes.ReadBulkDocMeta, 'load-more')
     ).pipe(
       takeUntil(this.destroy$),
       filter(a => a.context && a.context.isLoadMore === true),
@@ -111,7 +111,7 @@ export class HomeComponent {
   ) {}
 
   private refresh() {
-    this.store.dispatch(new DocumentEffectsReadBulkDocMeta({isBelowRange:true}));
+    this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: true }));
   }
 
   private panToRefresh() {
@@ -142,7 +142,7 @@ export class HomeComponent {
           !refreshStarted &&
           startY - y > PAN_ACTION_DELTY
         ) {
-          this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange:true }));
+          this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: true }));
           refreshStarted = true;
         }
       },
@@ -150,8 +150,24 @@ export class HomeComponent {
     );
   }
 
+  private _scrollTop;
+  private _rememberScrollPosition() {
+    if ('scrollRestoration' in history) {
+      // Back off, browser: https://developers.google.com/web/updates/2015/09/history-api-scroll-restoration
+      history.scrollRestoration = 'manual';
+    }
+    this.router.events.subscribe(events => {
+      if (events instanceof NavigationEnd && events.url === '/home') {
+        if (this._scrollTop) window.scrollTo(0, this._scrollTop);
+      } else if (events instanceof NavigationStart && events.url !== '/home') {
+        this._scrollTop = window.pageYOffset;
+      }
+    });
+  }
+
   ngOnInit() {
     this.panToRefresh();
+    this._rememberScrollPosition();
     let isSearching;
     const filteredDocs$ = this.docSearch.Search.pipe(
       debounceTime(280),

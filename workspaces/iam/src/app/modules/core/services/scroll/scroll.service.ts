@@ -1,7 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { PlatformLocation } from '@angular/common';
 import { DOCUMENT } from '@angular/platform-browser';
-import { fromEvent } from 'rxjs';
 
 @Injectable()
 export class ScrollService {
