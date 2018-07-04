@@ -23,12 +23,12 @@ import 'codemirror/addon/search/matchesonscrollbar';
 import 'codemirror/addon/search/jump-to-line';
 
 import { MarkdownEditorService } from '../services/markdown.editor.service';
-import { Scrollable } from 'core';
 import { Store } from '@ngrx/store';
 import * as markdown from '../../state';
 import * as fromEdit from '../../state/actions/edit';
 import { KeyMap } from '../editor-toolbar/keymap';
 import { Subject } from 'rxjs';
+import { ContainerRef } from 'core';
 /**
  * Usage : <codemirror [(ngModel)]="markdown" [config]="{...}"></codemirror>
  */
@@ -104,7 +104,7 @@ export class CodemirrorComponent {
     };
     this.codemirrorInit(this.config);
     this.service.editorLoaded$.next(this.instance);
-    new Scrollable(this.scroll.nativeElement.children[1].lastChild).isScrollDown$.subscribe(e => {
+    new ContainerRef(this.scroll.nativeElement.children[1].lastChild).isScrollDown$.subscribe(e => {
       this.store.dispatch(new fromEdit.ScrollDown(e));
       // console.log(e)
     });

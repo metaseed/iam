@@ -1,14 +1,16 @@
-import { map, auditTime } from "rxjs/operators";
-import { Observable, fromEvent } from "rxjs";
+import { map, auditTime } from 'rxjs/operators';
+import { fromEvent } from 'rxjs';
 
 export class ContainerRef {
-
-  scrollEvent$ = fromEvent(this.container, 'scroll').pipe(auditTime(this._scrollAuditTime));;
+  scrollEvent$ = fromEvent(this.container, 'scroll').pipe(auditTime(this._scrollAuditTime));
   resizeEvent$ = fromEvent(this.container, 'resize').pipe(auditTime(this._resizeAuditTime));
 
-  constructor(protected container: HTMLElement | Window = window,private _scrollAuditTime=300, private _resizeAuditTime=10) {
+  constructor(
+    protected container: HTMLElement | Window = window,
+    private _scrollAuditTime = 300,
+    private _resizeAuditTime = 10
+  ) {}
 
-  }
   get contentHeight() {
     if (this.container instanceof HTMLElement) {
       return this.container.scrollHeight;
@@ -48,4 +50,5 @@ export class ContainerRef {
       })
     );
   }
+
 }

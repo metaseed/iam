@@ -1,13 +1,8 @@
-import { Component, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
-import { DocumentRef, Scrollable } from 'core';
+import { Component, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
-import * as fromDocument from '../../state/reducers/document';
 import * as document from '../../state/actions/document';
-import * as fromView from '../../state/reducers/view';
 import { trigger, state, style, animate, transition } from '@angular/animations';
-import { MarkdownViewerComponent } from '../markdown-viewer.component';
 import { select } from '@ngrx/store';
-import { Observable } from 'rxjs';
 import * as fromMarkdown from './../../state';
 import { DocumentMode } from './../../state/reducers/document';
 import { MatToolbar } from '@angular/material';
@@ -73,10 +68,10 @@ export class ReaderToolbarComponent {
     });
   }
 
-  onRefresh(event) {
+  onRefresh() {
     this.store.dispatch(new document.RefreshAction());
   }
-  toEditMode(event) {
+  toEditMode() {
     this.isScrollDown = null;
     this.store.dispatch(new document.EditMode());
   }

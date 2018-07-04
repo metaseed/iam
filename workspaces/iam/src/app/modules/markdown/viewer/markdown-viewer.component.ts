@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { DomSanitizer, Title, Meta } from '@angular/platform-browser';
 import { MarkdownViewerService } from './services/markdown.viewer.service';
-import { Scrollable, Logger, DocumentRef } from 'core';
+import { Logger, DocumentRef } from 'core';
 import { ViewChild } from '@angular/core';
 import * as view from '../state/reducers/view';
 import { Store } from '@ngrx/store';

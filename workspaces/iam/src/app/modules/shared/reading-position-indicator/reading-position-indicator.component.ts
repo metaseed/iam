@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
-import { DocumentRef, WindowRef, Scrollable } from 'core';
+import { Component, OnInit, Input } from '@angular/core';
+import { DocumentRef, WindowRef, ContainerRef } from 'core';
 import { AfterViewInit, ViewChild } from '@angular/core';
 import { MatProgressBar } from '@angular/material';
 
@@ -18,7 +18,7 @@ export class ReadingPositionIndicatorComponent implements OnInit, AfterViewInit 
   @Input() element: HTMLElement;
 
   ngAfterViewInit() {
-    new Scrollable(this.element).scrollEvent$.subscribe(event => {
+    new ContainerRef(this.element).scrollEvent$.subscribe(event => {
       this.setProgress(event);
     });
 
@@ -29,7 +29,6 @@ export class ReadingPositionIndicatorComponent implements OnInit, AfterViewInit 
     const length = this.Max;
     const value = position / length;
     this.progressBar.value = value;
-    // console.log(event);
   }
 
   private get Max() {
@@ -39,4 +38,5 @@ export class ReadingPositionIndicatorComponent implements OnInit, AfterViewInit 
   private get Value() {
     return this.element.scrollTop;
   }
+
 }
