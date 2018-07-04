@@ -104,7 +104,7 @@ export class ScrollSpyService {
 
     return {
       activeScrollElement$: spiedGroup.activeScrollElement$,
-      isScrollDown$: spiedGroup.isScrollDown$,
+      isScrollDown$: spiedGroup.scrollDown$,
       unspy: () => this.unspy(spiedGroup)
     };
   }

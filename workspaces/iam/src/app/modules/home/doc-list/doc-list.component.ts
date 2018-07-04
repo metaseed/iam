@@ -7,12 +7,14 @@ import {
   ViewChild,
   ElementRef
 } from '@angular/core';
-import { Document } from 'core';
+import { Document, WindowRef } from 'core';
 import { MatDialog } from '@angular/material';
 import { DeleteAlertDialog } from '../doc-list/dialog.component';
 import { Store } from '@ngrx/store';
 import { State, DocumentEffectsReadBulkDocMeta } from '../state';
-import { PAN_ACTION_SCROLL_TRIGGER, PAN_ACTION_DELTY } from '../const';
+import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'doc-list',
@@ -21,12 +23,17 @@ import { PAN_ACTION_SCROLL_TRIGGER, PAN_ACTION_DELTY } from '../const';
 })
 export class DocListComponent implements OnInit {
   private docs;
-  @ViewChild('touchDiv') touchDiv: ElementRef;
+  private destroy$ = new Subject();
 
+  @ViewChild('touchDiv') touchDiv: ElementRef;
   @Output() onDelete = new EventEmitter<Document>();
   @Output() onShow = new EventEmitter<Document>();
 
-  constructor(private dialog: MatDialog, private store: Store<State>) {}
+  constructor(
+    private dialog: MatDialog,
+    private store: Store<State>,
+    private windowRef: WindowRef
+  ) {}
 
   @Input()
   set documents(v) {
@@ -37,7 +44,19 @@ export class DocListComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.windowRef.scrollDown$.pipe(takeUntil(this.destroy$)).subscribe(
+      e=>{
+        const margin = this.windowRef.maxScrollTop - e.scrollTop;
+        if(e.isDown && margin >=0 && margin < PAN_TO_GET_MORE_MARGIN){
+          this.getMore();
+        }
+      }
+    )
     this.panToRefresh();
+  }
+
+  ngOnDestroy() {
+  this.destroy$.next();
   }
 
   trackByFunc = (i, doc) => doc.id;
@@ -53,6 +72,14 @@ export class DocListComponent implements OnInit {
     dialogRef.afterClosed().subscribe(r => {
       if (r === 'Yes') this.onDelete.emit(document);
     });
+  }
+
+  private refresh() {
+    this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: true }));
+  }
+
+  private getMore() {
+    this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: true }));
   }
 
   private panToRefresh() {
@@ -71,19 +98,19 @@ export class DocListComponent implements OnInit {
       e => {
         const y = e.touches[0].pageY;
         const scrollTop =
-          window.pageXOffset === undefined
+          this.windowRef.window.pageXOffset === undefined
             ? document.scrollingElement.scrollTop
-            : window.pageYOffset;
-        if (scrollTop === 0 && !refreshStarted && y > startY + PAN_ACTION_SCROLL_TRIGGER) {
+            : this.windowRef.window.pageYOffset;
+        if (scrollTop === 0 && !refreshStarted && y > startY + PAN_TO_REFRESH_MARGIN) {
           refreshStarted = true;
-          this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: true }));
+          this.refresh();
         }
         if (
-          window.innerHeight + window.pageYOffset >= document.body.offsetHeight &&
+          this.windowRef.window.innerHeight + this.windowRef.window.pageYOffset >= document.body.offsetHeight &&
           !refreshStarted &&
-          startY - y > PAN_ACTION_DELTY
+          startY - y > PAN_TO_GET_MORE_MARGIN
         ) {
-          this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: true }));
+          this.getMore();
           refreshStarted = true;
         }
       },

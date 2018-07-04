@@ -1,6 +1,10 @@
 import { map, auditTime } from 'rxjs/operators';
 import { fromEvent } from 'rxjs';
 
+export class ScrollEvent {
+  constructor(public event: Event, public isDown: boolean, public scrollTop: number) {}
+}
+
 export class ContainerRef {
   scrollEvent$ = fromEvent(this.container, 'scroll').pipe(auditTime(this._scrollAuditTime));
   resizeEvent$ = fromEvent(this.container, 'resize').pipe(auditTime(this._resizeAuditTime));
@@ -22,7 +26,14 @@ export class ContainerRef {
     if (this.container instanceof HTMLElement) {
       return this.container.clientHeight;
     }
-    return document.body.clientHeight || 0;
+    return  Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  }
+
+  get viewportWidth() {
+    if (this.container instanceof HTMLElement) {
+      return this.container.clientWidth;
+    }
+    return  Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
   }
 
   get scrollTop() {
@@ -36,19 +47,18 @@ export class ContainerRef {
     return this.contentHeight - this.viewportHeight;
   }
 
-  get isScrollDown$() {
+  get scrollDown$() {
     let lastValue = this.scrollTop;
     return this.scrollEvent$.pipe(
       map(event => {
-        const currentValue = this.scrollTop;
-        if (currentValue - lastValue > 0) {
-          lastValue = currentValue;
-          return { scroll: event, isDown: true };
+        const scrollTop = this.scrollTop;
+        if (scrollTop - lastValue > 0) {
+          lastValue = scrollTop;
+          return new ScrollEvent(event, true, scrollTop);
         }
-        lastValue = currentValue;
-        return { scroll: event, isDown: false };
-      })
+        lastValue = scrollTop;
+        return new ScrollEvent(event, false, scrollTop);
+      }, auditTime(this._scrollAuditTime))
     );
   }
-
 }

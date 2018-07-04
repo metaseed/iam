@@ -104,7 +104,7 @@ export class CodemirrorComponent {
     };
     this.codemirrorInit(this.config);
     this.service.editorLoaded$.next(this.instance);
-    new ContainerRef(this.scroll.nativeElement.children[1].lastChild).isScrollDown$.subscribe(e => {
+    new ContainerRef(this.scroll.nativeElement.children[1].lastChild).scrollDown$.subscribe(e => {
       this.store.dispatch(new fromEdit.ScrollDown(e));
       // console.log(e)
     });

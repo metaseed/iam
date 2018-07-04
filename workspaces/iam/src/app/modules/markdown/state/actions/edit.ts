@@ -1,4 +1,5 @@
 import { Action } from '@ngrx/store';
+import { ScrollEvent } from 'core';
 
 export enum EditActionTypes {
   Save = '[Edit] Save',
@@ -26,6 +27,6 @@ export class LockScrollWithView implements Action {
 
 export class ScrollDown implements Action {
   readonly type = EditActionTypes.ScrollDown;
-  constructor(public payload: { scroll: any; isDown: boolean }) {}
+  constructor(public payload:ScrollEvent) {}
 }
 export type EditActions = Save | LockScrollWithView | ScrollDown;

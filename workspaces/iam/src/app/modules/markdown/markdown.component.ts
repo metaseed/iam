@@ -1,30 +1,22 @@
 import * as doc from './state/actions/document';
-import { Component, OnInit, ViewChild, Inject, HostListener, ElementRef } from '@angular/core';
-import { MarkdownViewerComponent } from './viewer/markdown-viewer.component';
+import { Component, OnInit, ViewChild, Inject, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { APP_BASE_HREF } from '@angular/common';
-import { take, map, timeout, tap, takeUntil, combineLatest, share } from 'rxjs/operators';
-import { DocService } from 'home';
-import { MarkdownEditorService } from './editor/index';
-import { ActivatedRoute, Router, ParamMap } from '@angular/router';
-import { base64Decode, DocumentRef, Scrollable, DocFormat } from 'core';
+import { take, map, tap, takeUntil, combineLatest, share } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
+import { DocFormat } from 'core';
 import { Store, select, State } from '@ngrx/store';
 import * as fromMarkdown from './state';
-import * as fromView from './state/actions/view';
 import { DocumentMode } from './state/reducers/document';
 import * as document from './state/actions/document';
 import { ChangeDetectorRef } from '@angular/core';
 import { MarkdownEditorComponent } from './editor/markdown-editor.component';
 import { OnDestroy } from '@angular/core';
 import { MarkdownViewerContainerComponent } from './viewer/markdown-viewer-container.component';
-import { HasElementRef } from '@angular/material/core/typings/common-behaviors/color';
-import { Observable, Subscription, Subject, merge } from 'rxjs';
-import { DocSaveCoordinateService } from './editor/services/doc-save-coordinate-service';
+import { Observable, Subject, merge } from 'rxjs';
 import {
-  DocumentEffectsRead,
   selectCurrentDocumentState,
   DocumentEffectsCreate,
-  getDocumentByIdSeletor,
   SetCurrentDocumentId
 } from '../home/state';
 import { Document } from 'core';
@@ -78,20 +70,13 @@ export class MarkdownComponent implements OnInit, OnDestroy {
 
   constructor(
     private markdownSerive: MarkdownService,
-    private _docService: DocService,
-    private _el: ElementRef,
-    private _editorService: MarkdownEditorService,
-    private docSaveCoodinator: DocSaveCoordinateService,
     private _http: HttpClient,
     @Inject(APP_BASE_HREF) private baseHref,
     private changeDetecorRef: ChangeDetectorRef,
     private route: ActivatedRoute,
     private router: Router,
     private store: Store<fromMarkdown.State>,
-    private state: State<fromMarkdown.State>,
-    private utils: Utilities,
-    private docRef: DocumentRef
-  ) {}
+    private utils: Utilities  ) {}
 
   ngOnInit() {
     this.markdown$ = merge(
@@ -133,7 +118,6 @@ export class MarkdownComponent implements OnInit, OnDestroy {
             let title = params.get('title');
             let num = +params.get('id');
             let format = params.get('f');
-            let doc = getDocumentByIdSeletor(num)(this.state.value);
             this.markdownSerive.refresh(num, title, format);
           }
         }),
@@ -145,6 +129,6 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   showDemo() {
     this._http
       .get(`${this.baseHref}assets/markdown.md`, { responseType: 'text' })
-      .subscribe(a => {});
+      .subscribe(() => { });
   }
 }

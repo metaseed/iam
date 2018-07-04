@@ -1,8 +1,6 @@
 import { Component, OnInit, Input, Output, ViewChild } from '@angular/core';
 import { MarkdownEditorService } from './index';
 import { EventEmitter } from '@angular/core';
-import { Scrollable } from 'core';
-import * as fromEdit from '../state/actions/edit';
 import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
 import * as fromMarkdown from './../state';
 import { DocumentMode } from './../state/reducers/document';
@@ -10,19 +8,11 @@ import { DocSaveCoordinateService } from './services/doc-save-coordinate-service
 import { Observable, Subject } from 'rxjs';
 import {
   map,
-  filter,
-  switchMap,
-  debounceTime,
-  take,
-  takeUntil,
-  distinctUntilChanged
-} from 'rxjs/Operators';
+  takeUntil} from 'rxjs/Operators';
 import { Store, select, State as StoreState } from '@ngrx/store';
-import { DialogService } from 'core';
-import { DocService } from 'home';
 import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
 import { MatDialog } from '@angular/material';
-import { Subscription, of } from 'rxjs';
+import { of } from 'rxjs';
 import {
   DocumentEffectsSave,
   selectCurrentDocumentIdState,
@@ -63,9 +53,7 @@ export class MarkdownEditorComponent implements OnInit {
     private dialog: MatDialog,
     private editorService: MarkdownEditorService,
     private docSaveCoordinater: DocSaveCoordinateService,
-    private store: Store<fromMarkdown.State>,
-    private docSerivce: DocService
-  ) {
+    private store: Store<fromMarkdown.State>  ) {
     this.editorService.editorLoaded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       setTimeout(() => (this.editorLoaded = true), 0);
     });

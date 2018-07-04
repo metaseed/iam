@@ -1,25 +1,19 @@
-import { Component, Input, AfterViewInit, Output } from '@angular/core';
-import { Scrollable, MSG_DISPLAY_TIMEOUT, NET_COMMU_TIMEOUT } from 'core';
+import { Component, Input, AfterViewInit } from '@angular/core';
+import { MSG_DISPLAY_TIMEOUT, NET_COMMU_TIMEOUT, ContainerRef } from 'core';
 import { ViewChild } from '@angular/core';
 import * as markdown from '../state';
 import * as fromView from '../state/actions/view';
 import { Store, select } from '@ngrx/store';
-import { DocService } from 'home';
 import { ElementRef } from '@angular/core';
-import { Subscription, of, Subject, merge, asyncScheduler } from 'rxjs';
+import { Subject, merge, asyncScheduler } from 'rxjs';
 import {
-  selectDocumentActionStatusState,
   DocumentEffectsActionTypes,
-  DocumentActionTypes,
   ActionStatus,
   monitorActionStatus,
   getActionStatus
 } from '../../home/state';
-import { filter, takeLast, takeUntil, map, mergeAll, observeOn } from 'rxjs/operators';
+import { takeUntil, map, observeOn } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
-// import { PAN_ACTION_DELTY, PAN_ACTION_SCROLL_TRIGGER } from '../../docs/const';
-import { EventEmitter } from '@angular/core';
-import { PAN_ACTION_DELTY, PAN_ACTION_SCROLL_TRIGGER } from '../../home/const';
 @Component({
   selector: 'markdown-viewer-container',
   templateUrl: './markdown-viewer-container.component.html',
@@ -59,7 +53,6 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
 
   constructor(
     private store: Store<any>,
-    private _docService: DocService,
     private snackBar: MatSnackBar
   ) {}
   isScrollDown = false;
@@ -86,9 +79,9 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
       }
     });
 
-    new Scrollable(this.viewerContainerDiv.nativeElement).isScrollDown$
+    new ContainerRef(this.viewerContainerDiv.nativeElement).scrollDown$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(e => {
+      .subscribe(e=> {
         this.store.dispatch(new fromView.ScrollDown(e));
         this.isScrollDown = e.isDown;
       });
