@@ -36,14 +36,24 @@ export class DatabaseCache implements ICache {
       tap(doc => {
         this.db
           .add<DocContent>(DataTables.DocContent, doc.content)
-          .pipe(subscribeOn(asyncScheduler),catchError(err=>{throw err;})).subscribe();
+          .pipe(
+            subscribeOn(asyncScheduler),
+            catchError(err => {
+              throw err;
+            })
+          )
+          .subscribe();
 
-          this.db
-            .add<DocMeta>(DataTables.DocMeta, doc.metaData)
-            .pipe(subscribeOn(asyncScheduler),catchError(err=>{throw err;})).subscribe();
-
-      }),
-
+        this.db
+          .add<DocMeta>(DataTables.DocMeta, doc.metaData)
+          .pipe(
+            subscribeOn(asyncScheduler),
+            catchError(err => {
+              throw err;
+            })
+          )
+          .subscribe();
+      })
     );
   }
 
@@ -56,11 +66,15 @@ export class DatabaseCache implements ICache {
       }
     }
 
-    let keyRange: IDBKeyRange = undefined; // initial fetch
+    let keyRange: IDBKeyRange = undefined;
+    let dir: IDBCursorDirection = isBelowTheKey ? 'next' : 'prev';
     if (key !== undefined) {
       keyRange = isBelowTheKey ? IDBKeyRange.upperBound(key) : IDBKeyRange.lowerBound(key, true);
+    } else {
+      /// initial fetch
+      keyRange = IDBKeyRange.lowerBound(0, true);
+      dir = 'prev';
     }
-    const dir = isBelowTheKey ? 'next' : 'prev';
 
     let cacheRecords: DocMeta[];
 
@@ -193,18 +207,28 @@ export class DatabaseCache implements ICache {
   }
 
   UpdateDocument(oldDocMeta: DocMeta, content: string) {
-    return this.nextLevelCache.UpdateDocument(oldDocMeta,content).pipe(
+    return this.nextLevelCache.UpdateDocument(oldDocMeta, content).pipe(
       tap(doc => {
         this.db
           .put<DocContent>(DataTables.DocContent, doc.content)
-          .pipe(subscribeOn(asyncScheduler),catchError(err=>{throw err;})).subscribe();
+          .pipe(
+            subscribeOn(asyncScheduler),
+            catchError(err => {
+              throw err;
+            })
+          )
+          .subscribe();
 
-          this.db
-            .put<DocMeta>(DataTables.DocMeta, doc.metaData)
-            .pipe(subscribeOn(asyncScheduler),catchError(err=>{throw err;})).subscribe();
-
-      }),
-
+        this.db
+          .put<DocMeta>(DataTables.DocMeta, doc.metaData)
+          .pipe(
+            subscribeOn(asyncScheduler),
+            catchError(err => {
+              throw err;
+            })
+          )
+          .subscribe();
+      })
     );
   }
 

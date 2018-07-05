@@ -14,7 +14,8 @@ import { Store } from '@ngrx/store';
 import { State, DocumentEffectsReadBulkDocMeta } from '../state';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, filter } from 'rxjs/operators';
+import { Router, RouterState } from '@angular/router';
 
 @Component({
   selector: 'doc-list',
@@ -32,6 +33,7 @@ export class DocListComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private store: Store<State>,
+    private router: Router,
     private windowRef: WindowRef
   ) {}
 
@@ -44,19 +46,25 @@ export class DocListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.windowRef.scrollDown$.pipe(takeUntil(this.destroy$)).subscribe(
-      e=>{
-        const margin = this.windowRef.maxScrollTop - e.scrollTop;
-        if(e.isDown && margin >=0 && margin < PAN_TO_GET_MORE_MARGIN){
-          this.getMore();
-        }
-      }
-    )
+    this.windowRef.scrollDown$
+      .pipe(
+        takeUntil(this.destroy$),
+        filter(e => {
+          if (!this.router.url.startsWith('/home')) return false;
+          const margin = this.windowRef.maxScrollTop - e.scrollTop;
+          if (e.isDown && margin >= 0 && margin < PAN_TO_GET_MORE_MARGIN) {
+            return true;
+          }
+        })
+      )
+      .subscribe(e => {
+        this.getMore();
+      });
     this.panToRefresh();
   }
 
   ngOnDestroy() {
-  this.destroy$.next();
+    this.destroy$.next();
   }
 
   trackByFunc = (i, doc) => doc.id;
@@ -106,7 +114,8 @@ export class DocListComponent implements OnInit {
           this.refresh();
         }
         if (
-          this.windowRef.window.innerHeight + this.windowRef.window.pageYOffset >= document.body.offsetHeight &&
+          this.windowRef.window.innerHeight + this.windowRef.window.pageYOffset >=
+            document.body.offsetHeight &&
           !refreshStarted &&
           startY - y > PAN_TO_GET_MORE_MARGIN
         ) {
