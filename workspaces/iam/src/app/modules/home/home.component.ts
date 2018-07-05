@@ -6,14 +6,7 @@ import { NavigationExtras } from '@angular/router/src/router';
 import { DocSearchService } from './services/doc-search.service';
 import { State } from './state/document.reducer';
 import { Store, select } from '@ngrx/store';
-import {
-  Observable,
-  of,
-  from,
-  Subject,
-  merge,
-  asyncScheduler
-} from 'rxjs';
+import { Observable, of, from, Subject, merge, asyncScheduler } from 'rxjs';
 import {
   map,
   filter,
@@ -22,7 +15,8 @@ import {
   combineLatest,
   tap,
   takeUntil,
-  observeOn} from 'rxjs/operators';
+  observeOn
+} from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import {
   DocumentEffectsActionTypes,
@@ -62,7 +56,12 @@ export class HomeComponent {
     ).pipe(
       takeUntil(this.destroy$),
       map(v => {
-        return v.status === ActionStatus.Fail || v.status === ActionStatus.Success;
+        return (
+          v.status === ActionStatus.Fail ||
+          v.status === ActionStatus.Succession ||
+          v.status === ActionStatus.Complete ||
+          v.status === ActionStatus.Timeout
+        );
       })
     )
   ).pipe(observeOn(asyncScheduler));
@@ -79,7 +78,7 @@ export class HomeComponent {
       filter(a => a.context && a.context.isLoadMore === true),
       observeOn(asyncScheduler),
       map(v => {
-        return v.status === ActionStatus.Fail || v.status === ActionStatus.Success;
+        return v.status === ActionStatus.Fail || v.status === ActionStatus.Succession;
       })
     )
   ]).pipe(switchIfEmit());
@@ -132,10 +131,10 @@ export class HomeComponent {
     this.docs$ = from([this.initDocs$, filteredDocs$]).pipe(
       switchIfEmit(),
       tap(docs => {
-        if (docs.length <= 1 && !isSearching) {
-          // 0: initial value ; 1: nav back from url doc show; potential problem: if only 1 doc created, we will always query not from store but first store then from net.
-    this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: true }));
-
+        if (docs.length <= 1) {
+          if (!isSearching)
+            // 0: initial value ; 1: nav back from url doc show;
+            this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: true }));
         } else {
           this.loadFromStoreDirectly$.next(true);
         }

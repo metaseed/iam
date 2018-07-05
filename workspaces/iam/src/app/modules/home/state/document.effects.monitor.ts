@@ -3,7 +3,11 @@ import { OperatorFunction } from 'rxjs';
 import { Store, Action } from '@ngrx/store';
 import { State } from './document.reducer';
 import { Actions, ofType } from '@ngrx/effects';
-import { DocumentEffectsActionTypes, ActionStatus } from './document.effects.actions';
+import {
+  DocumentEffectsActionTypes,
+  ActionStatus,
+  DocumentEffectionsAction
+} from './document.effects.actions';
 import { SetDocumentsMessage } from './document.actions';
 import { Injectable } from '@angular/core';
 
@@ -11,19 +15,38 @@ import { Injectable } from '@angular/core';
 export class EffectsMoniter {
   constructor(private store: Store<State>, private actions$: Actions) {}
 
+  complete(actionType: DocumentEffectsActionTypes, action: DocumentEffectionsAction) {
+    return tap(undefined, undefined, () => this._sendComplete(actionType, action));
+  }
+
+  private _sendComplete(actionType: DocumentEffectsActionTypes, action: DocumentEffectionsAction) {
+    const coId = action.coId;
+    console.groupCollapsed(`%c${actionType}-${coId}->complete`, 'background-color:#4285f4');
+    console.count(`${actionType}-${coId}->complete`);
+    console.groupEnd();
+    this.store.dispatch(
+      new SetDocumentsMessage({
+        action: actionType,
+        status: ActionStatus.Complete,
+        corelationId: coId
+      })
+    );
+  }
+
   do = <T extends Action & { payload }>(
-    action: DocumentEffectsActionTypes,
+    actionType: DocumentEffectsActionTypes,
     pipe: OperatorFunction<T, any>
   ) => {
     let coId: number;
     return this.actions$.pipe(
-      ofType<T>(action),
-      tap(_ => {
-        coId = Date.now();
-        console.log(`%c${action}-${coId}->start`, 'background-color:#4285f4');
+      ofType<T>(actionType),
+      tap((action: DocumentEffectionsAction) => {
+        coId = action.coId;
+        console.log(`%c${actionType}-${coId}->start`, 'background-color:#4285f4');
+
         this.store.dispatch(
           new SetDocumentsMessage({
-            action,
+            action: actionType,
             status: ActionStatus.Start,
             corelationId: coId
           })
@@ -32,34 +55,34 @@ export class EffectsMoniter {
       pipe,
       map(r => {
         if (!r) {
-          console.groupCollapsed(`%c${action}-${coId}->waiting`, 'background-color:#4285f433');
-          console.count(`${action}-${coId}->waiting`);
+          console.groupCollapsed(`%c${actionType}-${coId}->waiting`, 'background-color:#4285f433');
+          console.count(`${actionType}-${coId}->waiting`);
           console.log('result:', r);
           console.groupEnd();
           return new SetDocumentsMessage({
-            action,
+            action: actionType,
             status: ActionStatus.Waiting,
             corelationId: coId
           });
         }
         const msg = new SetDocumentsMessage({
-          action,
-          status: ActionStatus.Success,
+          action: actionType,
+          status: ActionStatus.Succession,
           corelationId: coId
         });
-        console.groupCollapsed(`%c${action}-${coId}->success`, 'background-color:#4285f4');
-        console.count(`${action}-${coId}->success`);
+        console.groupCollapsed(`%c${actionType}-${coId}->succession`, 'background-color:#4285f4');
+        console.count(`${actionType}-${coId}->succession`);
         console.log('result:', r);
         console.groupEnd();
         return msg;
       }),
       catchError((err, caught) => {
-        console.log(`%c${action}-${coId}->error`, 'background-color:#4285f4');
+        console.log(`%c${actionType}-${coId}->error`, 'background-color:#4285f4');
         console.error(err);
         this.store.dispatch(
           new SetDocumentsMessage({
             status: ActionStatus.Fail,
-            action,
+            action: actionType,
             corelationId: coId,
             message: err.message + err.stack
           })

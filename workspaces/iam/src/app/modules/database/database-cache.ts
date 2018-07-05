@@ -80,6 +80,7 @@ export class DatabaseCache implements ICache {
 
     const FromDB$ = this.db.query<DocMeta>(DataTables.DocMeta, keyRange, dir, DB_PAGE_SIZE).pipe(
       toArray(),
+      filter(a => a.length > 0),
       tap(a => (cacheRecords = a))
     );
 
@@ -123,7 +124,8 @@ export class DatabaseCache implements ICache {
         });
       }),
       count(),
-      switchMap(_ => from([docMetaDelete, docMetaUpsert]))
+      switchMap(_ => from([docMetaDelete, docMetaUpsert])),
+      filter(a => a.length > 0)
     );
 
     if (refreshFirstPage) {

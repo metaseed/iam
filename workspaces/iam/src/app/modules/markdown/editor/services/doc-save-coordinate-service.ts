@@ -52,7 +52,7 @@ export class DocSaveCoordinateService implements OnDestroy {
         if (as.status === ActionStatus.Start) {
           this.docSavedHandler(editor);
           this.isSaving = true;
-        } else if (as.status === ActionStatus.Success || as.status === ActionStatus.Fail) {
+        } else if (as.status === ActionStatus.Succession || as.status === ActionStatus.Fail) {
           this.isSaving = false;
         }
       });

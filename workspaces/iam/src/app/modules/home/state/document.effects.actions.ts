@@ -14,39 +14,57 @@ export enum DocumentEffectsActionTypes {
   Save = '[DocumentEffects] Save'
 }
 
-export class DocumentEffectsReadBulkDocMeta implements Action {
+export class DocumentEffectionsAction {
+  public coId = Date.now();
+}
+
+export class DocumentEffectsReadBulkDocMeta extends DocumentEffectionsAction implements Action {
   readonly type = DocumentEffectsActionTypes.ReadBulkDocMeta;
-  constructor(public payload={isBelowRange:true}){}
+  constructor(public payload = { isBelowRange: true }) {
+    super();
+  }
 }
-export class DocumentEffectsDelete implements Action {
+export class DocumentEffectsDelete extends DocumentEffectionsAction implements Action {
   readonly type = DocumentEffectsActionTypes.Delete;
-  constructor(public payload: { id: number }) {}
+  constructor(public payload: { id: number }) {
+    super();
+  }
 }
-export class DocumentEffectsCreate implements Action {
+export class DocumentEffectsCreate extends DocumentEffectionsAction implements Action {
   readonly type = DocumentEffectsActionTypes.Create;
-  constructor(public payload: { format: DocFormat }) {}
+  constructor(public payload: { format: DocFormat }) {
+    super();
+  }
 }
-export class DocumentEffectsRead implements Action {
+export class DocumentEffectsRead extends DocumentEffectionsAction implements Action {
   readonly type = DocumentEffectsActionTypes.ReadDocument;
-  constructor(public payload: { id: number; title?: string; format?: string }) {}
+  constructor(public payload: { id: number; title?: string; format?: string }) {
+    super();
+  }
 }
-export class DocumentEffectsSave implements Action {
+export class DocumentEffectsSave extends DocumentEffectionsAction implements Action {
   readonly type = DocumentEffectsActionTypes.Save;
-  constructor(public payload: { content: string; format?: DocFormat }) {}
+  constructor(public payload: { content: string; format?: DocFormat }) {
+    super();
+  }
 }
 
 export enum ActionStatus {
   Start = 'Start',
   Waiting = 'Waiting',
-  Success = 'Success',
-  Fail = 'Fail'
+  Succession = 'Success',
+  Fail = 'Fail',
+  Complete = 'Complete',
+  Timeout = 'Timeout'
 }
-export interface DocumentActionStatus {
-  status: ActionStatus;
-  action: DocumentEffectsActionTypes;
-  message?: string;
-  context?: any;
-  corelationId?: number;
+export class DocumentActionStatus {
+  constructor(
+    public status: ActionStatus,
+    public action: DocumentEffectsActionTypes,
+    public message?: string,
+    public context?: any,
+    public corelationId?: number
+  ) {}
 }
 
 export function getActionStatus(
@@ -74,11 +92,13 @@ export function monitorActionStatus(
       (start, v) =>
         start &&
         v.corelationId === start.corelationId &&
-        (v.status === ActionStatus.Success || v.status === ActionStatus.Fail),
+        (v.status === ActionStatus.Succession ||
+          v.status === ActionStatus.Fail ||
+          v.status === ActionStatus.Complete),
       start => {
         if (timeOutHander) timeOutHander(new TimeoutError());
         return {
-          status: ActionStatus.Fail,
+          status: ActionStatus.Timeout,
           action: start.action,
           message: `Timeout when perform ${start.action}`
         };

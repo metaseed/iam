@@ -40,11 +40,11 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
       this.defaultTimeoutHandler
     ).pipe(
       map(v => {
-        return v.status === ActionStatus.Fail || v.status === ActionStatus.Success;
+        return v.status === ActionStatus.Fail || v.status === ActionStatus.Succession;
       })
     ),
     getActionStatus(DocumentEffectsActionTypes.Create, this.store).pipe(
-      map(v => v.status === ActionStatus.Success || v.status === ActionStatus.Fail)
+      map(v => v.status === ActionStatus.Succession || v.status === ActionStatus.Fail)
     )
   ).pipe(
     takeUntil(this.destroy$),

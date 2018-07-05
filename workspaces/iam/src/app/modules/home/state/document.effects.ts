@@ -6,7 +6,8 @@ import { State as StoreState } from '@ngrx/store';
 import {
   DocumentEffectsReadBulkDocMeta,
   DocumentEffectsActionTypes,
-  DocumentEffectsDelete
+  DocumentEffectsDelete,
+  DocumentEffectionsAction
 } from './document.effects.actions';
 import { GithubStorage, GithubCache } from 'net-storage';
 import { switchMap, tap, combineLatest } from 'rxjs/operators';
@@ -79,10 +80,12 @@ export class DocumentEffects {
           keyRangeLow = selectIdRangeLowState(this.state.value);
           isBelowRange = action.payload.isBelowRange;
         }),
-        switchMap(_ => {
+        switchMap(action => {
           // (low, high]
           const key = isBelowRange ? keyRangeLow : keyRangeHigh;
-          return this.storeCache.readBulkDocMeta(key, isBelowRange);
+          return this.storeCache
+            .readBulkDocMeta(key, isBelowRange)
+            .pipe(this.monitor.complete(DocumentEffectsActionTypes.ReadBulkDocMeta, action));
         })
       );
     })()
@@ -95,7 +98,9 @@ export class DocumentEffects {
       tap(action => this.store.dispatch(new SetCurrentDocumentId({ id: action.payload.id }))),
       switchMap(action => {
         const actionDoc = action.payload;
-        return this.storeCache.readDocContent(actionDoc.id, actionDoc.title, actionDoc.format);
+        return this.storeCache
+          .readDocContent(actionDoc.id, actionDoc.title, actionDoc.format)
+          .pipe(this.monitor.complete(DocumentEffectsActionTypes.ReadDocument, action));
       })
     )
   );
@@ -117,14 +122,14 @@ export class DocumentEffects {
             tap(doc => {
               this.util.modifyUrlAfterSaved(doc.id, newTitle, format);
               this.snackbar.open('New document saved!', 'OK');
-            })
+            }, this.monitor.complete(DocumentEffectsActionTypes.Save, action))
           );
         } else {
           return this.storeCache.UpdateDocument(doc.metaData, content).pipe(
             tap(doc => {
               this.util.modifyUrlAfterSaved(doc.id, newTitle, format);
               this.snackbar.open('Saved!', 'OK');
-            })
+            }, this.monitor.complete(DocumentEffectsActionTypes.Save, action))
           );
         }
       })
@@ -134,6 +139,10 @@ export class DocumentEffects {
   @Effect()
   DeleteDocument = this.monitor.do<DocumentEffectsDelete>(
     DocumentEffectsActionTypes.Delete,
-    switchMap(a => this.storeCache.deleteDoc(a.payload.id))
+    switchMap(action =>
+      this.storeCache
+        .deleteDoc(action.payload.id)
+        .pipe(this.monitor.complete(DocumentEffectsActionTypes.Save, action))
+    )
   );
 }
