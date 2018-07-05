@@ -74,23 +74,27 @@ export function getActionStatus(
 }
 
 export function monitorActionStatus(
-  action: DocumentEffectsActionTypes,
+  actionType: DocumentEffectsActionTypes,
   store: Store<State>,
   due: number,
-  timeOutHander: (err: TimeoutError) => void
+  timeOutHander: (err: TimeoutError) => void,
+  sameActionTypeDiff?: (action: DocumentActionStatus) => boolean
 ): Observable<DocumentActionStatus> {
   return store.pipe(
     select(selectDocumentActionStatusState),
-    ofActionType(action),
+    ofActionType(actionType),
     timeOutMonitor<DocumentActionStatus, DocumentActionStatus>(
       due,
-      v => v.status === ActionStatus.Start,
-      (start, v) =>
+      actionStatus =>
+        actionStatus.status === ActionStatus.Start &&
+        (!sameActionTypeDiff ? true : sameActionTypeDiff(actionStatus)),
+      (start,   actionStatus) =>
         start &&
-        v.corelationId === start.corelationId &&
-        (v.status === ActionStatus.Succession ||
-          v.status === ActionStatus.Fail ||
-          v.status === ActionStatus.Complete),
+        actionStatus.corelationId === start.corelationId &&
+        (!sameActionTypeDiff ? true : sameActionTypeDiff(actionStatus)) &&
+        (actionStatus.status === ActionStatus.Succession ||
+          actionStatus.status === ActionStatus.Fail ||
+          actionStatus.status === ActionStatus.Complete),
       start => {
         if (timeOutHander) timeOutHander(new TimeoutError());
         return {

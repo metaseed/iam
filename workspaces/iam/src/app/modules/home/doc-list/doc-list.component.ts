@@ -44,7 +44,8 @@ export class DocListComponent implements OnInit {
       DocumentEffectsActionTypes.Delete,
       this.store,
       NET_COMMU_TIMEOUT,
-      this.defaultTimeoutHandler(DocumentEffectsActionTypes.Delete)
+      this.defaultTimeoutHandler(DocumentEffectsActionTypes.Delete),
+      actionStatus=>actionStatus.action.payload.id === doc.id
     ).pipe(
       takeUntil(this.destroy$),
       map(v => {
