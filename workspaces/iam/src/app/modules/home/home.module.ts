@@ -16,12 +16,13 @@ import { StoreModule } from '@ngrx/store';
 import * as fromState from './state';
 import { EffectsModule } from '@ngrx/effects';
 import { DocumentEffects } from './state/document.effects';
-import { DocDeleteComponent } from './doc-list/doc-delete/doc-delete.component';
 import { GithubStorageModule } from '../net-storage/github/github-storage.module';
 import { DatabaseModule } from 'database';
 import { EffectsMoniter } from './state';
 import { DocEffectsUtil } from './state/document.effects.util';
 import { ScrollingModule } from '@angular/cdk-experimental';
+import { DocItemComponent } from './doc-list/doc-item/doc-item.component';
+import { DocDeleteComponent } from './doc-list/doc-item/doc-delete/doc-delete.component';
 
 const routes: Routes = [
   {
@@ -48,7 +49,8 @@ const routes: Routes = [
     HomeComponent,
     DocListComponent,
     DocSearchComponent,
-    DocDeleteComponent
+    DocDeleteComponent,
+    DocItemComponent
   ],
   exports: [HomeComponent],
   providers: [DocService, DocSearchService, EffectsMoniter, DocEffectsUtil],

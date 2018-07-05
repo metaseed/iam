@@ -144,7 +144,6 @@ export class DatabaseCache implements ICache {
     let inCache: T;
     const _cache$ = cache$.pipe(
       tap(d => (inCache = d))
-      // tapObservable('BBB')
     );
     const _nextCache$ = nextCache$.pipe(
       filter(fromNext => {
@@ -174,7 +173,7 @@ export class DatabaseCache implements ICache {
         } else return false;
       })
     );
-    return concat<T>(_cache$, _nextCache$);
+    return concat<T>(_cache$, _nextCache$).pipe(filter(t=>!!t));
   }
 
   readDocMeta(id: number, checkNextCache?: boolean): Observable<DocMeta> {
@@ -236,11 +235,11 @@ export class DatabaseCache implements ICache {
 
   deleteDoc(id: number) {
     return this.nextLevelCache.deleteDoc(id).pipe(
-      switchMap((r: true) => {
+      switchMap(_ => {
         return this.db.delete(DataTables.DocMeta, id).pipe(
           subscribeOn(asyncScheduler),
           switchMap(_ => {
-            return this.db.delete(DataTables.DocContent, id).pipe(map<any, true>(_ => true));
+            return this.db.delete(DataTables.DocContent, id).pipe(map(_ => id));
           })
         );
       })

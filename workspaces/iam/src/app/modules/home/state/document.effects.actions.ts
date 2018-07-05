@@ -1,6 +1,6 @@
 import { Action, Store, select } from '@ngrx/store';
 import { Observable, TimeoutError, UnaryFunction, of, asyncScheduler } from 'rxjs';
-import { State } from './document.reducer';
+import { State } from './state-selectors';
 import { filter, timeout, map, catchError, tap } from 'rxjs/operators';
 import { timeOutMonitor } from '../../core/operators';
 import { selectDocumentActionStatusState } from './state-selectors';
@@ -14,39 +14,35 @@ export enum DocumentEffectsActionTypes {
   Save = '[DocumentEffects] Save'
 }
 
-export class DocumentEffectionsAction {
-  public coId = Date.now();
+export interface DocumentEffectsAction extends Action {
+  coId: number;
+  payload: any;
 }
 
-export class DocumentEffectsReadBulkDocMeta extends DocumentEffectionsAction implements Action {
+export class DocumentEffectsReadBulkDocMeta implements DocumentEffectsAction {
   readonly type = DocumentEffectsActionTypes.ReadBulkDocMeta;
-  constructor(public payload = { isBelowRange: true }) {
-    super();
-  }
+  coId = Date.now();
+  constructor(public payload = { isBelowRange: true }) {}
 }
-export class DocumentEffectsDelete extends DocumentEffectionsAction implements Action {
+export class DocumentEffectsDelete implements DocumentEffectsAction {
+  coId = Date.now();
   readonly type = DocumentEffectsActionTypes.Delete;
-  constructor(public payload: { id: number }) {
-    super();
-  }
+  constructor(public payload: { id: number }) {}
 }
-export class DocumentEffectsCreate extends DocumentEffectionsAction implements Action {
+export class DocumentEffectsCreate implements DocumentEffectsAction {
+  coId = Date.now();
   readonly type = DocumentEffectsActionTypes.Create;
-  constructor(public payload: { format: DocFormat }) {
-    super();
-  }
+  constructor(public payload: { format: DocFormat }) {}
 }
-export class DocumentEffectsRead extends DocumentEffectionsAction implements Action {
+export class DocumentEffectsRead implements DocumentEffectsAction {
+  coId = Date.now();
   readonly type = DocumentEffectsActionTypes.ReadDocument;
-  constructor(public payload: { id: number; title?: string; format?: string }) {
-    super();
-  }
+  constructor(public payload: { id: number; title?: string; format?: string }) {}
 }
-export class DocumentEffectsSave extends DocumentEffectionsAction implements Action {
+export class DocumentEffectsSave implements DocumentEffectsAction {
+  coId = Date.now();
   readonly type = DocumentEffectsActionTypes.Save;
-  constructor(public payload: { content: string; format?: DocFormat }) {
-    super();
-  }
+  constructor(public payload: { content: string; format?: DocFormat }) {}
 }
 
 export enum ActionStatus {
@@ -60,7 +56,7 @@ export enum ActionStatus {
 export class DocumentActionStatus {
   constructor(
     public status: ActionStatus,
-    public action: DocumentEffectsActionTypes,
+    public action: DocumentEffectsAction,
     public message?: string,
     public context?: any,
     public corelationId?: number
@@ -109,7 +105,7 @@ export function monitorActionStatus(
 
 export function ofActionType(actionType: DocumentEffectsActionTypes) {
   return filter((status: DocumentActionStatus) => {
-    return status && status.action === actionType;
+    return status && status.action.type === actionType;
   });
 }
 

@@ -4,7 +4,7 @@ import { DocService } from './services/doc.service';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { NavigationExtras } from '@angular/router/src/router';
 import { DocSearchService } from './services/doc-search.service';
-import { State } from './state/document.reducer';
+import { State } from './state/state-selectors';
 import { Store, select } from '@ngrx/store';
 import { Observable, of, from, Subject, merge, asyncScheduler } from 'rxjs';
 import {
@@ -78,7 +78,10 @@ export class HomeComponent {
       filter(a => a.context && a.context.isLoadMore === true),
       observeOn(asyncScheduler),
       map(v => {
-        return v.status === ActionStatus.Fail || v.status === ActionStatus.Succession;
+        return v.status === ActionStatus.Fail || v.status === ActionStatus.Succession ||
+        v.status === ActionStatus.Complete ||
+        v.status === ActionStatus.Timeout
+
       })
     )
   ]).pipe(switchIfEmit());
@@ -146,18 +149,5 @@ export class HomeComponent {
     this.destroy$.next();
   }
 
-  showDoc(doc: Document) {
-    let navigationExtras: NavigationExtras = {
-      queryParams: {
-        id: doc.id,
-        title: doc.metaData.title,
-        f: doc.metaData.format || 'md'
-      }
-    };
-    this.router.navigate(['/doc'], navigationExtras);
-  }
 
-  deleteDoc(doc: Document) {
-    this.store.dispatch(new DocumentEffectsDelete({ id: doc.id }));
-  }
 }

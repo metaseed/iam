@@ -7,15 +7,22 @@ import {
   ViewChild,
   ElementRef
 } from '@angular/core';
-import { Document, WindowRef } from 'core';
-import { MatDialog } from '@angular/material';
+import { Document, WindowRef, NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT } from 'core';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import { DeleteAlertDialog } from '../doc-list/dialog.component';
 import { Store } from '@ngrx/store';
-import { State, DocumentEffectsReadBulkDocMeta } from '../state';
+import {
+  State,
+  DocumentEffectsReadBulkDocMeta,
+  DocumentEffectsDelete,
+  monitorActionStatus,
+  DocumentEffectsActionTypes,
+  ActionStatus
+} from '../state';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
 import { Subject } from 'rxjs';
-import { takeUntil, filter } from 'rxjs/operators';
-import { Router, RouterState } from '@angular/router';
+import { takeUntil, filter, map } from 'rxjs/operators';
+import { Router, RouterState, NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'doc-list',
@@ -27,14 +34,40 @@ export class DocListComponent implements OnInit {
   private destroy$ = new Subject();
 
   @ViewChild('touchDiv') touchDiv: ElementRef;
-  @Output() onDelete = new EventEmitter<Document>();
-  @Output() onShow = new EventEmitter<Document>();
+  private defaultTimeoutHandler = (action: DocumentEffectsActionTypes, info?: string) => err => {
+    console.warn(err.message + ' action:' + action + (info ? `--${info}` : ''));
+    this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
+  };
+
+  isDeleteDone = (doc:Document) =>
+    monitorActionStatus(
+      DocumentEffectsActionTypes.Delete,
+      this.store,
+      NET_COMMU_TIMEOUT,
+      this.defaultTimeoutHandler(DocumentEffectsActionTypes.Delete)
+    ).pipe(
+      takeUntil(this.destroy$),
+      map(v => {
+        if (v.action.payload.id === doc.id) {
+          if (v.status === ActionStatus.Fail) {
+            this.snackBar.open(`delete: ${doc.metaData.title} failed!`);
+            return true;
+          }
+          return (
+            // v.status === ActionStatus.Succession ||
+            v.status === ActionStatus.Complete || v.status === ActionStatus.Timeout
+          );
+        }
+        return false;
+      })
+    );
 
   constructor(
     private dialog: MatDialog,
     private store: Store<State>,
     private router: Router,
-    private windowRef: WindowRef
+    private windowRef: WindowRef,
+    private snackBar: MatSnackBar
   ) {}
 
   @Input()
@@ -69,17 +102,28 @@ export class DocListComponent implements OnInit {
 
   trackByFunc = (i, doc) => doc.id;
 
-  show(document: Document) {
-    this.onShow.emit(document);
+  // delete(document: Document) {
+  //   const dialogRef = this.dialog.open(DeleteAlertDialog, {
+  //     disableClose: true
+  //   });
+  //   dialogRef.afterClosed().subscribe(r => {
+  //     if (r === 'Yes') this.onDelete.emit(document);
+  //   });
+  // }
+
+  onShow(doc: Document) {
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+        id: doc.id,
+        title: doc.metaData.title,
+        f: doc.metaData.format || 'md'
+      }
+    };
+    this.router.navigate(['/doc'], navigationExtras);
   }
 
-  delete(document: Document) {
-    const dialogRef = this.dialog.open(DeleteAlertDialog, {
-      disableClose: true
-    });
-    dialogRef.afterClosed().subscribe(r => {
-      if (r === 'Yes') this.onDelete.emit(document);
-    });
+  onDelete(doc: Document) {
+    this.store.dispatch(new DocumentEffectsDelete({ id: doc.id }));
   }
 
   private refresh() {

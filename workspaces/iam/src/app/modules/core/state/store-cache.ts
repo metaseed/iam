@@ -141,13 +141,11 @@ export class StoreCache implements ICache {
   deleteDoc(id: number) {
     if (id === NEW_DOC_ID) {
       this.store.dispatch(new DeleteDocument({ id }));
-      return of(true) as Observable<true>;
+      return of(id);
     }
-    return this.nextLevelCache.deleteDoc(id).pipe<true>(
-      tap(r => {
-        if (r) {
-          return this.store.dispatch(new DeleteDocument({ id }));
-        }
+    return this.nextLevelCache.deleteDoc(id).pipe<number>(
+      tap(_ => {
+          this.store.dispatch(new DeleteDocument({ id }));
       })
     );
   }

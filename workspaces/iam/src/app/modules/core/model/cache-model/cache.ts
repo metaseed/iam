@@ -32,7 +32,7 @@ export interface ICache {
   readDocContent(id:number, title:string, format: string): Observable<DocContent>;
 
   UpdateDocument(oldDocMeta:DocMeta,content:string):Observable<Document>
-  deleteDoc(id:number):Observable<true>; // false is processed by observable error hanlder
+  deleteDoc(id:number):Observable<number>; //retrun the id;  false is processed by observable error hanlder
 }
 
 

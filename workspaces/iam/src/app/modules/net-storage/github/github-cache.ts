@@ -245,6 +245,7 @@ export class GithubCache implements ICache {
       state = 0,
       isDeleted = false
     ) => {
+      if(!title) throw new Error('title is empty!');
       let uri = `${DOCUMENTS_FOLDER_NAME}/${title}_${id}`;
       if (format) uri = `${uri}.${format}`;
 
@@ -352,12 +353,12 @@ export class GithubCache implements ICache {
             return repo.delFile(`${DOCUMENTS_FOLDER_NAME}/${title}_${id}.md`).pipe(
               catchError(err => {
                 if (err.status === 404) { // already deleted on other computer.
-                  return of(true);
+                  return of(id);
                 }
                 throw err;
               }),
-              map<File, true>(d => {
-                return true; // false is processed by error of observable
+              map<File, number>(_ => {
+                return id; // false is processed by error of observable
               })
             );
           })
