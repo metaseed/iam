@@ -9,9 +9,9 @@ import { MatToolbar } from '@angular/material';
 import { Observable } from 'rxjs';
 import { ScrollEvent } from 'core';
 @Component({
-  selector: 'ms-reader-toolbar',
-  templateUrl: './reader-toolbar.component.html',
-  styleUrls: ['./reader-toolbar.component.scss'],
+  selector: 'ms-viewer-toolbar',
+  templateUrl: './viewer-toolbar.component.html',
+  styleUrls: ['./viewer-toolbar.component.scss'],
   animations: [
     trigger('show', [
       state('true', style({ opacity: 1, transform: 'translateY(0)' })),
@@ -34,7 +34,7 @@ import { ScrollEvent } from 'core';
     ])
   ]
 })
-export class ReaderToolbarComponent {
+export class ViewerToolbarComponent {
   @ViewChild('toolbar') toolbar: MatToolbar;
   isScrollDown: boolean | null = null;
   isPositionFixed: boolean;

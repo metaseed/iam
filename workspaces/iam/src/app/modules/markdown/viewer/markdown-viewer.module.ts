@@ -5,7 +5,7 @@ import { MarkdownConfig } from "./markdown.config";
 import { MarkdownViewerService } from "./services/markdown.viewer.service";
 import { Router } from "@angular/router";
 import { SharedModule } from "shared";
-import { ReaderToolbarComponent } from "./reader-toolbar/reader-toolbar.component";
+import { ViewerToolbarComponent } from "./viewer-toolbar/viewer-toolbar.component";
 import { MaterialModule } from "material";
 import { RouterModule } from "@angular/router";
 import { MarkdownViewerContainerComponent } from "./markdown-viewer-container.component";
@@ -18,7 +18,7 @@ import { Utilities } from "../../core/utils";
 @NgModule({
   declarations: [
     MarkdownViewerComponent,
-    ReaderToolbarComponent,
+    ViewerToolbarComponent,
     MarkdownViewerContainerComponent
   ],
   imports: [
@@ -31,7 +31,7 @@ import { Utilities } from "../../core/utils";
   ],
   exports: [
     MarkdownViewerComponent,
-    ReaderToolbarComponent,
+    ViewerToolbarComponent,
     MarkdownViewerContainerComponent
   ],
   providers: [TocService]
