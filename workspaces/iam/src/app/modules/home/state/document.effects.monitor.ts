@@ -6,7 +6,8 @@ import { Actions, ofType } from '@ngrx/effects';
 import {
   DocumentEffectsActionTypes,
   ActionStatus,
-  DocumentEffectsAction
+  DocumentEffectsAction,
+  DocumentActionStatus
 } from './document.effects.actions';
 import { SetDocumentsMessage } from './document.actions';
 import { Injectable } from '@angular/core';
@@ -25,11 +26,10 @@ export class EffectsMoniter {
     console.count(`${action.type}-${coId}->complete`);
     console.groupEnd();
     this.store.dispatch(
-      new SetDocumentsMessage({
+      new SetDocumentsMessage(new DocumentActionStatus(
+        ActionStatus.Complete,
         action,
-        status: ActionStatus.Complete,
-        corelationId: coId
-      })
+        coId))
     );
   }
 
@@ -47,20 +47,19 @@ export class EffectsMoniter {
         console.log(`%c${actionType}-${coId}->start`, 'background-color:#4285f4');
 
         this.store.dispatch(
-          new SetDocumentsMessage({
+          new SetDocumentsMessage(new DocumentActionStatus(
+            ActionStatus.Start,
             action,
-            status: ActionStatus.Start,
-            corelationId: coId
-          })
+            coId))
         );
       }),
       pipe,
       map(r => {
-        const msg = new SetDocumentsMessage({
+        const msg = new SetDocumentsMessage( new DocumentActionStatus(
+          ActionStatus.Succession,
           action,
-          status: ActionStatus.Succession,
-          corelationId: coId
-        });
+          coId));
+
         console.groupCollapsed(`%c${actionType}-${coId}->succession`, 'background-color:#4285f4');
         console.count(`${actionType}-${coId}->succession`);
         console.log('result:', r);
@@ -71,12 +70,10 @@ export class EffectsMoniter {
         console.log(`%c${actionType}-${coId}->error`, 'background-color:#4285f4');
         console.error(err);
         this.store.dispatch(
-          new SetDocumentsMessage({
-            status: ActionStatus.Fail,
+          new SetDocumentsMessage(new DocumentActionStatus(
+            ActionStatus.Fail,
             action,
-            corelationId: coId,
-            message: err.message + err.stack
-          })
+            coId,err))
         );
         return caught;
       })

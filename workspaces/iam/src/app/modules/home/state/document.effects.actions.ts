@@ -47,8 +47,7 @@ export class DocumentEffectsSave implements DocumentEffectsAction {
 
 export enum ActionStatus {
   Start = 'Start',
-  Waiting = 'Waiting',
-  Succession = 'Success',
+  Succession = 'Succession',
   Fail = 'Fail',
   Complete = 'Complete',
   Timeout = 'Timeout'
@@ -57,10 +56,13 @@ export class DocumentActionStatus {
   constructor(
     public status: ActionStatus,
     public action: DocumentEffectsAction,
+    public corelationId?: number,
     public message?: string,
     public context?: any,
-    public corelationId?: number
   ) {}
+  isNotStartStatus() {
+    return status !== ActionStatus.Start;
+  }
 }
 
 export function getActionStatus(
@@ -77,7 +79,7 @@ export function monitorActionStatus(
   actionType: DocumentEffectsActionTypes,
   store: Store<State>,
   due: number,
-  timeOutHander: (err: TimeoutError) => void,
+  timeOutHander: (start:DocumentActionStatus) => void,
   sameActionTypeDiff?: (action: DocumentActionStatus) => boolean
 ): Observable<DocumentActionStatus> {
   return store.pipe(
@@ -85,23 +87,27 @@ export function monitorActionStatus(
     ofActionType(actionType),
     timeOutMonitor<DocumentActionStatus, DocumentActionStatus>(
       due,
+
       actionStatus =>
         actionStatus.status === ActionStatus.Start &&
         (!sameActionTypeDiff ? true : sameActionTypeDiff(actionStatus)),
-      (start,   actionStatus) =>
+
+      (start, actionStatus) =>
         start &&
         actionStatus.corelationId === start.corelationId &&
         (!sameActionTypeDiff ? true : sameActionTypeDiff(actionStatus)) &&
         (actionStatus.status === ActionStatus.Succession ||
           actionStatus.status === ActionStatus.Fail ||
           actionStatus.status === ActionStatus.Complete),
+
       start => {
-        if (timeOutHander) timeOutHander(new TimeoutError());
-        return {
-          status: ActionStatus.Timeout,
-          action: start.action,
-          message: `Timeout when perform ${start.action}`
-        };
+        if (timeOutHander) timeOutHander(start);
+        return new DocumentActionStatus(
+          ActionStatus.Timeout,
+          start.action,
+          start.corelationId,
+          `Timeout when perform ${start.action}`
+        );
       }
     )
   );

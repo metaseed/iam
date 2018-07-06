@@ -17,7 +17,8 @@ import {
   DocumentEffectsDelete,
   monitorActionStatus,
   DocumentEffectsActionTypes,
-  ActionStatus
+  ActionStatus,
+  DocumentActionStatus
 } from '../state';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
 import { Subject } from 'rxjs';
@@ -34,9 +35,9 @@ export class DocListComponent implements OnInit {
   private destroy$ = new Subject();
 
   @ViewChild('touchDiv') touchDiv: ElementRef;
-  private defaultTimeoutHandler = (action: DocumentEffectsActionTypes, info?: string) => err => {
-    console.warn(err.message + ' action:' + action + (info ? `--${info}` : ''));
-    this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
+  private defaultTimeoutHandler = (action: DocumentEffectsActionTypes, info?: string) => (start:DocumentActionStatus) => {
+    console.warn( 'action timeout:' + action + (info ? `--${info}` : ''));
+    this.snackBar.open(action+ 'time out.', 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
   isDeleteDone = (doc:Document) =>
@@ -64,7 +65,6 @@ export class DocListComponent implements OnInit {
     );
 
   constructor(
-    private dialog: MatDialog,
     private store: Store<State>,
     private router: Router,
     private windowRef: WindowRef,
