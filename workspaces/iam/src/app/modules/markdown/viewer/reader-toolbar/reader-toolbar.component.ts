@@ -7,7 +7,6 @@ import * as fromMarkdown from './../../state';
 import { DocumentMode } from './../../state/reducers/document';
 import { MatToolbar } from '@angular/material';
 import { Observable } from 'rxjs';
-import { ScrollDown } from '../../state/actions/edit';
 import { ScrollEvent } from 'core';
 @Component({
   selector: 'ms-reader-toolbar',
