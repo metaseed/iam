@@ -6,7 +6,7 @@ import { ContainerRef } from './container-ref';
 export class DocumentRef extends ContainerRef {
 
   constructor(@Inject(DOCUMENT) private _document: Document) {
-    super(_document.documentElement);
+    super(_document);
   }
 
   get document(): Document {

@@ -1,11 +1,12 @@
 import { ViewActions, ViewActionTypes } from '../actions/view';
+import { ScrollEvent } from 'core';
 
 export interface State {
-    scrollDown: { scroll: any, isDown: boolean | null };
+    scrollDown: ScrollEvent;
 }
 
 const initialState: State = {
-    scrollDown: { scroll: null, isDown: null }
+    scrollDown: null
 }
 
 export function reducer(state = initialState, action: ViewActions) {

@@ -1,8 +1,6 @@
-
 .markdown-container .md-footer {
   padding: 2px;
-  background-color: #f0f0f0;
-  // font-size: 12px;
+  background-color: #f0f0f0; // font-size: 12px;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -17,6 +15,13 @@
   z-index: 99999999;
 }
 
+// .split-pane-content-primary {
+//   height: 100%;
+// }
+.split-pane-content-secondary {
+  height: 100%;
+}
+
 //http://jsfiddle.net/5n5MA/2/
 .markdown-container.fullscreen .md-editor-panel {
   height: calc(100vh - 40px) !important;
@@ -26,7 +31,7 @@
   height: calc(100vh - 40px) !important;
 }
 
-.markdown-container .tool-bar .btn-group > .btn:first-child::before {
+.markdown-container .tool-bar .btn-group>.btn:first-child::before {
   content: " ";
   background-color: darkgray;
   width: 1px;
@@ -36,26 +41,24 @@
   position: absolute;
 }
 
-.markdown-container
-  .tool-bar
-  .btn-group:first-child
-  > .btn:first-child::before {
-  display: none;
-}
-
-.markdown-container .tool-bar .btn-group.hide-split > .btn:first-child::before {
-  display: none;
-}
-
-.markdown-container .tool-bar .btn {
-  margin-bottom: 0;
+.markdown-container {
+  height: 100vh;
+  overflow: hidden;
+  .tool-bar {
+    .btn-group.hide-split>.btn:first-child::before {
+      display: none;
+    }
+    .btn {
+      margin-bottom: 0;
+    }
+  }
 }
 
 .markdown-container .editor-container {
   display: flex;
 }
 
-.markdown-container .editor-container > div {
+.markdown-container .editor-container>div {
   flex: 1 1 0;
   width: 0;
   min-height: 200px;

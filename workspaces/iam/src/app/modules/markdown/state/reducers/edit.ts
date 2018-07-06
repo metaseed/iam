@@ -1,8 +1,9 @@
 import { EditActions, EditActionTypes } from '../actions/edit';
+import { ScrollEvent } from 'core';
 
 export interface State {
   save: string;
-  scrollDown: { scroll: any; isDown: boolean | null };
+  scrollDown: ScrollEvent;
   lockScrollWithView: boolean;
   editor: CodeMirror.Editor;
   content: string;
@@ -10,7 +11,7 @@ export interface State {
 
 export const initialState: State = {
   save: '',
-  scrollDown: { scroll: null, isDown: null },
+  scrollDown:null,
   lockScrollWithView: false,
   editor: undefined,//undefined: initial value; null: unloaded, other value: loaded
   content: undefined

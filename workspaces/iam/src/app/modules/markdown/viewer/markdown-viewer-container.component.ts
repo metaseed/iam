@@ -1,5 +1,5 @@
 import { Component, Input, AfterViewInit } from '@angular/core';
-import { MSG_DISPLAY_TIMEOUT, NET_COMMU_TIMEOUT, ContainerRef } from 'core';
+import { MSG_DISPLAY_TIMEOUT, NET_COMMU_TIMEOUT, ContainerRef, DocumentRef } from 'core';
 import { ViewChild } from '@angular/core';
 import * as markdown from '../state';
 import * as fromView from '../state/actions/view';
@@ -53,7 +53,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
 
   constructor(
     private store: Store<any>,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {}
   isScrollDown = false;
   ngAfterViewInit() {

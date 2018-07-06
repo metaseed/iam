@@ -6,6 +6,9 @@ import { select } from '@ngrx/store';
 import * as fromMarkdown from './../../state';
 import { DocumentMode } from './../../state/reducers/document';
 import { MatToolbar } from '@angular/material';
+import { Observable } from 'rxjs';
+import { ScrollDown } from '../../state/actions/edit';
+import { ScrollEvent } from 'core';
 @Component({
   selector: 'ms-reader-toolbar',
   templateUrl: './reader-toolbar.component.html',
@@ -39,17 +42,18 @@ export class ReaderToolbarComponent {
   isEditMode: boolean;
   constructor(private store: Store<fromMarkdown.State>) {}
 
-  isScrollDown$;
+  isScrollDown$:Observable<ScrollEvent>;
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
   editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState));
   editWithView: boolean;
   ngOnInit() {
     this.isScrollDown$ = this.store.pipe(select(fromMarkdown.selectViewScrollDownState));
     this.isScrollDown$.subscribe(value => {
+      if(!value) return;
       this.isScrollDown = value.isDown;
       if (this.toolbar)
         this.isPositionFixed =
-          value.scroll.target.scrollTop > this.toolbar._elementRef.nativeElement.offsetHeight;
+          (value.event.target as HTMLElement).scrollTop > this.toolbar._elementRef.nativeElement.offsetHeight;
     });
     this.editWithView$.subscribe(mode => {
       this.editWithView = mode;

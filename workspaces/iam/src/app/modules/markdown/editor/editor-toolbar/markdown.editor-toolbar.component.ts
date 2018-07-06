@@ -2,10 +2,10 @@ import { Component, OnInit, AfterViewInit, Input, Renderer, ViewChild } from '@a
 import { MarkdownComponent } from '../../markdown.component';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { Subscription, Subject } from 'rxjs';
+import { Subscription, Subject, Observable } from 'rxjs';
 import { DocService } from 'home';
 import { MarkdownEditorService } from '../../editor/index';
-import { CommandService, Command, DocumentRef, DocFormat } from '../../../core/index';
+import { CommandService, Command, DocumentRef, DocFormat, ScrollEvent } from '../../../core/index';
 import * as fromMarkdown from '../../state';
 import { DocumentMode } from '../../state/reducers/document';
 import { Store, select, State } from '@ngrx/store';
@@ -54,16 +54,17 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   documentMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
   isScrollDown = null;
   isPositionFixed: boolean;
-  isScrollDown$;
+  isScrollDown$:Observable<ScrollEvent>;
   isScrollDown_view$;
   destroy$ = new Subject();
   isEditMode = false;
   ngOnInit() {
-    const scrollHandler = value => {
+    const scrollHandler = (value:ScrollEvent) => {
+      if(!value) return;
       this.isScrollDown = value.isDown;
       if (this.toolbar)
         this.isPositionFixed =
-          value.scroll.target.scrollTop > this.toolbar._elementRef.nativeElement.offsetHeight;
+          (value.event.target as HTMLElement).scrollTop> this.toolbar._elementRef.nativeElement.offsetHeight;
     };
     this.isScrollDown$ = this.store.pipe(select(fromMarkdown.selectEditScrollDownState));
     this.isScrollDown$.subscribe(scrollHandler);

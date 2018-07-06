@@ -10,7 +10,7 @@ export class ContainerRef {
   resizeEvent$ = fromEvent(this.container, 'resize').pipe(auditTime(this._resizeAuditTime));
 
   constructor(
-    protected container: HTMLElement | Window = window,
+    protected container: HTMLElement | Window|Document = window,
     private _scrollAuditTime = 300,
     private _resizeAuditTime = 10
   ) {}
