@@ -87,15 +87,12 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   isScreenWide$=this.utils.isScreenWide$;
 
   constructor(
-    private dialog: MatDialog,
     private utils:Utilities,
     public markdown: MarkdownComponent,
     private _editorService: MarkdownEditorService,
     public docService: DocService,
     private _renderer: Renderer,
     private _commandService: CommandService,
-    private _docRef: DocumentRef,
-    private _domSanitizer: DomSanitizer,
     private store: Store<fromMarkdown.State>,
     private state: State<fromMarkdown.State>,
     public docSaver: DocSaveCoordinateService

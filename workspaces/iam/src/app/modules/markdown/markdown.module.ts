@@ -25,8 +25,8 @@ import { MarkdownService } from "./markdown.service";
     NgSpinKitModule,
     MarkdownRoutingModule,
     StoreModule.forFeature("markdown", fromState.reducers),
-    MarkdownEditorModule,
     SharedModule,
+    MarkdownEditorModule,
     MarkdownViewerModule.forChild(),
     EffectsModule.forFeature([MarkdownEffects])
   ],
