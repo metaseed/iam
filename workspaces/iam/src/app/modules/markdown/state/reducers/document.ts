@@ -1,7 +1,6 @@
 import { DocumentActions, DocumentActionTypes } from "../actions/document";
 
 export enum DocumentMode {
-  Init,
   View,
   Edit
 }
@@ -12,7 +11,7 @@ export interface State {
 }
 
 const initialState: State = {
-  mode: DocumentMode.Init,
+  mode: DocumentMode.View,
   showPreview: null
 };
 

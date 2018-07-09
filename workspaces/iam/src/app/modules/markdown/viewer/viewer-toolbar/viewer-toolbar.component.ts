@@ -7,9 +7,8 @@ import * as fromMarkdown from './../../state';
 import { DocumentMode } from './../../state/reducers/document';
 import { MatToolbar } from '@angular/material';
 import { Observable, Subject } from 'rxjs';
-import { ScrollEvent } from 'core';
 import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../../model/markdown.model';
-import { map, share } from 'rxjs/operators';
+import { map, share, tap } from 'rxjs/operators';
 @Component({
   selector: 'ms-viewer-toolbar',
   templateUrl: './viewer-toolbar.component.html',
@@ -39,7 +38,6 @@ import { map, share } from 'rxjs/operators';
 export class ViewerToolbarComponent implements OnInit, OnDestroy {
   @ViewChild('toolbar') toolbar: MatToolbar;
   private destroy$ = new Subject();
-  isEditMode: boolean;
   constructor(
     private store: Store<fromMarkdown.State>,
     @Inject(MARKDOWN_SERVICE_TOKEN) private markdownService: IMarkdownService
@@ -49,12 +47,12 @@ export class ViewerToolbarComponent implements OnInit, OnDestroy {
   editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState));
 
   _viewerScroll$ = this.markdownService.viewerScroll$.pipe(share());
-  isScrollDown$ = this._viewerScroll$.pipe(
-    map(v => {
-
-      return v.isDown;
-    })
-  );
+  isScrollDown$ = this._viewerScroll$
+    .pipe(
+      map(v => {
+        return v.isDown;
+      })
+    )
   isPositionFixed$ = this._viewerScroll$.pipe(
     map(v => {
       if (this.toolbar) return;
