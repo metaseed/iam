@@ -61,7 +61,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   @ViewChild('toolbar') toolbar: MatToolbar;
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
-  documentMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
+
   _scroll_viewer$ = this._markdownService.viewerScroll$.pipe(share());
   _scroll_editor$ = this._markdownService.editorScroll$.pipe(share());
 
@@ -75,10 +75,10 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
       return false;
     })
   );
+
   isScrollDown$ = merge(this._scroll_viewer$, this._scroll_editor$).pipe(map(v => v.isDown));
-  isScrollDown_view$;
-  destroy$ = new Subject();
-  ngOnInit() {}
+
+  private _destroy$ = new Subject();
 
   isScreenWide$ = this.utils.isScreenWide$;
 
@@ -94,7 +94,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     public docSaver: DocSaveCoordinateService,
     @Inject(MARKDOWN_SERVICE_TOKEN) private _markdownService: IMarkdownService
   ) {
-    this._editorService.editorLoaded$.pipe(takeUntil(this.destroy$)).subscribe(editor => {
+    this._editorService.editorLoaded$.pipe(takeUntil(this._destroy$)).subscribe(editor => {
       this.editor = editor;
     });
     (<any>CodeMirror).commands.save = this.save;
@@ -117,9 +117,12 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     };
   }
 
+  ngOnInit() {}
+
   ngDestroy() {
-    this.destroy$.next();
+    this._destroy$.next();
   }
+
   save = () => {
     const content = this.editor.getValue();
     this.store.dispatch(new edit.Save(content));
