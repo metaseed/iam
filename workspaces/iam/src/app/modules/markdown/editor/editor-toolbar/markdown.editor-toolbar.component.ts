@@ -1,8 +1,16 @@
-import { Component, OnInit, AfterViewInit, Input, Renderer, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  Input,
+  Renderer,
+  ViewChild,
+  Inject
+} from '@angular/core';
 import { MarkdownComponent } from '../../markdown.component';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { Subscription, Subject, Observable } from 'rxjs';
+import { Subscription, Subject, Observable, merge } from 'rxjs';
 import { DocService } from 'home';
 import { MarkdownEditorService } from '../../editor/index';
 import { CommandService, Command, DocumentRef, DocFormat, ScrollEvent } from '../../../core/index';
@@ -15,9 +23,10 @@ import * as CodeMirror from 'codemirror';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';
 import { MatToolbar, MatDialog } from '@angular/material';
-import { takeUntil, map } from 'rxjs/operators';
+import { takeUntil, map, share } from 'rxjs/operators';
 import { Utilities } from '../../../core/utils';
 import { DocumentEffectsSave, DocumentEffectsCreate } from '../../../home/state';
+import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../../model/markdown.model';
 
 @Component({
   selector: 'editor-toolbar',
@@ -46,48 +55,35 @@ import { DocumentEffectsSave, DocumentEffectsCreate } from '../../../home/state'
   ]
 })
 export class EditorToolbarComponent implements OnInit, AfterViewInit {
+  DocumentMode = DocumentMode;
   isFullScreen: boolean;
   editor: any;
   @ViewChild('toolbar') toolbar: MatToolbar;
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
   documentMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
-  isScrollDown = null;
-  isPositionFixed: boolean;
-  isScrollDown$:Observable<ScrollEvent>;
+  _scroll_viewer$ = this._markdownService.viewerScroll$.pipe(share());
+  _scroll_editor$ = this._markdownService.editorScroll$.pipe(share());
+
+  isPositionFixed$ = merge(this._scroll_viewer$, this._scroll_editor$).pipe(
+    map(v => {
+      if (this.toolbar)
+        return (
+          (v.event.target as HTMLElement).scrollTop >
+          this.toolbar._elementRef.nativeElement.offsetHeight
+        );
+      return false;
+    })
+  );
+  isScrollDown$ = merge(this._scroll_viewer$, this._scroll_editor$).pipe(map(v => v.isDown));
   isScrollDown_view$;
   destroy$ = new Subject();
-  isEditMode = false;
-  ngOnInit() {
-    const scrollHandler = (value:ScrollEvent) => {
-      if(!value) return;
-      this.isScrollDown = value.isDown;
-      if (this.toolbar)
-        this.isPositionFixed =
-          (value.event.target as HTMLElement).scrollTop> this.toolbar._elementRef.nativeElement.offsetHeight;
-    };
-    this.isScrollDown$ = this.store.pipe(select(fromMarkdown.selectEditScrollDownState));
-    this.isScrollDown$.subscribe(scrollHandler);
-    this.isScrollDown_view$ = this.store.pipe(select(fromMarkdown.selectViewScrollDownState));
-    this.isScrollDown_view$.subscribe(scrollHandler);
-    this.docMode$.subscribe(mode => {
-      switch (mode) {
-        case DocumentMode.Edit: {
-          this.isEditMode = true;
-          break;
-        }
-        case DocumentMode.View: {
-          this.isEditMode = false;
-          break;
-        }
-      }
-    });
-  }
+  ngOnInit() {}
 
-  isScreenWide$=this.utils.isScreenWide$;
+  isScreenWide$ = this.utils.isScreenWide$;
 
   constructor(
-    private utils:Utilities,
+    private utils: Utilities,
     public markdown: MarkdownComponent,
     private _editorService: MarkdownEditorService,
     public docService: DocService,
@@ -95,13 +91,12 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     private _commandService: CommandService,
     private store: Store<fromMarkdown.State>,
     private state: State<fromMarkdown.State>,
-    public docSaver: DocSaveCoordinateService
+    public docSaver: DocSaveCoordinateService,
+    @Inject(MARKDOWN_SERVICE_TOKEN) private _markdownService: IMarkdownService
   ) {
-    this._editorService.editorLoaded$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(editor => {
-        this.editor = editor;
-      });
+    this._editorService.editorLoaded$.pipe(takeUntil(this.destroy$)).subscribe(editor => {
+      this.editor = editor;
+    });
     (<any>CodeMirror).commands.save = this.save;
     let cmds = (<any>CodeMirror).commands;
     cmds.scrollLineUp = function(cm) {
@@ -153,7 +148,6 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {}
 
   toViewMode = event => {
-    this.isScrollDown = null;
     this.store.dispatch(new doc.ViewMode());
   };
 
@@ -176,7 +170,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     this.editorResize();
   }
 
- lockScrollWithView = false;
+  lockScrollWithView = false;
   more(event: { item: HTMLElement }) {
     if (event.item.id === '0') {
       this.lockScrollWithView = !this.lockScrollWithView;

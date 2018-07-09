@@ -1,19 +1,25 @@
-import { Component, Input, AfterViewInit } from '@angular/core';
-import { MSG_DISPLAY_TIMEOUT, NET_COMMU_TIMEOUT, ContainerRef, DocumentRef } from 'core';
+import { Component, Input, AfterViewInit, Inject } from '@angular/core';
+import {
+  MSG_DISPLAY_TIMEOUT,
+  NET_COMMU_TIMEOUT,
+  ContainerRef,
+  DocumentRef,
+  ScrollEvent
+} from 'core';
 import { ViewChild } from '@angular/core';
 import * as markdown from '../state';
-import * as fromView from '../state/actions/view';
 import { Store, select } from '@ngrx/store';
 import { ElementRef } from '@angular/core';
-import { Subject, merge, asyncScheduler } from 'rxjs';
+import { Subject, merge, asyncScheduler, Observable } from 'rxjs';
 import {
   DocumentEffectsActionTypes,
   ActionStatus,
   monitorActionStatus,
   getActionStatus
 } from '../../home/state';
-import { takeUntil, map, observeOn } from 'rxjs/operators';
+import { takeUntil, map, observeOn, tap, share } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
+import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../model/markdown.model';
 @Component({
   selector: 'markdown-viewer-container',
   templateUrl: './markdown-viewer-container.component.html',
@@ -25,7 +31,6 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
   @Input() markdown: string;
   @Input() hideToolbar: false;
   @ViewChild('viewContainerDiv') viewerContainerDiv: ElementRef;
-  isEditorScrollDown$;
   isLockScrollWithView$;
   isLockScrollWithView;
 
@@ -44,7 +49,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
       })
     ),
     getActionStatus(DocumentEffectsActionTypes.Create, this.store).pipe(
-      map(v=>v.isNotStartStatus())
+      map(v => v.isNotStartStatus())
     )
   ).pipe(
     takeUntil(this.destroy$),
@@ -54,11 +59,19 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
   constructor(
     private store: Store<any>,
     private snackBar: MatSnackBar,
+    @Inject(MARKDOWN_SERVICE_TOKEN) private markdownService: IMarkdownService
   ) {}
-  isScrollDown = false;
+  scroll$: Observable<ScrollEvent>;
+
   ngAfterViewInit() {
-    this.isEditorScrollDown$ = this.store.pipe(select(markdown.selectEditScrollDownState));
     let me = this;
+    this.scroll$ = new ContainerRef(this.viewerContainerDiv.nativeElement).scrollDown$;
+    this.scroll$.pipe(
+      takeUntil(this.destroy$),
+      share()
+    );
+
+    this.scroll$.subscribe(this.markdownService.viewerScroll$ as Subject<ScrollEvent>);
     let v_per_last = 0;
     this.isLockScrollWithView$ = this.store.pipe(
       select(markdown.selectEditLockScrollWithViewState)
@@ -67,9 +80,9 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
       this.isLockScrollWithView = isLock;
     });
 
-    this.isEditorScrollDown$.pipe(takeUntil(this.destroy$)).subscribe(value => {
-      if (this.isLockScrollWithView && value.scroll) {
-        let edit_div = value.scroll.target;
+    this.markdownService.editorScroll$.pipe(takeUntil(this.destroy$)).subscribe(value => {
+      if (this.isLockScrollWithView && value.event) {
+        let edit_div = value.event.target as HTMLElement;
         let v_per = edit_div.scrollTop / (edit_div.scrollHeight - edit_div.clientHeight);
         let delta_per = v_per - v_per_last;
         v_per_last = v_per;
@@ -78,13 +91,6 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
         me.viewerContainerDiv.nativeElement.scrollTop += delta_v_view;
       }
     });
-
-    new ContainerRef(this.viewerContainerDiv.nativeElement).scrollDown$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(e=> {
-        this.store.dispatch(new fromView.ScrollDown(e));
-        this.isScrollDown = e.isDown;
-      });
   }
 
   ngOnDestroy() {

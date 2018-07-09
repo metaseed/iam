@@ -11,11 +11,11 @@ import { MarkdownRoutingModule } from "./markdown-routing.module";
 import { NgSpinKitModule } from "ng-spin-kit";
 import { StoreModule } from "@ngrx/store";
 import * as fromState from "./state";
-import { MarkdownEditorComponent } from "./editor/markdown-editor.component";
 import { SharedModule } from "shared";
 import { EffectsModule } from "@ngrx/effects";
 import { MarkdownEffects } from "./markdown.effects";
 import { MarkdownService } from "./markdown.service";
+import { MARKDOWN_SERVICE_TOKEN } from "./model/markdown.model";
 @NgModule({
   imports: [
     CommonModule,
@@ -31,7 +31,10 @@ import { MarkdownService } from "./markdown.service";
     EffectsModule.forFeature([MarkdownEffects])
   ],
   declarations: [MarkdownComponent],
-  providers: [MarkdownService],
+  providers: [
+    MarkdownService,
+    {provide: MARKDOWN_SERVICE_TOKEN,useExisting:MarkdownService},
+],
   exports: [MarkdownEditorModule, MarkdownViewerModule, MarkdownComponent]
 })
 export class MarkdownModule {

@@ -5,7 +5,8 @@ import {
   ViewChild,
   EventEmitter,
   ViewEncapsulation,
-  forwardRef
+  forwardRef,
+  Inject
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 // import 'codemirror/addon/dialog/dialog.css'
@@ -28,7 +29,8 @@ import * as markdown from '../../state';
 import * as fromEdit from '../../state/actions/edit';
 import { KeyMap } from '../editor-toolbar/keymap';
 import { Subject } from 'rxjs';
-import { ContainerRef } from 'core';
+import { ContainerRef, ScrollEvent } from 'core';
+import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../../model/markdown.model';
 /**
  * Usage : <codemirror [(ngModel)]="markdown" [config]="{...}"></codemirror>
  */
@@ -67,7 +69,11 @@ export class CodemirrorComponent {
   /**
    * Constructor
    */
-  constructor(private service: MarkdownEditorService, private store: Store<markdown.State>) {}
+  constructor(
+    private service: MarkdownEditorService,
+    @Inject(MARKDOWN_SERVICE_TOKEN) private markdownService: IMarkdownService,
+    private store: Store<markdown.State>
+  ) {}
 
   get value() {
     return this._value;
@@ -104,10 +110,9 @@ export class CodemirrorComponent {
     };
     this.codemirrorInit(this.config);
     this.service.editorLoaded$.next(this.instance);
-    new ContainerRef(this.scroll.nativeElement.children[1].lastChild).scrollDown$.subscribe(e => {
-      this.store.dispatch(new fromEdit.ScrollDown(e));
-      // console.log(e)
-    });
+    new ContainerRef(this.scroll.nativeElement.children[1].lastChild).scrollDown$.subscribe(
+      (this.markdownService.editorScroll$ as Subject<ScrollEvent>)
+    );
   }
   destroy$ = new Subject();
 

@@ -3,7 +3,6 @@ import { ScrollEvent } from 'core';
 
 export interface State {
   save: string;
-  scrollDown: ScrollEvent;
   lockScrollWithView: boolean;
   editor: CodeMirror.Editor;
   content: string;
@@ -11,7 +10,6 @@ export interface State {
 
 export const initialState: State = {
   save: '',
-  scrollDown:null,
   lockScrollWithView: false,
   editor: undefined,//undefined: initial value; null: unloaded, other value: loaded
   content: undefined
@@ -23,12 +21,6 @@ export function reducer(state = initialState, action: EditActions) {
       return {
         ...state,
         save: action.payload
-      };
-    }
-    case EditActionTypes.ScrollDown: {
-      return {
-        ...state,
-        scrollDown: action.payload
       };
     }
     case EditActionTypes.LockScrollWithView: {
@@ -46,6 +38,6 @@ export function reducer(state = initialState, action: EditActions) {
 }
 
 export const getSave = (state: State) => state.save;
-export const getScrollDown = (state: State) => state.scrollDown;
+// export const getScrollDown = (state: State) => state.scrollDown;
 // export const getEditor = (state: State) => state.editor;
 // export const getSavedContent = (state: State) => state.content;

@@ -3,7 +3,7 @@ import { ScrollEvent } from 'core';
 
 export enum EditActionTypes {
   Save = '[Edit] Save',
-  ScrollDown = '[Edit] Scroll Down',
+  // ScrollDown = '[Edit] Scroll Down',
   LockScrollWithView = '[Edit] Lock Scroll With View',
   EditorLoaded = '[Edit] Editor Loaded',
   EditorUnloaded = '[Edit] Editor Unloaded',
@@ -25,8 +25,9 @@ export class LockScrollWithView implements Action {
   constructor(public payload: boolean) {}
 }
 
-export class ScrollDown implements Action {
-  readonly type = EditActionTypes.ScrollDown;
-  constructor(public payload:ScrollEvent) {}
-}
-export type EditActions = Save | LockScrollWithView | ScrollDown;
+// export class ScrollDown implements Action {
+//   readonly type = EditActionTypes.ScrollDown;
+//   constructor(public payload:ScrollEvent) {}
+// }
+export type EditActions = Save | LockScrollWithView ;
+// | ScrollDown;

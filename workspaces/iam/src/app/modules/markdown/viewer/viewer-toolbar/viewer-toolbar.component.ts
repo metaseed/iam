@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, Inject, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as document from '../../state/actions/document';
 import { trigger, state, style, animate, transition } from '@angular/animations';
@@ -6,8 +6,10 @@ import { select } from '@ngrx/store';
 import * as fromMarkdown from './../../state';
 import { DocumentMode } from './../../state/reducers/document';
 import { MatToolbar } from '@angular/material';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { ScrollEvent } from 'core';
+import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../../model/markdown.model';
+import { map, share } from 'rxjs/operators';
 @Component({
   selector: 'ms-viewer-toolbar',
   templateUrl: './viewer-toolbar.component.html',
@@ -34,48 +36,45 @@ import { ScrollEvent } from 'core';
     ])
   ]
 })
-export class ViewerToolbarComponent {
+export class ViewerToolbarComponent implements OnInit, OnDestroy {
   @ViewChild('toolbar') toolbar: MatToolbar;
-  isScrollDown: boolean | null = null;
-  isPositionFixed: boolean;
+  private destroy$ = new Subject();
   isEditMode: boolean;
-  constructor(private store: Store<fromMarkdown.State>) {}
-
-  isScrollDown$:Observable<ScrollEvent>;
+  constructor(
+    private store: Store<fromMarkdown.State>,
+    @Inject(MARKDOWN_SERVICE_TOKEN) private markdownService: IMarkdownService
+  ) {}
+  DocumentMode = DocumentMode;
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
   editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState));
-  editWithView: boolean;
+
+  _viewerScroll$ = this.markdownService.viewerScroll$.pipe(share());
+  isScrollDown$ = this._viewerScroll$.pipe(
+    map(v => {
+
+      return v.isDown;
+    })
+  );
+  isPositionFixed$ = this._viewerScroll$.pipe(
+    map(v => {
+      if (this.toolbar) return;
+      (v.event.target as HTMLElement).scrollTop >
+        this.toolbar._elementRef.nativeElement.offsetHeight;
+      return false;
+    })
+  );
   ngOnInit() {
-    this.isScrollDown$ = this.store.pipe(select(fromMarkdown.selectViewScrollDownState));
-    this.isScrollDown$.subscribe(value => {
-      if(!value) return;
-      this.isScrollDown = value.isDown;
-      if (this.toolbar)
-        this.isPositionFixed =
-          (value.event.target as HTMLElement).scrollTop > this.toolbar._elementRef.nativeElement.offsetHeight;
-    });
-    this.editWithView$.subscribe(mode => {
-      this.editWithView = mode;
-    });
-    this.docMode$.subscribe(mode => {
-      switch (mode) {
-        case DocumentMode.Edit: {
-          this.isEditMode = true;
-          break;
-        }
-        case DocumentMode.View: {
-          this.isEditMode = false;
-          break;
-        }
-      }
-    });
+    this.markdownService.viewerScroll$.subscribe(value => {});
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
   }
 
   onRefresh() {
     this.store.dispatch(new document.RefreshAction());
   }
   toEditMode() {
-    this.isScrollDown = null;
     this.store.dispatch(new document.EditMode());
   }
 }

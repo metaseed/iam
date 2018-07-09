@@ -1,4 +1,4 @@
-<mat-toolbar color="primary" *ngIf="!isScrollDown && isEditMode" [style.position]="isPositionFixed?'fixed':'relative'" style="z-index: 20;"
+<mat-toolbar color="primary" *ngIf="!(isScrollDown|async)&& (docMode$|async)===DocumentMode.Edit" [style.position]="(isPositionFixed$|async)?'fixed':'relative'" style="z-index: 20;"
   #toolbar>
   <mat-toolbar-row>
     <button mat-icon-button routerLinkActive [routerLink]="['/home']">

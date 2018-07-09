@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Observable } from 'rxjs';
 import { Action } from '@ngrx/store';
@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { MarkdownService } from './markdown.service';
 import { RefreshAction } from './state/actions/document';
 import { DocumentActionTypes } from './state/actions/document';
+import { MARKDOWN_SERVICE_TOKEN } from './model/markdown.model';
 
 @Injectable()
 export class MarkdownEffects {
@@ -28,6 +29,6 @@ export class MarkdownEffects {
   constructor(
     private actions$: Actions,
     private router: Router,
-    private markdownService: MarkdownService
+    @Inject(MARKDOWN_SERVICE_TOKEN)private markdownService: MarkdownService
   ) {}
 }
