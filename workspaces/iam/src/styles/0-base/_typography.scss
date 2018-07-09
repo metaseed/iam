@@ -6,20 +6,23 @@ html {
 
 .markdown-container {
   .blockquote {
-    @include mat-typography-level-to-styles($iam-typography-config,blockquote);
+    @include mat-typography-level-to-styles($iam-typography-config, blockquote);
     color: #555;
     --x-height-multiplier: 0.375;
     --baseline-multiplier: 0.17;
     font-style: italic;
-  }
-
-  .blockquote {
     border-left: 3px solid rgba(0, 0, 0, 0.84);
-    padding-left: 20px; // margin-left: -23px;
-    // padding-bottom: 2px;
+    padding-left: 20px;
+    margin-left: 0px; // padding-bottom: 2px;
     // border-left: 0.25rem solid #eceeef;
   }
-
+  pre[class*="language-"].line-numbers  {
+    font-size: 90%;
+    line-height: 1.2;
+    code {
+      line-height: inherit;
+    }
+  }
   .CodeMirror {
     font-family: inherit;
     height: calc(100vh - 38px);
@@ -68,8 +71,16 @@ html {
     .mat-tab-body-wrapper h2 {
       margin-top: 0;
     }
-    .cm-keyword,.cm-def,.cm-def,.cm-comment,.cm-tab,.cm-variable,.cm-property,.cm-operator,.cm-string {
-      font-family:  Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    .cm-keyword,
+    .cm-def,
+    .cm-def,
+    .cm-comment,
+    .cm-tab,
+    .cm-variable,
+    .cm-property,
+    .cm-operator,
+    .cm-string {
+      font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
     }
   }
 }

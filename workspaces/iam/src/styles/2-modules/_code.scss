@@ -85,10 +85,10 @@ i-code pre {
   color: $darkred;
 }
 
-.copy-button {
+.copy-button,.wrap-button{
   position: absolute;
   top: -0.3rem;
-  right: 0;
+
   visibility: collapse;
   z-index: 2;
   color: $blue-grey-200;
@@ -99,6 +99,14 @@ i-code pre {
     color: $mediumgray;
   }
 }
+
+.copy-button {
+  right: 0;
+}
+.wrap-button {
+  right:3rem;
+}
+
 
 .lang-sh .copy-button,
 .lang-bash .copy-button {

@@ -30,23 +30,26 @@ div.markdown-code:hover>button {
 }
 
 .markdown-view {
-  h1:hover .deep-link .deep-link-icon,
-  h2:hover .deep-link .deep-link-icon,
-  h3:hover .deep-link .deep-link-icon,
-  h4:hover .deep-link .deep-link-icon,
-  h5:hover .deep-link .deep-link-icon,
-  h6:hover .deep-link .deep-link-icon,
-  .deep-link:hover .deep-link-icon,
-  .deep-link-icon:hover {
-    visibility: visible;
+  h1:hover,
+  h2:hover,
+  h3:hover,
+  h4:hover,
+  h5:hover,
+  h6:hover {
+    .deep-link {
+      .deep-link-icon {
+        visibility: visible;
+      }
+    }
   }
   .deep-link {
-    float: left;
-    margin-left: -18px;
-    padding-right: 2px;
-  }
-  .deep-link .deep-link-icon {
-    visibility: hidden;
+    .deep-link-icon {
+      vertical-align: middle; // float: left;
+      // margin-left: -18px;
+      padding-right: 2px;
+      color: #6e6e6e;
+      visibility: hidden;
+    }
   }
   hr {
     height: 0.2em;
@@ -56,7 +59,6 @@ div.markdown-code:hover>button {
     border: 0;
   }
 }
-
 
 .warning {
   background-color: #ff8;
@@ -74,4 +76,3 @@ div.markdown-code:hover>button {
 @import '~codemirror/addon/display/fullscreen';
 @import '~codemirror/addon/dialog/dialog';
 @import '~codemirror/addon/search/matchesonscrollbar';
-
