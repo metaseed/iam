@@ -4,7 +4,7 @@
   "name": "i'm writing your professional life",
   "scope": "/",
   "display": "standalone",
-  "start_url": "./?utm_source=web_app_manifest",
+  "start_url": "/",
   "short_name": "i'm",
   "theme_color": "#1976D2",
   "description": "i'm writing your professional life",
