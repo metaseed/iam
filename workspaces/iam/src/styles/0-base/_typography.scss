@@ -20,7 +20,9 @@ html {
     font-size: 90%;
     line-height: 1.2;
     code {
-      line-height: inherit;
+      // line-height: inherit;
+      font-family: $code-font;
+      font-size: 90%;
     }
   }
   .CodeMirror {
@@ -80,7 +82,8 @@ html {
     .cm-property,
     .cm-operator,
     .cm-string {
-      font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+      font-family: $code-font;
+      font-size: 90%;
     }
   }
 }
