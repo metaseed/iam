@@ -1,4 +1,4 @@
-import { Component, ViewChild, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, Inject, OnInit, OnDestroy, HostBinding } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as document from '../../state/actions/document';
 import { trigger, state, style, animate, transition } from '@angular/animations';
@@ -8,7 +8,7 @@ import { DocumentMode } from './../../state/reducers/document';
 import { MatToolbar } from '@angular/material';
 import { Observable, Subject } from 'rxjs';
 import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../../model/markdown.model';
-import { map, share, tap } from 'rxjs/operators';
+import { map, share, tap, takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'ms-viewer-toolbar',
   templateUrl: './viewer-toolbar.component.html',
@@ -42,27 +42,37 @@ export class ViewerToolbarComponent implements OnInit, OnDestroy {
     private store: Store<fromMarkdown.State>,
     @Inject(MARKDOWN_SERVICE_TOKEN) private markdownService: IMarkdownService
   ) {}
-  DocumentMode = DocumentMode;
-  docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
-  editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState));
 
-  _viewerScroll$ = this.markdownService.viewerScroll$.pipe(share());
-  isScrollDown$ = this._viewerScroll$
-    .pipe(
-      map(v => {
-        return v.isDown;
-      })
-    )
-  isPositionFixed$ = this._viewerScroll$.pipe(
-    map(v => {
-      if (this.toolbar) return;
-      (v.event.target as HTMLElement).scrollTop >
-        this.toolbar._elementRef.nativeElement.offsetHeight;
-      return false;
-    })
-  );
+
+  // _viewerScroll$ = this.markdownService.viewerScroll$.pipe(share());
+  // isScrollDown$ = this._viewerScroll$.pipe(
+  //   map(v => {
+  //     return v.isDown;
+  //   })
+  // );
+  // isPositionFixed$ = this._viewerScroll$.pipe(
+  //   map(v => {
+  //     if (this.toolbar && v.scrollTop > this.toolbar._elementRef.nativeElement.offsetHeight) {
+  //       return true;
+  //     }
+  //     return false;
+  //   })
+  // );
+
+  // [style.position]="(isPositionFixed$|async)?'fixed':'relative'"
+  // @HostBinding('style.width') width = '100%';
+  // @HostBinding('style.position') position;
+
   ngOnInit() {
-    this.markdownService.viewerScroll$.subscribe(value => {});
+    // this.markdownService.viewerScroll$.subscribe(value => {});
+    // this.isPositionFixed$
+    //   .pipe(
+    //     takeUntil(this.destroy$),
+    //     map(v => {
+    //       return v ? 'fixed' : 'relative';
+    //     })
+    //   )
+    //   .subscribe(v => (this.position = v));
   }
 
   ngOnDestroy() {

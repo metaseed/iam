@@ -6,11 +6,13 @@ import { BottomNavigationComponent } from "./bottom-navigation/bottom-navigation
 import { RouterModule } from "@angular/router";
 import { SplitPaneModule } from "./split-pane/ng2-split-pane";
 import { FormsModule } from "@angular/forms";
+import { ScrollHideDirective } from './scroll-hide/scroll-hide.directive';
 
 @NgModule({
   imports: [cm, MaterialModule, RouterModule, SplitPaneModule],
-  declarations: [ReadingPositionIndicatorComponent, BottomNavigationComponent],
+  declarations: [ReadingPositionIndicatorComponent, BottomNavigationComponent, ScrollHideDirective],
   exports: [
+    ScrollHideDirective,
     ReadingPositionIndicatorComponent,
     BottomNavigationComponent,
     SplitPaneModule,

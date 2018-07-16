@@ -17,6 +17,10 @@ import {
   monitorActionStatus,
   getActionStatus
 } from '../../home/state';
+import { DocumentMode } from './../state/reducers/document';
+import * as fromMarkdown from './../state';
+
+
 import { takeUntil, map, observeOn, tap, share } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../model/markdown.model';
@@ -27,7 +31,9 @@ import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../model/markdown.mode
 })
 export class MarkdownViewerContainerComponent implements AfterViewInit {
   destroy$ = new Subject();
-
+  DocumentMode = DocumentMode;
+  docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
+  editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState));
   @Input() markdown: string;
   @Input() hideToolbar: false;
   @ViewChild('viewContainerDiv') viewerContainerDiv: ElementRef;

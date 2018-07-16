@@ -8,9 +8,12 @@ export class ScrollEvent {
 export class ContainerRef {
   scrollEvent$ = fromEvent(this.container, 'scroll').pipe(auditTime(this._scrollAuditTime));
   resizeEvent$ = fromEvent(this.container, 'resize').pipe(auditTime(this._resizeAuditTime));
+  touchStart$ = fromEvent<TouchEvent>(this.container,'touchstart');
+  touchMove$ = fromEvent<TouchEvent>(this.container,'touchmove');
+  touchEnd$ = fromEvent<TouchEvent>(this.container,'touchend');
 
   constructor(
-    protected container: HTMLElement | Window|Document = window,
+    public container: HTMLElement | Window|Document = window,
     private _scrollAuditTime = 300,
     private _resizeAuditTime = 10
   ) {}
