@@ -43,6 +43,11 @@ export class ScrollHideDirective implements AfterViewInit, OnDestroy {
   @Input()
   set hide(hideCondition) {
     this._hide = hideCondition;
+    if(hideCondition) {
+      this.transform = 'translateY(-100%)';
+    }else {
+      this.transform = 'translateY(0)';
+    }
   }
 
   @Input()
