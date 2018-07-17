@@ -35,18 +35,20 @@ export class DocListComponent implements OnInit {
   private destroy$ = new Subject();
 
   @ViewChild('touchDiv') touchDiv: ElementRef;
-  private defaultTimeoutHandler = (action: DocumentEffectsActionTypes, info?: string) => (start:DocumentActionStatus) => {
-    console.warn( 'action timeout:' + action + (info ? `--${info}` : ''));
-    this.snackBar.open(action+ 'time out.', 'ok', { duration: MSG_DISPLAY_TIMEOUT });
+  private defaultTimeoutHandler = (action: DocumentEffectsActionTypes, info?: string) => (
+    start: DocumentActionStatus
+  ) => {
+    console.warn('action timeout:' + action + (info ? `--${info}` : ''));
+    this.snackBar.open(action + 'time out.', 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
-  isDeleteDone = (doc:Document) =>
+  isDeleteDone = (doc: Document) =>
     monitorActionStatus(
       DocumentEffectsActionTypes.Delete,
       this.store,
       NET_COMMU_TIMEOUT,
       this.defaultTimeoutHandler(DocumentEffectsActionTypes.Delete),
-      actionStatus=>actionStatus.action.payload.id === doc.id
+      actionStatus => actionStatus.action.payload.id === doc.id
     ).pipe(
       takeUntil(this.destroy$),
       map(v => {

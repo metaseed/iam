@@ -9,8 +9,7 @@ import { MatProgressBar } from '@angular/material';
   styleUrls: ['./reading-position-indicator.component.scss']
 })
 export class ReadingPositionIndicatorComponent implements OnInit, AfterViewInit {
-
-  value:number;
+  value: number;
   constructor(private _docRef: DocumentRef, private _windowRef: WindowRef) {}
 
   ngOnInit() {}
@@ -27,7 +26,7 @@ export class ReadingPositionIndicatorComponent implements OnInit, AfterViewInit 
   private setProgress(event) {
     const position = this.Value;
     const length = this.Max;
-    const value = position / length *100;
+    const value = (position / length) * 100;
     this.value = value;
   }
 
@@ -38,5 +37,4 @@ export class ReadingPositionIndicatorComponent implements OnInit, AfterViewInit 
   private get Value() {
     return this.element.scrollTop;
   }
-
 }

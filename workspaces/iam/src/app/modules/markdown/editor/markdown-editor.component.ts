@@ -6,9 +6,7 @@ import * as fromMarkdown from './../state';
 import { DocumentMode } from './../state/reducers/document';
 import { DocSaveCoordinateService } from './services/doc-save-coordinate-service';
 import { Observable, Subject } from 'rxjs';
-import {
-  map,
-  takeUntil} from 'rxjs/Operators';
+import { map, takeUntil } from 'rxjs/Operators';
 import { Store, select, State as StoreState } from '@ngrx/store';
 import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
 import { MatDialog } from '@angular/material';
@@ -53,7 +51,8 @@ export class MarkdownEditorComponent implements OnInit {
     private dialog: MatDialog,
     private editorService: MarkdownEditorService,
     private docSaveCoordinater: DocSaveCoordinateService,
-    private store: Store<fromMarkdown.State>  ) {
+    private store: Store<fromMarkdown.State>
+  ) {
     this.editorService.editorLoaded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       setTimeout(() => (this.editorLoaded = true), 0);
     });

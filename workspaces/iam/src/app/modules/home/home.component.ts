@@ -2,7 +2,6 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { Document } from 'core';
 import { DocService } from './services/doc.service';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
-import { NavigationExtras } from '@angular/router/src/router';
 import { DocSearchService } from './services/doc-search.service';
 import { State } from './state/state-selectors';
 import { Store, select } from '@ngrx/store';
@@ -22,7 +21,6 @@ import {
   DocumentEffectsActionTypes,
   selectDocumentsState,
   DocumentEffectsReadBulkDocMeta,
-  DocumentEffectsDelete,
   ActionStatus,
   monitorActionStatus
 } from './state';
@@ -39,7 +37,7 @@ export class HomeComponent {
   private destroy$ = new Subject();
 
   @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;
-  @ViewChild('scrollDocs') scrollDocs:ElementRef;
+  @ViewChild('scrollDocs') scrollDocs: ElementRef;
 
   defaultTimeoutHandler = (action: DocumentEffectsActionTypes, info?: string) => err => {
     console.warn(err.message + ' action:' + action + (info ? `--${info}` : ''));
@@ -79,10 +77,12 @@ export class HomeComponent {
       filter(a => a.context && a.context.isLoadMore === true),
       observeOn(asyncScheduler),
       map(v => {
-        return v.status === ActionStatus.Fail || v.status === ActionStatus.Succession ||
-        v.status === ActionStatus.Complete ||
-        v.status === ActionStatus.Timeout
-
+        return (
+          v.status === ActionStatus.Fail ||
+          v.status === ActionStatus.Succession ||
+          v.status === ActionStatus.Complete ||
+          v.status === ActionStatus.Timeout
+        );
       })
     )
   ]).pipe(switchIfEmit());
@@ -149,6 +149,4 @@ export class HomeComponent {
   ngOnDestroy() {
     this.destroy$.next();
   }
-
-
 }
