@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { Document } from 'core';
 import { DocService } from './services/doc.service';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
@@ -39,6 +39,7 @@ export class HomeComponent {
   private destroy$ = new Subject();
 
   @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;
+  @ViewChild('scrollDocs') scrollDocs:ElementRef;
 
   defaultTimeoutHandler = (action: DocumentEffectsActionTypes, info?: string) => err => {
     console.warn(err.message + ' action:' + action + (info ? `--${info}` : ''));
@@ -106,9 +107,9 @@ export class HomeComponent {
     }
     this.router.events.subscribe(events => {
       if (events instanceof NavigationEnd && events.url === '/home') {
-        if (this._scrollTop) window.scrollTo(0, this._scrollTop);
+        if (this._scrollTop) this.scrollDocs.nativeElement.scrollTo(0, this._scrollTop);
       } else if (events instanceof NavigationStart && events.url !== '/home') {
-        this._scrollTop = window.pageYOffset;
+        this._scrollTop = (this.scrollDocs.nativeElement as HTMLElement).scrollTop;
       }
     });
   }
