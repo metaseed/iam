@@ -1,6 +1,6 @@
-<div style="margin-bottom:5.5rem">
-  <iam-doc-search></iam-doc-search>
-  <sk-wave [isRunning]="!(isLoadDone$ | async)"></sk-wave>
-  <doc-list [documents]="docs$ | async"></doc-list>
-  <sk-wave [isRunning]="!(isLoadMoreDone$ | async)"></sk-wave>
+<iam-doc-search [scrollHide]="[{container:docs}]"></iam-doc-search>
+<sk-wave [isRunning]="!(isLoadDone$ | async)"></sk-wave>
+<div class="docs" #docs>
+  <doc-list [documents]="docs$ | async" ></doc-list>
 </div>
+<sk-wave [isRunning]="!(isLoadMoreDone$ | async)"></sk-wave>

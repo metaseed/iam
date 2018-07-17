@@ -23,6 +23,7 @@ import { DocEffectsUtil } from './state/document.effects.util';
 import { ScrollingModule } from '@angular/cdk-experimental';
 import { DocItemComponent } from './doc-list/doc-item/doc-item.component';
 import { DocDeleteComponent } from './doc-list/doc-item/doc-delete/doc-delete.component';
+import { SharedModule } from 'shared';
 
 const routes: Routes = [
   {
@@ -34,6 +35,7 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
+    SharedModule,
     FormsModule,
     ScrollingModule,
     MaterialModule,
