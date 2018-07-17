@@ -9,24 +9,14 @@ import { Subject } from 'rxjs';
   templateUrl: './viewer-toolbar.component.html',
   styleUrls: ['./viewer-toolbar.component.scss']
 })
-export class ViewerToolbarComponent implements OnInit, OnDestroy {
+export class ViewerToolbarComponent {
   @ViewChild('toolbar') toolbar: MatToolbar;
-  private destroy$ = new Subject();
-  constructor(
-    private store: Store<fromMarkdown.State>  ) {}
+  constructor(private store: Store<fromMarkdown.State>) {}
 
-
-  ngOnInit() {
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next();
-  }
-
-  onRefresh() {
+  onRefresh(e) {
     this.store.dispatch(new document.RefreshAction());
   }
-  toEditMode() {
+  toEditMode(e) {
     this.store.dispatch(new document.EditMode());
   }
 }

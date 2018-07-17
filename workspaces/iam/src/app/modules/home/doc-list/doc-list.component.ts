@@ -103,15 +103,6 @@ export class DocListComponent implements OnInit {
 
   trackByFunc = (i, doc) => doc.id;
 
-  // delete(document: Document) {
-  //   const dialogRef = this.dialog.open(DeleteAlertDialog, {
-  //     disableClose: true
-  //   });
-  //   dialogRef.afterClosed().subscribe(r => {
-  //     if (r === 'Yes') this.onDelete.emit(document);
-  //   });
-  // }
-
   onShow(doc: Document) {
     let navigationExtras: NavigationExtras = {
       queryParams: {
