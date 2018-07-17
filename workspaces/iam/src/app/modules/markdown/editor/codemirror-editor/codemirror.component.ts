@@ -46,9 +46,11 @@ import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../../model/markdown.m
     }
   ],
   template: `
+    <div #wrapper>
     <ms-codemirror-toolbar></ms-codemirror-toolbar>
     <div #scroll>
     <textarea #host></textarea>
+    </div>
     </div>
     `
 })
@@ -62,6 +64,7 @@ export class CodemirrorComponent {
 
   @ViewChild('host') host;
 
+
   @Output() instance = null;
 
   _value = '';
@@ -73,23 +76,11 @@ export class CodemirrorComponent {
     private service: MarkdownEditorService,
     @Inject(MARKDOWN_SERVICE_TOKEN) private markdownService: IMarkdownService,
     private store: Store<markdown.State>
-  ) {}
+  ) {
 
-  get value() {
-    return this._value;
   }
 
-  @Input()
-  set value(v) {
-    if (v !== this._value) {
-      this._value = v;
-      this.onChange(v);
-    }
-  }
-
-  @ViewChild('scroll') scroll;
-
-  ngAfterViewInit() {
+  ngOnInit() {
     this.config = this.config || {
       mode: {
         name: 'gfm',
@@ -109,6 +100,27 @@ export class CodemirrorComponent {
       }
     };
     this.codemirrorInit(this.config);
+  }
+
+  get value() {
+    return this._value;
+  }
+
+  @Input()
+  set value(v) {
+    if (v !== this._value) {
+      this._value = v;
+      this.onChange(v);
+    }
+  }
+
+  @ViewChild('scroll') scroll;
+  @ViewChild('wrapper') wrapper;
+  scrollElement=()=> {
+    return this.scroll.nativeElement.children[1].lastChild;
+  }
+
+  ngAfterViewInit() {
     this.service.editorLoaded$.next(this.instance);
     new ContainerRef(this.scroll.nativeElement.children[1].lastChild).scrollDown$.subscribe(
       (this.markdownService.editorScroll$ as Subject<ScrollEvent>)

@@ -29,6 +29,7 @@ import { MarkdownService } from './markdown.service';
   styleUrls: ['./markdown.component.scss']
 })
 export class MarkdownComponent implements OnInit, OnDestroy {
+  DocumentMode=DocumentMode;
   isFullScreen: boolean;
   fixEditButton = false;
   @ViewChild(MarkdownEditorComponent) editor: MarkdownEditorComponent;

@@ -60,23 +60,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   editor: any;
   @ViewChild('toolbar') toolbar: MatToolbar;
 
-  docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
 
-  _scroll_viewer$ = this._markdownService.viewerScroll$.pipe(share());
-  _scroll_editor$ = this._markdownService.editorScroll$.pipe(share());
-
-  isPositionFixed$ = merge(this._scroll_viewer$, this._scroll_editor$).pipe(
-    map(v => {
-      if (this.toolbar)
-        return (
-          (v.event.target as HTMLElement).scrollTop >
-          this.toolbar._elementRef.nativeElement.offsetHeight
-        );
-      return false;
-    })
-  );
-
-  isScrollDown$ = merge(this._scroll_viewer$, this._scroll_editor$).pipe(map(v => v.isDown));
 
   private _destroy$ = new Subject();
 

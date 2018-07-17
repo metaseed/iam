@@ -1,4 +1,4 @@
-import { map, auditTime } from 'rxjs/operators';
+import { map, auditTime, share } from 'rxjs/operators';
 import { fromEvent } from 'rxjs';
 
 export class ScrollEvent {
@@ -8,12 +8,12 @@ export class ScrollEvent {
 export class ContainerRef {
   scrollEvent$ = fromEvent(this.container, 'scroll').pipe(auditTime(this._scrollAuditTime));
   resizeEvent$ = fromEvent(this.container, 'resize').pipe(auditTime(this._resizeAuditTime));
-  touchStart$ = fromEvent<TouchEvent>(this.container,'touchstart');
-  touchMove$ = fromEvent<TouchEvent>(this.container,'touchmove');
-  touchEnd$ = fromEvent<TouchEvent>(this.container,'touchend');
+  touchStart$ = fromEvent<TouchEvent>(this.container, 'touchstart');
+  touchMove$ = fromEvent<TouchEvent>(this.container, 'touchmove');
+  touchEnd$ = fromEvent<TouchEvent>(this.container, 'touchend');
 
   constructor(
-    public container: HTMLElement | Window|Document = window,
+    public container: HTMLElement | Window | Document = window,
     private _scrollAuditTime = 300,
     private _resizeAuditTime = 10
   ) {}
@@ -29,14 +29,14 @@ export class ContainerRef {
     if (this.container instanceof HTMLElement) {
       return this.container.clientHeight;
     }
-    return  Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    return Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
   }
 
   get viewportWidth() {
     if (this.container instanceof HTMLElement) {
       return this.container.clientWidth;
     }
-    return  Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    return Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
   }
 
   get scrollTop() {
@@ -53,15 +53,18 @@ export class ContainerRef {
   get scrollDown$() {
     let lastValue = this.scrollTop;
     return this.scrollEvent$.pipe(
-      map(event => {
-        const scrollTop = this.scrollTop;
-        if (scrollTop - lastValue > 0) {
+      map(
+        event => {
+          const scrollTop = this.scrollTop;
+          if (scrollTop - lastValue > 0) {
+            lastValue = scrollTop;
+            return new ScrollEvent(event, true, scrollTop);
+          }
           lastValue = scrollTop;
-          return new ScrollEvent(event, true, scrollTop);
-        }
-        lastValue = scrollTop;
-        return new ScrollEvent(event, false, scrollTop);
-      }, auditTime(this._scrollAuditTime))
+          return new ScrollEvent(event, false, scrollTop);
+        },
+      ),
+      share()
     );
   }
 }
