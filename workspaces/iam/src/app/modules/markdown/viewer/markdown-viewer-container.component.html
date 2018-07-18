@@ -1,6 +1,5 @@
-<ms-viewer-toolbar [scrollHide]="[{container:viewContainerDiv}]" [hide]="(docMode$ | async)!==DocumentMode.View" >
+<ms-viewer-toolbar [scrollHide]="[{container:viewContainerDiv}]" [hide]="(docMode$ | async)!==DocumentMode.View">
 </ms-viewer-toolbar>
-<!--  -->
 <ms-reading-position-indicator *ngIf="(scroll$ | async)?.isDown" [element]="viewContainerDiv"></ms-reading-position-indicator>
 <sk-three-bounce [isRunning]="!(isLoadDone$|async)"></sk-three-bounce>
 

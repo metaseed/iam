@@ -14,7 +14,8 @@ import { takeUntil } from 'rxjs/operators';
 
 export interface ScrollHideItem {
   container: HTMLElement;
-  padding: HTMLElement;
+  padding?: HTMLElement & { _padding?: number };
+  paddingAlways?: boolean;
 }
 
 @Directive({
@@ -25,28 +26,39 @@ export class ScrollHideDirective implements AfterViewInit, OnDestroy {
   private _destroy$ = new Subject();
 
   @HostBinding('style.width') width = '100%';
+  @HostBinding('style.visibility') visibility = 'visible';
   @HostBinding('style.position') position = 'fixed';
-  @HostBinding('style.transform') transform = 'translateY(0)';
   @HostBinding('style.z-index') zIndex = 1000;
-  @HostBinding('style.top') top = 0;
-  @HostBinding('style.left') left = 0;
-  @HostBinding('style.transition-duration') transitionDuration = '.4s';
+  // @HostBinding('style.top') top_px = '0px';
+  private _top = 0;
+  get top() {
+    return this._top;
+  }
+  set top(v) {
+    if (v !== this._top) {
+      this._elementRef.nativeElement.style.top = v + 'px';
+      this._top = v;
+    }
+  }
+  @HostBinding('style.left') left = '0';
+  @HostBinding('style.transition-duration') transitionDuration = '.5s';
   @HostBinding('style.transition-delay') t_d = '0s';
-  @HostBinding('style.transition-property') t_p = 'transform';
+  @HostBinding('style.transition-property') t_p = 'top';
   @HostBinding('style.transition-timing-function') t_f = 'ease-in-out';
   private _hide = false;
   @Input()
   set hide(hideCondition) {
     this._hide = hideCondition;
     if (hideCondition) {
-      this.transform = 'translateY(-100%)';
+      this.visibility = 'collapse';
     } else {
-      this.transform = 'translateY(0)';
+      this.visibility = 'visible';
     }
   }
 
   @Input()
-  set scrollHide(containers) {
+  @Input()
+  set scrollHide(containers: ScrollHideItem[]) {
     if (!containers) return;
     if (!Array.isArray(containers)) {
       throw 'scrollHide attribute should be an array!';
@@ -59,74 +71,91 @@ export class ScrollHideDirective implements AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     if (this.containers.length === 0) return;
 
+    const height = this._elementRef.nativeElement.getBoundingClientRect().height;
+    const height_minus = -height;
+    const height_half_minus = height_minus / 2;
+
     this.containers.forEach(item => {
       let container = item.container;
       if (container instanceof Function) {
         container = container();
+        item.container = container;
       }
-      let paddingElement = item.padding || container;
+      if (!item.padding) item.padding = container;
+      const p = item.padding;
+      if (p) {
+        p.style.transitionDuration = '0.5s';
+        p.style.transitionProperty = 'padding-top';
+        p.style.transitionTimingFunction = 'ease-in-out';
+      }
 
-      const containerRef = new ContainerRef(container);
-      let position = 0;
-      let disableScroll = false;
-      let height = this._elementRef.nativeElement.getBoundingClientRect().height;
-      paddingElement.style.paddingTop = height + 'px';
-      containerRef.scrollDown$
-        .pipe(takeUntil(this._destroy$))
-        .subscribe(e => {
-          if (disableScroll) return;
-          height = this._elementRef.nativeElement.getBoundingClientRect().height;
-          if (e.scrollTop <= 1) {
-            paddingElement.style.paddingTop = height + 'px';
-          } else {
-            paddingElement.style.paddingTop = '0';
-          }
-
-          if (e.isDown || this._hide) {
-            position = -1;
-            this.transform = 'translateY(-100%)';
-          } else {
-            position = 0;
-            this.transform = 'translateY(0)';
-          }
+      const setPadding = () => {
+        this.containers.forEach(c => {
+          const e = c.padding;
+          if ((!c.paddingAlways && c.container.scrollTop > height) || e._padding === height) return;
+          e._padding = height;
+          e.style.paddingTop = height + 'px';
         });
+      };
+
+      const removePadding = () => {
+        this.containers.forEach(c => {
+          const e = c.padding;
+          if ((!c.paddingAlways && c.container.scrollTop > height) || e._padding === 0) return;
+          e._padding = 0;
+          e.style.paddingTop = '0px';
+        });
+      };
+
+      setPadding();
+      const containerRef = new ContainerRef(container);
+
+      let disableScroll = false;
+
+      containerRef.scrollDown$.pipe(takeUntil(this._destroy$)).subscribe(e => {
+        if (disableScroll || this._hide) return;
+        disableScroll = true;
+        if (e.isDown) {
+          this.top = height_minus;
+          removePadding();
+        } else {
+          this.top = 0;
+          setPadding();
+        }
+        disableScroll = false;
+      });
 
       let startY: number;
 
       containerRef.touchStart$.pipe(takeUntil(this._destroy$)).subscribe(e => {
+        if (this._hide) return;
         disableScroll = true;
-        height = this._elementRef.nativeElement.getBoundingClientRect().height;
-
-        startY = e.touches[0].clientY;
         this.transitionDuration = '.2s';
+        startY = e.touches[0].clientY;
       });
 
       containerRef.touchEnd$.pipe(takeUntil(this._destroy$)).subscribe(e => {
-        this.transitionDuration = '.4s';
-        if (position > -0.5) {
-          position = 0;
-          this.transform = 'translateY(0)';
+        if (this._hide) return;
+        this.transitionDuration = '.5s';
+        if (this.top > height_half_minus) {
+          this.top = 0;
+          setPadding();
         } else {
-          position = -1;
-          this.transform = 'translateY(-100%)';
+          this.top = height_minus;
+          removePadding();
         }
         disableScroll = false;
       });
 
       containerRef.touchMove$.pipe(takeUntil(this._destroy$)).subscribe(e => {
+        if (this._hide) return;
+
         const y = e.touches[0].clientY;
         const delt = y - startY;
-        const delt_per = delt / height;
+        let top = this.top + delt;
 
-        position = position + delt_per;
-        position = Math.min(Math.max(position, -1), 0);
-
-        if (position === -1) {
-          paddingElement.style.paddingTop = '0';
-        } else {
-          paddingElement.style.paddingTop = height + 'px';
-        }
-        this.transform = `translateY(${position * 100}%)`;
+        top = Math.min(Math.max(height_minus, top), 0);
+        this.top = top;
       });
     });
   }
