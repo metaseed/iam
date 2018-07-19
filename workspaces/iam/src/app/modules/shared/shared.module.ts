@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { SplitPaneModule } from './split-pane/ng2-split-pane';
 import { FormsModule } from '@angular/forms';
 import { ScrollHideDirective } from './scroll-hide/scroll-hide.directive';
+import { CoreModule } from 'core';
 
 @NgModule({
   imports: [cm, MaterialModule, RouterModule, SplitPaneModule],
@@ -18,6 +19,7 @@ import { ScrollHideDirective } from './scroll-hide/scroll-hide.directive';
     SplitPaneModule,
     /* re-exporting */
     CommonModule,
+    CoreModule,
     FormsModule
   ],
   providers: [

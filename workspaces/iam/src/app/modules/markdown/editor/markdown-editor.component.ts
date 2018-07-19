@@ -1,4 +1,13 @@
-import { Component, OnInit, Input, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  ViewChild,
+  Inject,
+  HostBinding,
+  ElementRef
+} from '@angular/core';
 import { MarkdownEditorService } from './index';
 import { EventEmitter } from '@angular/core';
 import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
@@ -17,18 +26,28 @@ import {
   DocumentEffectsDelete
 } from '../../home/state';
 import { NEW_DOC_ID } from '../../home/const';
+import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../model/markdown.model';
+import { IContainer, ContainerRef } from 'core';
 
 @Component({
   selector: 'ms-markdown-editor',
   template: `
+  <editor-toolbar [scrollHide]="[{container$:markdownService.viewer$},{container$:markdownService.editor$}]"
+  [hide]="(docMode$|async)!==DocumentMode.Edit"></editor-toolbar>
+  <ms-codemirror-toolbar></ms-codemirror-toolbar>
     <codemirror [(ngModel)]="markdown"></codemirror>
     <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>
     `,
   styles: []
 })
-export class MarkdownEditorComponent implements OnInit {
+export class MarkdownEditorComponent {
   editorLoaded = false;
   destroy$ = new Subject();
+  DocumentMode = DocumentMode;
+
+  @HostBinding('style.display') _d = 'block';
+  @HostBinding('style.overflow-y') _o_y = 'auto';
+  @HostBinding('style.height') _h = '100vh';
 
   @Output() markdownChange = new EventEmitter<string>();
 
@@ -47,8 +66,10 @@ export class MarkdownEditorComponent implements OnInit {
   }
 
   constructor(
+    private _elementRef: ElementRef,
     private state: StoreState<fromMarkdown.State>,
     private dialog: MatDialog,
+    @Inject(MARKDOWN_SERVICE_TOKEN) private markdownService: IMarkdownService,
     private editorService: MarkdownEditorService,
     private docSaveCoordinater: DocSaveCoordinateService,
     private store: Store<fromMarkdown.State>
@@ -56,6 +77,10 @@ export class MarkdownEditorComponent implements OnInit {
     this.editorService.editorLoaded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       setTimeout(() => (this.editorLoaded = true), 0);
     });
+
+    (this.markdownService.editor$ as Subject<IContainer>).next(
+      new ContainerRef(_elementRef.nativeElement)
+    );
 
     this.docMode$.pipe(takeUntil(this.destroy$)).subscribe(mode => {
       switch (mode) {
@@ -68,7 +93,6 @@ export class MarkdownEditorComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
   ngOnDestroy() {
     this.destroy$.next();
   }

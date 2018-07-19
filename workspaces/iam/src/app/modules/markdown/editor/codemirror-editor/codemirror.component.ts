@@ -19,7 +19,7 @@ import 'codemirror/addon/dialog/dialog';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/search/searchcursor';
 import 'codemirror/addon/search/search';
-import 'codemirror/addon/scroll/annotatescrollbar';
+// import 'codemirror/addon/scroll/annotatescrollbar';
 import 'codemirror/addon/search/matchesonscrollbar';
 import 'codemirror/addon/search/jump-to-line';
 
@@ -29,7 +29,7 @@ import * as markdown from '../../state';
 import * as fromEdit from '../../state/actions/edit';
 import { KeyMap } from '../editor-toolbar/keymap';
 import { Subject } from 'rxjs';
-import { ContainerRef, ScrollEvent } from 'core';
+import { ContainerRef, ScrollEvent, IContainer } from 'core';
 import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../../model/markdown.model';
 /**
  * Usage : <codemirror [(ngModel)]="markdown" [config]="{...}"></codemirror>
@@ -46,12 +46,7 @@ import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../../model/markdown.m
     }
   ],
   template: `
-    <div #wrapper>
-    <ms-codemirror-toolbar></ms-codemirror-toolbar>
-    <div #scroll>
     <textarea #host></textarea>
-    </div>
-    </div>
     `
 })
 export class CodemirrorComponent {
@@ -64,7 +59,6 @@ export class CodemirrorComponent {
 
   @ViewChild('host') host;
 
-
   @Output() instance = null;
 
   _value = '';
@@ -76,9 +70,7 @@ export class CodemirrorComponent {
     private service: MarkdownEditorService,
     @Inject(MARKDOWN_SERVICE_TOKEN) private markdownService: IMarkdownService,
     private store: Store<markdown.State>
-  ) {
-
-  }
+  ) {}
 
   ngOnInit() {
     this.config = this.config || {
@@ -114,17 +106,8 @@ export class CodemirrorComponent {
     }
   }
 
-  @ViewChild('scroll') scroll;
-  @ViewChild('wrapper') wrapper;
-  scrollElement=()=> {
-    return this.scroll.nativeElement.children[1].lastChild;
-  }
-
   ngAfterViewInit() {
     this.service.editorLoaded$.next(this.instance);
-    new ContainerRef(this.scroll.nativeElement.children[1].lastChild).scrollDown$.subscribe(
-      (this.markdownService.editorScroll$ as Subject<ScrollEvent>)
-    );
   }
   destroy$ = new Subject();
 

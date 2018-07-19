@@ -1,33 +1,33 @@
-<mat-toolbar [ngClass]="{'tool-bar':!(isScreenWide$|async)}" style="width: 100%;background:#eeeeee;height: 3.8rem;">
-    <button mat-icon-button title="Bold" (click)="insertContent('Bold')" *ngIf="!_hideIcons.Bold">
-      <mat-icon>format_bold</mat-icon>
-    </button>
+<mat-toolbar class="toolbar" [ngClass]="{'tool-bar--bottom':!(isScreenWide$|async)}" style="width: 100%;height: 3.8rem;">
+  <button mat-icon-button title="Bold" (click)="insertContent('Bold')" *ngIf="!_hideIcons.Bold">
+    <mat-icon>format_bold</mat-icon>
+  </button>
 
-    <button mat-icon-button title="Italic" (click)="insertContent('Italic')" *ngIf="!_hideIcons.Italic">
-      <mat-icon >format_italic</mat-icon>
-    </button>
-    <button mat-icon-button title="Heading" (click)="insertContent('Heading')" *ngIf="!_hideIcons.Heading">
-      <mat-icon >title</mat-icon>
-    </button>
-    <button mat-icon-button title="Refrence" (click)="insertContent('Reference')" *ngIf="!_hideIcons.Refrence">
-      <mat-icon >format_quote</mat-icon>
-    </button>
+  <button mat-icon-button title="Italic" (click)="insertContent('Italic')" *ngIf="!_hideIcons.Italic">
+    <mat-icon>format_italic</mat-icon>
+  </button>
+  <button mat-icon-button title="Heading" (click)="insertContent('Heading')" *ngIf="!_hideIcons.Heading">
+    <mat-icon>title</mat-icon>
+  </button>
+  <button mat-icon-button title="Refrence" (click)="insertContent('Reference')" *ngIf="!_hideIcons.Refrence">
+    <mat-icon>format_quote</mat-icon>
+  </button>
 
-    <button mat-icon-button title="Unordered List" (click)="insertContent('Ul')" *ngIf="!_hideIcons.Ul">
-      <mat-icon >format_list_bulleted</mat-icon>
-    </button>
-    <button mat-icon-button title="Ordered List" (click)="insertContent('Ol')" *ngIf="!_hideIcons.Ol">
-      <mat-icon >format_list_numbered</mat-icon>
-    </button>
+  <button mat-icon-button title="Unordered List" (click)="insertContent('Ul')" *ngIf="!_hideIcons.Ul">
+    <mat-icon>format_list_bulleted</mat-icon>
+  </button>
+  <button mat-icon-button title="Ordered List" (click)="insertContent('Ol')" *ngIf="!_hideIcons.Ol">
+    <mat-icon>format_list_numbered</mat-icon>
+  </button>
 
-    <button mat-icon-button title="Code Block" (click)="insertContent('Code')" *ngIf="!_hideIcons.Code">
-      <mat-icon >code</mat-icon>
-    </button>
-    <button mat-icon-button title="Link" (click)="insertContent('Link')" *ngIf="!_hideIcons.Link">
-      <mat-icon >link</mat-icon>
-    </button>
-    <button mat-icon-button title="Image" (click)="insertContent('Image')" *ngIf="!_hideIcons.Image">
-      <mat-icon >image</mat-icon>
-    </button>
+  <button mat-icon-button title="Code Block" (click)="insertContent('Code')" *ngIf="!_hideIcons.Code">
+    <mat-icon>code</mat-icon>
+  </button>
+  <button mat-icon-button title="Link" (click)="insertContent('Link')" *ngIf="!_hideIcons.Link">
+    <mat-icon>link</mat-icon>
+  </button>
+  <button mat-icon-button title="Image" (click)="insertContent('Image')" *ngIf="!_hideIcons.Image">
+    <mat-icon>image</mat-icon>
+  </button>
 
 </mat-toolbar>

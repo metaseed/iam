@@ -1,4 +1,4 @@
-@import "../typography-variables";
+@import '../typography-variables';
 // always using rem as size unit, 1rem = 10px
 html {
   font-size: 62.5%;
@@ -16,7 +16,7 @@ html {
     margin-left: 0px; // padding-bottom: 2px;
     // border-left: 0.25rem solid #eceeef;
   }
-  pre[class*="language-"] {
+  pre[class*='language-'] {
     font-size: 90%;
     line-height: 1.2;
     code {
@@ -27,7 +27,7 @@ html {
   }
   .CodeMirror {
     font-family: inherit;
-    height: calc(100vh - 38px);
+    height: inherit;
     .cm-s-default .cm-formatting {
       opacity: 0.48;
     }

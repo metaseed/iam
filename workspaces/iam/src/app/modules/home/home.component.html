@@ -1,4 +1,4 @@
-<iam-doc-search [scrollHide]="[{container:scrollDocs}]"></iam-doc-search>
+<iam-doc-search [scrollHide]="[{container$:scrollDocs$}]"></iam-doc-search>
 <sk-wave [isRunning]="!(isLoadDone$ | async)"></sk-wave>
 <div class="docs" #scrollDocs>
   <doc-list [documents]="docs$ | async"></doc-list>

@@ -12,6 +12,7 @@ import { CodemirrorToolbarComponent } from './codemirror-editor/codemirror-toolb
 import { DocSaveCoordinateService } from './services/doc-save-coordinate-service';
 import { CanDeactivateGuard } from './services/can-deactive-guard.service';
 import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
+import { SharedModule } from 'shared';
 
 @NgModule({
   declarations: [
@@ -22,17 +23,14 @@ import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
     DocDirtyNotifyDialog
   ],
   imports: [
+    SharedModule,
     CommonModule,
     FormsModule,
     NgSpinKitModule,
     MarkdownEditorRoutingModule,
     MaterialModule
   ],
-  exports: [
-    EditorToolbarComponent,
-    MarkdownEditorComponent,
-    CodemirrorComponent
-  ],
+  exports: [EditorToolbarComponent, MarkdownEditorComponent, CodemirrorComponent],
   providers: [MarkdownEditorService, DocSaveCoordinateService, CanDeactivateGuard],
   entryComponents: [DocDirtyNotifyDialog]
 })

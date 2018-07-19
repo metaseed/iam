@@ -1,11 +1,11 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { Document } from 'core';
+import { Document, IContainer, ContainerRef } from 'core';
 import { DocService } from './services/doc.service';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { DocSearchService } from './services/doc-search.service';
 import { State } from './state/state-selectors';
 import { Store, select } from '@ngrx/store';
-import { Observable, of, from, Subject, merge, asyncScheduler } from 'rxjs';
+import { Observable, of, from, Subject, merge, asyncScheduler, ReplaySubject } from 'rxjs';
 import {
   map,
   filter,
@@ -27,6 +27,7 @@ import {
 import { DocSearchComponent } from './doc-search/doc-search.component';
 import { switchIfEmit } from '../core/operators/switchIfEmit';
 import { NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT } from 'core';
+import { Container } from '../../../../../../node_modules/@angular/compiler/src/i18n/i18n_ast';
 
 @Component({
   selector: 'home',
@@ -38,6 +39,8 @@ export class HomeComponent {
 
   @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;
   @ViewChild('scrollDocs') scrollDocs: ElementRef;
+
+  scrollDocs$ = new ReplaySubject<IContainer>(1);
 
   defaultTimeoutHandler = (action: DocumentEffectsActionTypes, info?: string) => err => {
     console.warn(err.message + ' action:' + action + (info ? `--${info}` : ''));
@@ -116,6 +119,8 @@ export class HomeComponent {
 
   ngOnInit() {
     this._rememberScrollPosition();
+    this.scrollDocs$.next(new ContainerRef(this.scrollDocs.nativeElement));
+
     let isSearching;
     const filteredDocs$ = this.docSearch.Search.pipe(
       debounceTime(280),

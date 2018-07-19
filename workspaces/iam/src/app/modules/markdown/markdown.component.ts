@@ -29,7 +29,6 @@ import { MarkdownService } from './markdown.service';
   styleUrls: ['./markdown.component.scss']
 })
 export class MarkdownComponent implements OnInit, OnDestroy {
-  DocumentMode=DocumentMode;
   isFullScreen: boolean;
   fixEditButton = false;
   @ViewChild(MarkdownEditorComponent) editor: MarkdownEditorComponent;
@@ -70,14 +69,15 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   markdown$: Observable<string>;
 
   constructor(
-    private markdownSerive: MarkdownService,
+    public markdownSerive: MarkdownService,
     private _http: HttpClient,
     @Inject(APP_BASE_HREF) private baseHref,
     private changeDetecorRef: ChangeDetectorRef,
     private route: ActivatedRoute,
     private router: Router,
     private store: Store<fromMarkdown.State>,
-    private utils: Utilities  ) {}
+    private utils: Utilities
+  ) {}
 
   ngOnInit() {
     this.markdown$ = merge(
@@ -130,6 +130,6 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   showDemo() {
     this._http
       .get(`${this.baseHref}assets/markdown.md`, { responseType: 'text' })
-      .subscribe(() => { });
+      .subscribe(() => {});
   }
 }
