@@ -8,7 +8,7 @@ import {
   OnInit,
   AfterViewInit
 } from '@angular/core';
-import { ContainerRef } from 'core';
+import { ContainerRef, WindowRef } from 'core';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -36,7 +36,9 @@ export class ScrollHideDirective implements AfterViewInit, OnDestroy {
   }
   set top(v) {
     if (v !== this._top) {
-      this._elementRef.nativeElement.style.top = v + 'px';
+      (this._windowRef.container as Window).requestAnimationFrame(
+        timestamp => (this._elementRef.nativeElement.style.top = v + 'px')
+      );
       this._top = v;
     }
   }
@@ -66,7 +68,11 @@ export class ScrollHideDirective implements AfterViewInit, OnDestroy {
     this.containers = containers;
   }
 
-  constructor(private _viewContainer: ViewContainerRef, private _elementRef: ElementRef) {}
+  constructor(
+    private _viewContainer: ViewContainerRef,
+    private _elementRef: ElementRef,
+    private _windowRef: WindowRef
+  ) {}
 
   ngAfterViewInit() {
     if (this.containers.length === 0) return;
@@ -82,12 +88,12 @@ export class ScrollHideDirective implements AfterViewInit, OnDestroy {
         item.container = container;
       }
       if (!item.padding) item.padding = container;
-      const p = item.padding;
-      if (p) {
-        p.style.transitionDuration = '0.5s';
-        p.style.transitionProperty = 'padding-top';
-        p.style.transitionTimingFunction = 'ease-in-out';
-      }
+      // const p = item.padding;
+      // if (p) {
+      //   p.style.transitionDuration = '0.5s';
+      //   p.style.transitionProperty = 'padding-top';
+      //   p.style.transitionTimingFunction = 'ease-in-out';
+      // }
 
       const setPadding = () => {
         this.containers.forEach(c => {
