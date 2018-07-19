@@ -38,8 +38,8 @@ export class CodemirrorToolbarComponent implements OnInit {
   doc: CodeMirror.Doc;
   isScreenWide$ = this.utils.isScreenWide$;
 
-  // @HostBinding('style.position') position = 'sticky';
-  // @HostBinding('style.top') _t = 0;
+  @HostBinding('style.position') position = 'sticky';
+  @HostBinding('style.top') _t = 0;
   @HostBinding('style.z-index') _z = 10;
   @HostBinding('style.display') _d = 'block';
 

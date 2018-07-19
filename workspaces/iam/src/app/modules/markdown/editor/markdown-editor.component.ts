@@ -32,13 +32,13 @@ import { IContainer, ContainerRef } from 'core';
 @Component({
   selector: 'ms-markdown-editor',
   template: `
-    <editor-toolbar [scrollHide]="[{container$:markdownService.viewer$},{container$:markdownService.editor$,padding:me}]"
+    <editor-toolbar [scrollHide]="[{container$:markdownService.viewer$},{container$:markdownService.editor$,padding:scroll}]"
   [hide]="(docMode$|async)!==DocumentMode.Edit"></editor-toolbar>
-
   <div #scroll style="overflow-y:auto;height:100%">
+  <ms-codemirror-toolbar></ms-codemirror-toolbar>
+
   <codemirror [(ngModel)]="markdown"></codemirror>
   </div>
-  <ms-codemirror-toolbar></ms-codemirror-toolbar>
     <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>
     `,
   styles: []
@@ -48,8 +48,8 @@ export class MarkdownEditorComponent {
   destroy$ = new Subject();
   DocumentMode = DocumentMode;
 
-  @HostBinding('style.display') _d = 'flex';
-  @HostBinding('style.flex-direction') _dr = 'column';
+  @HostBinding('style.display') _d = 'block';
+  // @HostBinding('style.flex-direction') _dr = 'column';
 
   @HostBinding('style.height') _h = '100vh';
 
@@ -96,9 +96,7 @@ export class MarkdownEditorComponent {
   }
 
   ngOnInit() {
-    (this.markdownService.editor$ as Subject<IContainer>).next(
-      new ContainerRef(this.scroll.nativeElement)
-    );
+    (this.markdownService.editor$ as Subject<IContainer>).next(new ContainerRef(this.me));
   }
 
   ngOnDestroy() {
