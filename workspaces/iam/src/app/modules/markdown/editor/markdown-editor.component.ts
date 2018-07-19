@@ -32,10 +32,13 @@ import { IContainer, ContainerRef } from 'core';
 @Component({
   selector: 'ms-markdown-editor',
   template: `
-  <editor-toolbar [scrollHide]="[{container$:markdownService.viewer$},{container$:markdownService.editor$}]"
+    <editor-toolbar [scrollHide]="[{container$:markdownService.viewer$},{container$:markdownService.editor$,padding:me}]"
   [hide]="(docMode$|async)!==DocumentMode.Edit"></editor-toolbar>
   <ms-codemirror-toolbar></ms-codemirror-toolbar>
+
+  <div #scroll style="overflow-y:auto;height:100%">
     <codemirror [(ngModel)]="markdown"></codemirror>
+    </div>
     <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>
     `,
   styles: []
@@ -50,7 +53,7 @@ export class MarkdownEditorComponent {
   @HostBinding('style.height') _h = '100vh';
 
   @Output() markdownChange = new EventEmitter<string>();
-
+  @ViewChild('scroll') scroll: ElementRef;
   @ViewChild(CodemirrorComponent) codeMirrorComponent: CodemirrorComponent;
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
@@ -64,6 +67,7 @@ export class MarkdownEditorComponent {
     this._markdown = value;
     this.markdownChange.emit(value);
   }
+  me: HTMLElement;
 
   constructor(
     private _elementRef: ElementRef,
@@ -74,13 +78,10 @@ export class MarkdownEditorComponent {
     private docSaveCoordinater: DocSaveCoordinateService,
     private store: Store<fromMarkdown.State>
   ) {
+    this.me = _elementRef.nativeElement;
     this.editorService.editorLoaded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       setTimeout(() => (this.editorLoaded = true), 0);
     });
-
-    (this.markdownService.editor$ as Subject<IContainer>).next(
-      new ContainerRef(_elementRef.nativeElement)
-    );
 
     this.docMode$.pipe(takeUntil(this.destroy$)).subscribe(mode => {
       switch (mode) {
@@ -91,6 +92,12 @@ export class MarkdownEditorComponent {
         }
       }
     });
+  }
+
+  ngOnInit() {
+    (this.markdownService.editor$ as Subject<IContainer>).next(
+      new ContainerRef(this.scroll.nativeElement)
+    );
   }
 
   ngOnDestroy() {

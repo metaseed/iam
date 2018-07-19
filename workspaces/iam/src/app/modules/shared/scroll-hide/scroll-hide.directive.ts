@@ -14,6 +14,7 @@ import { takeUntil, switchMap, map } from 'rxjs/operators';
 
 export interface ScrollHideItem {
   container$: Observable<IContainer>;
+  padding: HTMLElement;
 }
 
 @Directive({
@@ -57,12 +58,19 @@ export class ScrollHideDirective implements OnDestroy {
     this.height = this._elementRef.nativeElement.getBoundingClientRect().height;
   }
 
+  private _containerItems: ScrollHideItem[];
+
   @Input()
   set scrollHide(containerItems: ScrollHideItem[]) {
     if (!containerItems) return;
     if (!Array.isArray(containerItems)) {
       throw 'scrollHide attribute should be an array!';
     }
+    this._containerItems = containerItems;
+  }
+
+  ngAfterViewInit() {
+    const containerItems = this._containerItems;
     if (containerItems.length === 0) return;
 
     this.height = this._elementRef.nativeElement.getBoundingClientRect().height;
@@ -70,32 +78,31 @@ export class ScrollHideDirective implements OnDestroy {
       let container$ = item.container$;
 
       container$.pipe(takeUntil(this._destroy$)).subscribe(container => {
-        const c = container.nativeElement as HTMLElement;
+        const c = item.padding || (container.nativeElement as HTMLElement);
         c.style.transitionDuration = '0.5s';
         c.style.transitionProperty = 'padding-top';
         c.style.transitionTimingFunction = 'ease-in-out';
-        this.containers.push(container);
+
+        this.paddingElements.push(c);
       });
 
       const setPadding = () => {
-        this.containers.forEach(con => {
-          const c = con.nativeElement as HTMLElement;
+        this.paddingElements.forEach(con => {
           if (con.scrollTop > this.height || con._padding === this.height) return;
           con._padding = this.height;
-          c.style.paddingTop = this.height + 'px';
+          con.style.paddingTop = this.height + 'px';
         });
       };
 
       const removePadding = () => {
-        this.containers.forEach(c => {
-          const e = c.nativeElement as HTMLElement;
+        this.paddingElements.forEach(c => {
           if (c.scrollTop > this.height || c._padding === 0) return;
           c._padding = 0;
-          e.style.paddingTop = '0px';
+          c.style.paddingTop = '0px';
         });
       };
 
-      setPadding();
+      setTimeout(_ => setPadding(), 0);
 
       let disableScroll = false;
 
@@ -167,7 +174,7 @@ export class ScrollHideDirective implements OnDestroy {
     });
   }
 
-  private containers: Array<IContainer & { _padding?: number }> = [];
+  private paddingElements: Array<HTMLElement & { _padding?: number }> = [];
   private _height: number;
   get height() {
     return this._height;
