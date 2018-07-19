@@ -50,16 +50,31 @@ export class ScrollHideDirective implements OnDestroy {
   @Input()
   set hide(hideCondition) {
     this._hide = hideCondition;
+    this.height = this._elementRef.nativeElement.getBoundingClientRect().height;
     if (hideCondition) {
       this.visibility = 'collapse';
     } else {
       this.visibility = 'visible';
+      this.setPadding();
     }
-    this.height = this._elementRef.nativeElement.getBoundingClientRect().height;
   }
 
   private _containerItems: ScrollHideItem[];
+  setPadding = () => {
+    this.paddingElements.forEach(con => {
+      if (con.scrollTop > this.height || con._padding === this.height) return;
+      con._padding = this.height;
+      con.style.paddingTop = this.height + 'px';
+    });
+  };
 
+  removePadding = () => {
+    this.paddingElements.forEach(c => {
+      if (c.scrollTop > this.height || c._padding === 0) return;
+      c._padding = 0;
+      c.style.paddingTop = '0px';
+    });
+  };
   @Input()
   set scrollHide(containerItems: ScrollHideItem[]) {
     if (!containerItems) return;
@@ -70,6 +85,7 @@ export class ScrollHideDirective implements OnDestroy {
   }
 
   ngAfterViewInit() {
+    this.top = 0;
     const containerItems = this._containerItems;
     if (containerItems.length === 0) return;
 
@@ -82,27 +98,10 @@ export class ScrollHideDirective implements OnDestroy {
         c.style.transitionDuration = '0.5s';
         c.style.transitionProperty = 'padding-top';
         c.style.transitionTimingFunction = 'ease-in-out';
-
         this.paddingElements.push(c);
+
+        c.style.paddingTop = this.height + 'px';
       });
-
-      const setPadding = () => {
-        this.paddingElements.forEach(con => {
-          if (con.scrollTop > this.height || con._padding === this.height) return;
-          con._padding = this.height;
-          con.style.paddingTop = this.height + 'px';
-        });
-      };
-
-      const removePadding = () => {
-        this.paddingElements.forEach(c => {
-          if (c.scrollTop > this.height || c._padding === 0) return;
-          c._padding = 0;
-          c.style.paddingTop = '0px';
-        });
-      };
-
-      setTimeout(_ => setPadding(), 0);
 
       let disableScroll = false;
 
@@ -116,10 +115,10 @@ export class ScrollHideDirective implements OnDestroy {
           disableScroll = true;
           if (e.isDown) {
             this.top = this.height_minus;
-            removePadding();
+            this.removePadding();
           } else {
             this.top = 0;
-            setPadding();
+            this.setPadding();
           }
           disableScroll = false;
         });
@@ -148,10 +147,10 @@ export class ScrollHideDirective implements OnDestroy {
           this.transitionDuration = '.5s';
           if (this.top > this.height_half_minus) {
             this.top = 0;
-            setPadding();
+            this.setPadding();
           } else {
             this.top = this.height_minus;
-            removePadding();
+            this.removePadding();
           }
           disableScroll = false;
         });
