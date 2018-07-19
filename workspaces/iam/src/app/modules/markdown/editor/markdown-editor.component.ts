@@ -34,11 +34,11 @@ import { IContainer, ContainerRef } from 'core';
   template: `
     <editor-toolbar [scrollHide]="[{container$:markdownService.viewer$},{container$:markdownService.editor$,padding:me}]"
   [hide]="(docMode$|async)!==DocumentMode.Edit"></editor-toolbar>
-  <ms-codemirror-toolbar></ms-codemirror-toolbar>
 
   <div #scroll style="overflow-y:auto;height:100%">
-    <codemirror [(ngModel)]="markdown"></codemirror>
-    </div>
+  <codemirror [(ngModel)]="markdown"></codemirror>
+  </div>
+  <ms-codemirror-toolbar></ms-codemirror-toolbar>
     <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>
     `,
   styles: []
@@ -48,8 +48,9 @@ export class MarkdownEditorComponent {
   destroy$ = new Subject();
   DocumentMode = DocumentMode;
 
-  @HostBinding('style.display') _d = 'block';
-  @HostBinding('style.overflow-y') _o_y = 'auto';
+  @HostBinding('style.display') _d = 'flex';
+  @HostBinding('style.flex-direction') _dr = 'column';
+
   @HostBinding('style.height') _h = '100vh';
 
   @Output() markdownChange = new EventEmitter<string>();
