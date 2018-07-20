@@ -66,7 +66,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
   constructor(
     private store: Store<any>,
     private snackBar: MatSnackBar,
-    @Inject(MARKDOWN_SERVICE_TOKEN) private markdownService: IMarkdownService
+    @Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService
   ) {}
 
   container: IContainer;

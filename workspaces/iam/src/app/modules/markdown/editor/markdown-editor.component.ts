@@ -31,29 +31,15 @@ import { IContainer, ContainerRef } from 'core';
 
 @Component({
   selector: 'ms-markdown-editor',
-  template: `
-    <editor-toolbar  #toolbar [scrollHide]="[{container$:markdownService.viewer$},{container$:markdownService.editor$,padding:scroll}]"
-  [hide]="(docMode$|async)!==DocumentMode.Edit" [hideHeight]="toolbar.hideHeight"></editor-toolbar>
-  <div #scroll style="overflow-y:auto;height:100%">
-
-  <codemirror [(ngModel)]="markdown"></codemirror>
-  </div>
-    <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>
-    `,
-  styles: []
+  templateUrl: './markdown-editor.component.html',
+  styleUrls: ['./markdown-editor.component.scss']
 })
 export class MarkdownEditorComponent {
   editorLoaded = false;
   destroy$ = new Subject();
   DocumentMode = DocumentMode;
 
-  @HostBinding('style.display') _d = 'block';
-  // @HostBinding('style.flex-direction') _dr = 'column';
-
-  @HostBinding('style.height') _h = '100vh';
-
   @Output() markdownChange = new EventEmitter<string>();
-  @ViewChild('scroll') scroll: ElementRef;
   @ViewChild(CodemirrorComponent) codeMirrorComponent: CodemirrorComponent;
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
@@ -67,18 +53,16 @@ export class MarkdownEditorComponent {
     this._markdown = value;
     this.markdownChange.emit(value);
   }
-  me: HTMLElement;
 
   constructor(
     private _elementRef: ElementRef,
     private state: StoreState<fromMarkdown.State>,
     private dialog: MatDialog,
-    @Inject(MARKDOWN_SERVICE_TOKEN) private markdownService: IMarkdownService,
+    @Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService,
     private editorService: MarkdownEditorService,
     private docSaveCoordinater: DocSaveCoordinateService,
     private store: Store<fromMarkdown.State>
   ) {
-    this.me = _elementRef.nativeElement;
     this.editorService.editorLoaded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       setTimeout(() => (this.editorLoaded = true), 0);
     });
@@ -96,7 +80,7 @@ export class MarkdownEditorComponent {
 
   ngOnInit() {
     (this.markdownService.editor$ as Subject<IContainer>).next(
-      new ContainerRef(this.scroll.nativeElement)
+      new ContainerRef(this._elementRef.nativeElement)
     );
   }
 

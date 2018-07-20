@@ -23,7 +23,7 @@
       <mat-icon>save</mat-icon>
     </button>
     <button mat-icon-button *ngIf="isScreenWide$|async" (click)="togglePreview()">
-      <mat-icon>{{markdown.showPreviewPanel?'chrome_reader_mode':'chrome_reader_mode'}}</mat-icon>
+      <mat-icon>{{(showPreview$|async)?'chrome_reader_mode':'chrome_reader_mode'}}</mat-icon>
     </button>
     <button mat-icon-button (click)="toViewMode($event)">
       <mat-icon>

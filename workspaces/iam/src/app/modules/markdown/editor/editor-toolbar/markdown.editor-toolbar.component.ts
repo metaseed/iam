@@ -68,6 +68,8 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
 
   isScreenWide$ = this.utils.isScreenWide$;
 
+  showPreview$ = this.store.select(fromMarkdown.selectDocumentShowPreviewState);
+
   constructor(
     private utils: Utilities,
     public markdown: MarkdownComponent,
