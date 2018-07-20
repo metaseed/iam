@@ -1,16 +1,7 @@
-import {
-  Directive,
-  HostBinding,
-  ElementRef,
-  Input,
-  ViewContainerRef,
-  OnDestroy,
-  OnInit,
-  AfterViewInit
-} from '@angular/core';
-import { ContainerRef, WindowRef, IContainer } from 'core';
-import { Subject, Subscription, Observable } from 'rxjs';
-import { takeUntil, switchMap, map } from 'rxjs/operators';
+import { Directive, HostBinding, ElementRef, Input, OnDestroy } from '@angular/core';
+import { WindowRef, IContainer } from 'core';
+import { Subject, Observable } from 'rxjs';
+import { takeUntil, switchMap } from 'rxjs/operators';
 
 export interface ScrollHideItem {
   container$: Observable<IContainer>;
@@ -36,21 +27,23 @@ export class ScrollHideDirective implements OnDestroy {
   set top(v) {
     if (v !== this._top) {
       (this._windowRef.nativeElement as Window).requestAnimationFrame(
-        timestamp => (this._elementRef.nativeElement.style.top = v + 'px')
+        () => (this._elementRef.nativeElement.style.top = v + 'px')
       );
       this._top = v;
     }
   }
+
   @HostBinding('style.left') left = '0';
   @HostBinding('style.transition-duration') transitionDuration = '.5s';
   @HostBinding('style.transition-delay') t_d = '0s';
   @HostBinding('style.transition-property') t_p = 'top';
   @HostBinding('style.transition-timing-function') t_f = 'ease-in-out';
   private _hide = false;
+
   @Input()
   set hide(hideCondition) {
     this._hide = hideCondition;
-    this.height = this._elementRef.nativeElement.getBoundingClientRect().height;
+    this.height = (this._elementRef.nativeElement as HTMLElement).offsetHeight;
     if (hideCondition) {
       this.visibility = 'collapse';
     } else {
@@ -88,6 +81,7 @@ export class ScrollHideDirective implements OnDestroy {
       padding.style.paddingTop = '0px';
     });
   };
+
   @Input()
   set scrollHide(containerItems: ScrollHideItem[]) {
     if (!containerItems) return;
@@ -155,7 +149,7 @@ export class ScrollHideDirective implements OnDestroy {
           takeUntil(this._destroy$),
           switchMap(c => c.touchEnd$)
         )
-        .subscribe(e => {
+        .subscribe(() => {
           if (this._hide) return;
           this.transitionDuration = '.5s';
           if (this.top > this.height_half_minus) {
@@ -197,11 +191,7 @@ export class ScrollHideDirective implements OnDestroy {
     this.height_minus = -v;
     this.height_half_minus = -v / 2;
   }
-  constructor(
-    private _viewContainer: ViewContainerRef,
-    private _elementRef: ElementRef,
-    private _windowRef: WindowRef
-  ) {}
+  constructor(private _elementRef: ElementRef, private _windowRef: WindowRef) {}
   ngOnDestroy(): void {
     this._destroy$.next();
   }
