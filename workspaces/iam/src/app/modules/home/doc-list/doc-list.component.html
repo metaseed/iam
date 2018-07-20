@@ -1,4 +1,4 @@
-<div class="doc-card-container" #touchDiv>
+<div class="doc-card-container">
   <ng-container *ngFor="let doc of documents; let i = index; trackBy:trackByFunc">
     <doc-item [doc]="doc" (delete)="onDelete(doc)" (show)="onShow(doc)" [isDeleteDone]="isDeleteDone(doc) | async"></doc-item>
   </ng-container>

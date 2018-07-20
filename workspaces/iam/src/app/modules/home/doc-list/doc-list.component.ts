@@ -7,9 +7,15 @@ import {
   ViewChild,
   ElementRef
 } from '@angular/core';
-import { Document, WindowRef, NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT } from 'core';
+import {
+  Document,
+  WindowRef,
+  NET_COMMU_TIMEOUT,
+  MSG_DISPLAY_TIMEOUT,
+  IContainer,
+  ContainerRef
+} from 'core';
 import { MatDialog, MatSnackBar } from '@angular/material';
-import { DeleteAlertDialog } from '../doc-list/dialog.component';
 import { Store } from '@ngrx/store';
 import {
   State,
@@ -21,7 +27,7 @@ import {
   DocumentActionStatus
 } from '../state';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
-import { Subject } from 'rxjs';
+import { Subject, ReplaySubject } from 'rxjs';
 import { takeUntil, filter, map } from 'rxjs/operators';
 import { Router, RouterState, NavigationExtras } from '@angular/router';
 
@@ -34,7 +40,6 @@ export class DocListComponent implements OnInit {
   private docs;
   private destroy$ = new Subject();
 
-  @ViewChild('touchDiv') touchDiv: ElementRef;
   private defaultTimeoutHandler = (action: DocumentEffectsActionTypes, info?: string) => (
     start: DocumentActionStatus
   ) => {
@@ -66,12 +71,16 @@ export class DocListComponent implements OnInit {
       })
     );
 
+  public container: IContainer;
   constructor(
+    private _elementRef: ElementRef,
     private store: Store<State>,
     private router: Router,
     private windowRef: WindowRef,
     private snackBar: MatSnackBar
-  ) {}
+  ) {
+    this.container = new ContainerRef(_elementRef.nativeElement);
+  }
 
   @Input()
   set documents(v) {
@@ -82,7 +91,7 @@ export class DocListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.windowRef.scrollDown$
+    this.container.scrollDown$
       .pipe(
         takeUntil(this.destroy$),
         filter(e => {
@@ -131,37 +140,29 @@ export class DocListComponent implements OnInit {
   private panToRefresh() {
     let startY: number;
     let refreshStarted;
-    this.touchDiv.nativeElement.addEventListener(
-      'touchstart',
-      e => {
-        startY = e.touches[0].pageY;
-        refreshStarted = false;
-      },
-      { passive: true }
-    );
-    this.touchDiv.nativeElement.addEventListener(
-      'touchmove',
-      e => {
-        const y = e.touches[0].pageY;
-        const scrollTop =
-          this.windowRef.window.pageXOffset === undefined
-            ? document.scrollingElement.scrollTop
-            : this.windowRef.window.pageYOffset;
-        if (scrollTop === 0 && !refreshStarted && y > startY + PAN_TO_REFRESH_MARGIN) {
-          refreshStarted = true;
-          this.refresh();
-        }
-        if (
-          this.windowRef.window.innerHeight + this.windowRef.window.pageYOffset >=
-            document.body.offsetHeight &&
-          !refreshStarted &&
-          startY - y > PAN_TO_GET_MORE_MARGIN
-        ) {
-          this.getMore();
-          refreshStarted = true;
-        }
-      },
-      { passive: true }
-    );
+    this.container.touchStart$.pipe(takeUntil(this.destroy$)).subscribe(e => {
+      startY = e.touches[0].pageY;
+      refreshStarted = false;
+    });
+    this.container.touchMove$.pipe(takeUntil(this.destroy$)).subscribe(e => {
+      const y = e.touches[0].pageY;
+      const scrollTop =
+        this.windowRef.window.pageXOffset === undefined
+          ? document.scrollingElement.scrollTop
+          : this.windowRef.window.pageYOffset;
+      if (scrollTop === 0 && !refreshStarted && y > startY + PAN_TO_REFRESH_MARGIN) {
+        refreshStarted = true;
+        this.refresh();
+      }
+      if (
+        this.windowRef.window.innerHeight + this.windowRef.window.pageYOffset >=
+          document.body.offsetHeight &&
+        !refreshStarted &&
+        startY - y > PAN_TO_GET_MORE_MARGIN
+      ) {
+        this.getMore();
+        refreshStarted = true;
+      }
+    });
   }
 }

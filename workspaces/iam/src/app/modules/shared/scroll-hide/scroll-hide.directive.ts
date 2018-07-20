@@ -1,6 +1,6 @@
 import { Directive, HostBinding, ElementRef, Input, OnDestroy } from '@angular/core';
 import { WindowRef, IContainer } from 'core';
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, config, ReplaySubject } from 'rxjs';
 import { takeUntil, switchMap } from 'rxjs/operators';
 
 const TRANSITION_DURATION = '.5s';
@@ -93,9 +93,7 @@ export class ScrollHideDirective implements OnDestroy {
     if (containerItems.length === 0) return;
 
     containerItems.forEach(item => {
-      let container$ = item.container$;
-
-      container$.pipe(takeUntil(this._destroy$)).subscribe(container => {
+      const configContainer = container => {
         const margin = item.marginTop || (container.nativeElement as HTMLElement);
         margin.style.transitionDuration = TRANSITION_DURATION;
         margin.style.transitionProperty = 'margin-top';
@@ -104,6 +102,17 @@ export class ScrollHideDirective implements OnDestroy {
         item.marginTop = margin;
         item.marginTop._margin = this.height;
         item.container = container;
+      };
+
+      if (!item.container$ && item.container) {
+        const sjt = new ReplaySubject<IContainer>(1);
+        item.container$ = sjt;
+        sjt.next(item.container);
+      }
+
+      let container$ = item.container$;
+      container$.pipe(takeUntil(this._destroy$)).subscribe(container => {
+        configContainer(container);
       });
 
       let disableScroll = false;

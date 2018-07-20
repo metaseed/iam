@@ -23,9 +23,9 @@ export interface IContainer {
 export class ContainerRef implements IContainer {
   scrollEvent$ = fromEvent(this.nativeElement, 'scroll').pipe(auditTime(this._scrollAuditTime));
   resizeEvent$ = fromEvent(this.nativeElement, 'resize').pipe(auditTime(this._resizeAuditTime));
-  touchStart$ = fromEvent<TouchEvent>(this.nativeElement, 'touchstart');
-  touchMove$ = fromEvent<TouchEvent>(this.nativeElement, 'touchmove');
-  touchEnd$ = fromEvent<TouchEvent>(this.nativeElement, 'touchend');
+  touchStart$ = fromEvent<TouchEvent>(this.nativeElement, 'touchstart', { passive: true });
+  touchMove$ = fromEvent<TouchEvent>(this.nativeElement, 'touchmove', { passive: true });
+  touchEnd$ = fromEvent<TouchEvent>(this.nativeElement, 'touchend', { passive: true });
 
   constructor(
     public nativeElement: HTMLElement | Window | Document = window,

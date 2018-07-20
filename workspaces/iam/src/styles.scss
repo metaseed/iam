@@ -1,4 +1,5 @@
 body {
+  overflow-y: hidden;
   margin: 0;
   /* Disables pull-to-refresh but allows overscroll glow effects. */
   overscroll-behavior-y: contain;
@@ -25,7 +26,7 @@ body {
   }
 }
 
-div.markdown-code:hover>button {
+div.markdown-code:hover > button {
   visibility: visible;
 }
 

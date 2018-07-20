@@ -40,8 +40,6 @@ export class HomeComponent {
   @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;
   @ViewChild('scrollDocs') scrollDocs: ElementRef;
 
-  scrollDocs$ = new ReplaySubject<IContainer>(1);
-
   defaultTimeoutHandler = (action: DocumentEffectsActionTypes, info?: string) => err => {
     console.warn(err.message + ' action:' + action + (info ? `--${info}` : ''));
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
@@ -119,7 +117,6 @@ export class HomeComponent {
 
   ngOnInit() {
     this._rememberScrollPosition();
-    this.scrollDocs$.next(new ContainerRef(this.scrollDocs.nativeElement));
 
     let isSearching;
     const filteredDocs$ = this.docSearch.Search.pipe(
