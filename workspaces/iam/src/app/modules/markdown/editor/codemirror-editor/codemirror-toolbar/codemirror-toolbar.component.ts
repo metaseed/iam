@@ -24,6 +24,7 @@ import * as CodeMirror from 'codemirror';
 import { HtmlParser } from '@angular/compiler';
 import { takeUntil, map } from 'rxjs/operators';
 import { Utilities } from '../../../../core/utils';
+import { VerticalSplitPaneComponent } from '../../../../shared/split-pane/vertical-split-pane.component';
 @Component({
   selector: 'ms-codemirror-toolbar',
   templateUrl: './codemirror-toolbar.component.html',
@@ -38,13 +39,11 @@ export class CodemirrorToolbarComponent implements OnInit {
   doc: CodeMirror.Doc;
   isScreenWide$ = this.utils.isScreenWide$;
 
-  @HostBinding('style.position') position = 'sticky';
-  @HostBinding('style.top') _t = 0;
-  @HostBinding('style.z-index') _z = 10;
-  @HostBinding('style.display') _d = 'block';
+  @HostBinding('style.width') width;
 
   constructor(
     public markdown: MarkdownComponent,
+    private _verticalSplitPane: VerticalSplitPaneComponent,
     private _editorService: MarkdownEditorService,
     private utils: Utilities,
     private _docService: DocService,
@@ -54,6 +53,11 @@ export class CodemirrorToolbarComponent implements OnInit {
     private _domSanitizer: DomSanitizer,
     private store: Store<State>
   ) {
+    this._verticalSplitPane.notifySizeDidChange.pipe(takeUntil(this.destroy$)).subscribe(s => {
+      if (this.width === s.primary) return;
+      this.width = `${s.primary}px`;
+    });
+
     this._subscription = _commandService.commands.subscribe(c => this.handleCommand(c));
     let me = this;
     this._editorService.editorLoaded$

@@ -5,7 +5,8 @@ import {
   Input,
   Renderer,
   ViewChild,
-  Inject
+  Inject,
+  ElementRef
 } from '@angular/core';
 import { MarkdownComponent } from '../../markdown.component';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -27,6 +28,8 @@ import { takeUntil, map, share } from 'rxjs/operators';
 import { Utilities } from '../../../core/utils';
 import { DocumentEffectsSave, DocumentEffectsCreate } from '../../../home/state';
 import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../../model/markdown.model';
+import { HtmlAstPath } from '@angular/compiler';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 @Component({
   selector: 'editor-toolbar',
@@ -58,9 +61,8 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   DocumentMode = DocumentMode;
   isFullScreen: boolean;
   editor: any;
-  @ViewChild('toolbar') toolbar: MatToolbar;
-
-
+  @ViewChild('toolbar', { read: ElementRef })
+  toolbar: ElementRef;
 
   private _destroy$ = new Subject();
 
@@ -76,8 +78,13 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     private store: Store<fromMarkdown.State>,
     private state: State<fromMarkdown.State>,
     public docSaver: DocSaveCoordinateService,
+    private _breakpointObserver: BreakpointObserver,
     @Inject(MARKDOWN_SERVICE_TOKEN) private _markdownService: IMarkdownService
   ) {
+    this._breakpointObserver
+      .observe(['(orientation: portrait)', '(orientation: landscape)'])
+      .pipe(takeUntil(this._destroy$))
+      .subscribe(_ => {});
     this._editorService.editorLoaded$.pipe(takeUntil(this._destroy$)).subscribe(editor => {
       this.editor = editor;
     });
@@ -130,6 +137,10 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     } else {
       this.store.dispatch(new doc.ShowPreview());
     }
+  }
+
+  get hideHeight() {
+    return (this.toolbar.nativeElement as HTMLElement).offsetHeight;
   }
 
   ngAfterViewInit() {}

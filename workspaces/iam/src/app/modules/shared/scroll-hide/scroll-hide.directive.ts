@@ -28,17 +28,16 @@ export class ScrollHideDirective implements OnDestroy {
   @HostBinding('style.visibility') visibility = 'visible';
   @HostBinding('style.position') position = 'fixed';
   @HostBinding('style.z-index') zIndex = 1000;
-  // @HostBinding('style.top') top_px = '0px';
+
   private _top;
   get top() {
     return this._top;
   }
   set top(v) {
     if (v !== this._top) {
-      this._elementRef.nativeElement.style.top = v + 'px';
-      // (this._windowRef.nativeElement as Window).requestAnimationFrame(
-      //   timestamp => (this._elementRef.nativeElement.style.top = v + 'px')
-      // );
+      (this._windowRef.nativeElement as Window).requestAnimationFrame(
+        timestamp => (this._elementRef.nativeElement.style.top = v + 'px')
+      );
       this._top = v;
     }
   }
@@ -58,6 +57,15 @@ export class ScrollHideDirective implements OnDestroy {
       this.visibility = 'visible';
       this.setPadding();
     }
+  }
+
+  private _hideHeight_minus: number;
+  get hideHeight() {
+    return this._hideHeight_minus || this.height_minus;
+  }
+  @Input()
+  set hideHeight(v: number) {
+    this._hideHeight_minus = -v;
   }
 
   private _containerItems: ScrollHideItem[];
@@ -119,7 +127,7 @@ export class ScrollHideDirective implements OnDestroy {
           if (disableScroll || this._hide) return;
           disableScroll = true;
           if (e.isDown) {
-            this.top = this.height_minus;
+            this.top = this.hideHeight;
             this.removePadding();
           } else {
             this.top = 0;
@@ -145,7 +153,7 @@ export class ScrollHideDirective implements OnDestroy {
       container$
         .pipe(
           takeUntil(this._destroy$),
-          switchMap(c => c.touchMove$)
+          switchMap(c => c.touchEnd$)
         )
         .subscribe(e => {
           if (this._hide) return;
@@ -154,7 +162,7 @@ export class ScrollHideDirective implements OnDestroy {
             this.top = 0;
             this.setPadding();
           } else {
-            this.top = this.height_minus;
+            this.top = this.hideHeight;
             this.removePadding();
           }
           disableScroll = false;
@@ -163,11 +171,10 @@ export class ScrollHideDirective implements OnDestroy {
       container$
         .pipe(
           takeUntil(this._destroy$),
-          switchMap(c => c.touchEnd$)
+          switchMap(c => c.touchMove$)
         )
         .subscribe(e => {
           if (this._hide) return;
-
           const y = e.touches[0].clientY;
           const delt = y - startY;
           let top = this.top + delt;

@@ -1,5 +1,4 @@
-<mat-toolbar color="primary"  style="z-index: 20;"
-  #toolbar>
+<mat-toolbar color="primary" style="z-index: 20;pointer-events:all" #toolbar>
   <mat-toolbar-row>
     <button mat-icon-button routerLinkActive [routerLink]="['/home']">
       <mat-icon>
@@ -44,4 +43,6 @@
     </mat-menu>
 
   </mat-toolbar-row>
+
 </mat-toolbar>
+<ms-codemirror-toolbar style="pointer-events:all;"></ms-codemirror-toolbar>
