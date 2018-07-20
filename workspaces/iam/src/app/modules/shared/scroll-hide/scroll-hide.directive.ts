@@ -3,9 +3,11 @@ import { WindowRef, IContainer } from 'core';
 import { Subject, Observable } from 'rxjs';
 import { takeUntil, switchMap } from 'rxjs/operators';
 
+const TRANSITION_DURATION = '.5s';
+
 export interface ScrollHideItem {
   container$: Observable<IContainer>;
-  padding?: HTMLElement & { _padding?: number };
+  marginTop?: HTMLElement & { _margin?: number };
   container?: IContainer;
 }
 
@@ -34,21 +36,20 @@ export class ScrollHideDirective implements OnDestroy {
   }
 
   @HostBinding('style.left') left = '0';
-  @HostBinding('style.transition-duration') transitionDuration = '.5s';
+  @HostBinding('style.transition-duration') transitionDuration = TRANSITION_DURATION;
   @HostBinding('style.transition-delay') t_d = '0s';
-  @HostBinding('style.transition-property') t_p = 'top';
+  @HostBinding('style.transition-property') transitionProperty = 'top';
   @HostBinding('style.transition-timing-function') t_f = 'ease-in-out';
   private _hide = false;
 
   @Input()
   set hide(hideCondition) {
     this._hide = hideCondition;
-    this.height = (this._elementRef.nativeElement as HTMLElement).offsetHeight;
     if (hideCondition) {
       this.visibility = 'collapse';
     } else {
       this.visibility = 'visible';
-      this.setPadding();
+      this.setMargin('Set');
     }
   }
 
@@ -62,23 +63,18 @@ export class ScrollHideDirective implements OnDestroy {
   }
 
   private _containerItems: ScrollHideItem[];
-  setPadding = () => {
-    if (!this._containerItems) return;
-    this._containerItems.forEach(item => {
-      const padding = item.padding;
-      if (item.container.scrollTop > this.height || padding._padding === this.height) return;
-      padding._padding = this.height;
-      padding.style.paddingTop = this.height + 'px';
-    });
-  };
 
-  removePadding = () => {
+  setMargin = (o: 'Set' | 'Clear') => {
     if (!this._containerItems) return;
+    const v = o === 'Set' ? this.height : 0;
+
     this._containerItems.forEach(item => {
-      const padding = item.padding;
-      if (item.container.scrollTop > this.height && padding._padding === 0) return;
-      padding._padding = 0;
-      padding.style.paddingTop = '0px';
+      const margin = item.marginTop;
+      if (v !== 0 && (item.container.scrollTop > this.height || margin._margin === v)) return;
+      margin._margin = v;
+      (this._windowRef.nativeElement as Window).requestAnimationFrame(
+        () => (margin.style.marginTop = v + 'px')
+      );
     });
   };
 
@@ -96,21 +92,39 @@ export class ScrollHideDirective implements OnDestroy {
     const containerItems = this._containerItems;
     if (containerItems.length === 0) return;
 
-    this.height = this._elementRef.nativeElement.getBoundingClientRect().height;
     containerItems.forEach(item => {
       let container$ = item.container$;
 
       container$.pipe(takeUntil(this._destroy$)).subscribe(container => {
-        const padding = item.padding || (container.nativeElement as HTMLElement);
-        padding.style.transitionDuration = '0.5s';
-        padding.style.transitionProperty = 'padding-top';
-        padding.style.transitionTimingFunction = 'ease-in-out';
-        padding.style.paddingTop = this.height + 'px';
-        item.padding = padding;
+        const margin = item.marginTop || (container.nativeElement as HTMLElement);
+        margin.style.transitionDuration = TRANSITION_DURATION;
+        margin.style.transitionProperty = 'margin-top';
+        margin.style.transitionTimingFunction = 'ease-in-out';
+        margin.style.marginTop = this.height + 'px';
+        item.marginTop = margin;
+        item.marginTop._margin = this.height;
         item.container = container;
       });
 
       let disableScroll = false;
+
+      const disableAnimation = () => {
+        this.transitionProperty = undefined;
+        containerItems.forEach(item => {
+          if (item.marginTop !== undefined) {
+            item.marginTop.style.transitionProperty = undefined;
+          }
+        });
+      };
+
+      const enableAnimation = () => {
+        this.transitionProperty = 'top';
+        containerItems.forEach(item => {
+          if (item.marginTop !== undefined) {
+            item.marginTop.style.transitionProperty = 'margin-top';
+          }
+        });
+      };
 
       container$
         .pipe(
@@ -121,16 +135,16 @@ export class ScrollHideDirective implements OnDestroy {
           if (disableScroll || this._hide) return;
           disableScroll = true;
           if (e.isDown) {
+            this.setMargin('Clear');
             this.top = this.hideHeight;
-            this.removePadding();
           } else {
+            this.setMargin('Set');
             this.top = 0;
-            this.setPadding();
           }
           disableScroll = false;
         });
 
-      let startY: number;
+      let lastY: number;
 
       container$
         .pipe(
@@ -140,8 +154,8 @@ export class ScrollHideDirective implements OnDestroy {
         .subscribe(e => {
           if (this._hide) return;
           disableScroll = true;
-          this.transitionDuration = '.2s';
-          startY = e.touches[0].clientY;
+          disableAnimation();
+          lastY = e.touches[0].clientY;
         });
 
       container$
@@ -151,14 +165,15 @@ export class ScrollHideDirective implements OnDestroy {
         )
         .subscribe(() => {
           if (this._hide) return;
-          this.transitionDuration = '.5s';
           if (this.top > this.height_half_minus) {
             this.top = 0;
-            this.setPadding();
+            this.setMargin('Set');
           } else {
             this.top = this.hideHeight;
-            this.removePadding();
+            this.setMargin('Clear');
           }
+
+          enableAnimation();
           disableScroll = false;
         });
 
@@ -169,28 +184,40 @@ export class ScrollHideDirective implements OnDestroy {
         )
         .subscribe(e => {
           if (this._hide) return;
-          const y = e.touches[0].clientY;
-          const delt = y - startY;
-          let top = this.top + delt;
 
-          top = Math.min(Math.max(this.height_minus, top), 0);
-          this.top = top;
+          const y = e.touches[0].clientY;
+          const delt = y - lastY;
+          lastY = y;
+
+          const top = this.top + delt;
+          this.top = Math.min(Math.max(this.height_minus, top), 0);
+
+          this._containerItems.forEach(item => {
+            if (item.container.scrollTop > this.height) return;
+            const margin = item.marginTop;
+            let v = margin._margin + delt;
+            v = Math.min(Math.max(0, v), this.height);
+            if (v !== margin._margin) {
+              item.container.scrollTop += delt;
+              (this._windowRef.nativeElement as Window).requestAnimationFrame(
+                () => (margin.style.marginTop = v + 'px')
+              );
+              margin._margin = v;
+            }
+          });
         });
     });
   }
 
-  private _height: number;
   get height() {
-    return this._height;
+    const v = (this._elementRef.nativeElement as HTMLElement).offsetHeight;
+    this.height_minus = -v;
+    this.height_half_minus = -v / 2;
+    return v;
   }
   height_minus: number;
   height_half_minus: number;
 
-  set height(v) {
-    this._height = v;
-    this.height_minus = -v;
-    this.height_half_minus = -v / 2;
-  }
   constructor(private _elementRef: ElementRef, private _windowRef: WindowRef) {}
   ngOnDestroy(): void {
     this._destroy$.next();

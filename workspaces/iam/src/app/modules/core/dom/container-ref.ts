@@ -60,7 +60,13 @@ export class ContainerRef implements IContainer {
     }
     return (window && window.pageYOffset) || 0;
   }
-
+  set scrollTop(v) {
+    if (this.nativeElement instanceof HTMLElement) {
+      this.nativeElement.scrollTop = v;
+      return;
+    }
+    window && window.scrollTo(window.pageXOffset, v);
+  }
   get maxScrollTop() {
     return this.contentHeight - this.viewportHeight;
   }
