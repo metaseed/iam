@@ -3,7 +3,7 @@ import { WindowRef, IContainer } from 'core';
 import { Subject, Observable, config, ReplaySubject } from 'rxjs';
 import { takeUntil, switchMap } from 'rxjs/operators';
 
-const TRANSITION_DURATION = '.5s';
+const TRANSITION_DURATION = '.36s';
 
 export interface ScrollHideItem {
   container$: Observable<IContainer>;
@@ -70,7 +70,7 @@ export class ScrollHideDirective implements OnDestroy {
 
     this._containerItems.forEach(item => {
       const margin = item.marginTop;
-      if (v !== 0 && (item.container.scrollTop > this.height || margin._margin === v)) return;
+      if ((v !== 0 && item.container.scrollTop > this.height) || margin._margin === v) return;
       margin._margin = v;
       (this._windowRef.nativeElement as Window).requestAnimationFrame(
         () => (margin.style.marginTop = v + 'px')
@@ -118,10 +118,10 @@ export class ScrollHideDirective implements OnDestroy {
       let disableScroll = false;
 
       const disableAnimation = () => {
-        this.transitionProperty = undefined;
+        this.transitionProperty = 'none';
         containerItems.forEach(item => {
           if (item.marginTop !== undefined) {
-            item.marginTop.style.transitionProperty = undefined;
+            item.marginTop.style.transitionProperty = 'none';
           }
         });
       };
@@ -154,6 +154,8 @@ export class ScrollHideDirective implements OnDestroy {
         });
 
       let lastY: number;
+      let startY: number;
+      let isDown: boolean;
 
       container$
         .pipe(
@@ -172,14 +174,26 @@ export class ScrollHideDirective implements OnDestroy {
           takeUntil(this._destroy$),
           switchMap(c => c.touchEnd$)
         )
-        .subscribe(() => {
+        .subscribe(e => {
           if (this._hide) return;
-          if (this.top > this.height_half_minus) {
-            this.top = 0;
-            this.setMargin('Set');
+
+          if (lastY - startY) {
+            // isdown
+            if (this.top < this.height_half_minus) {
+              this.top = 0;
+              this.setMargin('Set');
+            } else {
+              this.top = this.hideHeight;
+              this.setMargin('Clear');
+            }
           } else {
-            this.top = this.hideHeight;
-            this.setMargin('Clear');
+            if (this.top > this.height_half_minus) {
+              this.top = 0;
+              this.setMargin('Set');
+            } else {
+              this.top = this.hideHeight;
+              this.setMargin('Clear');
+            }
           }
 
           enableAnimation();

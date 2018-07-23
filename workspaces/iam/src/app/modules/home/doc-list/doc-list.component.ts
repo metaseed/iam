@@ -96,8 +96,8 @@ export class DocListComponent implements OnInit {
         takeUntil(this.destroy$),
         filter(e => {
           if (!this.router.url.startsWith('/home')) return false;
-          const margin = this.windowRef.maxScrollTop - e.scrollTop;
-          if (e.isDown && margin >= 0 && margin < PAN_TO_GET_MORE_MARGIN) {
+          const margin = this.container.maxScrollTop - e.scrollTop;
+          if (e.isDown && margin < PAN_TO_GET_MORE_MARGIN) {
             return true;
           }
         })
@@ -130,7 +130,7 @@ export class DocListComponent implements OnInit {
   }
 
   private refresh() {
-    this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: true }));
+    this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: false }));
   }
 
   private getMore() {
@@ -139,24 +139,23 @@ export class DocListComponent implements OnInit {
 
   private panToRefresh() {
     let startY: number;
-    let refreshStarted;
+    let refreshStarted: boolean;
+
     this.container.touchStart$.pipe(takeUntil(this.destroy$)).subscribe(e => {
       startY = e.touches[0].pageY;
       refreshStarted = false;
     });
+
     this.container.touchMove$.pipe(takeUntil(this.destroy$)).subscribe(e => {
       const y = e.touches[0].pageY;
-      const scrollTop =
-        this.windowRef.window.pageXOffset === undefined
-          ? document.scrollingElement.scrollTop
-          : this.windowRef.window.pageYOffset;
-      if (scrollTop === 0 && !refreshStarted && y > startY + PAN_TO_REFRESH_MARGIN) {
+      const scrollTop = this.container.scrollTop;
+
+      if (scrollTop === 0 && !refreshStarted && y - startY > PAN_TO_REFRESH_MARGIN) {
         refreshStarted = true;
         this.refresh();
       }
       if (
-        this.windowRef.window.innerHeight + this.windowRef.window.pageYOffset >=
-          document.body.offsetHeight &&
+        scrollTop === this.container.maxScrollTop &&
         !refreshStarted &&
         startY - y > PAN_TO_GET_MORE_MARGIN
       ) {
