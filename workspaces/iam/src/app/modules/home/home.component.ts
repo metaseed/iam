@@ -38,7 +38,8 @@ export class HomeComponent {
   private destroy$ = new Subject();
 
   @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;
-  @ViewChild('scrollDocs') scrollDocs: ElementRef;
+  @ViewChild('docList', { read: ElementRef })
+  scrollDocs: ElementRef;
 
   defaultTimeoutHandler = (action: DocumentEffectsActionTypes, info?: string) => err => {
     console.warn(err.message + ' action:' + action + (info ? `--${info}` : ''));

@@ -30,12 +30,12 @@ $iam-purple: (
     A100: $dark-primary-text,
     A200: $light-primary-text,
     A400: $light-primary-text,
-    A700: $light-primary-text,
+    A700: $light-primary-text
   )
 );
-
-$primary-palette: mat-palette($iam-purple);
+// $primary-palette: mat-palette($iam-purple);
+// $accent-palette: mat-palette($iam-purple, A200, A100, A400);
+$primary-palette: mat-palette($mat-grey, 800, 500, 900);
 $accent-palette: mat-palette($iam-purple, A200, A100, A400);
-
 $iam-theme-light: mat-light-theme($primary-palette, $accent-palette);
 $iam-theme-dark: mat-dark-theme($primary-palette, $accent-palette);
