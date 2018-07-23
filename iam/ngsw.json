@@ -1,0 +1,121 @@
+{
+  "configVersion": 1,
+  "appData": {
+    "name": "i'm",
+    "description": "i'm writing your professional life"
+  },
+  "index": "/iam/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "urls": [
+        "/iam/1.222cb44d1ddc8534eb2e.js",
+        "/iam/2.a45601345237b8c1ab58.js",
+        "/iam/3.6c7495145cca218cf46d.js",
+        "/iam/4.008b50fbf9153c35d53d.js",
+        "/iam/6.fb56a4147f3c9b0b4704.js",
+        "/iam/common.e6922a8082cc544e29d2.js",
+        "/iam/favicon.ico",
+        "/iam/index.html",
+        "/iam/main.a2a1cfd290d6df4e739a.js",
+        "/iam/polyfills.be7f7750954709bb143c.js",
+        "/iam/runtime.abc4938accb9ae172bf3.js",
+        "/iam/styles.9042782ba3f485bb511c.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "urls": [
+        "/iam/assets/config.json",
+        "/iam/assets/icons/android-icon-192x192.png",
+        "/iam/assets/icons/apple-icon-180x180.png",
+        "/iam/assets/icons/favicon-16x16.png",
+        "/iam/assets/icons/favicon-32x32.png",
+        "/iam/assets/icons/favicon-96x96.png",
+        "/iam/assets/icons/ms-icon-310x310.png",
+        "/iam/assets/js/prettify.js",
+        "/iam/assets/markdown.md"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "fonts",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "urls": [],
+      "patterns": [
+        "https:\\/\\/fonts\\.googleapis\\.com\\/.*"
+      ]
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "api-freshness",
+      "patterns": [
+        "\\/timeline"
+      ],
+      "strategy": "freshness",
+      "maxSize": 100,
+      "maxAge": 259200000,
+      "timeoutMs": 60000,
+      "version": 1
+    },
+    {
+      "name": "api-performance",
+      "patterns": [
+        "\\/favorites"
+      ],
+      "strategy": "performance",
+      "maxSize": 100,
+      "maxAge": 259200000,
+      "timeoutMs": 60000,
+      "version": 1
+    }
+  ],
+  "hashTable": {
+    "/iam/1.222cb44d1ddc8534eb2e.js": "e7d20c1edb56501febd0a973920fbc3b78341ae0",
+    "/iam/2.a45601345237b8c1ab58.js": "4cc80d3e11937d3b83b03bf79902e056c1ab4e57",
+    "/iam/3.6c7495145cca218cf46d.js": "8a33bf1164632bb6cbeb522ac961998d67ec5b97",
+    "/iam/4.008b50fbf9153c35d53d.js": "ec03b8da368e3f6be174998f910cb3a640317d0b",
+    "/iam/6.fb56a4147f3c9b0b4704.js": "d44b4bb8a5b48952217d6a36bcbc7e4eef277647",
+    "/iam/assets/config.json": "4e15dd87bfc5f46b5ba3a078aa470ab5253773c3",
+    "/iam/assets/icons/android-icon-192x192.png": "2a4f79ce3e023275f8463130c6fdfbcb4d90eb85",
+    "/iam/assets/icons/apple-icon-180x180.png": "95c3f6f7e84edf4e4eaae457ca7281ee09e96da9",
+    "/iam/assets/icons/favicon-16x16.png": "0af74a7cd69409728f0ae6bf366509084be70b63",
+    "/iam/assets/icons/favicon-32x32.png": "91a82608d88962932b0dd3ea32f01275c5c9c4ce",
+    "/iam/assets/icons/favicon-96x96.png": "6d45ca36b0788329f6d5564e07b5ccd8001b7df1",
+    "/iam/assets/icons/ms-icon-310x310.png": "e26d0159771bf479b7a39f5c62bbb8228df0e4fa",
+    "/iam/assets/js/prettify.js": "4bd1e40c55b5514ebb1772bbb288c19d9ead6ca8",
+    "/iam/assets/markdown.md": "faeca483f797afd32badf4969dfc9f77704fb95e",
+    "/iam/common.e6922a8082cc544e29d2.js": "5f9e5aa198b47debcb5f806b1af687b633baf409",
+    "/iam/favicon.ico": "7fa29ec2415f03fba638317f83a61265d5050d9f",
+    "/iam/index.html": "7d730c75739117f35e6ca490e6ad400784ddfb4b",
+    "/iam/main.a2a1cfd290d6df4e739a.js": "b70432e8bd5c56146c7e5f23cf516db3937faf64",
+    "/iam/polyfills.be7f7750954709bb143c.js": "fadacf05121ab7486649e223760a29af680944b2",
+    "/iam/runtime.abc4938accb9ae172bf3.js": "5c14871bf6d2479842f10fb938046b827bbcf1f0",
+    "/iam/styles.9042782ba3f485bb511c.css": "fe3f96ee9ff1f86d84be15fade42feb1b01a4ef6"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^\\/]*\\.[^\\/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^\\/]*__[^\\/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^\\/]*__[^\\/]*\\/.*$"
+    }
+  ]
+}
