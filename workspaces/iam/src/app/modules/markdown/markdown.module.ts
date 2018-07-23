@@ -1,6 +1,5 @@
 import { NgModule, ModuleWithProviders } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { HttpModule } from "@angular/http";
 import { MarkdownComponent } from "./markdown.component";
 import { CommonModule } from "@angular/common";
 import { MaterialModule } from "../material/material.module";
@@ -21,7 +20,6 @@ import { MARKDOWN_SERVICE_TOKEN } from "./model/markdown.model";
     CommonModule,
     FormsModule,
     MaterialModule,
-    HttpModule,
     NgSpinKitModule,
     MarkdownRoutingModule,
     StoreModule.forFeature("markdown", fromState.reducers),
