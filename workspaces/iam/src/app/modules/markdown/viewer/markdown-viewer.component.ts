@@ -1,9 +1,4 @@
-import {
-  Component,
-  Input,
-  ElementRef,
-  Output,
-  EventEmitter} from '@angular/core';
+import { Component, Input, ElementRef, Output, EventEmitter } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
 import { MarkdownViewerService } from './services/markdown.viewer.service';
 import { Logger, DocumentRef } from 'core';
@@ -61,7 +56,7 @@ export class MarkdownViewerComponent {
           );
         }
       }),
-      switchMap(_ => this.elementsLoader.loadContainingCustomElements(this.nextViewContainer)),
+      switchMap(_ => this.elementsLoader.loadContainedCustomElements(this.nextViewContainer)),
       tap(_ => this.docReady.emit()),
       switchMap(_ => this.swapViews(addTitleAndToc)),
       tap(_ => this.docRendered.emit()),
@@ -116,7 +111,10 @@ export class MarkdownViewerComponent {
     (<any>document).iamMarkdownIsPureViewMode = true;
     this.hostElement = elementRef.nativeElement;
     this.docContents$
-      .pipe(switchMap(newDoc => this.render(newDoc)), takeUntil(this.onDestroy$))
+      .pipe(
+        switchMap(newDoc => this.render(newDoc)),
+        takeUntil(this.onDestroy$)
+      )
       .subscribe();
   }
   ngAfterViewInit() {

@@ -1,22 +1,19 @@
-import {
-  Inject,
-  Injectable,
-  NgModuleFactoryLoader,
-  NgModuleRef
-} from "@angular/core";
-import { ELEMENT_MODULE_PATHS_TOKEN } from "./element-registry";
-import { from as fromPromise, Observable, of } from "rxjs";
-import { createCustomElement } from "@angular/elements";
+import { Inject, Injectable, NgModuleFactoryLoader, NgModuleRef } from '@angular/core';
+import { ELEMENT_MODULE_PATHS_TOKEN } from './element-registry';
+import { from as fromPromise, Observable, of } from 'rxjs';
+import { createCustomElement } from '@angular/elements';
 
 @Injectable()
 export class ElementsLoader {
   /** Map of unregistered custom elements and their respective module paths to load. */
-  elementsToLoad: Map<string, string>;
+  private elementsToLoad: Map<string, string>;
+  /** Map of custom elements that are in the process of being loaded and registered. */
+  private elementsLoading = new Map<string, Promise<void>>();
 
   constructor(
     private moduleFactoryLoader: NgModuleFactoryLoader,
     private moduleRef: NgModuleRef<any>,
-    @Inject(ELEMENT_MODULE_PATHS_TOKEN) elementModulePaths
+    @Inject(ELEMENT_MODULE_PATHS_TOKEN) elementModulePaths: Map<string, string>
   ) {
     this.elementsToLoad = new Map(elementModulePaths);
   }
@@ -26,46 +23,60 @@ export class ElementsLoader {
    * the browser. Custom elements that are registered will be removed from the list of unregistered
    * elements so that they will not be queried in subsequent calls.
    */
-  loadContainingCustomElements(element: HTMLElement): Observable<void> {
-    const selectors: any[] = Array.from(this.elementsToLoad.keys()).filter(s =>
+  loadContainedCustomElements(element: HTMLElement): Observable<void> {
+    const unregisteredSelectors = Array.from(this.elementsToLoad.keys()).filter(s =>
       element.querySelector(s)
     );
 
-    if (!selectors.length) {
+    if (!unregisteredSelectors.length) {
       return of(undefined);
     }
 
     // Returns observable that completes when all discovered elements have been registered.
-    return fromPromise(
-      Promise.all(selectors.map(s => this.register(s))).then(
-        result => undefined
-      )
-    );
+    const allRegistered = Promise.all(unregisteredSelectors.map(s => this.loadCustomElement(s)));
+    return fromPromise(allRegistered.then(() => undefined));
   }
 
-  /** Registers the custom element defined on the WithCustomElement module factory. */
-  private register(selector: string) {
-    const modulePath = this.elementsToLoad.get(selector)!;
-    return this.moduleFactoryLoader.load(modulePath).then(moduleFactory => {
-      if (!this.elementsToLoad.has(selector)) {
-        return;
-      }
+  /** Loads and registers the custom element defined on the `WithCustomElement` module factory. */
+  loadCustomElement(selector: string): Promise<void> {
+    if (this.elementsLoading.has(selector)) {
+      // The custom element is in the process of being loaded and registered.
+      return this.elementsLoading.get(selector)!;
+    }
 
-      const moduleRef = moduleFactory.create(this.moduleRef.injector);
-      const CustomElementComponent = moduleRef.instance.customElementComponent;
-      const CustomElement = createCustomElement(CustomElementComponent, {
-        injector: moduleRef.injector
-      });
+    if (this.elementsToLoad.has(selector)) {
+      // Load and register the custom element (for the first time).
+      const modulePath = this.elementsToLoad.get(selector)!;
+      const loadedAndRegistered = this.moduleFactoryLoader
+        .load(modulePath)
+        .then(elementModuleFactory => {
+          const elementModuleRef = elementModuleFactory.create(this.moduleRef.injector);
+          const injector = elementModuleRef.injector;
+          const CustomElementComponent = elementModuleRef.instance.customElementComponent;
+          const CustomElement = createCustomElement(CustomElementComponent, { injector });
 
-      if (!customElements.get(selector)) {
-        // temp workaround for hmr, when customElement already defined. BUT, new CustomElement is not used!
-        // need to undefine and redefine to use new CustomElement
-        customElements!.define(selector, CustomElement);
-      }
+          customElements!.define(selector, CustomElement);
+          return customElements.whenDefined(selector);
+        })
+        .then(() => {
+          // The custom element has been successfully loaded and registered.
+          // Remove from `elementsLoading` and `elementsToLoad`.
+          this.elementsLoading.delete(selector);
+          this.elementsToLoad.delete(selector);
+        })
+        .catch(err => {
+          // The custom element has failed to load and register.
+          // Remove from `elementsLoading`.
+          // (Do not remove from `elementsToLoad` in case it was a temporary error.)
+          this.elementsLoading.delete(selector);
+          return Promise.reject(err);
+        });
 
-      this.elementsToLoad.delete(selector);
+      this.elementsLoading.set(selector, loadedAndRegistered);
+      return loadedAndRegistered;
+    }
 
-      return customElements.whenDefined(selector);
-    });
+    // The custom element has already been loaded and registered.
+    return Promise.resolve();
   }
 }

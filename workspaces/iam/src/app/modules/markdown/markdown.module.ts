@@ -22,7 +22,6 @@ import { MARKDOWN_SERVICE_TOKEN } from './model/markdown.model';
     MaterialModule,
     NgSpinKitModule,
     MarkdownRoutingModule,
-    MarkdownEditorModule,
     StoreModule.forFeature('markdown', fromState.reducers),
     SharedModule,
     MarkdownViewerModule.forChild(),

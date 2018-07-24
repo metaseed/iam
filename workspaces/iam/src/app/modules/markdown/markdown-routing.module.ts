@@ -17,8 +17,7 @@ const documentRoutes: Routes = [
     children: [
       {
         path: '',
-        component: MarkdownEditorComponent
-        // loadChildren: './editor/markdown-editor.module#MarkdownEditorModule'
+        loadChildren: 'app/modules/markdown/editor/markdown-editor.module#MarkdownEditorModule'
       }
     ]
   }
