@@ -13,7 +13,7 @@
     "deploy_doc": "ng build --prod --output-path ../../docs  --base-href /iam/ && cd ../.. && git add . && git commit -am \"deploy\" && git push && start http://metaseed.github.io/iam",
     "test": "ng test",
     "lint": "ng lint",
-    "ba": "ng build --prod --stats-json & npx webpack-bundle-analyzer dist/stats.json",
+    "ba": "ng build --prod --named-chunks --stats-json & npx webpack-bundle-analyzer dist/iam/stats.json",
     "e2e": "ng e2e"
   },
   "engines": {

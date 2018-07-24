@@ -27,9 +27,6 @@ export class MarkdownViewerComponent {
   private void$ = of<void>(undefined);
   private hostElement: HTMLElement;
   private docContents$ = new EventEmitter<string>();
-  // new Scrollable(this.hostElement).scroll$.subscribe(a => {
-  //   console.log(a);
-  // });
 
   @Input()
   set model(value: string) {
