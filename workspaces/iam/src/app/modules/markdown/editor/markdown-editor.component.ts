@@ -23,7 +23,8 @@ import { of } from 'rxjs';
 import {
   DocumentEffectsSave,
   selectCurrentDocumentIdState,
-  DocumentEffectsDelete
+  DocumentEffectsDelete,
+  selectCurrentDocumentState
 } from '../../home/state';
 import { NEW_DOC_ID } from '../../home/const';
 import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../model/markdown.model';
@@ -39,20 +40,19 @@ export class MarkdownEditorComponent {
   destroy$ = new Subject();
   DocumentMode = DocumentMode;
 
-  @Output() markdownChange = new EventEmitter<string>();
   @ViewChild(CodemirrorComponent) codeMirrorComponent: CodemirrorComponent;
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
 
-  _markdown: string;
-  @Input()
-  get markdown(): string {
-    return this._markdown;
-  }
-  set markdown(value) {
-    this._markdown = value;
-    this.markdownChange.emit(value);
-  }
+  markdown$ = this.store.select(selectCurrentDocumentState).pipe(
+    map(doc => {
+      if (doc && doc.content) {
+        return doc.content.content;
+      } else {
+        return '';
+      }
+    })
+  );
 
   constructor(
     private _elementRef: ElementRef,
@@ -66,6 +66,12 @@ export class MarkdownEditorComponent {
     this.editorService.editorLoaded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       setTimeout(() => (this.editorLoaded = true), 0);
     });
+    this.editorService.contentChanged$
+      .pipe(
+        takeUntil(this.destroy$),
+        map(v => v[0])
+      )
+      .subscribe(this.markdownService.editorContentChanged$ as Subject<string>);
 
     this.docMode$.pipe(takeUntil(this.destroy$)).subscribe(mode => {
       switch (mode) {

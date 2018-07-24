@@ -12,8 +12,5 @@ export class MarkdownService implements IMarkdownService {
 
   viewer$ = new ReplaySubject<IContainer>(1);
   editor$ = new ReplaySubject<IContainer>(1);
-
-  refresh(num, title, format) {
-    this.store.dispatch(new DocumentEffectsRead({ id: num, title, format }));
-  }
+  editorContentChanged$ = new ReplaySubject<string>(1);
 }

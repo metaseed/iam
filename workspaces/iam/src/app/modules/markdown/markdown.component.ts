@@ -17,11 +17,12 @@ import { Observable, Subject, merge } from 'rxjs';
 import {
   selectCurrentDocumentState,
   DocumentEffectsCreate,
-  SetCurrentDocumentId
+  SetCurrentDocumentId,
+  DocumentEffectsRead
 } from '../home/state';
 import { Document } from 'core';
 import { Utilities } from '../core/utils';
-import { MarkdownService } from './markdown.service';
+import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from './model/markdown.model';
 
 @Component({
   selector: 'ms-markdown',
@@ -31,7 +32,6 @@ import { MarkdownService } from './markdown.service';
 export class MarkdownComponent implements OnInit, OnDestroy {
   isFullScreen: boolean;
   fixEditButton = false;
-  @ViewChild(MarkdownEditorComponent) editor: MarkdownEditorComponent;
   @ViewChild(MarkdownViewerContainerComponent) viewer: MarkdownViewerContainerComponent;
   @ViewChild('viewerDiv') viewerDiv: ElementRef;
   @ViewChild('editorDiv') editorDiv: ElementRef;
@@ -69,7 +69,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   markdown$: Observable<string>;
 
   constructor(
-    public markdownSerive: MarkdownService,
+    @Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService,
     private _http: HttpClient,
     @Inject(APP_BASE_HREF) private baseHref,
     private changeDetecorRef: ChangeDetectorRef,
@@ -90,7 +90,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
           }
         })
       ),
-      <Observable<string>>this.editor.markdownChange
+      <Observable<string>>this.markdownService.editorContentChanged$
     ).pipe(share());
   }
 
@@ -99,9 +99,9 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     this.destroy$.next();
   }
 
-  canDeactivate(): Observable<boolean> | boolean {
-    return this.editor.canDeactivate();
-  }
+  // canDeactivate(): Observable<boolean> | boolean {
+  //   return this.editor.canDeactivate();
+  // }
 
   ngAfterViewChecked() {
     this.changeDetecorRef.detectChanges();
@@ -119,7 +119,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
             let title = params.get('title');
             let num = +params.get('id');
             let format = params.get('f');
-            this.markdownSerive.refresh(num, title, format);
+            this.store.dispatch(new DocumentEffectsRead({ id: num, title, format }));
           }
         }),
         take(1)

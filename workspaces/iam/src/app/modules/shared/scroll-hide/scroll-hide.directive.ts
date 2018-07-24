@@ -49,7 +49,7 @@ export class ScrollHideDirective implements OnDestroy {
       this.visibility = 'collapse';
     } else {
       this.visibility = 'visible';
-      this.setMargin('Set');
+      asyncScheduler.schedule(_ => this.setMargin('Set'));
     }
   }
 
@@ -70,7 +70,8 @@ export class ScrollHideDirective implements OnDestroy {
 
     this._containerItems.forEach(item => {
       const margin = item.marginTop;
-      if ((v !== 0 && item.container.scrollTop > this.height) || margin._margin === v) return;
+      if (!margin || (v !== 0 && item.container.scrollTop > this.height) || margin._margin === v)
+        return;
       margin._margin = v;
       (this._windowRef.nativeElement as Window).requestAnimationFrame(
         () => (margin.style.marginTop = v + 'px')

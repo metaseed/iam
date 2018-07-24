@@ -8,7 +8,7 @@ import {
   forwardRef,
   Inject
 } from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 // import 'codemirror/addon/dialog/dialog.css'
 
 import * as CodeMirror from 'codemirror';
@@ -49,7 +49,7 @@ import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../../model/markdown.m
     <textarea #host></textarea>
     `
 })
-export class CodemirrorComponent {
+export class CodemirrorComponent implements ControlValueAccessor {
   //    var map = {"Alt-Space": function(cm){...}}
   //    editor.addKeyMap(map);
   @Input() config;

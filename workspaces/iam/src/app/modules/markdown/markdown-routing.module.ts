@@ -1,18 +1,26 @@
-import { Route, Routes, RouterModule } from "@angular/router";
-import { MarkdownComponent } from "./markdown.component";
-import { NgModule } from "@angular/core";
-import { CanDeactivateGuard } from "./editor/services/can-deactive-guard.service";
+import { Route, Routes, RouterModule } from '@angular/router';
+import { MarkdownComponent } from './markdown.component';
+import { NgModule } from '@angular/core';
+import { CanDeactivateGuard } from './editor/services/can-deactive-guard.service';
+import { MarkdownEditorComponent } from './editor/markdown-editor.component';
 
 const documentRoutes: Routes = [
   {
-    path: "new",
+    path: 'new',
     component: MarkdownComponent,
     canDeactivate: [CanDeactivateGuard]
   },
   {
-    path: "",
+    path: '',
     component: MarkdownComponent,
-    canDeactivate: [CanDeactivateGuard]
+    canDeactivate: [CanDeactivateGuard],
+    children: [
+      {
+        path: '',
+        component: MarkdownEditorComponent
+        // loadChildren: './editor/markdown-editor.module#MarkdownEditorModule'
+      }
+    ]
   }
 ];
 
