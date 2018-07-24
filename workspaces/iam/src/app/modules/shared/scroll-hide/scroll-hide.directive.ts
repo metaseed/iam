@@ -1,7 +1,7 @@
 import { Directive, HostBinding, ElementRef, Input, OnDestroy } from '@angular/core';
 import { WindowRef, IContainer } from 'core';
-import { Subject, Observable, config, ReplaySubject } from 'rxjs';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { Subject, Observable, config, ReplaySubject, asyncScheduler } from 'rxjs';
+import { takeUntil, switchMap, subscribeOn } from 'rxjs/operators';
 
 const TRANSITION_DURATION = '.36s';
 
@@ -93,13 +93,13 @@ export class ScrollHideDirective implements OnDestroy {
     if (containerItems.length === 0) return;
 
     containerItems.forEach(item => {
-      const configContainer = container => {
-        const margin = item.marginTop || (container.nativeElement as HTMLElement);
-        margin.style.transitionDuration = TRANSITION_DURATION;
-        margin.style.transitionProperty = 'margin-top';
-        margin.style.transitionTimingFunction = 'ease-in-out';
-        margin.style.marginTop = this.height + 'px';
-        item.marginTop = margin;
+      const configContainer = (container: IContainer) => {
+        const marginElement = item.marginTop || (container.nativeElement as HTMLElement);
+        marginElement.style.transitionDuration = TRANSITION_DURATION;
+        marginElement.style.transitionProperty = 'margin-top';
+        marginElement.style.transitionTimingFunction = 'ease-in-out';
+        marginElement.style.marginTop = this.height + 'px';
+        item.marginTop = marginElement;
         item.marginTop._margin = this.height;
         item.container = container;
       };
@@ -111,9 +111,14 @@ export class ScrollHideDirective implements OnDestroy {
       }
 
       let container$ = item.container$;
-      container$.pipe(takeUntil(this._destroy$)).subscribe(container => {
-        configContainer(container);
-      });
+      container$
+        .pipe(
+          takeUntil(this._destroy$),
+          subscribeOn(asyncScheduler)
+        )
+        .subscribe(container => {
+          configContainer(container);
+        });
 
       let disableScroll = false;
 
