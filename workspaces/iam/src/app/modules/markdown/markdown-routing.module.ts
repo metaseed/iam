@@ -6,14 +6,18 @@ import { MarkdownEditorComponent } from './editor/markdown-editor.component';
 
 const documentRoutes: Routes = [
   {
-    path: 'new',
-    component: MarkdownComponent,
-    canDeactivate: [CanDeactivateGuard]
-  },
-  {
     path: '',
     component: MarkdownComponent,
-    canDeactivate: [CanDeactivateGuard],
+    children: [
+      {
+        path: '',
+        loadChildren: 'app/modules/markdown/editor/markdown-editor.module#MarkdownEditorModule'
+      }
+    ]
+  },
+  {
+    path: 'new',
+    component: MarkdownComponent,
     children: [
       {
         path: '',

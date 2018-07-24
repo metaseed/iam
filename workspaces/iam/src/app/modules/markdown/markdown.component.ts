@@ -99,9 +99,9 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     this.destroy$.next();
   }
 
-  // canDeactivate(): Observable<boolean> | boolean {
-  //   return this.editor.canDeactivate();
-  // }
+  canDeactivate(): Observable<boolean> | boolean {
+    return this.editor.canDeactivate();
+  }
 
   ngAfterViewChecked() {
     this.changeDetecorRef.detectChanges();
