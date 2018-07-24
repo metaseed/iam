@@ -48,7 +48,7 @@ import latex from 'markdown-it-latex';
 import { mergeConf, DocumentRef, base64Encode } from 'core';
 import { Router } from '@angular/router';
 //import latex from 'markdown-it-katex';
-import { Mermaid } from './markdown-it-plugins/mermaid';
+import { MermaidPlugin } from './markdown-it-plugins/mermaid.plugin';
 import { CopierService } from 'core';
 import { Subscription } from 'rxjs';
 import { getAddr } from '../utils/getUri';
@@ -72,7 +72,7 @@ export class MarkdownViewerService {
   mediaChangeSubscription: Subscription;
   private markdown: MarkdownIt.MarkdownIt;
   private containerPlugin: ContainerPlugin;
-  private mermaidPlugin: Mermaid;
+  private mermaidPlugin: MermaidPlugin;
   private showCodeLineNumber: boolean;
   constructor(
     private router: Router,
@@ -124,7 +124,7 @@ export class MarkdownViewerService {
       .use(latex)
       .use(imsize, { autofill: true });
 
-    this.mermaidPlugin = new Mermaid(this.markdown);
+    this.mermaidPlugin = new MermaidPlugin(this.markdown);
 
     this.containerPlugin = new ContainerPlugin(this.markdown, 'warning');
     // Beautify output of parser for html content

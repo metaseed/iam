@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/Common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Const } from '../model/const';
 import { UserInfo } from '../user-info';
 import { Requestable } from '../requestable';

@@ -1,4 +1,4 @@
-import { base64Decode } from "app/modules/core/utils";
+import { base64Decode } from "../utils";
 
 
 export class CopierService {

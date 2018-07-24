@@ -6,7 +6,7 @@ import {
   HttpResponseBase,
   HttpParams
 } from '@angular/common/http';
-import { UserInfo } from './index';
+import { UserInfo } from '.';
 import { Const } from './model/const';
 import { Media } from './media';
 import { Observable } from 'rxjs';

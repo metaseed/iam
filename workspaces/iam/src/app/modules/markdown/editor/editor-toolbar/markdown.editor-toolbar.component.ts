@@ -13,8 +13,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 import { Subscription, Subject, Observable, merge } from 'rxjs';
 import { DocService } from 'home';
-import { MarkdownEditorService } from '../../editor/index';
-import { CommandService, Command, DocumentRef, DocFormat, ScrollEvent } from '../../../core/index';
+import { MarkdownEditorService } from '..';
+import { CommandService, Command, DocumentRef, DocFormat, ScrollEvent } from 'core';
 import * as fromMarkdown from '../../state';
 import { DocumentMode } from '../../state/reducers/document';
 import { Store, select, State } from '@ngrx/store';

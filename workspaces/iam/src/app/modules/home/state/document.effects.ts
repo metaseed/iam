@@ -20,7 +20,7 @@ import {
   DocumentEffectsSave,
   selectIdRangeLowState,
   selectIdRangeHighState
-} from 'app/modules/home/state';
+} from '.';
 import { MatSnackBar } from '@angular/material';
 import { State } from './document.reducer';
 import { StoreCache } from 'core';

@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { Logger } from 'core';
 import { PrettyPrinter } from './pretty-printer.service';
-import { CopierService } from '../../../../../../../packages/copier.service';
+import { CopierService } from 'packages/copier.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { tap } from 'rxjs/operators';
 

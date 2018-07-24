@@ -18,13 +18,13 @@ import {
   monitorActionStatus,
   getActionStatus
 } from '../../home/state';
-import { DocumentMode } from './../state/reducers/document';
-import * as fromMarkdown from './../state';
+import { DocumentMode } from '../state/reducers/document';
+import * as fromMarkdown from '../state';
 
 import { takeUntil, map, observeOn, tap, share, switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../model/markdown.model';
-import { container } from '../../../../../../../node_modules/@angular/core/src/render3/instructions';
+import { container } from '@angular/core/src/render3/instructions';
 @Component({
   selector: 'markdown-viewer-container',
   templateUrl: './markdown-viewer-container.component.html',

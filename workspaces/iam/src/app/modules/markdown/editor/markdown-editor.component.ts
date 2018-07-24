@@ -8,14 +8,14 @@ import {
   HostBinding,
   ElementRef
 } from '@angular/core';
-import { MarkdownEditorService } from './index';
+import { MarkdownEditorService } from '.';
 import { EventEmitter } from '@angular/core';
 import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
-import * as fromMarkdown from './../state';
-import { DocumentMode } from './../state/reducers/document';
+import * as fromMarkdown from '../state';
+import { DocumentMode } from '../state/reducers/document';
 import { DocSaveCoordinateService } from './services/doc-save-coordinate-service';
 import { Observable, Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/Operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { Store, select, State as StoreState } from '@ngrx/store';
 import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
 import { MatDialog } from '@angular/material';

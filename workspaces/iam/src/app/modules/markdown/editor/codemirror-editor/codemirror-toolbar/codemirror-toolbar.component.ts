@@ -12,7 +12,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 import { Subscription, Subject } from 'rxjs';
 import { DocService } from 'home';
-import { MarkdownEditorService } from '../../../editor/index';
+import { MarkdownEditorService } from '../..';
 import { CommandService, Command, DocumentRef } from 'core';
 import { Store, select } from '@ngrx/store';
 import { State } from '../../../state';

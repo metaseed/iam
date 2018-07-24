@@ -1,4 +1,4 @@
-import { User } from '../model/user';
+import { User } from './user';
 
 export interface Milestone {
     url: string;

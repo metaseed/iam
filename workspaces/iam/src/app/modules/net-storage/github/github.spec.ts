@@ -1,4 +1,4 @@
-import { UserInfo, GithubStorage, Repository } from './index';
+import { UserInfo, GithubStorage, Repository } from '.';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { HttpClient } from '@angular/common/http';

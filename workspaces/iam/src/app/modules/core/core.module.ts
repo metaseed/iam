@@ -6,7 +6,7 @@ import { HotkeyModule } from '@metaseed/angular-hotkey';
 import { CommandService } from './services/command.service';
 import { UpdateService } from './services/update.service';
 import { Logger } from './services/logger.service';
-import { CopierService } from '../../../../packages/copier.service';
+import { CopierService } from 'packages/copier.service';
 import { DialogService } from './services/dialog/dialog.service';
 import { DocumentRef } from './dom/document-ref';
 import { ScrollService } from './services/scroll/scroll.service';
