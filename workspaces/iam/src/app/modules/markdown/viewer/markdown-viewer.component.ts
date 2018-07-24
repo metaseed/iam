@@ -22,7 +22,7 @@ export const NO_ANIMATIONS = 'no-animations';
 export class MarkdownViewerComponent {
   static animationsEnabled = false;
   static config_addTocByDefault = false;
-  lozad = lozad();
+  lozad: any;
 
   private void$ = of<void>(undefined);
   private hostElement: HTMLElement;

@@ -1,4 +1,4 @@
-import { DocumentActions, DocumentActionTypes } from "../actions/document";
+import { DocumentActions, DocumentActionTypes } from '../actions/document';
 
 export enum DocumentMode {
   View,
@@ -16,9 +16,9 @@ const initialState: State = {
 };
 
 export function reducer(state = initialState, action: DocumentActions): State {
-  (<any>document).iamMarkdownIsPureViewMode = false;
   switch (action.type) {
     case DocumentActionTypes.EditMode: {
+      (<any>document).iamMarkdownIsPureViewMode = false;
       return {
         ...state,
         mode: DocumentMode.Edit
