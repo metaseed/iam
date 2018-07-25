@@ -2,7 +2,7 @@ import { Component, Input, ElementRef, Output, EventEmitter } from '@angular/cor
 import { Title, Meta } from '@angular/platform-browser';
 import { MarkdownViewerService } from './services/markdown.viewer.service';
 import { Logger, DocumentRef } from 'core';
-import lozad from '../../../../../packages/lazy-load';
+import lozad from 'packages/lazy-load';
 import { TocComponent } from './elements/toc/toc.component';
 import { of, Observable, timer } from 'rxjs';
 import { TocService } from './services/toc.service';
@@ -113,10 +113,8 @@ export class MarkdownViewerComponent {
         takeUntil(this.onDestroy$)
       )
       .subscribe();
-  }
-  ngAfterViewInit() {
     var container = this.hostElement;
-    this.lozad = (<any>lozad)('img[data-src]', { container });
+    this.lozad = lozad('img[data-src]', { container });
   }
 
   ngOnDestroy() {
