@@ -1,4 +1,2 @@
 <iam-doc-search [scrollHide]="[{container:docList.container}]"></iam-doc-search>
-<sk-wave [isRunning]="true"></sk-wave>
 <doc-list #docList [documents]="docs$ | async"></doc-list>
-<sk-wave [isRunning]="!(isLoadMoreDone$ | async)"></sk-wave>

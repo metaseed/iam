@@ -45,49 +45,6 @@ export class HomeComponent {
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
-  private loadFromStoreDirectly$ = new Subject<boolean>();
-  isLoadDone$ = merge(
-    this.loadFromStoreDirectly$,
-    monitorActionStatus(
-      DocumentEffectsActionTypes.ReadBulkDocMeta,
-      this.store,
-      NET_COMMU_TIMEOUT,
-      this.defaultTimeoutHandler(DocumentEffectsActionTypes.ReadBulkDocMeta)
-    ).pipe(
-      takeUntil(this.destroy$),
-      map(v => {
-        return (
-          v.status === ActionStatus.Fail ||
-          v.status === ActionStatus.Succession ||
-          v.status === ActionStatus.Complete ||
-          v.status === ActionStatus.Timeout
-        );
-      })
-    )
-  ).pipe(observeOn(asyncScheduler));
-
-  isLoadMoreDone$ = from([
-    of(true),
-    monitorActionStatus(
-      DocumentEffectsActionTypes.ReadBulkDocMeta,
-      this.store,
-      NET_COMMU_TIMEOUT,
-      this.defaultTimeoutHandler(DocumentEffectsActionTypes.ReadBulkDocMeta, 'load-more')
-    ).pipe(
-      takeUntil(this.destroy$),
-      filter(a => a.context && a.context.isLoadMore === true),
-      observeOn(asyncScheduler),
-      map(v => {
-        return (
-          v.status === ActionStatus.Fail ||
-          v.status === ActionStatus.Succession ||
-          v.status === ActionStatus.Complete ||
-          v.status === ActionStatus.Timeout
-        );
-      })
-    )
-  ]).pipe(switchIfEmit());
-
   private initDocs$ = this.store.pipe(select(selectDocumentsState));
   docs$: Observable<Document[]>;
   ActionStatus = ActionStatus;
@@ -141,8 +98,6 @@ export class HomeComponent {
           if (!isSearching)
             // 0: initial value ; 1: nav back from url doc show;
             this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: true }));
-        } else {
-          this.loadFromStoreDirectly$.next(true);
         }
       })
     );

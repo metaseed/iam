@@ -16,7 +16,7 @@ import {
   ContainerRef
 } from 'core';
 import { MatDialog, MatSnackBar } from '@angular/material';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import {
   State,
   DocumentEffectsReadBulkDocMeta,
@@ -24,12 +24,14 @@ import {
   monitorActionStatus,
   DocumentEffectsActionTypes,
   ActionStatus,
-  DocumentActionStatus
+  DocumentActionStatus,
+  selectDocumentsState
 } from '../state';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
-import { Subject, ReplaySubject } from 'rxjs';
-import { takeUntil, filter, map } from 'rxjs/operators';
+import { Subject, ReplaySubject, merge, asyncScheduler, from, of } from 'rxjs';
+import { takeUntil, filter, map, observeOn } from 'rxjs/operators';
 import { Router, RouterState, NavigationExtras } from '@angular/router';
+import { switchIfEmit } from 'core';
 
 @Component({
   selector: 'doc-list',
@@ -70,6 +72,48 @@ export class DocListComponent implements OnInit {
         return false;
       })
     );
+
+  isLoadDone$ = merge(
+    this.store.pipe(select(selectDocumentsState)),
+    monitorActionStatus(
+      DocumentEffectsActionTypes.ReadBulkDocMeta,
+      this.store,
+      NET_COMMU_TIMEOUT,
+      this.defaultTimeoutHandler(DocumentEffectsActionTypes.ReadBulkDocMeta)
+    ).pipe(
+      takeUntil(this.destroy$),
+      map(v => {
+        return (
+          v.status === ActionStatus.Fail ||
+          v.status === ActionStatus.Succession ||
+          v.status === ActionStatus.Complete ||
+          v.status === ActionStatus.Timeout
+        );
+      })
+    )
+  ).pipe(observeOn(asyncScheduler));
+
+  isLoadMoreDone$ = from([
+    of(true),
+    monitorActionStatus(
+      DocumentEffectsActionTypes.ReadBulkDocMeta,
+      this.store,
+      NET_COMMU_TIMEOUT,
+      this.defaultTimeoutHandler(DocumentEffectsActionTypes.ReadBulkDocMeta, 'load-more')
+    ).pipe(
+      takeUntil(this.destroy$),
+      filter(a => a.context && a.context.isLoadMore === true),
+      observeOn(asyncScheduler),
+      map(v => {
+        return (
+          v.status === ActionStatus.Fail ||
+          v.status === ActionStatus.Succession ||
+          v.status === ActionStatus.Complete ||
+          v.status === ActionStatus.Timeout
+        );
+      })
+    )
+  ]).pipe(switchIfEmit());
 
   public container: IContainer;
   constructor(
