@@ -29,7 +29,7 @@ import {
 } from '../state';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
 import { Subject, ReplaySubject, merge, asyncScheduler, from, of } from 'rxjs';
-import { takeUntil, filter, map, observeOn } from 'rxjs/operators';
+import { takeUntil, filter, map, observeOn, tap } from 'rxjs/operators';
 import { Router, RouterState, NavigationExtras } from '@angular/router';
 import { switchIfEmit } from 'core';
 
@@ -102,7 +102,7 @@ export class DocListComponent implements OnInit {
       this.defaultTimeoutHandler(DocumentEffectsActionTypes.ReadBulkDocMeta, 'load-more')
     ).pipe(
       takeUntil(this.destroy$),
-      filter(a => a.context && a.context.isLoadMore === true),
+      filter(a => a.action.payload.isBelowRange === true),
       observeOn(asyncScheduler),
       map(v => {
         return (
