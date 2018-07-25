@@ -1,11 +1,11 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { Document, IContainer, ContainerRef } from 'core';
+import { Document } from 'core';
 import { DocService } from './services/doc.service';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { DocSearchService } from './services/doc-search.service';
 import { State } from './state/state-selectors';
 import { Store, select } from '@ngrx/store';
-import { Observable, of, from, Subject, merge, asyncScheduler, ReplaySubject } from 'rxjs';
+import { Observable, of, from, Subject, merge, asyncScheduler } from 'rxjs';
 import {
   map,
   filter,
@@ -27,7 +27,6 @@ import {
 import { DocSearchComponent } from './doc-search/doc-search.component';
 import { switchIfEmit } from '../core/operators/switchIfEmit';
 import { NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT } from 'core';
-import { Container } from '@angular/compiler/src/i18n/i18n_ast';
 
 @Component({
   selector: 'home',
