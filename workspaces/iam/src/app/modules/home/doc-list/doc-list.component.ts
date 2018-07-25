@@ -29,9 +29,11 @@ import {
 } from '../state';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
 import { Subject, ReplaySubject, merge, asyncScheduler, from, of } from 'rxjs';
-import { takeUntil, filter, map, observeOn, tap } from 'rxjs/operators';
+import { takeUntil, filter, map, observeOn, tap, auditTime } from 'rxjs/operators';
 import { Router, RouterState, NavigationExtras } from '@angular/router';
 import { switchIfEmit } from 'core';
+
+const REFRESH_AUDITE_TIME = 3000;
 
 @Component({
   selector: 'doc-list',
@@ -82,6 +84,7 @@ export class DocListComponent implements OnInit {
       this.defaultTimeoutHandler(DocumentEffectsActionTypes.ReadBulkDocMeta)
     ).pipe(
       takeUntil(this.destroy$),
+      filter(a => a.action.payload.isBelowRange === false),
       map(v => {
         return (
           v.status === ActionStatus.Fail ||
@@ -93,27 +96,24 @@ export class DocListComponent implements OnInit {
     )
   ).pipe(observeOn(asyncScheduler));
 
-  isLoadMoreDone$ = from([
-    of(true),
-    monitorActionStatus(
-      DocumentEffectsActionTypes.ReadBulkDocMeta,
-      this.store,
-      NET_COMMU_TIMEOUT,
-      this.defaultTimeoutHandler(DocumentEffectsActionTypes.ReadBulkDocMeta, 'load-more')
-    ).pipe(
-      takeUntil(this.destroy$),
-      filter(a => a.action.payload.isBelowRange === true),
-      observeOn(asyncScheduler),
-      map(v => {
-        return (
-          v.status === ActionStatus.Fail ||
-          v.status === ActionStatus.Succession ||
-          v.status === ActionStatus.Complete ||
-          v.status === ActionStatus.Timeout
-        );
-      })
-    )
-  ]).pipe(switchIfEmit());
+  isLoadMoreDone$ = monitorActionStatus(
+    DocumentEffectsActionTypes.ReadBulkDocMeta,
+    this.store,
+    NET_COMMU_TIMEOUT,
+    this.defaultTimeoutHandler(DocumentEffectsActionTypes.ReadBulkDocMeta, 'load-more')
+  ).pipe(
+    takeUntil(this.destroy$),
+    filter(a => a.action.payload.isBelowRange === true),
+    observeOn(asyncScheduler),
+    map(v => {
+      return (
+        v.status === ActionStatus.Fail ||
+        v.status === ActionStatus.Succession ||
+        v.status === ActionStatus.Complete ||
+        v.status === ActionStatus.Timeout
+      );
+    })
+  );
 
   public container: IContainer;
   constructor(
@@ -144,7 +144,8 @@ export class DocListComponent implements OnInit {
           if (e.isDown && margin < PAN_TO_GET_MORE_MARGIN) {
             return true;
           }
-        })
+        }),
+        auditTime(REFRESH_AUDITE_TIME)
       )
       .subscribe(e => {
         this.getMore();
@@ -190,22 +191,27 @@ export class DocListComponent implements OnInit {
       refreshStarted = false;
     });
 
-    this.container.touchMove$.pipe(takeUntil(this.destroy$)).subscribe(e => {
-      const y = e.touches[0].pageY;
-      const scrollTop = this.container.scrollTop;
+    this.container.touchMove$
+      .pipe(
+        takeUntil(this.destroy$),
+        auditTime(REFRESH_AUDITE_TIME)
+      )
+      .subscribe(e => {
+        const y = e.touches[0].pageY;
+        const scrollTop = this.container.scrollTop;
 
-      if (scrollTop === 0 && !refreshStarted && y - startY > PAN_TO_REFRESH_MARGIN) {
-        refreshStarted = true;
-        this.refresh();
-      }
-      if (
-        scrollTop === this.container.maxScrollTop &&
-        !refreshStarted &&
-        startY - y > PAN_TO_GET_MORE_MARGIN
-      ) {
-        this.getMore();
-        refreshStarted = true;
-      }
-    });
+        if (scrollTop === 0 && !refreshStarted && y - startY > PAN_TO_REFRESH_MARGIN) {
+          refreshStarted = true;
+          this.refresh();
+        }
+        if (
+          scrollTop === this.container.maxScrollTop &&
+          !refreshStarted &&
+          startY - y > PAN_TO_GET_MORE_MARGIN
+        ) {
+          this.getMore();
+          refreshStarted = true;
+        }
+      });
   }
 }
