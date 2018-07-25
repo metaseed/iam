@@ -5,3 +5,5 @@
   </ng-container>
 </div>
 <sk-wave style="margin-bottom: 60px;display: block;" [isRunning]="!(isLoadMoreDone$ | async)"></sk-wave>
+<button mat-button style="display: block;margin: auto;" *ngIf="elementRef?.nativeElement.scrollHeight===elementRef?.nativeElement.clientHeight"
+  (click)="getMore()">get more...</button>

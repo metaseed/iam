@@ -117,13 +117,13 @@ export class DocListComponent implements OnInit {
 
   public container: IContainer;
   constructor(
-    private _elementRef: ElementRef,
+    public elementRef: ElementRef,
     private store: Store<State>,
     private router: Router,
     private windowRef: WindowRef,
     private snackBar: MatSnackBar
   ) {
-    this.container = new ContainerRef(_elementRef.nativeElement);
+    this.container = new ContainerRef(elementRef.nativeElement);
   }
 
   @Input()
