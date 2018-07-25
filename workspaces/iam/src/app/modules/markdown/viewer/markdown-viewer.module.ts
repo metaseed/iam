@@ -9,7 +9,7 @@ import { ViewerToolbarComponent } from './viewer-toolbar/viewer-toolbar.componen
 import { MaterialModule } from 'material';
 import { RouterModule } from '@angular/router';
 import { MarkdownViewerContainerComponent } from './markdown-viewer-container.component';
-import { SpinnerModule } from 'ng-spin-kit';
+import { SpinnerModule } from '@metaseed/spinner';
 import { DocumentRef } from 'core';
 import { ElementsModule } from './elements/elements.module';
 import { TocService } from './services/toc.service';
@@ -17,7 +17,14 @@ import { Utilities } from '../../core/utils';
 
 @NgModule({
   declarations: [MarkdownViewerComponent, ViewerToolbarComponent, MarkdownViewerContainerComponent],
-  imports: [CommonModule, SpinnerModule, SharedModule, MaterialModule, RouterModule, ElementsModule],
+  imports: [
+    CommonModule,
+    SpinnerModule,
+    SharedModule,
+    MaterialModule,
+    RouterModule,
+    ElementsModule
+  ],
   exports: [MarkdownViewerComponent, ViewerToolbarComponent, MarkdownViewerContainerComponent],
   providers: [TocService]
 })

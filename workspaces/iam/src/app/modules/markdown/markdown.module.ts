@@ -7,7 +7,7 @@ import { MarkdownEditorModule } from './editor/markdown-editor.module';
 import { MarkdownViewerModule } from './viewer';
 import { MarkdownConfig } from './viewer/markdown.config';
 import { MarkdownRoutingModule } from './markdown-routing.module';
-import { SpinnerModule } from 'ng-spin-kit';
+import { SpinnerModule } from '@metaseed/spinner';
 import { StoreModule } from '@ngrx/store';
 import * as fromState from './state';
 import { SharedModule } from 'shared';

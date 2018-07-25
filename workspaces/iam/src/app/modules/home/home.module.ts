@@ -8,7 +8,7 @@ import { NewDocComponent } from './new-doc/new-doc.component';
 import { DocListComponent } from './doc-list/doc-list.component';
 import { DocService } from './services/doc.service';
 import { MaterialModule } from '../material/material.module';
-import { SpinnerModule } from 'ng-spin-kit';
+import { SpinnerModule } from '@metaseed/spinner';
 import { DeleteAlertDialog } from './doc-list/dialog.component';
 import { DocSearchComponent } from './doc-search/doc-search.component';
 import { DocSearchService } from './services/doc-search.service';
