@@ -11,22 +11,22 @@ import { base64Encode, base64Decode } from 'core';
 import { map, flatMap, tap, catchError } from 'rxjs/operators';
 @Injectable()
 export class Repository extends Requestable {
-  remoteRepo: any;
+  // remoteRepo: any;
   public fullName: string;
 
-  constructor(http: HttpClient, userInfo: UserInfo, private _name: string, private githubApi) {
+  constructor(http: HttpClient, userInfo: UserInfo, private _name: string) {
     super(http, userInfo);
     this.fullName = `${this._userInfo.name}/${this._name}`;
-    this.remoteRepo = githubApi.getRepo(userInfo.name, _name);
+    // this.remoteRepo = githubApi.getRepo(userInfo.name, _name);
   }
 
   get issue() {
     return new Issue(this._http, this._name, this._userInfo);
   }
 
-  renameFile(oldName: string, newName: string) {
-    return from(this.remoteRepo.move('master', oldName, newName));
-  }
+  // renameFile(oldName: string, newName: string) {
+  //   return from(this.remoteRepo.move('master', oldName, newName));
+  // }
 
   // https://developer.github.com/v3/repos/contents/
   file(path: string, contents: string, branch: string = 'master') {

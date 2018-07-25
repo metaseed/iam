@@ -16,13 +16,12 @@ import { Const } from './model/const';
 import { UserInfo } from './user-info';
 import { Repository } from './repository';
 import { Requestable } from './requestable';
-import * as GitHub from 'github-api';
 import { GITHUB_AUTHENTICATION } from './tokens';
 import { ConfigService, ConfigModel } from 'core';
 
 @Injectable()
 export class GithubStorage extends Requestable {
-  gh: GitHub;
+  // gh: GitHub;
   private _repo: Observable<Repository>;
   constructor(
     http: HttpClient,
@@ -30,13 +29,13 @@ export class GithubStorage extends Requestable {
     private configService: ConfigService
   ) {
     super(http, userInfo);
-    this.gh = new GitHub({
-      username: userInfo.name,
-      password: userInfo.password
-      /* also acceptable:
-               token: 'MY_OAUTH_TOKEN'
-             */
-    });
+    // this.gh = new GitHub({
+    //   username: userInfo.name,
+    //   password: userInfo.password
+    //   /* also acceptable:
+    //            token: 'MY_OAUTH_TOKEN'
+    //          */
+    // });
   }
 
   init(): Observable<Repository> {
@@ -69,19 +68,19 @@ export class GithubStorage extends Requestable {
                     );
                   })
                 )
-                .subscribe(o =>replayObservable.next(o),err=>replayObservable.error(err));
+                .subscribe(o => replayObservable.next(o), err => replayObservable.error(err));
             }
             return replayObservable.subscribe(this);
           };
         })()
       )
-      .pipe(take<Repository>(1)/*solve never complet problem of replay subject*/));
+      .pipe(take<Repository>(1) /*solve never complet problem of replay subject*/));
   }
 
   private getRepos(user: string, name: string): Observable<Repository> {
     return this.request('GET', `/repos/${user}/${name}`, null).pipe(
       map(resp => {
-        return new Repository(this._http, this._userInfo, name, this.gh);
+        return new Repository(this._http, this._userInfo, name);
       }),
       catchError(error => {
         return throwError({
@@ -104,7 +103,7 @@ export class GithubStorage extends Requestable {
       has_wiki: true
     }).pipe(
       map(value => {
-        return new Repository(this._http, this._userInfo, name, this.gh);
+        return new Repository(this._http, this._userInfo, name);
       })
     );
   }
