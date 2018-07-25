@@ -1,6 +1,6 @@
 <ms-viewer-toolbar [scrollHide]="[{container$:markdownService.viewer$}]" [hide]="(docMode$ | async)!==DocumentMode.View">
 </ms-viewer-toolbar>
-<ms-reading-position-indicator *ngIf="(container?.scrollDown$ | async)?.isDown" [element]="viewContainerDiv"></ms-reading-position-indicator>
+<ms-reading-position-indicator *ngIf="(scrollDown$|async)?.isDown" [element]="viewContainerDiv"></ms-reading-position-indicator>
 <sk-three-bounce [isRunning]="!(isLoadDone$|async)"></sk-three-bounce>
 
 <div style="position:relative;height:100%;">

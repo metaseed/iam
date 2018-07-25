@@ -170,6 +170,7 @@ export class ScrollHideDirective implements OnDestroy {
         )
         .subscribe(e => {
           if (this._hide) return;
+          // e.preventDefault();
           disableScroll = true;
           disableAnimation();
           lastY = e.touches[0].clientY;
@@ -182,7 +183,7 @@ export class ScrollHideDirective implements OnDestroy {
         )
         .subscribe(e => {
           if (this._hide) return;
-
+          // e.preventDefault();
           if (lastY - startY) {
             // isdown
             if (this.top < this.height_half_minus) {
@@ -220,7 +221,7 @@ export class ScrollHideDirective implements OnDestroy {
 
           const top = this.top + delt;
           this.top = Math.min(Math.max(this.height_minus, top), 0);
-
+          // console.log(e, top);
           this._containerItems.forEach(item => {
             if (item.container.scrollTop > this.height) return;
             const margin = item.marginTop;

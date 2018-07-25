@@ -24,7 +24,6 @@ import * as fromMarkdown from '../state';
 import { takeUntil, map, observeOn, tap, share, switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../model/markdown.model';
-import { container } from '@angular/core/src/render3/instructions';
 @Component({
   selector: 'markdown-viewer-container',
   templateUrl: './markdown-viewer-container.component.html',
@@ -70,10 +69,12 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
   ) {}
 
   container: IContainer;
+  scrollDown$: Observable<ScrollEvent>;
 
   ngAfterViewInit() {
     let me = this;
     this.container = new ContainerRef(this.viewerContainerDiv.nativeElement);
+    this.scrollDown$ = this.container.scrollDown$;
     (this.markdownService.viewer$ as Subject<IContainer>).next(this.container);
 
     let v_per_last = 0;
