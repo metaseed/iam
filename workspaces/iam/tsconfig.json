@@ -10,17 +10,43 @@
     "target": "es5",
     "baseUrl": "./src",
     "paths": {
-      "packages/*": ["../packages/*"],
-      "net-storage": ["app/modules/net-storage"],
-      "database": ["app/modules/database"],
-      "home": ["app/modules/home"],
-      "markdown": ["app/modules/markdown"],
-      "core": ["app/modules/core"],
-      "shared": ["app/modules/shared"],
-      "material": ["app/modules/material"]
+      "packages/*": [
+        "../packages/*"
+      ],
+      "net-storage": [
+        "app/modules/net-storage"
+      ],
+      "database": [
+        "app/modules/database"
+      ],
+      "home": [
+        "app/modules/home"
+      ],
+      "markdown": [
+        "app/modules/markdown"
+      ],
+      "core": [
+        "app/modules/core"
+      ],
+      "shared": [
+        "app/modules/shared"
+      ],
+      "material": [
+        "app/modules/material"
+      ],
+      "spinner": [
+        "dist/spinner"
+      ],
+      "spinner/*": [
+        "dist/spinner/*"
+      ]
     },
-
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["es2017", "dom"]
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2017",
+      "dom"
+    ]
   }
 }

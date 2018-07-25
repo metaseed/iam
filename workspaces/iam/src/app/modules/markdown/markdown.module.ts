@@ -7,7 +7,7 @@ import { MarkdownEditorModule } from './editor/markdown-editor.module';
 import { MarkdownViewerModule } from './viewer';
 import { MarkdownConfig } from './viewer/markdown.config';
 import { MarkdownRoutingModule } from './markdown-routing.module';
-import { NgSpinKitModule } from 'ng-spin-kit';
+import { SpinnerModule } from 'ng-spin-kit';
 import { StoreModule } from '@ngrx/store';
 import * as fromState from './state';
 import { SharedModule } from 'shared';
@@ -20,7 +20,7 @@ import { MARKDOWN_SERVICE_TOKEN } from './model/markdown.model';
     CommonModule,
     FormsModule,
     MaterialModule,
-    NgSpinKitModule,
+    SpinnerModule,
     MarkdownRoutingModule,
     StoreModule.forFeature('markdown', fromState.reducers),
     SharedModule,

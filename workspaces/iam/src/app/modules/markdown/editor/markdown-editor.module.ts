@@ -5,7 +5,7 @@ import { MarkdownEditorService } from './services/markdown.editor.service';
 import { MarkdownEditorRoutingModule } from './markdown-editor-routing.module';
 import { MarkdownEditorComponent } from './markdown-editor.component';
 import { FormsModule } from '@angular/forms';
-import { NgSpinKitModule } from 'ng-spin-kit';
+import { SpinnerModule } from 'ng-spin-kit';
 import { MaterialModule } from '../../material/material.module';
 import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
 import { CodemirrorToolbarComponent } from './codemirror-editor/codemirror-toolbar/codemirror-toolbar.component';
@@ -26,7 +26,7 @@ import { SharedModule } from 'shared';
     SharedModule,
     CommonModule,
     FormsModule,
-    NgSpinKitModule,
+    SpinnerModule,
     MarkdownEditorRoutingModule,
     MaterialModule
   ],

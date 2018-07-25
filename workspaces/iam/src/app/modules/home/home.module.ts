@@ -8,7 +8,7 @@ import { NewDocComponent } from './new-doc/new-doc.component';
 import { DocListComponent } from './doc-list/doc-list.component';
 import { DocService } from './services/doc.service';
 import { MaterialModule } from '../material/material.module';
-import { NgSpinKitModule } from 'ng-spin-kit';
+import { SpinnerModule } from 'ng-spin-kit';
 import { DeleteAlertDialog } from './doc-list/dialog.component';
 import { DocSearchComponent } from './doc-search/doc-search.component';
 import { DocSearchService } from './services/doc-search.service';
@@ -39,7 +39,7 @@ const routes: Routes = [
     FormsModule,
     ScrollingModule,
     MaterialModule,
-    NgSpinKitModule,
+    SpinnerModule,
     GithubStorageModule,
     DatabaseModule,
     StoreModule.forFeature<fromState.DocsState>('docs', fromState.reducers),

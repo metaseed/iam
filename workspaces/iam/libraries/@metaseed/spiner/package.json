@@ -1,0 +1,22 @@
+{
+  "name": "@metaseed/spinner",
+  "version": "0.0.1",
+  "description": "spiners angular - https://github.com/metaseed/iam/tree/master/workspaces/iam/projects/spinner",
+  "peerDependencies": {
+    "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
+    "@angular/core": "^6.0.0-rc.0 || ^6.0.0"
+  },
+  "main": "bundles/metaseed-spinner.umd.js",
+  "module": "fesm5/metaseed-spinner.js",
+  "es2015": "fesm2015/metaseed-spinner.js",
+  "esm5": "esm5/metaseed-spinner.js",
+  "esm2015": "esm2015/metaseed-spinner.js",
+  "fesm5": "fesm5/metaseed-spinner.js",
+  "fesm2015": "fesm2015/metaseed-spinner.js",
+  "typings": "metaseed-spinner.d.ts",
+  "metadata": "metaseed-spinner.metadata.json",
+  "sideEffects": false,
+  "dependencies": {
+    "tslib": "^1.9.0"
+  }
+}

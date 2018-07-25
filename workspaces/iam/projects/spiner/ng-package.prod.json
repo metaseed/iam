@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../libraries/@metaseed/angular-hotkey",
+  "dest": "../../libraries/@metaseed/spinner",
   "lib": {
     "entryFile": "src/public_api.ts"
   }
