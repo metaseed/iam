@@ -31,6 +31,8 @@ import { KeyMap } from '../editor-toolbar/keymap';
 import { Subject } from 'rxjs';
 import { ContainerRef, ScrollEvent, IContainer } from 'core';
 import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../../model/markdown.model';
+import { Utilities } from 'core';
+import { takeUntil } from 'rxjs/operators';
 /**
  * Usage : <codemirror [(ngModel)]="markdown" [config]="{...}"></codemirror>
  */
@@ -62,6 +64,7 @@ export class CodemirrorComponent implements ControlValueAccessor {
   @Output() instance = null;
 
   _value = '';
+  private showLineNumber;
 
   /**
    * Constructor
@@ -69,16 +72,20 @@ export class CodemirrorComponent implements ControlValueAccessor {
   constructor(
     private service: MarkdownEditorService,
     @Inject(MARKDOWN_SERVICE_TOKEN) private markdownService: IMarkdownService,
-    private store: Store<markdown.State>
-  ) {}
-
+    private store: Store<markdown.State>,
+    private utils: Utilities
+  ) {
+    this.utils.isScreenWide$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(wide => (this.showLineNumber = wide));
+  }
   ngOnInit() {
     this.config = this.config || {
       mode: {
         name: 'gfm',
         highlightFormatting: true
       },
-      lineNumbers: true,
+      lineNumbers: this.showLineNumber,
       // scrollbarStyle: 'simple',
       lineWrapping: true,
       extraKeys: {

@@ -18,8 +18,9 @@ import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-makefile';
 import 'prismjs/components/prism-markdown';
-import 'prismjs/components/prism-php';
+// import 'prismjs/components/prism-php';// have problem
 import 'prismjs/components/prism-powershell';
+import 'prismjs/components/prism-lisp';
 import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-sass';
 import 'prismjs/components/prism-sql';
@@ -80,7 +81,7 @@ export class MarkdownViewerService {
     private utils: Utilities,
     @Optional() config?: MarkdownConfig
   ) {
-    this.utils.isScreenWide$.pipe(take(1)).subscribe(wide => (this.showCodeLineNumber = wide));
+    this.utils.isScreenWide$.subscribe(wide => (this.showCodeLineNumber = wide));
     config = config || mergeConf(this.defaultConfig, config);
 
     if (!config.markdownIt.highlight) {
@@ -161,7 +162,9 @@ export class MarkdownViewerService {
         onclick="document.copier.copyText(this.attributes.originalstr.value,true)">
         <span aria-hidden="true">content_copy</span>
       </button>${preNode.outerHTML}</div>`;
-      } catch (__) {}
+      } catch (e) {
+        console.error(e);
+      }
     }
     return `<pre class="highlight"><code>${this.markdown.utils.escapeHtml(str)} </code></pre>`;
   };
