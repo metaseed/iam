@@ -1,15 +1,5 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  Output,
-  ViewChild,
-  Inject,
-  HostBinding,
-  ElementRef
-} from '@angular/core';
+import { Component, ViewChild, Inject, ElementRef } from '@angular/core';
 import { MarkdownEditorService } from '.';
-import { EventEmitter } from '@angular/core';
 import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
 import * as fromMarkdown from '../state';
 import { DocumentMode } from '../state/reducers/document';

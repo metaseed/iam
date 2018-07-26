@@ -96,6 +96,17 @@ export class DocListComponent implements OnInit {
     )
   ).pipe(observeOn(asyncScheduler));
 
+  private _showGetMore = false;
+  get showGetMore() {
+    if (!this.elementRef) return false;
+    setTimeout(
+      _ =>
+        (this._showGetMore =
+          this.elementRef.nativeElement.scrollHeight === this.elementRef.nativeElement.clientHeight)
+    );
+    return this.elementRef;
+  }
+
   isLoadMoreDone$ = monitorActionStatus(
     DocumentEffectsActionTypes.ReadBulkDocMeta,
     this.store,

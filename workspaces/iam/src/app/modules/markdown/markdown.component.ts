@@ -2,9 +2,9 @@ import * as doc from './state/actions/document';
 import { Component, OnInit, ViewChild, Inject, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { APP_BASE_HREF } from '@angular/common';
-import { take, map, tap, takeUntil, combineLatest, share } from 'rxjs/operators';
+import { take, map, tap, takeUntil, combineLatest, share, catchError } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DocFormat } from 'core';
+import { DocFormat, backoff } from 'core';
 import { Store, select, State } from '@ngrx/store';
 import * as fromMarkdown from './state';
 import { DocumentMode } from './state/reducers/document';
@@ -91,7 +91,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
         })
       ),
       <Observable<string>>this.markdownService.editorContentChanged$
-    ).pipe(share());
+    ).pipe(backoff(80, 3000)) as Observable<string>;
   }
 
   ngOnDestroy() {
