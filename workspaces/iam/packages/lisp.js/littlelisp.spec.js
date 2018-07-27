@@ -150,6 +150,17 @@ describe('littleLisp', function() {
       it('should return correct result when invoke lambda w params', function() {
         expect(t.interpret(t.parse('((lambda (x) (first (x))) 1)'))).toEqual(1);
       });
+      it('should return correct result when invoke lambda w params', function() {
+        expect(
+          t.interpret(
+            t.parse(`((lambda (a)
+        ((lambda (b)
+            (b a))
+          'b'))
+       'a')`)
+          )
+        ).toEqual(['b', 'a']);
+      });
     });
 
     describe('let', function() {

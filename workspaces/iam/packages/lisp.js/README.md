@@ -23,3 +23,13 @@ $ node repl.js
 ```lisp
 ((lambda (x) (rest x)) ("a" "b" "c"))
 ```
+
+```lisp
+((lambda (a)
+  ((lambda (b)
+      (b a))
+    "b"))
+ "a")
+```
+
+https://maryrosecook.com/blog/post/little-lisp-interpreter
