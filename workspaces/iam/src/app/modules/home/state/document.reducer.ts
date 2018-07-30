@@ -1,16 +1,12 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
-import { Document } from 'core';
+import { Document, ActionStatus } from 'core';
 import { DocumentActions, DocumentActionTypes } from './document.actions';
-import {
-  DocumentEffectsActionTypes,
-  ActionStatusInfo,
-  ActionStatus
-} from './document.effects.actions';
+import { DocumentEffectsActionTypes } from './document.effects.actions';
 
 export interface State extends EntityState<Document> {
   // additional entities state properties
   currentDocumentId: number;
-  actionStatus?: ActionStatusInfo;
+  actionStatus?: ActionStatus;
   idRangeHigh: number; // undefined:initial, Number.MAX_VALUE highest number, no newest
   idRangeLow?: number; // undefined: lowest number, no oldest
 }

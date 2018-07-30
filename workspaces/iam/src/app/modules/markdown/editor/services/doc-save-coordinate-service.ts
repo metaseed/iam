@@ -5,10 +5,10 @@ import { auditTime, takeUntil, combineLatest } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import {
   DocumentEffectsSave,
-  getActionStatus,
-  DocumentEffectsActionTypes,
-  ActionStatus
+  getDocumentActionStatus$,
+  DocumentEffectsActionTypes
 } from '../../../home/state';
+import { ActionState } from 'core';
 
 @Injectable()
 export class DocSaveCoordinateService implements OnDestroy {
@@ -43,16 +43,16 @@ export class DocSaveCoordinateService implements OnDestroy {
       )
       .subscribe(([, editor]) => this.checkDirty(editor));
 
-    getActionStatus(DocumentEffectsActionTypes.Save, this.store)
+    getDocumentActionStatus$(DocumentEffectsActionTypes.Save, this.store)
       .pipe(
         takeUntil(this.destroy$),
         combineLatest(this.editor$)
       )
       .subscribe(([as, editor]) => {
-        if (as.status === ActionStatus.Start) {
+        if (as.state === ActionState.Start) {
           this.docSavedHandler(editor);
           this.isSaving = true;
-        } else if (as.status === ActionStatus.Succession || as.status === ActionStatus.Fail) {
+        } else if (as.state === ActionState.Succession || as.state === ActionState.Fail) {
           this.isSaving = false;
         }
       });

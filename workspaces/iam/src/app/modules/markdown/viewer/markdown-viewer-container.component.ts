@@ -14,9 +14,8 @@ import { ElementRef } from '@angular/core';
 import { Subject, merge, asyncScheduler, Observable } from 'rxjs';
 import {
   DocumentEffectsActionTypes,
-  ActionStatus,
-  monitorActionStatus,
-  getActionStatus
+  monitorDocumentActionStatus,
+  getDocumentActionStatus$
 } from '../../home/state';
 import { DocumentMode } from '../state/reducers/document';
 import * as fromMarkdown from '../state';
@@ -44,7 +43,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
 
   isLoadDone$ = merge(
-    monitorActionStatus(
+    monitorDocumentActionStatus(
       DocumentEffectsActionTypes.ReadDocument,
       this.store,
       NET_COMMU_TIMEOUT,
@@ -54,7 +53,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
         return v.isNotStartStatus();
       })
     ),
-    getActionStatus(DocumentEffectsActionTypes.Create, this.store).pipe(
+    getDocumentActionStatus$(DocumentEffectsActionTypes.Create, this.store).pipe(
       map(v => v.isNotStartStatus())
     )
   ).pipe(

@@ -1,32 +1,17 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { Document } from 'core';
+import { Document, ActionState } from 'core';
 import { DocService } from './services/doc.service';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { DocSearchService } from './services/doc-search.service';
 import { State } from './state/state-selectors';
 import { Store, select } from '@ngrx/store';
-import { Observable, of, from, Subject, merge, asyncScheduler } from 'rxjs';
-import {
-  map,
-  filter,
-  debounceTime,
-  distinctUntilChanged,
-  combineLatest,
-  tap,
-  takeUntil,
-  observeOn
-} from 'rxjs/operators';
+import { Observable, from, Subject } from 'rxjs';
+import { map, debounceTime, distinctUntilChanged, combineLatest, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
-import {
-  DocumentEffectsActionTypes,
-  selectDocumentsState,
-  DocumentEffectsReadBulkDocMeta,
-  ActionStatus,
-  monitorActionStatus
-} from './state';
+import { selectDocumentsState, DocumentEffectsReadBulkDocMeta } from './state';
 import { DocSearchComponent } from './doc-search/doc-search.component';
 import { switchIfEmit } from '../core/operators/switchIfEmit';
-import { NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT } from 'core';
+import { MSG_DISPLAY_TIMEOUT } from 'core';
 
 @Component({
   selector: 'home',
@@ -40,14 +25,14 @@ export class HomeComponent {
   @ViewChild('docList', { read: ElementRef })
   scrollDocs: ElementRef;
 
-  defaultTimeoutHandler = (action: DocumentEffectsActionTypes, info?: string) => err => {
+  defaultTimeoutHandler = (action: string, info?: string) => err => {
     console.warn(err.message + ' action:' + action + (info ? `--${info}` : ''));
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
   private initDocs$ = this.store.pipe(select(selectDocumentsState));
   docs$: Observable<Document[]>;
-  ActionStatus = ActionStatus;
+  ActionStatus = ActionState;
 
   constructor(
     private store: Store<State>,

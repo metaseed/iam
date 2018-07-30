@@ -13,7 +13,9 @@ import {
   NET_COMMU_TIMEOUT,
   MSG_DISPLAY_TIMEOUT,
   IContainer,
-  ContainerRef
+  ContainerRef,
+  ActionStatus,
+  ActionState
 } from 'core';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { Store, select } from '@ngrx/store';
@@ -21,10 +23,8 @@ import {
   State,
   DocumentEffectsReadBulkDocMeta,
   DocumentEffectsDelete,
-  monitorActionStatus,
+  monitorDocumentActionStatus,
   DocumentEffectsActionTypes,
-  ActionStatus,
-  ActionStatusInfo,
   selectDocumentsState
 } from '../state';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
@@ -44,15 +44,13 @@ export class DocListComponent implements OnInit {
   private docs;
   private destroy$ = new Subject();
 
-  private defaultTimeoutHandler = (action: DocumentEffectsActionTypes, info?: string) => (
-    start: ActionStatusInfo
-  ) => {
+  private defaultTimeoutHandler = (action: string, info?: string) => (start: ActionStatus) => {
     console.warn('action timeout:' + action + (info ? `--${info}` : ''));
     this.snackBar.open(action + 'time out.', 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
   isDeleteDone = (doc: Document) =>
-    monitorActionStatus(
+    monitorDocumentActionStatus(
       DocumentEffectsActionTypes.Delete,
       this.store,
       NET_COMMU_TIMEOUT,
@@ -62,13 +60,13 @@ export class DocListComponent implements OnInit {
       takeUntil(this.destroy$),
       map(v => {
         if (v.action.payload.id === doc.id) {
-          if (v.status === ActionStatus.Fail) {
+          if (v.state === ActionState.Fail) {
             this.snackBar.open(`delete: ${doc.metaData.title} failed!`);
             return true;
           }
           return (
             // v.status === ActionStatus.Succession ||
-            v.status === ActionStatus.Complete || v.status === ActionStatus.Timeout
+            v.state === ActionState.Complete || v.state === ActionState.Timeout
           );
         }
         return false;
@@ -77,7 +75,7 @@ export class DocListComponent implements OnInit {
 
   isLoadDone$ = merge(
     this.store.pipe(select(selectDocumentsState)),
-    monitorActionStatus(
+    monitorDocumentActionStatus(
       DocumentEffectsActionTypes.ReadBulkDocMeta,
       this.store,
       NET_COMMU_TIMEOUT,
@@ -87,10 +85,10 @@ export class DocListComponent implements OnInit {
       filter(a => a.action.payload.isBelowRange === false),
       map(v => {
         return (
-          v.status === ActionStatus.Fail ||
-          v.status === ActionStatus.Succession ||
-          v.status === ActionStatus.Complete ||
-          v.status === ActionStatus.Timeout
+          v.state === ActionState.Fail ||
+          v.state === ActionState.Succession ||
+          v.state === ActionState.Complete ||
+          v.state === ActionState.Timeout
         );
       })
     )
@@ -107,7 +105,7 @@ export class DocListComponent implements OnInit {
     return this.elementRef;
   }
 
-  isLoadMoreDone$ = monitorActionStatus(
+  isLoadMoreDone$ = monitorDocumentActionStatus(
     DocumentEffectsActionTypes.ReadBulkDocMeta,
     this.store,
     NET_COMMU_TIMEOUT,
@@ -118,10 +116,10 @@ export class DocListComponent implements OnInit {
     observeOn(asyncScheduler),
     map(v => {
       return (
-        v.status === ActionStatus.Fail ||
-        v.status === ActionStatus.Succession ||
-        v.status === ActionStatus.Complete ||
-        v.status === ActionStatus.Timeout
+        v.state === ActionState.Fail ||
+        v.state === ActionState.Succession ||
+        v.state === ActionState.Complete ||
+        v.state === ActionState.Timeout
       );
     })
   );

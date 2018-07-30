@@ -3,14 +3,9 @@ import { OperatorFunction } from 'rxjs';
 import { Store, Action } from '@ngrx/store';
 import { State } from './document.reducer';
 import { Actions, ofType } from '@ngrx/effects';
-import {
-  DocumentEffectsActionTypes,
-  ActionStatus,
-  ActionStatusInfo
-} from './document.effects.actions';
-import { SetDocumentsMessage } from './document.actions';
+import { SetDocumentsActionStatus } from './document.actions';
 import { Injectable } from '@angular/core';
-import { CorrelationAction } from 'core';
+import { CorrelationAction, ActionStatus, ActionState } from 'core';
 
 @Injectable()
 export class EffectsMoniter {
@@ -26,14 +21,11 @@ export class EffectsMoniter {
     console.count(`${action.type}-${coId}->complete`);
     console.groupEnd();
     this.store.dispatch(
-      new SetDocumentsMessage(new ActionStatusInfo(ActionStatus.Complete, action))
+      new SetDocumentsActionStatus(new ActionStatus(ActionState.Complete, action))
     );
   }
 
-  do = <T extends Action & { payload }>(
-    actionType: DocumentEffectsActionTypes,
-    pipe: OperatorFunction<T, any>
-  ) => {
+  do$ = <T extends Action & { payload }>(actionType: string, pipe: OperatorFunction<T, any>) => {
     let coId: number;
     let action: CorrelationAction;
     return this.actions$.pipe(
@@ -44,12 +36,12 @@ export class EffectsMoniter {
         console.log(`%c${actionType}-${coId}->start`, 'background-color:#4285f4');
 
         this.store.dispatch(
-          new SetDocumentsMessage(new ActionStatusInfo(ActionStatus.Start, action))
+          new SetDocumentsActionStatus(new ActionStatus(ActionState.Start, action))
         );
       }),
       pipe,
       map(r => {
-        const msg = new SetDocumentsMessage(new ActionStatusInfo(ActionStatus.Succession, action));
+        const msg = new SetDocumentsActionStatus(new ActionStatus(ActionState.Succession, action));
 
         console.groupCollapsed(`%c${actionType}-${coId}->succession`, 'background-color:#4285f4');
         console.count(`${actionType}-${coId}->succession`);
@@ -61,7 +53,7 @@ export class EffectsMoniter {
         console.log(`%c${actionType}-${coId}->error`, 'background-color:#4285f4');
         console.error(err);
         this.store.dispatch(
-          new SetDocumentsMessage(new ActionStatusInfo(ActionStatus.Fail, action, err))
+          new SetDocumentsActionStatus(new ActionStatus(ActionState.Fail, action, err))
         );
         return caught;
       })

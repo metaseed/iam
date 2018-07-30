@@ -58,7 +58,7 @@ export class DocumentEffects {
   }
 
   @Effect()
-  CreateDocument = this.monitor.do<DocumentEffectsCreate>(
+  CreateDocument = this.monitor.do$<DocumentEffectsCreate>(
     DocumentEffectsActionTypes.Create,
     tap<DocumentEffectsCreate>(a => {
       this.storeCache.createDoc(a.payload.format);
@@ -66,7 +66,7 @@ export class DocumentEffects {
   );
 
   @Effect()
-  ReadBulkDocMeta = this.monitor.do<DocumentEffectsReadBulkDocMeta>(
+  ReadBulkDocMeta = this.monitor.do$<DocumentEffectsReadBulkDocMeta>(
     DocumentEffectsActionTypes.ReadBulkDocMeta,
     (() => {
       let keyRangeHigh: number;
@@ -91,7 +91,7 @@ export class DocumentEffects {
   );
 
   @Effect()
-  ReadDocument = this.monitor.do<DocumentEffectsRead>(
+  ReadDocument = this.monitor.do$<DocumentEffectsRead>(
     DocumentEffectsActionTypes.ReadDocument,
     pipe(
       tap(action => this.store.dispatch(new SetCurrentDocumentId({ id: action.payload.id }))),
@@ -105,7 +105,7 @@ export class DocumentEffects {
   );
 
   @Effect()
-  SaveDocument = this.monitor.do<DocumentEffectsSave>(
+  SaveDocument = this.monitor.do$<DocumentEffectsSave>(
     DocumentEffectsActionTypes.Save,
     pipe(
       switchMap(action => {
@@ -136,7 +136,7 @@ export class DocumentEffects {
   );
 
   @Effect()
-  DeleteDocument = this.monitor.do<DocumentEffectsDelete>(
+  DeleteDocument = this.monitor.do$<DocumentEffectsDelete>(
     DocumentEffectsActionTypes.Delete,
     switchMap(action =>
       this.storeCache.deleteDoc(action.payload.id).pipe(this.monitor.complete(action))
