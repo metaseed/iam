@@ -6,12 +6,11 @@ import { State as StoreState } from '@ngrx/store';
 import {
   DocumentEffectsReadBulkDocMeta,
   DocumentEffectsActionTypes,
-  DocumentEffectsDelete,
-  DocumentEffectsAction
+  DocumentEffectsDelete
 } from './document.effects.actions';
 import { GithubStorage, GithubCache } from 'net-storage';
 import { switchMap, tap, combineLatest } from 'rxjs/operators';
-import { DocMeta } from 'core';
+import { DocMeta, CorrelationAction } from 'core';
 import {
   DocumentEffectsRead,
   SetCurrentDocumentId,
@@ -122,14 +121,14 @@ export class DocumentEffects {
             tap(doc => {
               this.util.modifyUrlAfterSaved(doc.id, newTitle, format);
               this.snackbar.open('New document saved!', 'OK');
-            }, this.monitor.complete( action))
+            }, this.monitor.complete(action))
           );
         } else {
           return this.storeCache.UpdateDocument(doc.metaData, content).pipe(
             tap(doc => {
               this.util.modifyUrlAfterSaved(doc.id, newTitle, format);
               this.snackbar.open('Saved!', 'OK');
-            }, this.monitor.complete( action))
+            }, this.monitor.complete(action))
           );
         }
       })
@@ -140,9 +139,7 @@ export class DocumentEffects {
   DeleteDocument = this.monitor.do<DocumentEffectsDelete>(
     DocumentEffectsActionTypes.Delete,
     switchMap(action =>
-      this.storeCache
-        .deleteDoc(action.payload.id)
-        .pipe(this.monitor.complete( action))
+      this.storeCache.deleteDoc(action.payload.id).pipe(this.monitor.complete(action))
     )
   );
 }

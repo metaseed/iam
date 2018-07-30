@@ -4,7 +4,7 @@ import { State } from './state-selectors';
 import { filter, timeout, map, catchError, tap } from 'rxjs/operators';
 import { timeOutMonitor } from '../../core/operators';
 import { selectDocumentActionStatusState } from './state-selectors';
-import { DocFormat } from 'core';
+import { DocFormat, CorrelationAction } from 'core';
 
 export enum DocumentEffectsActionTypes {
   ReadBulkDocMeta = '[DocumentEffects] Load',
@@ -14,32 +14,27 @@ export enum DocumentEffectsActionTypes {
   Save = '[DocumentEffects] Save'
 }
 
-export interface DocumentEffectsAction extends Action {
-  coId: number;
-  payload: any;
-}
-
-export class DocumentEffectsReadBulkDocMeta implements DocumentEffectsAction {
+export class DocumentEffectsReadBulkDocMeta implements CorrelationAction {
   readonly type = DocumentEffectsActionTypes.ReadBulkDocMeta;
   coId = Date.now();
   constructor(public payload = { isBelowRange: true }) {}
 }
-export class DocumentEffectsDelete implements DocumentEffectsAction {
+export class DocumentEffectsDelete implements CorrelationAction {
   coId = Date.now();
   readonly type = DocumentEffectsActionTypes.Delete;
   constructor(public payload: { id: number }) {}
 }
-export class DocumentEffectsCreate implements DocumentEffectsAction {
+export class DocumentEffectsCreate implements CorrelationAction {
   coId = Date.now();
   readonly type = DocumentEffectsActionTypes.Create;
   constructor(public payload: { format: DocFormat }) {}
 }
-export class DocumentEffectsRead implements DocumentEffectsAction {
+export class DocumentEffectsRead implements CorrelationAction {
   coId = Date.now();
   readonly type = DocumentEffectsActionTypes.ReadDocument;
   constructor(public payload: { id: number; title?: string; format?: string }) {}
 }
-export class DocumentEffectsSave implements DocumentEffectsAction {
+export class DocumentEffectsSave implements CorrelationAction {
   coId = Date.now();
   readonly type = DocumentEffectsActionTypes.Save;
   constructor(public payload: { content: string; format?: DocFormat }) {}
@@ -55,10 +50,10 @@ export enum ActionStatus {
 export class DocumentActionStatus {
   constructor(
     public status: ActionStatus,
-    public action: DocumentEffectsAction,
+    public action: CorrelationAction,
     public corelationId?: number,
     public message?: string,
-    public context?: any,
+    public context?: any
   ) {}
   isNotStartStatus() {
     return status !== ActionStatus.Start;
@@ -79,7 +74,7 @@ export function monitorActionStatus(
   actionType: DocumentEffectsActionTypes,
   store: Store<State>,
   due: number,
-  timeOutHander: (start:DocumentActionStatus) => void,
+  timeOutHander: (start: DocumentActionStatus) => void,
   sameActionTypeDiff?: (action: DocumentActionStatus) => boolean
 ): Observable<DocumentActionStatus> {
   return store.pipe(
