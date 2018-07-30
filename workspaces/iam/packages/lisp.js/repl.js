@@ -1,7 +1,16 @@
 var repl = require('repl');
 var lisp = require('./littlelisp').littleLisp;
 
-var s = `(toHtml 'a' b:1 c:'wad' content:(toHtml 'b'  p:'5px' d:8))`;
+var s = `(let ((a 0) (b 1) (c 0))(
+            (print a)
+            (loop (< b 50)(
+              (= c b)
+              (= b (+ a b))
+              (= a c)
+              (print a)
+            ))
+          )
+        )`;
 var v = lisp.interpret(lisp.parse(s));
 console.log(v);
 repl.start({

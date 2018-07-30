@@ -1,5 +1,13 @@
 (function(exports) {
   var library = {
+    ['+']: function(...args) {
+      return args.reduce((acc, v) => acc + v, 0);
+    },
+
+    ['<']: function(a, b) {
+      return a < b;
+    },
+
     first: function(x) {
       return x[0];
     },
@@ -44,6 +52,19 @@
         return this.parent.get(identifier);
       }
     };
+
+    this.set = function(identifier, v) {
+      let id = identifier.split('.');
+      if (id[0] in this.scope) {
+        let scope = this.scope;
+        for (let i = 0; i < id.length - 1; i++) {
+          scope = scope[id[i]];
+        }
+        scope[id[id.length - 1]] = v;
+      } else if (this.parent !== undefined) {
+        return this.parent.set(identifier, v);
+      }
+    };
   };
 
   var special = {
@@ -54,6 +75,11 @@
       }, new Context({}, context));
 
       return interpret(input[2], letContext);
+    },
+
+    ['=']: function(input, context) {
+      const v = interpret(input[2], context);
+      return context.set(input[1].value, v);
     },
 
     lambda: function(input, context) {
@@ -72,6 +98,12 @@
       return interpret(input[1], context)
         ? interpret(input[2], context)
         : interpret(input[3], context);
+    },
+
+    loop: function(input, context) {
+      while (interpret(input[1], context)) {
+        interpret(input[2], context);
+      }
     }
   };
 
@@ -122,7 +154,7 @@
       return interpret(input, context);
     } else if (input instanceof Array) {
       return interpretList(input, context);
-    } else if (input.type === 'namedParam') {
+    } else if (input && input.type === 'namedParam') {
       const v = input.param.value;
       return { isNamedParam: true, name: input.name, value: interpret(input.param) };
     } else {

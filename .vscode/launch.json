@@ -2,6 +2,12 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "node",
+      "request": "launch",
+      "name": "lisp",
+      "program": "${workspaceFolder}/workspaces/iam/packages/lisp.js/repl.js"
+    },
+    {
       "name": "ng serve",
       "type": "chrome",
       "request": "launch",
