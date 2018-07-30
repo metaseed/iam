@@ -47,11 +47,10 @@ export enum ActionStatus {
   Complete = 'Complete',
   Timeout = 'Timeout'
 }
-export class DocumentActionStatus {
+export class ActionStatusInfo {
   constructor(
     public status: ActionStatus,
     public action: CorrelationAction,
-    public corelationId?: number,
     public message?: string,
     public context?: any
   ) {}
@@ -63,7 +62,7 @@ export class DocumentActionStatus {
 export function getActionStatus(
   action: DocumentEffectsActionTypes,
   store: Store<State>
-): Observable<DocumentActionStatus> {
+): Observable<ActionStatusInfo> {
   return store.pipe(
     select(selectDocumentActionStatusState),
     ofActionType(action)
@@ -74,13 +73,13 @@ export function monitorActionStatus(
   actionType: DocumentEffectsActionTypes,
   store: Store<State>,
   due: number,
-  timeOutHander: (start: DocumentActionStatus) => void,
-  sameActionTypeDiff?: (action: DocumentActionStatus) => boolean
-): Observable<DocumentActionStatus> {
+  timeOutHander: (start: ActionStatusInfo) => void,
+  sameActionTypeDiff?: (action: ActionStatusInfo) => boolean
+): Observable<ActionStatusInfo> {
   return store.pipe(
     select(selectDocumentActionStatusState),
     ofActionType(actionType),
-    timeOutMonitor<DocumentActionStatus, DocumentActionStatus>(
+    timeOutMonitor<ActionStatusInfo, ActionStatusInfo>(
       due,
 
       actionStatus =>
@@ -89,7 +88,7 @@ export function monitorActionStatus(
 
       (start, actionStatus) =>
         start &&
-        actionStatus.corelationId === start.corelationId &&
+        actionStatus.action.coId === start.action.coId &&
         (!sameActionTypeDiff ? true : sameActionTypeDiff(actionStatus)) &&
         (actionStatus.status === ActionStatus.Succession ||
           actionStatus.status === ActionStatus.Fail ||
@@ -97,10 +96,9 @@ export function monitorActionStatus(
 
       start => {
         if (timeOutHander) timeOutHander(start);
-        return new DocumentActionStatus(
+        return new ActionStatusInfo(
           ActionStatus.Timeout,
           start.action,
-          start.corelationId,
           `Timeout when perform ${start.action}`
         );
       }
@@ -109,7 +107,7 @@ export function monitorActionStatus(
 }
 
 export function ofActionType(actionType: DocumentEffectsActionTypes) {
-  return filter((status: DocumentActionStatus) => {
+  return filter((status: ActionStatusInfo) => {
     return status && status.action.type === actionType;
   });
 }

@@ -1,7 +1,7 @@
 import { Action } from '@ngrx/store';
 import { Update } from '@ngrx/entity';
 import { Document } from 'core';
-import { DocumentActionStatus } from './document.effects.actions';
+import { ActionStatusInfo } from './document.effects.actions';
 
 export enum DocumentActionTypes {
   LoadDocuments = '[Document] Load Documents',
@@ -85,7 +85,7 @@ export class SetCurrentDocumentId implements Action {
 
 export class SetDocumentsMessage implements Action {
   readonly type = DocumentActionTypes.SetDocumentStatus;
-  constructor(public payload: DocumentActionStatus) {}
+  constructor(public payload: ActionStatusInfo) {}
 }
 
 export class SetIdRangeHigh implements Action {
@@ -111,4 +111,4 @@ export type DocumentActions =
   | SetCurrentDocumentId
   | SetDocumentsMessage
   | SetIdRangeHigh
-  | SetIdRangeLow
+  | SetIdRangeLow;

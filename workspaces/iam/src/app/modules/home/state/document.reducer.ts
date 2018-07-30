@@ -1,18 +1,18 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import { Document } from 'core';
-import { DocumentActions, DocumentActionTypes} from './document.actions';
+import { DocumentActions, DocumentActionTypes } from './document.actions';
 import {
   DocumentEffectsActionTypes,
-  DocumentActionStatus,
+  ActionStatusInfo,
   ActionStatus
 } from './document.effects.actions';
 
 export interface State extends EntityState<Document> {
   // additional entities state properties
   currentDocumentId: number;
-  actionStatus?: DocumentActionStatus;
+  actionStatus?: ActionStatusInfo;
   idRangeHigh: number; // undefined:initial, Number.MAX_VALUE highest number, no newest
-  idRangeLow?: number;  // undefined: lowest number, no oldest
+  idRangeLow?: number; // undefined: lowest number, no oldest
 }
 
 export const adapter: EntityAdapter<Document> = createEntityAdapter<Document>({
@@ -24,7 +24,7 @@ export const adapter: EntityAdapter<Document> = createEntityAdapter<Document>({
 export const initialState: State = adapter.getInitialState({
   // additional entity state properties
   currentDocumentId: undefined,
-  idRangeHigh:undefined
+  idRangeHigh: undefined
 });
 export function reducer(state = initialState, action: DocumentActions): State {
   switch (action.type) {
@@ -75,11 +75,11 @@ export function reducer(state = initialState, action: DocumentActions): State {
       return { ...state, actionStatus: action.payload };
     }
     case DocumentActionTypes.SetIdRangeHigh: {
-      return { ...state,  ...action.payload };
+      return { ...state, ...action.payload };
     }
 
     case DocumentActionTypes.SetIdRangeLow: {
-      return { ...state,  ...action.payload };
+      return { ...state, ...action.payload };
     }
 
     default: {

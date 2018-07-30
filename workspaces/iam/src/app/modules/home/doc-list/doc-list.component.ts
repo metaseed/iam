@@ -24,7 +24,7 @@ import {
   monitorActionStatus,
   DocumentEffectsActionTypes,
   ActionStatus,
-  DocumentActionStatus,
+  ActionStatusInfo,
   selectDocumentsState
 } from '../state';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
@@ -45,7 +45,7 @@ export class DocListComponent implements OnInit {
   private destroy$ = new Subject();
 
   private defaultTimeoutHandler = (action: DocumentEffectsActionTypes, info?: string) => (
-    start: DocumentActionStatus
+    start: ActionStatusInfo
   ) => {
     console.warn('action timeout:' + action + (info ? `--${info}` : ''));
     this.snackBar.open(action + 'time out.', 'ok', { duration: MSG_DISPLAY_TIMEOUT });

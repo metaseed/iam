@@ -6,7 +6,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import {
   DocumentEffectsActionTypes,
   ActionStatus,
-  DocumentActionStatus
+  ActionStatusInfo
 } from './document.effects.actions';
 import { SetDocumentsMessage } from './document.actions';
 import { Injectable } from '@angular/core';
@@ -26,7 +26,7 @@ export class EffectsMoniter {
     console.count(`${action.type}-${coId}->complete`);
     console.groupEnd();
     this.store.dispatch(
-      new SetDocumentsMessage(new DocumentActionStatus(ActionStatus.Complete, action, coId))
+      new SetDocumentsMessage(new ActionStatusInfo(ActionStatus.Complete, action))
     );
   }
 
@@ -44,14 +44,12 @@ export class EffectsMoniter {
         console.log(`%c${actionType}-${coId}->start`, 'background-color:#4285f4');
 
         this.store.dispatch(
-          new SetDocumentsMessage(new DocumentActionStatus(ActionStatus.Start, action, coId))
+          new SetDocumentsMessage(new ActionStatusInfo(ActionStatus.Start, action))
         );
       }),
       pipe,
       map(r => {
-        const msg = new SetDocumentsMessage(
-          new DocumentActionStatus(ActionStatus.Succession, action, coId)
-        );
+        const msg = new SetDocumentsMessage(new ActionStatusInfo(ActionStatus.Succession, action));
 
         console.groupCollapsed(`%c${actionType}-${coId}->succession`, 'background-color:#4285f4');
         console.count(`${actionType}-${coId}->succession`);
@@ -63,7 +61,7 @@ export class EffectsMoniter {
         console.log(`%c${actionType}-${coId}->error`, 'background-color:#4285f4');
         console.error(err);
         this.store.dispatch(
-          new SetDocumentsMessage(new DocumentActionStatus(ActionStatus.Fail, action, coId, err))
+          new SetDocumentsMessage(new ActionStatusInfo(ActionStatus.Fail, action, err))
         );
         return caught;
       })
