@@ -4,7 +4,7 @@ import { Store, Action } from '@ngrx/store';
 import { State } from '../../../home/state/document.reducer';
 import { Actions, ofType } from '@ngrx/effects';
 import { Injectable } from '@angular/core';
-import { CorrelationAction, ActionStatus, ActionState } from 'core';
+import { ActionStatus, CorrelationAction, ActionState } from './action-status';
 
 export const SET_ACTION_STATUS_ACTION_TYPE = '[StatusMonitor] Set Action Status';
 

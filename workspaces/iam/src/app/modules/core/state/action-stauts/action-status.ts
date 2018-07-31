@@ -1,10 +1,10 @@
 import { Action, Store, MemoizedSelector, select, State } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { timeOutMonitor } from 'core';
-export interface CorrelationAction extends Action {
+import { PaloadAction } from '../payload-action';
+import { timeOutMonitor } from '../../operators/timeOutMonitor';
+export interface CorrelationAction extends PaloadAction {
   coId: number;
-  payload: any;
 }
 
 export enum ActionState {
