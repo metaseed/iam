@@ -67,9 +67,6 @@ export function reducer(state = initialState, action: DocumentActions): State {
       return { ...state, currentDocumentId: action.payload.id };
     }
 
-    case DocumentActionTypes.SetDocumentStatus: {
-      return { ...state, actionStatus: action.payload };
-    }
     case DocumentActionTypes.SetIdRangeHigh: {
       return { ...state, ...action.payload };
     }

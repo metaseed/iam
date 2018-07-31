@@ -13,7 +13,7 @@ import { ScrollService } from './services/scroll/scroll.service';
 import { ScrollSpyService } from './services/scroll/scroll-spy.service';
 import { ConfigService } from './config/config.service';
 import { Utilities } from './utils';
-import { StoreCache } from './state';
+import { StoreCache, ActionStatusMoniter } from './state';
 @NgModule({
   imports: [CommonModule, HotkeyModule],
   declarations: [],
@@ -30,6 +30,7 @@ import { StoreCache } from './state';
     ScrollSpyService,
     StoreCache,
     Utilities,
+    ActionStatusMoniter
   ]
 })
 export class CoreModule {}

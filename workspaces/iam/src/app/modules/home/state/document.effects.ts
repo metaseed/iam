@@ -25,14 +25,14 @@ import { State } from './document.reducer';
 import { StoreCache } from 'core';
 import { DatabaseCache } from 'database';
 import { NEW_DOC_ID } from '../const';
-import { EffectsMoniter } from './document.effects.monitor';
+import { ActionStatusMoniter } from 'core';
 import { DocEffectsUtil } from './document.effects.util';
 import { SetIdRangeLow, SetIdRangeHigh } from './document.actions';
 
 @Injectable()
 export class DocumentEffects {
   constructor(
-    private monitor: EffectsMoniter,
+    private monitor: ActionStatusMoniter,
     private state: StoreState<State>,
     private storage: GithubStorage,
     private snackbar: MatSnackBar,

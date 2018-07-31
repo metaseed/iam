@@ -18,7 +18,6 @@ import { EffectsModule } from '@ngrx/effects';
 import { DocumentEffects } from './state/document.effects';
 import { GithubStorageModule } from '../net-storage/github/github-storage.module';
 import { DatabaseModule } from 'database';
-import { EffectsMoniter } from './state';
 import { DocEffectsUtil } from './state/document.effects.util';
 import { DocItemComponent } from './doc-list/doc-item/doc-item.component';
 import { DocDeleteComponent } from './doc-list/doc-item/doc-delete/doc-delete.component';
@@ -55,7 +54,7 @@ const routes: Routes = [
     DocItemComponent
   ],
   exports: [HomeComponent],
-  providers: [DocService, DocSearchService, EffectsMoniter, DocEffectsUtil],
+  providers: [DocService, DocSearchService, DocEffectsUtil],
   entryComponents: [DeleteAlertDialog]
 })
 export class HomeModule {}

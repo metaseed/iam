@@ -14,7 +14,6 @@ export enum DocumentActionTypes {
   DeleteDocuments = '[Document] Delete Documents',
   ClearDocuments = '[Document] Clear Documents',
   SetCurrentDocumentId = '[Document] Set Current CollectoinDocument Id',
-  SetDocumentStatus = '[Document] Set Status',
   SetIdRangeHigh = '[Document] Set Key Range High',
   SetIdRangeLow = '[Document] Set Key Range Low'
 }
@@ -82,11 +81,6 @@ export class SetCurrentDocumentId implements Action {
   constructor(public payload: { id: number }) {}
 }
 
-export class SetDocumentsActionStatus implements Action {
-  readonly type = DocumentActionTypes.SetDocumentStatus;
-  constructor(public payload: ActionStatus) {}
-}
-
 export class SetIdRangeHigh implements Action {
   readonly type = DocumentActionTypes.SetIdRangeHigh;
   constructor(public payload: { idRangeHigh: number }) {}
@@ -108,6 +102,5 @@ export type DocumentActions =
   | DeleteDocuments
   | ClearDocuments
   | SetCurrentDocumentId
-  | SetDocumentsActionStatus
   | SetIdRangeHigh
   | SetIdRangeLow;
