@@ -1,7 +1,6 @@
-import { DataTables, ICache, DocMeta, DocContent, Document, DocFormat } from '../model';
+import { ICache, DocMeta, DocContent, Document, DocFormat } from '../model';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { DatabaseCache } from 'database';
 import { tap, catchError } from 'rxjs/operators';
 import { Store, State as StoreState } from '@ngrx/store';
 import {
@@ -17,9 +16,8 @@ import {
   DocumentEffectsDelete
 } from '../../home/state';
 import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../../home/const';
-import { base64Encode } from '../utils';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class StoreCache implements ICache {
   docMetaData: { hightKey: number; lowKey: number };
 
@@ -145,7 +143,7 @@ export class StoreCache implements ICache {
     }
     return this.nextLevelCache.deleteDoc(id).pipe<number>(
       tap(_ => {
-          this.store.dispatch(new DeleteDocument({ id }));
+        this.store.dispatch(new DeleteDocument({ id }));
       })
     );
   }

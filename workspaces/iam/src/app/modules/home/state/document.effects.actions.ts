@@ -1,8 +1,6 @@
-import { Action, Store, select, MemoizedSelector } from '@ngrx/store';
-import { Observable, TimeoutError, UnaryFunction, of, asyncScheduler } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { State } from './state-selectors';
-import { filter, timeout, map, catchError, tap } from 'rxjs/operators';
-import { timeOutMonitor } from '../../core/operators';
 import { selectDocumentActionStatusState } from './state-selectors';
 import {
   DocFormat,
