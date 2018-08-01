@@ -1,3 +1,2 @@
-export * from './reducers/appReducer';
-export * from './reducers/metaReducers';
-export interface State {}
+export * from './reducers/app-reducer';
+export * from './reducers/meta-reducers';

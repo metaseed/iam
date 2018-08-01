@@ -1,15 +1,14 @@
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { State } from './state-selectors';
-import { selectDocumentActionStatusState } from './state-selectors';
+import { selectActionStatusState } from '../action-stauts/selectors';
 import {
-  DocFormat,
   CorrelationAction,
   ActionStatus,
+  monitorActionStatus$,
   ActionStatusState,
-  actionStatus$,
-  monitorActionStatus$
-} from 'core';
+  actionStatus$
+} from '../action-stauts';
+import { DocFormat } from '../../model';
 
 export enum DocumentEffectsActionTypes {
   ReadBulkDocMeta = '[DocumentEffects] Load',
@@ -47,26 +46,19 @@ export class DocumentEffectsSave implements CorrelationAction {
 
 export function monitorDocumentActionStatus(
   actionType: string,
-  store: Store<State>,
+  store: Store<any>,
   due: number,
   timeOutHander: (start: ActionStatus) => void,
   sameActionTypeDiff?: (action: ActionStatus) => boolean
 ): Observable<ActionStatus> {
-  return monitorActionStatus$(
-    store,
-    actionType,
-    selectDocumentActionStatusState,
-    due,
-    timeOutHander,
-    sameActionTypeDiff
-  );
+  return monitorActionStatus$(store, actionType, due, timeOutHander, sameActionTypeDiff);
 }
 
 export function getDocumentActionStatus$(
   action: DocumentEffectsActionTypes,
   store: Store<ActionStatusState>
 ) {
-  return actionStatus$(store, action, selectDocumentActionStatusState);
+  return actionStatus$(store, action);
 }
 
 export type DocumentEffectsActions =

@@ -14,7 +14,15 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Subscription, Subject, Observable, merge } from 'rxjs';
 import { DocService } from 'home';
 import { MarkdownEditorService } from '..';
-import { CommandService, Command, DocumentRef, DocFormat, ScrollEvent } from 'core';
+import {
+  CommandService,
+  Command,
+  DocumentRef,
+  DocFormat,
+  ScrollEvent,
+  DocumentEffectsSave,
+  DocumentEffectsCreate
+} from 'core';
 import * as fromMarkdown from '../../state';
 import { DocumentMode } from '../../state/reducers/document';
 import { Store, select, State } from '@ngrx/store';
@@ -26,7 +34,6 @@ import { DocSaveCoordinateService } from '../services/doc-save-coordinate-servic
 import { MatToolbar, MatDialog } from '@angular/material';
 import { takeUntil, map, share } from 'rxjs/operators';
 import { Utilities } from '../../../core/utils';
-import { DocumentEffectsSave, DocumentEffectsCreate } from '../../../home/state';
 import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../../model/markdown.model';
 import { HtmlAstPath } from '@angular/compiler';
 import { BreakpointObserver } from '@angular/cdk/layout';

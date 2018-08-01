@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { State } from './state';
 import { Store } from '@ngrx/store';
-import { DocumentEffectsRead } from '../home/state';
 import { ReplaySubject } from 'rxjs';
 import { IContainer } from 'core';
 import { IMarkdownService } from './model/markdown.model';

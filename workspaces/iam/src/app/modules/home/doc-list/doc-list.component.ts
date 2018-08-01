@@ -26,7 +26,7 @@ import {
   monitorDocumentActionStatus,
   DocumentEffectsActionTypes,
   selectDocumentsState
-} from '../state';
+} from 'core';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
 import { Subject, ReplaySubject, merge, asyncScheduler, from, of } from 'rxjs';
 import { takeUntil, filter, map, observeOn, tap, auditTime } from 'rxjs/operators';

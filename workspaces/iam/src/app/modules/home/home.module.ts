@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import { HomeComponent } from './home.component';
@@ -12,24 +12,12 @@ import { SpinnerModule } from '@metaseed/spinner';
 import { DeleteAlertDialog } from './doc-list/dialog.component';
 import { DocSearchComponent } from './doc-search/doc-search.component';
 import { DocSearchService } from './services/doc-search.service';
-import { StoreModule } from '@ngrx/store';
-import * as fromState from './state';
-import { EffectsModule } from '@ngrx/effects';
-import { DocumentEffects } from './state/document.effects';
 import { GithubStorageModule } from '../net-storage/github/github-storage.module';
 import { DatabaseModule } from 'database';
-import { DocEffectsUtil } from './state/document.effects.util';
 import { DocItemComponent } from './doc-list/doc-item/doc-item.component';
 import { DocDeleteComponent } from './doc-list/doc-item/doc-delete/doc-delete.component';
 import { SharedModule } from 'shared';
 import { ScrollingModule } from '@angular/cdk-experimental/scrolling';
-
-const routes: Routes = [
-  {
-    path: 'docs',
-    component: HomeComponent
-  }
-];
 
 @NgModule({
   imports: [
@@ -40,9 +28,7 @@ const routes: Routes = [
     MaterialModule,
     SpinnerModule,
     GithubStorageModule,
-    DatabaseModule,
-    StoreModule.forFeature<fromState.DocsState>('docs', fromState.reducers),
-    EffectsModule.forFeature([DocumentEffects])
+    DatabaseModule
   ],
   declarations: [
     DeleteAlertDialog,
@@ -54,7 +40,7 @@ const routes: Routes = [
     DocItemComponent
   ],
   exports: [HomeComponent],
-  providers: [DocService, DocSearchService, DocEffectsUtil],
+  providers: [DocService, DocSearchService],
   entryComponents: [DeleteAlertDialog]
 })
 export class HomeModule {}

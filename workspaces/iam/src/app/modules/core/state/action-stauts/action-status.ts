@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { PaloadAction } from '../payload-action';
 import { timeOutMonitor } from '../../operators/timeOutMonitor';
+import { selectActionStatusState } from './selectors';
 export interface CorrelationAction extends PaloadAction {
   coId: number;
 }
@@ -39,7 +40,7 @@ export function ofActionType(...allowedActionType: string[]) {
 export function actionStatus$(
   store: Store<ActionStatusState>,
   actionType: string,
-  actionStatusSelector: MemoizedSelector<ActionStatusState, ActionStatus>
+  actionStatusSelector: MemoizedSelector<ActionStatusState, ActionStatus> = selectActionStatusState
 ): Observable<ActionStatus> {
   return store.pipe(
     select(actionStatusSelector),
@@ -50,10 +51,10 @@ export function actionStatus$(
 export function monitorActionStatus$(
   store: Store<any>,
   actionType: string,
-  actionStatusSelector: MemoizedSelector<ActionStatusState, ActionStatus>,
   due: number,
   timeOutHander: (start: ActionStatus) => void,
-  sameActionTypeDiff?: (action: ActionStatus) => boolean
+  sameActionTypeDiff?: (action: ActionStatus) => boolean,
+  actionStatusSelector: MemoizedSelector<ActionStatusState, ActionStatus> = selectActionStatusState
 ): Observable<ActionStatus> {
   return actionStatus$(store, actionType, actionStatusSelector).pipe(
     timeOutMonitor<ActionStatus, ActionStatus>(

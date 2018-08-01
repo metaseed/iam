@@ -8,9 +8,8 @@ import {
   DocumentEffectsActionTypes,
   DocumentEffectsDelete
 } from './document.effects.actions';
-import { GithubStorage, GithubCache } from 'net-storage';
-import { switchMap, tap, combineLatest } from 'rxjs/operators';
-import { DocMeta, CorrelationAction } from 'core';
+import { GithubCache } from 'net-storage';
+import { switchMap, tap } from 'rxjs/operators';
 import {
   DocumentEffectsRead,
   SetCurrentDocumentId,
@@ -21,24 +20,24 @@ import {
   selectIdRangeHighState
 } from '.';
 import { MatSnackBar } from '@angular/material';
-import { State } from './document.reducer';
-import { StoreCache } from 'core';
+import { DocumentState } from './document.reducer';
+import { StoreCache } from '../store-cache';
 import { DatabaseCache } from 'database';
-import { NEW_DOC_ID } from '../const';
-import { ActionStatusMoniter } from 'core';
+import { ActionStatusMoniter } from '../action-stauts';
 import { DocEffectsUtil } from './document.effects.util';
 import { SetIdRangeLow, SetIdRangeHigh } from './document.actions';
+import { NEW_DOC_ID } from './const';
+import { DocMeta } from '../../model';
 
 @Injectable()
 export class DocumentEffects {
   constructor(
     private monitor: ActionStatusMoniter,
-    private state: StoreState<State>,
-    private storage: GithubStorage,
-    private snackbar: MatSnackBar,
-    private store: Store<State>,
-    private util: DocEffectsUtil,
     private storeCache: StoreCache,
+    private util: DocEffectsUtil,
+    private state: StoreState<DocumentState>,
+    private snackbar: MatSnackBar,
+    private store: Store<DocumentState>,
     dbCache: DatabaseCache,
     githubCache: GithubCache
   ) {

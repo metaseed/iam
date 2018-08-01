@@ -16,7 +16,7 @@ import {
   DocumentEffectsActionTypes,
   monitorDocumentActionStatus,
   getDocumentActionStatus$
-} from '../../home/state';
+} from 'core';
 import { DocumentMode } from '../state/reducers/document';
 import * as fromMarkdown from '../state';
 

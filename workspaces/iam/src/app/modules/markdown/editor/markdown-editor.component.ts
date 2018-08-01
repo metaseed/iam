@@ -14,9 +14,9 @@ import {
   DocumentEffectsSave,
   selectCurrentDocumentIdState,
   DocumentEffectsDelete,
-  selectCurrentDocumentState
-} from '../../home/state';
-import { NEW_DOC_ID } from '../../home/const';
+  selectCurrentDocumentState,
+  NEW_DOC_ID
+} from 'core';
 import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../model/markdown.model';
 import { IContainer, ContainerRef } from 'core';
 

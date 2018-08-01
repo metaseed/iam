@@ -1,8 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { NavigationExtras, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Document } from 'core';
 import { Store } from '@ngrx/store';
-import { DocumentEffectsDelete } from '../../state';
 
 @Component({
   selector: 'doc-item',
@@ -12,7 +11,7 @@ import { DocumentEffectsDelete } from '../../state';
 export class DocItemComponent implements OnInit {
   showDelete: boolean;
   @Input() doc: Document;
-  @Input() isDeleteDone:boolean;
+  @Input() isDeleteDone: boolean;
 
   @Output() delete = new EventEmitter<Document>();
   @Output() show = new EventEmitter<Document>();

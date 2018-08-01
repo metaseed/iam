@@ -4,7 +4,6 @@ import { Observable, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { Store, State as StoreState } from '@ngrx/store';
 import {
-  State,
   UpsertDocuments,
   DeleteDocuments,
   selectDocumentEntitiesState,
@@ -14,15 +13,16 @@ import {
   SetCurrentDocumentId,
   selectCurrentDocumentIdState,
   DocumentEffectsDelete
-} from '../../home/state';
-import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../../home/const';
+} from './document';
+import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from './document/const';
+import { CoreState } from 'core';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class StoreCache implements ICache {
   docMetaData: { hightKey: number; lowKey: number };
 
   public nextLevelCache: ICache;
-  constructor(private store: Store<State>, private state: StoreState<State>) {}
+  constructor(private store: Store<CoreState>, private state: StoreState<CoreState>) {}
 
   init(nextLevelCache: ICache): ICache {
     this.nextLevelCache = nextLevelCache;

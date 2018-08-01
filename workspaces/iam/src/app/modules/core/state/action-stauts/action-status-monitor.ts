@@ -1,10 +1,9 @@
 import { catchError, tap, map } from 'rxjs/operators';
 import { OperatorFunction } from 'rxjs';
 import { Store, Action } from '@ngrx/store';
-import { State } from '../../../home/state/document.reducer';
 import { Actions, ofType } from '@ngrx/effects';
 import { Injectable } from '@angular/core';
-import { ActionStatus, CorrelationAction, ActionState } from './action-status';
+import { ActionStatus, CorrelationAction, ActionState, ActionStatusState } from './action-status';
 
 export const SET_ACTION_STATUS_ACTION_TYPE = '[StatusMonitor] Set Action Status';
 
@@ -15,7 +14,7 @@ export class SetActionStatusAction implements Action {
 
 @Injectable()
 export class ActionStatusMoniter {
-  constructor(private store: Store<State>, private actions$: Actions) {}
+  constructor(private store: Store<ActionStatusState>, private actions$: Actions) {}
 
   complete(action: CorrelationAction) {
     return tap(undefined, undefined, () => this._sendComplete(action));
