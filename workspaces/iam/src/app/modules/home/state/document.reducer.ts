@@ -6,7 +6,6 @@ import { DocumentEffectsActionTypes } from './document.effects.actions';
 export interface State extends EntityState<Document> {
   // additional entities state properties
   currentDocumentId: number;
-  actionStatus?: ActionStatus;
   idRangeHigh: number; // undefined:initial, Number.MAX_VALUE highest number, no newest
   idRangeLow?: number; // undefined: lowest number, no oldest
 }
@@ -84,6 +83,5 @@ export function reducer(state = initialState, action: DocumentActions): State {
 export const { selectIds, selectEntities, selectAll, selectTotal } = adapter.getSelectors();
 
 export const selectCurrentDocumentId = (state: State) => state.currentDocumentId;
-export const selectDocumentActionStatus = (state: State) => state.actionStatus;
 export const selectDocumentIdsRangeLow = (state: State) => state.idRangeLow;
 export const selectDocumentIdsRangeHigh = (state: State) => state.idRangeHigh;
