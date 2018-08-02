@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { Effect } from '@ngrx/effects';
 import { throwError, pipe } from 'rxjs';
 import { Store } from '@ngrx/store';
@@ -26,7 +26,7 @@ import { DatabaseCache } from 'database';
 import { ActionStatusMoniter } from '../action-stauts';
 import { DocEffectsUtil } from './document.effects.util';
 import { SetIdRangeLow, SetIdRangeHigh } from './document.actions';
-import { NEW_DOC_ID } from './const';
+import { NEW_DOC_ID, DB_CACHE_TOKEN, NET_CACHE_TOKEN } from './const';
 import { DocMeta } from '../../model';
 
 @Injectable()
@@ -38,8 +38,8 @@ export class DocumentEffects {
     private state: StoreState<DocumentState>,
     private snackbar: MatSnackBar,
     private store: Store<DocumentState>,
-    dbCache: DatabaseCache,
-    githubCache: GithubCache
+    @Inject(NET_CACHE_TOKEN) githubCache: GithubCache,
+    @Inject(DB_CACHE_TOKEN) dbCache: DatabaseCache
   ) {
     storeCache.init(
       dbCache.init(

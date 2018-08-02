@@ -1,12 +1,15 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
-import { CoreModule } from 'core';
-import { DBSchema, Database, DatabaseBackend, getIDBFactory, IDB_SCHEMA } from './database-engine';
+import { NgModule } from '@angular/core';
+import { DB_CACHE_TOKEN } from 'core';
+import { Database, DatabaseBackend, getIDBFactory, IDB_SCHEMA } from './database-engine';
 import { schema as dbSchema } from './schema';
 import { DatabaseCache } from './database-cache';
 
 @NgModule({
-  providers: [Database, DatabaseCache,{ provide: IDB_SCHEMA, useValue: dbSchema }, { provide: DatabaseBackend, useFactory: getIDBFactory }]
+  providers: [
+    Database,
+    { provide: DB_CACHE_TOKEN, useClass: DatabaseCache },
+    { provide: IDB_SCHEMA, useValue: dbSchema },
+    { provide: DatabaseBackend, useFactory: getIDBFactory }
+  ]
 })
-export class DatabaseModule {
-
-}
+export class DatabaseModule {}

@@ -7,12 +7,13 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './auth-interceptor';
 import { GithubCache } from './github-cache';
 import { gitHubCacheUtil } from './github-cache.util';
+import { NET_CACHE_TOKEN } from 'core';
 
 @NgModule({
   imports: [],
   exports: [],
   providers: [
-    GithubStorage,
+    { provide: NET_CACHE_TOKEN, useClass: GithubStorage },
     gitHubCacheUtil,
     GithubCache,
     {
@@ -20,7 +21,7 @@ import { gitHubCacheUtil } from './github-cache.util';
       useValue: new UserInfo('metasong', 'metaseed@gmail.com', 'mssong179')
     },
     AuthService,
-    {provide: HTTP_INTERCEPTORS, useClass:AuthInterceptor, multi:true}
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ]
 })
 export class GithubStorageModule {}

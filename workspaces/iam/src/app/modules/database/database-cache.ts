@@ -20,7 +20,7 @@ import { tapObservable } from '../core/utils/debug';
 
 const DB_PAGE_SIZE = 50;
 export interface IterableDocuments extends IterableIterator<Observable<Document>> {}
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DatabaseCache implements ICache {
   public nextLevelCache: ICache;
 
