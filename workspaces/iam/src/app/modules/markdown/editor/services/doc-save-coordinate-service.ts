@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import {
   ActionState,
   DocumentEffectsSave,
-  getDocumentActionStatus$,
+  actionStatus$,
   DocumentEffectsActionTypes
 } from 'shared';
 
@@ -43,7 +43,7 @@ export class DocSaveCoordinateService implements OnDestroy {
       )
       .subscribe(([, editor]) => this.checkDirty(editor));
 
-    getDocumentActionStatus$(DocumentEffectsActionTypes.Save, this.store)
+    actionStatus$(this.store, DocumentEffectsActionTypes.Save)
       .pipe(
         takeUntil(this.destroy$),
         combineLatest(this.editor$)

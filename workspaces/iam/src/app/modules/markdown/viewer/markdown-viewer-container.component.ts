@@ -12,11 +12,7 @@ import * as markdown from '../state';
 import { Store, select } from '@ngrx/store';
 import { ElementRef } from '@angular/core';
 import { Subject, merge, asyncScheduler, Observable } from 'rxjs';
-import {
-  DocumentEffectsActionTypes,
-  monitorDocumentActionStatus,
-  getDocumentActionStatus$
-} from 'shared';
+import { DocumentEffectsActionTypes, monitorActionStatus$, actionStatus$ } from 'shared';
 import { DocumentMode } from '../state/reducers/document';
 import * as fromMarkdown from '../state';
 
@@ -43,9 +39,9 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
 
   isLoadDone$ = merge(
-    monitorDocumentActionStatus(
-      DocumentEffectsActionTypes.ReadDocument,
+    monitorActionStatus$(
       this.store,
+      DocumentEffectsActionTypes.ReadDocument,
       NET_COMMU_TIMEOUT,
       this.defaultTimeoutHandler
     ).pipe(
@@ -53,7 +49,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
         return v.isNotStartStatus();
       })
     ),
-    getDocumentActionStatus$(DocumentEffectsActionTypes.Create, this.store).pipe(
+    actionStatus$(this.store, DocumentEffectsActionTypes.Create).pipe(
       map(v => v.isNotStartStatus())
     )
   ).pipe(

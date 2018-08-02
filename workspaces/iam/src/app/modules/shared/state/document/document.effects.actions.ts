@@ -1,13 +1,6 @@
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { selectActionStatusState } from '../action-stauts/selectors';
-import {
-  CorrelationAction,
-  ActionStatus,
-  monitorActionStatus$,
-  ActionStatusState,
-  actionStatus$
-} from '../action-stauts';
+import { CorrelationAction, ActionStatus, monitorActionStatus$ } from '../action-stauts';
 import { DocFormat } from 'core';
 
 export enum DocumentEffectsActionTypes {
@@ -42,23 +35,6 @@ export class DocumentEffectsSave implements CorrelationAction {
   coId = Date.now();
   readonly type = DocumentEffectsActionTypes.Save;
   constructor(public payload: { content: string; format?: DocFormat }) {}
-}
-
-export function monitorDocumentActionStatus(
-  actionType: string,
-  store: Store<any>,
-  due: number,
-  timeOutHander: (start: ActionStatus) => void,
-  sameActionTypeDiff?: (action: ActionStatus) => boolean
-): Observable<ActionStatus> {
-  return monitorActionStatus$(store, actionType, due, timeOutHander, sameActionTypeDiff);
-}
-
-export function getDocumentActionStatus$(
-  action: DocumentEffectsActionTypes,
-  store: Store<ActionStatusState>
-) {
-  return actionStatus$(store, action);
 }
 
 export type DocumentEffectsActions =

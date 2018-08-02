@@ -21,7 +21,7 @@ import {
   State,
   DocumentEffectsReadBulkDocMeta,
   DocumentEffectsDelete,
-  monitorDocumentActionStatus,
+  monitorActionStatus$,
   DocumentEffectsActionTypes,
   selectDocumentsState,
   ActionStatus,
@@ -50,9 +50,9 @@ export class DocListComponent implements OnInit {
   };
 
   isDeleteDone = (doc: Document) =>
-    monitorDocumentActionStatus(
-      DocumentEffectsActionTypes.Delete,
+    monitorActionStatus$(
       this.store,
+      DocumentEffectsActionTypes.Delete,
       NET_COMMU_TIMEOUT,
       this.defaultTimeoutHandler(DocumentEffectsActionTypes.Delete),
       actionStatus => actionStatus.action.payload.id === doc.id
@@ -75,9 +75,9 @@ export class DocListComponent implements OnInit {
 
   isLoadDone$ = merge(
     this.store.pipe(select(selectDocumentsState)),
-    monitorDocumentActionStatus(
-      DocumentEffectsActionTypes.ReadBulkDocMeta,
+    monitorActionStatus$(
       this.store,
+      DocumentEffectsActionTypes.ReadBulkDocMeta,
       NET_COMMU_TIMEOUT,
       this.defaultTimeoutHandler(DocumentEffectsActionTypes.ReadBulkDocMeta)
     ).pipe(
@@ -105,9 +105,9 @@ export class DocListComponent implements OnInit {
     return this.elementRef;
   }
 
-  isLoadMoreDone$ = monitorDocumentActionStatus(
-    DocumentEffectsActionTypes.ReadBulkDocMeta,
+  isLoadMoreDone$ = monitorActionStatus$(
     this.store,
+    DocumentEffectsActionTypes.ReadBulkDocMeta,
     NET_COMMU_TIMEOUT,
     this.defaultTimeoutHandler(DocumentEffectsActionTypes.ReadBulkDocMeta, 'load-more')
   ).pipe(
