@@ -46,12 +46,12 @@ export class MarkdownEditorComponent {
 
   constructor(
     private _elementRef: ElementRef,
-    private state: StoreState<fromMarkdown.State>,
+    private state: StoreState<fromMarkdown.MarkdownState>,
     private dialog: MatDialog,
     @Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService,
     private editorService: MarkdownEditorService,
     private docSaveCoordinater: DocSaveCoordinateService,
-    private store: Store<fromMarkdown.State>
+    private store: Store<fromMarkdown.MarkdownState>
   ) {
     this.editorService.editorLoaded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       setTimeout(() => (this.editorLoaded = true), 0);

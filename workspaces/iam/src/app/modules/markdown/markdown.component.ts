@@ -75,7 +75,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     private changeDetecorRef: ChangeDetectorRef,
     private route: ActivatedRoute,
     private router: Router,
-    private store: Store<fromMarkdown.State>,
+    private store: Store<fromMarkdown.MarkdownState>,
     private utils: Utilities
   ) {}
 

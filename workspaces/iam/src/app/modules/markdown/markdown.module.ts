@@ -15,6 +15,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { MarkdownEffects } from './markdown.effects';
 import { MarkdownService } from './markdown.service';
 import { MARKDOWN_SERVICE_TOKEN } from './model/markdown.model';
+import { moduleStateName } from './state';
 @NgModule({
   imports: [
     CommonModule,
@@ -22,7 +23,7 @@ import { MARKDOWN_SERVICE_TOKEN } from './model/markdown.model';
     MaterialModule,
     SpinnerModule,
     MarkdownRoutingModule,
-    StoreModule.forFeature('markdown', fromState.reducers),
+    StoreModule.forFeature(moduleStateName, fromState.markdownReducers),
     SharedModule,
     MarkdownViewerModule.forChild(),
     EffectsModule.forFeature([MarkdownEffects])

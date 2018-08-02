@@ -3,8 +3,10 @@ import { actionStatusReducer, ActionStatusState } from './action-stauts';
 import { documentReducer, DocumentState } from './document/document.reducer';
 import * as fromRoot from '../../../state';
 
+export const moduleStateName = 'shared';
+
 export interface State extends fromRoot.State {
-  shared: SharedState;
+  [moduleStateName]: SharedState;
 }
 
 export interface SharedState {
@@ -12,7 +14,7 @@ export interface SharedState {
   document: DocumentState;
 }
 
-export const coreReducers: ActionReducerMap<SharedState> = {
+export const sharedReducers: ActionReducerMap<SharedState> = {
   actionStatus: actionStatusReducer,
   document: documentReducer
 };

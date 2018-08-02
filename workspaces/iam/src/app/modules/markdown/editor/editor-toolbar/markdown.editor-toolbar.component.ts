@@ -77,8 +77,8 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     public docService: DocService,
     private _renderer: Renderer,
     private _commandService: CommandService,
-    private store: Store<fromMarkdown.State>,
-    private state: State<fromMarkdown.State>,
+    private store: Store<fromMarkdown.MarkdownState>,
+    private state: State<fromMarkdown.MarkdownState>,
     public docSaver: DocSaveCoordinateService,
     private _breakpointObserver: BreakpointObserver,
     @Inject(MARKDOWN_SERVICE_TOKEN) private _markdownService: IMarkdownService

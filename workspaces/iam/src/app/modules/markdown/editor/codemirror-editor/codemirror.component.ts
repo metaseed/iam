@@ -72,7 +72,7 @@ export class CodemirrorComponent implements ControlValueAccessor {
   constructor(
     private service: MarkdownEditorService,
     @Inject(MARKDOWN_SERVICE_TOKEN) private markdownService: IMarkdownService,
-    private store: Store<markdown.State>,
+    private store: Store<markdown.MarkdownState>,
     private utils: Utilities
   ) {
     this.utils.isScreenWide$

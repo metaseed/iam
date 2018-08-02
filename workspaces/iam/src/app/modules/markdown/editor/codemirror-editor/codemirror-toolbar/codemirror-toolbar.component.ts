@@ -15,7 +15,6 @@ import { DocService } from 'home';
 import { MarkdownEditorService } from '../..';
 import { CommandService, Command, DocumentRef } from 'core';
 import { Store, select } from '@ngrx/store';
-import { State } from '../../../state';
 import * as doc from '../../../state/actions/document';
 import * as edit from '../../../state/actions/edit';
 import { OnDestroy } from '@angular/core';
@@ -50,8 +49,7 @@ export class CodemirrorToolbarComponent implements OnInit {
     private _renderer: Renderer,
     private _commandService: CommandService,
     private _docRef: DocumentRef,
-    private _domSanitizer: DomSanitizer,
-    private store: Store<State>
+    private _domSanitizer: DomSanitizer
   ) {
     this._verticalSplitPane.notifySizeDidChange.pipe(takeUntil(this.destroy$)).subscribe(s => {
       if (this.width === s.primary) return;

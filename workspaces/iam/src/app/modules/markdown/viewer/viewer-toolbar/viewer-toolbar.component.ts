@@ -11,7 +11,7 @@ import { Subject } from 'rxjs';
 })
 export class ViewerToolbarComponent {
   @ViewChild('toolbar') toolbar: MatToolbar;
-  constructor(private store: Store<fromMarkdown.State>) {}
+  constructor(private store: Store<fromMarkdown.MarkdownState>) {}
 
   onRefresh(e) {
     this.store.dispatch(new document.RefreshAction());
