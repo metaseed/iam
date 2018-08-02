@@ -4,15 +4,15 @@ import { documentReducer, DocumentState } from './document/document.reducer';
 import * as fromRoot from '../../../state';
 
 export interface State extends fromRoot.State {
-  core: CoreState;
+  shared: SharedState;
 }
 
-export interface CoreState {
+export interface SharedState {
   actionStatus: ActionStatusState;
   document: DocumentState;
 }
 
-export const coreReducers: ActionReducerMap<CoreState> = {
+export const coreReducers: ActionReducerMap<SharedState> = {
   actionStatus: actionStatusReducer,
   document: documentReducer
 };

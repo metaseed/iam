@@ -1,5 +1,4 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { Document, ActionState, CoreState } from 'core';
 import { DocService } from './services/doc.service';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { DocSearchService } from './services/doc-search.service';
@@ -7,10 +6,16 @@ import { Store, select } from '@ngrx/store';
 import { Observable, from, Subject } from 'rxjs';
 import { map, debounceTime, distinctUntilChanged, combineLatest, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
-import { selectDocumentsState, DocumentEffectsReadBulkDocMeta } from 'core';
 import { DocSearchComponent } from './doc-search/doc-search.component';
 import { switchIfEmit } from '../core/operators/switchIfEmit';
-import { MSG_DISPLAY_TIMEOUT } from 'core';
+import { MSG_DISPLAY_TIMEOUT, Document } from 'core';
+
+import {
+  selectDocumentsState,
+  ActionState,
+  SharedState,
+  DocumentEffectsReadBulkDocMeta
+} from 'shared';
 
 @Component({
   selector: 'home',
@@ -34,7 +39,7 @@ export class HomeComponent {
   ActionStatus = ActionState;
 
   constructor(
-    private store: Store<CoreState>,
+    private store: Store<SharedState>,
     public docService: DocService,
     private docSearchService: DocSearchService,
     private router: Router,

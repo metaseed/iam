@@ -8,7 +8,7 @@ import { MarkdownService } from './markdown.service';
 import { RefreshAction } from './state/actions/document';
 import { DocumentActionTypes } from './state/actions/document';
 import { MARKDOWN_SERVICE_TOKEN } from './model/markdown.model';
-import { DocumentEffectsRead } from 'core';
+import { DocumentEffectsRead } from 'shared';
 
 @Injectable()
 export class MarkdownEffects {

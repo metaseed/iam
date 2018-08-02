@@ -7,9 +7,9 @@ import {
 } from '@ngrx/store';
 import { environment } from 'environments/environment';
 import * as fromDocument from './document.reducer';
-import { CoreState } from '../state-reducers';
+import { SharedState } from '../state-reducers';
 
-export const selectDocsState = createFeatureSelector<CoreState>('core');
+export const selectDocsState = createFeatureSelector<SharedState>('shared');
 export const selectDocumentState = createSelector(selectDocsState, state => state.document);
 export const selectDocumentsState = createSelector(selectDocumentState, fromDocument.selectAll);
 export const selectDocumentEntitiesState = createSelector(

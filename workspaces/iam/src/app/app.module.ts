@@ -48,7 +48,7 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
     StorageModule,
     CoreModule,
     HomeModule,
-    SharedModule,
+    SharedModule.forRoot(),
     DatabaseModule,
     MaterialModule,
     ServiceWorkerModule.register(`./ngsw-worker.js`, {

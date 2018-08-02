@@ -13,9 +13,7 @@ import {
   NET_COMMU_TIMEOUT,
   MSG_DISPLAY_TIMEOUT,
   IContainer,
-  ContainerRef,
-  ActionStatus,
-  ActionState
+  ContainerRef
 } from 'core';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { Store, select } from '@ngrx/store';
@@ -25,8 +23,10 @@ import {
   DocumentEffectsDelete,
   monitorDocumentActionStatus,
   DocumentEffectsActionTypes,
-  selectDocumentsState
-} from 'core';
+  selectDocumentsState,
+  ActionStatus,
+  ActionState
+} from 'shared';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
 import { Subject, ReplaySubject, merge, asyncScheduler, from, of } from 'rxjs';
 import { takeUntil, filter, map, observeOn, tap, auditTime } from 'rxjs/operators';

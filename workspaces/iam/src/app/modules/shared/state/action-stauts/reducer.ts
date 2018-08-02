@@ -15,4 +15,3 @@ export function actionStatusReducer(state = initState, action: PaloadAction) {
       return state;
   }
 }
-export const selectActionStatus = (state: ActionStatusState) => state.actionStatus;

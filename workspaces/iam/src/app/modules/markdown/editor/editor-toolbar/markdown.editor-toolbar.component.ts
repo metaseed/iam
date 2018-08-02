@@ -14,15 +14,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Subscription, Subject, Observable, merge } from 'rxjs';
 import { DocService } from 'home';
 import { MarkdownEditorService } from '..';
-import {
-  CommandService,
-  Command,
-  DocumentRef,
-  DocFormat,
-  ScrollEvent,
-  DocumentEffectsSave,
-  DocumentEffectsCreate
-} from 'core';
+import { CommandService, Command, DocumentRef, DocFormat, ScrollEvent } from 'core';
 import * as fromMarkdown from '../../state';
 import { DocumentMode } from '../../state/reducers/document';
 import { Store, select, State } from '@ngrx/store';
@@ -37,6 +29,7 @@ import { Utilities } from '../../../core/utils';
 import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../../model/markdown.model';
 import { HtmlAstPath } from '@angular/compiler';
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { DocumentEffectsSave, DocumentEffectsCreate } from 'shared';
 
 @Component({
   selector: 'editor-toolbar',

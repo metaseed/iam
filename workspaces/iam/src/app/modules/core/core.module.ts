@@ -13,22 +13,10 @@ import { ScrollService } from './services/scroll/scroll.service';
 import { ScrollSpyService } from './services/scroll/scroll-spy.service';
 import { ConfigService } from './config/config.service';
 import { Utilities } from './utils';
-import { StoreCache, ActionStatusMoniter, CoreState, coreReducers } from './state';
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-import { DocumentEffects } from './state/document/document.effects';
-import { DocEffectsUtil } from './state/document/document.effects.util';
 @NgModule({
-  imports: [
-    CommonModule,
-    HotkeyModule,
-    StoreModule.forFeature<CoreState>('core', coreReducers),
-    EffectsModule.forFeature([DocumentEffects])
-  ],
+  imports: [CommonModule, HotkeyModule],
   declarations: [],
   providers: [
-    DocEffectsUtil,
-    ActionStatusMoniter,
     ConfigService,
     CommandService,
     WindowRef,
@@ -39,7 +27,6 @@ import { DocEffectsUtil } from './state/document/document.effects.util';
     DialogService,
     ScrollService,
     ScrollSpyService,
-    StoreCache,
     Utilities
   ]
 })

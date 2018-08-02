@@ -1,4 +1,4 @@
-import { ICache, DocMeta, DocContent, Document, DocFormat } from '../model';
+import { ICache, DocMeta, DocContent, Document, DocFormat } from 'core';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
@@ -15,14 +15,14 @@ import {
   DocumentEffectsDelete
 } from './document';
 import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from './document/const';
-import { CoreState } from 'core';
+import { SharedState } from './state-reducers';
 
 @Injectable()
 export class StoreCache implements ICache {
   docMetaData: { hightKey: number; lowKey: number };
 
   public nextLevelCache: ICache;
-  constructor(private store: Store<CoreState>, private state: StoreState<CoreState>) {}
+  constructor(private store: Store<SharedState>, private state: StoreState<SharedState>) {}
 
   init(nextLevelCache: ICache): ICache {
     this.nextLevelCache = nextLevelCache;

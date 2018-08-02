@@ -19,7 +19,7 @@ import {
   DocumentEffectsCreate,
   SetCurrentDocumentId,
   DocumentEffectsRead
-} from 'core';
+} from 'shared';
 import { Document } from 'core';
 import { Utilities } from '../core/utils';
 import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from './model/markdown.model';

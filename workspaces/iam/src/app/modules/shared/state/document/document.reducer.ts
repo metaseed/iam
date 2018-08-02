@@ -1,7 +1,6 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
-import { Document, ActionStatus } from 'core';
+import { Document } from 'core';
 import { DocumentActions, DocumentActionTypes } from './document.actions';
-import { DocumentEffectsActionTypes } from './document.effects.actions';
 
 export interface DocumentState extends EntityState<Document> {
   // additional entities state properties

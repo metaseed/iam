@@ -16,7 +16,7 @@ import {
   DocumentEffectsDelete,
   selectCurrentDocumentState,
   NEW_DOC_ID
-} from 'core';
+} from 'shared';
 import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../model/markdown.model';
 import { IContainer, ContainerRef } from 'core';
 

@@ -26,9 +26,7 @@ import { ScrollingModule } from '@angular/cdk-experimental/scrolling';
     FormsModule,
     ScrollingModule,
     MaterialModule,
-    SpinnerModule,
-    GithubStorageModule,
-    DatabaseModule
+    SpinnerModule
   ],
   declarations: [
     DeleteAlertDialog,

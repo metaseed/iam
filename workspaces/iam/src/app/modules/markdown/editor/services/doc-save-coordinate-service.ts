@@ -3,8 +3,12 @@ import { MarkdownEditorService } from './markdown.editor.service';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { auditTime, takeUntil, combineLatest } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
-import { DocumentEffectsSave, getDocumentActionStatus$, DocumentEffectsActionTypes } from 'core';
-import { ActionState } from 'core';
+import {
+  ActionState,
+  DocumentEffectsSave,
+  getDocumentActionStatus$,
+  DocumentEffectsActionTypes
+} from 'shared';
 
 @Injectable()
 export class DocSaveCoordinateService implements OnDestroy {

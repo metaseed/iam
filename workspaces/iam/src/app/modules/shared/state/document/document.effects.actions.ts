@@ -8,7 +8,7 @@ import {
   ActionStatusState,
   actionStatus$
 } from '../action-stauts';
-import { DocFormat } from '../../model';
+import { DocFormat } from 'core';
 
 export enum DocumentEffectsActionTypes {
   ReadBulkDocMeta = '[DocumentEffects] Load',

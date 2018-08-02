@@ -8,26 +8,25 @@ import {
   DocumentEffectsActionTypes,
   DocumentEffectsDelete
 } from './document.effects.actions';
-import { GithubCache } from 'net-storage';
 import { switchMap, tap } from 'rxjs/operators';
 import {
   DocumentEffectsRead,
-  SetCurrentDocumentId,
-  selectCurrentDocumentState,
   DocumentEffectsCreate,
-  DocumentEffectsSave,
-  selectIdRangeLowState,
-  selectIdRangeHighState
-} from '.';
+  DocumentEffectsSave
+} from './document.effects.actions';
 import { MatSnackBar } from '@angular/material';
 import { DocumentState } from './document.reducer';
 import { StoreCache } from '../store-cache';
-import { DatabaseCache } from 'database';
 import { ActionStatusMoniter } from '../action-stauts';
 import { DocEffectsUtil } from './document.effects.util';
-import { SetIdRangeLow, SetIdRangeHigh } from './document.actions';
-import { NEW_DOC_ID, DB_CACHE_TOKEN, NET_CACHE_TOKEN } from './const';
-import { DocMeta } from '../../model';
+import { SetIdRangeLow, SetIdRangeHigh, SetCurrentDocumentId } from './document.actions';
+import { DocMeta, ICache, NET_CACHE_TOKEN, DB_CACHE_TOKEN } from 'core';
+import {
+  selectIdRangeHighState,
+  selectIdRangeLowState,
+  selectCurrentDocumentState
+} from './selectors';
+import { NEW_DOC_ID } from './const';
 
 @Injectable()
 export class DocumentEffects {
@@ -38,8 +37,8 @@ export class DocumentEffects {
     private state: StoreState<DocumentState>,
     private snackbar: MatSnackBar,
     private store: Store<DocumentState>,
-    @Inject(NET_CACHE_TOKEN) githubCache: GithubCache,
-    @Inject(DB_CACHE_TOKEN) dbCache: DatabaseCache
+    @Inject(NET_CACHE_TOKEN) githubCache: ICache,
+    @Inject(DB_CACHE_TOKEN) dbCache: ICache
   ) {
     storeCache.init(
       dbCache.init(

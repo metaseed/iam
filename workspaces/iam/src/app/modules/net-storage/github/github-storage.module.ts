@@ -13,9 +13,9 @@ import { NET_CACHE_TOKEN } from 'core';
   imports: [],
   exports: [],
   providers: [
-    { provide: NET_CACHE_TOKEN, useClass: GithubStorage },
+    GithubStorage,
+    { provide: NET_CACHE_TOKEN, useClass: GithubCache },
     gitHubCacheUtil,
-    GithubCache,
     {
       provide: GITHUB_AUTHENTICATION,
       useValue: new UserInfo('metasong', 'metaseed@gmail.com', 'mssong179')
