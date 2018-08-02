@@ -83,7 +83,7 @@ export class ScrollHideDirective implements OnDestroy {
   set scrollHide(containerItems: ScrollHideItem[]) {
     if (!containerItems) return;
     if (!Array.isArray(containerItems)) {
-      throw 'scrollHide attribute should be an array!';
+      throw new Error('scrollHide attribute should be an array!');
     }
     this._containerItems = containerItems;
   }
@@ -111,7 +111,7 @@ export class ScrollHideDirective implements OnDestroy {
         sjt.next(item.container);
       }
 
-      let container$ = item.container$;
+      const container$ = item.container$;
       container$
         .pipe(
           takeUntil(this._destroy$),
@@ -125,18 +125,18 @@ export class ScrollHideDirective implements OnDestroy {
 
       const disableAnimation = () => {
         this.transitionProperty = 'none';
-        containerItems.forEach(item => {
-          if (item.marginTop !== undefined) {
-            item.marginTop.style.transitionProperty = 'none';
+        containerItems.forEach(it => {
+          if (it.marginTop !== undefined) {
+            it.marginTop.style.transitionProperty = 'none';
           }
         });
       };
 
       const enableAnimation = () => {
         this.transitionProperty = 'top';
-        containerItems.forEach(item => {
-          if (item.marginTop !== undefined) {
-            item.marginTop.style.transitionProperty = 'margin-top';
+        containerItems.forEach(it => {
+          if (it.marginTop !== undefined) {
+            it.marginTop.style.transitionProperty = 'margin-top';
           }
         });
       };
@@ -161,8 +161,6 @@ export class ScrollHideDirective implements OnDestroy {
 
       let lastY: number;
       let startY: number;
-      let isDown: boolean;
-
       container$
         .pipe(
           takeUntil(this._destroy$),
@@ -174,6 +172,7 @@ export class ScrollHideDirective implements OnDestroy {
           disableScroll = true;
           disableAnimation();
           lastY = e.touches[0].clientY;
+          startY = lastY;
         });
 
       container$
@@ -221,14 +220,14 @@ export class ScrollHideDirective implements OnDestroy {
 
           const top = this.top + delt;
           this.top = Math.min(Math.max(this.height_minus, top), 0);
-          // console.log(e, top);
-          this._containerItems.forEach(item => {
-            if (item.container.scrollTop > this.height) return;
-            const margin = item.marginTop;
+          console.log(e, top);
+          this._containerItems.forEach(it => {
+            if (it.container.scrollTop > this.height) return;
+            const margin = it.marginTop;
             let v = margin._margin + delt;
             v = Math.min(Math.max(0, v), this.height);
             if (v !== margin._margin) {
-              item.container.scrollTop += delt;
+              it.container.scrollTop += delt;
               (this._windowRef.nativeElement as Window).requestAnimationFrame(
                 () => (margin.style.marginTop = v + 'px')
               );
