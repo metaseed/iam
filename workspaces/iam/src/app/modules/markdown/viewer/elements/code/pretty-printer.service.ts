@@ -1,18 +1,10 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
-import { from as fromPromise, Observable } from "rxjs";
-import { first, map, share } from "rxjs/operators";
-import { Logger } from "core";
+import { from as fromPromise, Observable } from 'rxjs';
+import { first, map, share } from 'rxjs/operators';
+import { Logger } from 'core';
 
-declare const System: {
-  import(name: string): Promise<any>;
-};
-
-type PrettyPrintOne = (
-  code: string,
-  language?: string,
-  linenums?: number | boolean
-) => string;
+type PrettyPrintOne = (code: string, language?: string, linenums?: number | boolean) => string;
 
 /**
  * Wrapper around the prettify.js library
@@ -26,12 +18,12 @@ export class PrettyPrinter {
   }
 
   private getPrettyPrintOne(): Promise<PrettyPrintOne> {
-    const ppo = (window as any)["prettyPrintOne"];
+    const ppo = (window as any)['prettyPrintOne'];
     return ppo
       ? Promise.resolve(ppo)
       : // prettify.js is not in window global; load it with webpack loader
-        System.import("assets/js/prettify.js").then(
-          () => (window as any)["prettyPrintOne"],
+        import('assets/js/prettify.js').then(
+          () => (window as any)['prettyPrintOne'],
           err => {
             const msg = `Cannot get prettify.js from server: ${err.message}`;
             this.logger.error(new Error(msg));
@@ -59,10 +51,7 @@ export class PrettyPrinter {
         try {
           return ppo(code, language, linenums);
         } catch (err) {
-          const msg = `Could not format code that begins '${code.substr(
-            0,
-            50
-          )}...'.`;
+          const msg = `Could not format code that begins '${code.substr(0, 50)}...'.`;
           console.error(msg, err);
           throw new Error(msg);
         }
