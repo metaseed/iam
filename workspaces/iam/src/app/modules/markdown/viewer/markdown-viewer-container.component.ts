@@ -3,7 +3,6 @@ import {
   MSG_DISPLAY_TIMEOUT,
   NET_COMMU_TIMEOUT,
   ContainerRef,
-  DocumentRef,
   ScrollEvent,
   IContainer
 } from 'core';
@@ -16,7 +15,7 @@ import { DocumentEffectsActionTypes, monitorActionStatus$, actionStatus$ } from 
 import { DocumentMode } from '../state/reducers/document';
 import * as fromMarkdown from '../state';
 
-import { takeUntil, map, observeOn, tap, share, switchMap } from 'rxjs/operators';
+import { takeUntil, map, observeOn, switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../model/markdown.model';
 @Component({
