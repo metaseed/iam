@@ -146,7 +146,7 @@
       "root": "projects/angular-hotkey",
       "sourceRoot": "projects/angular-hotkey/src",
       "projectType": "library",
-      "prefix": "iam",
+      "prefix": "ms",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-ng-packagr:build",
@@ -209,7 +209,10 @@
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": ["projects/spinner/tsconfig.lib.json", "projects/spinner/tsconfig.spec.json"],
+            "tsConfig": [
+              "projects/spinner/tsconfig.lib.json",
+              "projects/spinner/tsconfig.spec.json"
+            ],
             "exclude": ["**/node_modules/**"]
           }
         }

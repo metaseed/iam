@@ -86,7 +86,7 @@ export class HomeComponent {
         if (docs.length <= 1) {
           if (!isSearching)
             // 0: initial value ; 1: nav back from url doc show;
-            this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: true }));
+            this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: false }));
         }
       })
     );

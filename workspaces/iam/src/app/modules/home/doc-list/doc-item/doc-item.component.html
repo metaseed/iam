@@ -17,5 +17,5 @@
       <mat-icon>delete_forever</mat-icon>
     </button>
   </mat-card-actions>
-  <doc-delete *ngIf="showDelete" (cancel)="showDelete=false" (delete)="onDelete(doc)" [isDone]="isDeleteDone"></doc-delete>
+  <doc-delete *ngIf="showDelete" (cancel)="showDelete=false" (delete)="onDelete(doc)" [isDone]="isDeleteDone$|async"></doc-delete>
 </mat-card>

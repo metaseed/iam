@@ -49,30 +49,6 @@ export class DocListComponent implements OnInit {
     this.snackBar.open(action + 'time out.', 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
-  isDeleteDone = (doc: Document) =>
-    monitorActionStatus$(
-      this.store,
-      DocumentEffectsActionTypes.Delete,
-      NET_COMMU_TIMEOUT,
-      this.defaultTimeoutHandler(DocumentEffectsActionTypes.Delete),
-      actionStatus => actionStatus.action.payload.id === doc.id
-    ).pipe(
-      takeUntil(this.destroy$),
-      map(v => {
-        if (v.action.payload.id === doc.id) {
-          if (v.state === ActionState.Fail) {
-            this.snackBar.open(`delete: ${doc.metaData.title} failed!`);
-            return true;
-          }
-          return (
-            // v.status === ActionStatus.Succession ||
-            v.state === ActionState.Complete || v.state === ActionState.Timeout
-          );
-        }
-        return false;
-      })
-    );
-
   isLoadDone$ = merge(
     this.store.pipe(select(selectDocumentsState)),
     monitorActionStatus$(
@@ -84,6 +60,8 @@ export class DocListComponent implements OnInit {
       takeUntil(this.destroy$),
       filter(a => a.action.payload.isBelowRange === false),
       map(v => {
+        this.showGetMore =
+          this.elementRef.nativeElement.scrollHeight === this.elementRef.nativeElement.clientHeight;
         return (
           v.state === ActionState.Fail ||
           v.state === ActionState.Succession ||
@@ -94,16 +72,7 @@ export class DocListComponent implements OnInit {
     )
   ).pipe(observeOn(asyncScheduler));
 
-  private _showGetMore = false;
-  get showGetMore() {
-    if (!this.elementRef) return false;
-    setTimeout(
-      _ =>
-        (this._showGetMore =
-          this.elementRef.nativeElement.scrollHeight === this.elementRef.nativeElement.clientHeight)
-    );
-    return this.elementRef;
-  }
+  private showGetMore = false;
 
   isLoadMoreDone$ = monitorActionStatus$(
     this.store,
@@ -169,7 +138,7 @@ export class DocListComponent implements OnInit {
   trackByFunc = (i, doc) => doc.id;
 
   onShow(doc: Document) {
-    let navigationExtras: NavigationExtras = {
+    const navigationExtras: NavigationExtras = {
       queryParams: {
         id: doc.id,
         title: doc.metaData.title,
