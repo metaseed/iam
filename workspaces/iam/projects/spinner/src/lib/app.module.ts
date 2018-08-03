@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
-import { SpinnerModule } from '@metaseed/spinner';
+import { SpinnerModule } from '@metaseed/spinner/metaseed-spinner';
 
 @NgModule({
   imports: [BrowserModule, SpinnerModule],

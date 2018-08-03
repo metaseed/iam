@@ -53,8 +53,6 @@ export const MatModules = [
 @NgModule({
   imports: [...MatModules],
   exports: [...MatModules],
-  providers:[
-    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 8000}}
-  ]
+  providers: [{ provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 8000 } }]
 })
 export class MaterialModule {}

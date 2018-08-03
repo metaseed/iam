@@ -7,19 +7,15 @@ import {
   DocumentEffectsReadBulkDocMeta,
   DocumentEffectsActionTypes,
   DocumentEffectsDelete
-} from './document.effects.actions';
+} from './effects.actions';
 import { switchMap, tap } from 'rxjs/operators';
-import {
-  DocumentEffectsRead,
-  DocumentEffectsCreate,
-  DocumentEffectsSave
-} from './document.effects.actions';
+import { DocumentEffectsRead, DocumentEffectsCreate, DocumentEffectsSave } from './effects.actions';
 import { MatSnackBar } from '@angular/material';
-import { DocumentState } from './document.reducer';
+import { DocumentState } from './reducer';
 import { StoreCache } from '../store-cache';
 import { ActionStatusMoniter } from '../action-stauts';
-import { DocEffectsUtil } from './document.effects.util';
-import { SetIdRangeLow, SetIdRangeHigh, SetCurrentDocumentId } from './document.actions';
+import { DocEffectsUtil } from './effects.util';
+import { SetIdRangeLow, SetIdRangeHigh, SetCurrentDocumentId } from './actions';
 import { DocMeta, ICache, NET_CACHE_TOKEN, DB_CACHE_TOKEN } from 'core';
 import {
   selectIdRangeHighState,
@@ -109,22 +105,22 @@ export class DocumentEffects {
       switchMap(action => {
         const doc = selectCurrentDocumentState(this.state.value);
         const content = action.payload.content;
-        let format = action.payload.format;
-        let newTitle = DocMeta.getTitle(action.payload.content);
+        const format = action.payload.format;
+        const newTitle = DocMeta.getTitle(action.payload.content);
 
         if (!newTitle) return throwError(new Error('Must define a title!'));
 
         if (doc.id === NEW_DOC_ID) {
           return this.storeCache.CreateDocument(content, format).pipe(
-            tap(doc => {
-              this.util.modifyUrlAfterSaved(doc.id, newTitle, format);
+            tap(d => {
+              this.util.modifyUrlAfterSaved(d.id, newTitle, format);
               this.snackbar.open('New document saved!', 'OK');
             }, this.monitor.complete(action))
           );
         } else {
           return this.storeCache.UpdateDocument(doc.metaData, content).pipe(
-            tap(doc => {
-              this.util.modifyUrlAfterSaved(doc.id, newTitle, format);
+            tap(d => {
+              this.util.modifyUrlAfterSaved(d.id, newTitle, format);
               this.snackbar.open('Saved!', 'OK');
             }, this.monitor.complete(action))
           );

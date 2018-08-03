@@ -1,6 +1,6 @@
 import { map, auditTime, share } from 'rxjs/operators';
 import { fromEvent, Observable } from 'rxjs';
-import { NgZone } from '../../../../../node_modules/@angular/core';
+import { NgZone } from '@angular/core';
 
 export class ScrollEvent {
   constructor(public event: Event, public isDown: boolean, public scrollTop: number) {}

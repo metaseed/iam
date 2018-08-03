@@ -10,7 +10,7 @@ import {
   ActionState
 } from 'shared';
 import { takeUntil, map } from 'rxjs/operators';
-import { Subject } from '../../../../../../node_modules/rxjs';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'doc-item',

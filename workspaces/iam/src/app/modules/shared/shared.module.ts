@@ -17,8 +17,8 @@ import {
   moduleStateName
 } from './state';
 import { EffectsModule } from '@ngrx/effects';
-import { DocumentEffects } from './state/document/document.effects';
-import { DocEffectsUtil } from './state/document/document.effects.util';
+import { DocumentEffects } from './state/document/effects';
+import { DocEffectsUtil } from './state/document/effects.util';
 import { DatabaseModule } from 'database';
 import { StorageModule } from '../net-storage/storage.module';
 

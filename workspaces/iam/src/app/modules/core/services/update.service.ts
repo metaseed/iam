@@ -16,7 +16,7 @@ export class UpdateService {
         'available version is',
         event.available
       );
-      let snackBarRef = this.snackBar.open('Newer version of the app is available', 'Refresh', {
+      const snackBarRef = this.snackBar.open('Newer version of the app is available', 'Refresh', {
         duration: 10
       });
       snackBarRef.onAction().subscribe(() => this.activateUpdate());
