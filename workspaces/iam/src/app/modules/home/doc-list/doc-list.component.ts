@@ -60,8 +60,6 @@ export class DocListComponent implements OnInit {
       takeUntil(this.destroy$),
       filter(a => a.action.payload.isBelowRange === false),
       map(v => {
-        this.showGetMore =
-          this.elementRef.nativeElement.scrollHeight === this.elementRef.nativeElement.clientHeight;
         return (
           v.state === ActionState.Fail ||
           v.state === ActionState.Succession ||
@@ -72,7 +70,11 @@ export class DocListComponent implements OnInit {
     )
   ).pipe(observeOn(asyncScheduler));
 
-  private showGetMore = false;
+  public showGetMore$ = this.isLoadDone$.pipe(
+    map(
+      _ => this.elementRef.nativeElement.scrollHeight === this.elementRef.nativeElement.clientHeight
+    )
+  );
 
   isLoadMoreDone$ = monitorActionStatus$(
     this.store,

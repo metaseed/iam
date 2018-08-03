@@ -1,4 +1,11 @@
-import { Component, ViewChild, Inject, ElementRef } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  Inject,
+  ElementRef,
+  NgZone,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { MarkdownEditorService } from '.';
 import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
 import * as fromMarkdown from '../state';
@@ -51,7 +58,8 @@ export class MarkdownEditorComponent {
     @Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService,
     private editorService: MarkdownEditorService,
     private docSaveCoordinater: DocSaveCoordinateService,
-    private store: Store<fromMarkdown.MarkdownState>
+    private store: Store<fromMarkdown.MarkdownState>,
+    private ngZone: NgZone
   ) {
     this.editorService.editorLoaded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       setTimeout(() => (this.editorLoaded = true), 0);
@@ -76,7 +84,7 @@ export class MarkdownEditorComponent {
 
   ngOnInit() {
     (this.markdownService.editor$ as Subject<IContainer>).next(
-      new ContainerRef(this._elementRef.nativeElement)
+      new ContainerRef(this._elementRef.nativeElement, undefined, undefined, this.ngZone)
     );
   }
 

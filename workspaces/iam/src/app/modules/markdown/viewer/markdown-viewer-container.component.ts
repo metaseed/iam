@@ -1,4 +1,4 @@
-import { Component, Input, AfterViewInit, Inject } from '@angular/core';
+import { Component, Input, AfterViewInit, Inject, NgZone } from '@angular/core';
 import {
   MSG_DISPLAY_TIMEOUT,
   NET_COMMU_TIMEOUT,
@@ -59,15 +59,21 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
   constructor(
     private store: Store<any>,
     private snackBar: MatSnackBar,
-    @Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService
+    @Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService,
+    private ngZone: NgZone
   ) {}
 
   container: IContainer;
   scrollDown$: Observable<ScrollEvent>;
 
   ngAfterViewInit() {
-    let me = this;
-    this.container = new ContainerRef(this.viewerContainerDiv.nativeElement);
+    const me = this;
+    this.container = new ContainerRef(
+      this.viewerContainerDiv.nativeElement,
+      undefined,
+      undefined,
+      this.ngZone
+    );
     this.scrollDown$ = this.container.scrollDown$;
     (this.markdownService.viewer$ as Subject<IContainer>).next(this.container);
 

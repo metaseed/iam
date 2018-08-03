@@ -1,5 +1,6 @@
 import { map, auditTime, share } from 'rxjs/operators';
 import { fromEvent, Observable } from 'rxjs';
+import { NgZone } from '../../../../../node_modules/@angular/core';
 
 export class ScrollEvent {
   constructor(public event: Event, public isDown: boolean, public scrollTop: number) {}
@@ -21,17 +22,46 @@ export interface IContainer {
 }
 
 export class ContainerRef implements IContainer {
-  scrollEvent$ = fromEvent(this.nativeElement, 'scroll').pipe(auditTime(this._scrollAuditTime));
-  resizeEvent$ = fromEvent(this.nativeElement, 'resize').pipe(auditTime(this._resizeAuditTime));
-  touchStart$ = fromEvent<TouchEvent>(this.nativeElement, 'touchstart', { passive: true });
-  touchMove$ = fromEvent<TouchEvent>(this.nativeElement, 'touchmove', { passive: true });
-  touchEnd$ = fromEvent<TouchEvent>(this.nativeElement, 'touchend', { passive: true });
+  scrollEvent$: Observable<Event>;
+  resizeEvent$: Observable<Event>;
+  touchStart$: Observable<TouchEvent>;
+  touchEnd$: Observable<TouchEvent>;
+  touchMove$: Observable<TouchEvent>;
 
   constructor(
     public nativeElement: HTMLElement | Window | Document = window,
     private _scrollAuditTime = 300,
-    private _resizeAuditTime = 10
-  ) {}
+    private _resizeAuditTime = 10,
+    private ngZone?: NgZone
+  ) {
+    if (this.ngZone) {
+      this.ngZone.runOutsideAngular(_ => {
+        this.scrollEvent$ = fromEvent(this.nativeElement, 'scroll').pipe(
+          auditTime(this._scrollAuditTime)
+        );
+        this.resizeEvent$ = fromEvent(this.nativeElement, 'resize').pipe(
+          auditTime(this._resizeAuditTime)
+        );
+        this.touchStart$ = fromEvent<TouchEvent>(this.nativeElement, 'touchstart', {
+          passive: true
+        });
+        this.touchMove$ = fromEvent<TouchEvent>(this.nativeElement, 'touchmove', { passive: true });
+        this.touchEnd$ = fromEvent<TouchEvent>(this.nativeElement, 'touchend', { passive: true });
+      });
+    } else {
+      this.scrollEvent$ = fromEvent(this.nativeElement, 'scroll').pipe(
+        auditTime(this._scrollAuditTime)
+      );
+      this.resizeEvent$ = fromEvent(this.nativeElement, 'resize').pipe(
+        auditTime(this._resizeAuditTime)
+      );
+      this.touchStart$ = fromEvent<TouchEvent>(this.nativeElement, 'touchstart', {
+        passive: true
+      });
+      this.touchMove$ = fromEvent<TouchEvent>(this.nativeElement, 'touchmove', { passive: true });
+      this.touchEnd$ = fromEvent<TouchEvent>(this.nativeElement, 'touchend', { passive: true });
+    }
+  }
 
   get contentHeight() {
     if (this.nativeElement instanceof HTMLElement) {

@@ -183,9 +183,9 @@ export class ScrollHideDirective implements OnDestroy {
         .subscribe(e => {
           if (this._hide) return;
           // e.preventDefault();
-          if (lastY - startY) {
+          if (startY - lastY) {
             // isdown
-            if (this.top < this.height_half_minus) {
+            if (this.top > this.height_half_minus) {
               this.top = 0;
               this.setMargin('Set');
             } else {
@@ -193,7 +193,7 @@ export class ScrollHideDirective implements OnDestroy {
               this.setMargin('Clear');
             }
           } else {
-            if (this.top > this.height_half_minus) {
+            if (this.top < this.height_half_minus) {
               this.top = 0;
               this.setMargin('Set');
             } else {
@@ -220,7 +220,7 @@ export class ScrollHideDirective implements OnDestroy {
 
           const top = this.top + delt;
           this.top = Math.min(Math.max(this.height_minus, top), 0);
-          console.log(e, top);
+          // console.log(e, top);
           this._containerItems.forEach(it => {
             if (it.container.scrollTop > this.height) return;
             const margin = it.marginTop;
