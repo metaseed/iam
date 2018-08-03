@@ -49,9 +49,8 @@ html {
   }
 
   .CodeMirror {
-    height: auto;
+    height: 100%;
     font-family: inherit;
-    // height: inherit;
     .cm-s-default .cm-formatting {
       opacity: 0.48;
     }

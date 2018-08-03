@@ -83,9 +83,16 @@ export class MarkdownEditorComponent {
     });
   }
 
-  ngOnInit() {
+  ngAfterViewInit() {
     (this.markdownService.editor$ as Subject<IContainer>).next(
-      new ContainerRef(this._elementRef.nativeElement, undefined, undefined, this.ngZone)
+      new ContainerRef(
+        (this._elementRef.nativeElement as HTMLElement).getElementsByClassName(
+          'CodeMirror-scroll'
+        )[0] as HTMLElement,
+        undefined,
+        undefined,
+        this.ngZone
+      )
     );
   }
 
