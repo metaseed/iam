@@ -29,7 +29,7 @@ import {
 } from 'shared';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
 import { Subject, ReplaySubject, merge, asyncScheduler, from, of } from 'rxjs';
-import { takeUntil, filter, map, observeOn, tap, auditTime } from 'rxjs/operators';
+import { takeUntil, filter, map, observeOn, tap, auditTime, startWith } from 'rxjs/operators';
 import { Router, RouterState, NavigationExtras } from '@angular/router';
 import { switchIfEmit } from 'core';
 
@@ -92,7 +92,8 @@ export class DocListComponent implements OnInit {
         v.state === ActionState.Complete ||
         v.state === ActionState.Timeout
       );
-    })
+    }),
+    startWith(true)
   );
 
   public container: IContainer;
