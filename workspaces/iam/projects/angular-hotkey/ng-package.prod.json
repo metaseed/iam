@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../libraries/@metaseed/angular-hotkey",
+  "dest": "../../dist/@metaseed/angular-hotkey",
   "lib": {
     "entryFile": "src/public_api.ts"
   }

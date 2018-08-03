@@ -6,8 +6,9 @@
     "build": "ng build spinner",
     "build-prod": "ng build spinner --prod",
     "prerelease": "npm run build-prod",
-    "release": "cd ../../libraries/@metaseed/spinner & npm publish --access public"
+    "release": "cd ../../dist/@metaseed/spinner & npm publish --access public"
   },
+  "main": "./src/public_api.ts",
   "peerDependencies": {
     "@angular/common": "^6.0.0",
     "@angular/core": "^6.0.0"

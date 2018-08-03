@@ -18,10 +18,10 @@
       "core": ["app/modules/core"],
       "shared": ["app/modules/shared"],
       "material": ["app/modules/material"],
-      "@metaseed/angular-hotkey": ["dist/@metaseed/angular-hotkey"],
-      "@metaseed/angular-hotkey/*": ["dist/@metaseed/angular-hotkey/*"],
-      "@metaseed/spinner": ["dist/@metaseed/spinner"],
-      "@metaseed/spinner/*": ["dist/@metaseed/spinner/*"]
+      "@metaseed/angular-hotkey": ["../projects/angular-hotkey"],
+      "@metaseed/angular-hotkey/*": ["../projects/angular-hotkey/*"],
+      "@metaseed/spinner": ["../projects/spinner"],
+      "@metaseed/spinner/*": ["../projects/spinner/*"]
     },
     "typeRoots": ["node_modules/@types"],
     "lib": ["es2017", "dom"]

@@ -6,13 +6,14 @@
     "build": "ng build angular-hotkey",
     "build-prod": "ng build angular-hotkey --prod",
     "prerelease": "npm run build-prod",
-    "release": "cd ../../libraries/@metaseed/angular-hotkey & npm publish --access public"
+    "release": "cd ../../dist/@metaseed/angular-hotkey & npm publish --access public"
   },
+  "main": "./src/public_api.ts",
   "dependencies": {
     "mousetrap": "^1.6.1"
   },
   "peerDependencies": {
-    "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
-    "@angular/core": "^6.0.0-rc.0 || ^6.0.0"
+    "@angular/common": "^6.0.0",
+    "@angular/core": "^6.0.0"
   }
 }
