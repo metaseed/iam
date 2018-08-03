@@ -11,7 +11,7 @@ import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
 import * as fromMarkdown from '../state';
 import { DocumentMode } from '../state/reducers/document';
 import { DocSaveCoordinateService } from './services/doc-save-coordinate-service';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { Store, select, State as StoreState } from '@ngrx/store';
 import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
@@ -51,6 +51,10 @@ export class MarkdownEditorComponent {
     })
   );
 
+  // could not use takeuntil, otherwise the view is not updated when edit,
+  // when reconstruct this component
+  contentChangeSubscription: Subscription;
+
   constructor(
     private _elementRef: ElementRef,
     private state: StoreState<fromMarkdown.MarkdownState>,
@@ -64,12 +68,9 @@ export class MarkdownEditorComponent {
     this.editorService.editorLoaded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       setTimeout(() => (this.editorLoaded = true), 0);
     });
-    this.editorService.contentChanged$
-      .pipe(
-        takeUntil(this.destroy$),
-        map(v => v[0])
-      )
-      .subscribe(this.markdownService.editorContentChanged$ as Subject<string>);
+
+    this.contentChangeSubscription = this.editorService.contentChanged$.subscribe(this
+      .markdownService.editorContentChanged$ as Subject<string>);
 
     this.docMode$.pipe(takeUntil(this.destroy$)).subscribe(mode => {
       switch (mode) {
@@ -89,6 +90,7 @@ export class MarkdownEditorComponent {
   }
 
   ngOnDestroy() {
+    this.contentChangeSubscription.unsubscribe();
     this.destroy$.next();
   }
 

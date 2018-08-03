@@ -153,7 +153,7 @@ export class CodemirrorComponent implements ControlValueAccessor {
   updateValue(value) {
     this.value = value;
     this.onTouched();
-    this.service.contentChanged$.next([value, this.instance]);
+    this.service.contentChanged$.next(value);
     this.change.emit(value);
   }
 

@@ -91,7 +91,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
         })
       ),
       this.markdownService.editorContentChanged$
-    ).pipe<string>(backoff(80, 3000));
+    ).pipe<string>(backoff(80, 1000));
   }
 
   ngOnDestroy() {
