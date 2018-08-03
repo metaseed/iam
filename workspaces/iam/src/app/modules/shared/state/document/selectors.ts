@@ -1,9 +1,7 @@
-import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { createSelector } from '@ngrx/store';
 import * as fromDocument from './reducer';
-import { SharedState, moduleStateName } from '../state-reducers';
+import { getDocumentState } from '../state-reducers';
 
-export const getDocsState = createFeatureSelector<SharedState>(moduleStateName);
-export const getDocumentState = createSelector(getDocsState, state => state.document);
 export const getDocumentsState = createSelector(getDocumentState, fromDocument.selectAll);
 export const getDocumentEntitiesState = createSelector(
   getDocumentState,
