@@ -1,9 +1,9 @@
 import 'codemirror/keymap/vim';
-import 'codemirror/keymap/sublime'
-import 'codemirror/keymap/emacs'
+import 'codemirror/keymap/sublime';
+import 'codemirror/keymap/emacs';
 
 export class KeyMap {
-    constructor(cm) {
-        //cm.setOption('keyMap', 'vim');
-    }
+  constructor(cm) {
+    //  cm.setOption('keyMap', 'vim');
+  }
 }

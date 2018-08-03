@@ -140,7 +140,7 @@ export class CodemirrorComponent implements ControlValueAccessor {
     this.instance.on('blur', () => {
       this.blur.emit();
     });
-    new KeyMap(this.instance);
+    // new KeyMap(this.instance);
   }
 
   refresh() {

@@ -1,11 +1,4 @@
-import {
-  ActionReducer,
-  ActionReducerMap,
-  createFeatureSelector,
-  createSelector,
-  MetaReducer
-} from '@ngrx/store';
-import { environment } from 'environments/environment';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
 import * as fromDocument from './document.reducer';
 import { SharedState, moduleStateName } from '../state-reducers';
 

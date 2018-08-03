@@ -95,7 +95,7 @@ export class ContainerRef implements IContainer {
       this.nativeElement.scrollTop = v;
       return;
     }
-    window && window.scrollTo(window.pageXOffset, v);
+    if (window) window.scrollTo(window.pageXOffset, v);
   }
   get maxScrollTop() {
     return this.contentHeight - this.viewportHeight;

@@ -112,9 +112,9 @@ export class MarkdownComponent implements OnInit, OnDestroy {
             this.store.dispatch(new DocumentEffectsCreate({ format }));
             this.store.dispatch(new document.EditMode());
           } else {
-            let title = params.get('title');
-            let num = +params.get('id');
-            let format = params.get('f');
+            const title = params.get('title');
+            const num = +params.get('id');
+            const format = params.get('f');
             this.store.dispatch(new DocumentEffectsRead({ id: num, title, format }));
           }
         }),
