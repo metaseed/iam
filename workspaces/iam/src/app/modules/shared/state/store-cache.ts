@@ -6,7 +6,7 @@ import { Store, State as StoreState } from '@ngrx/store';
 import {
   UpsertDocuments,
   DeleteDocuments,
-  selectDocumentEntitiesState,
+  getDocumentEntitiesState,
   AddDocument,
   UpdateDocument,
   DeleteDocument,
@@ -62,7 +62,7 @@ export class StoreCache implements ICache {
         } else {
           const array = new Array<Document>();
           metaArray.forEach(meta => {
-            const docDic = selectDocumentEntitiesState(this.state.value);
+            const docDic = getDocumentEntitiesState(this.state.value);
             const doc = docDic[meta.id];
 
             if (doc && doc.metaData.updateDate.getTime() === meta.updateDate.getTime()) return;
@@ -95,7 +95,7 @@ export class StoreCache implements ICache {
           this.store.dispatch(new DeleteDocument({ id: docContent.id }));
         }
 
-        const documents = selectDocumentEntitiesState(this.state.value);
+        const documents = getDocumentEntitiesState(this.state.value);
         let document = documents[id];
 
         if (document && document.content && document.content.sha === docContent.sha) return; // nothing changed.

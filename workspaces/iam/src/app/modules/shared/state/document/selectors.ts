@@ -2,33 +2,33 @@ import { createFeatureSelector, createSelector } from '@ngrx/store';
 import * as fromDocument from './reducer';
 import { SharedState, moduleStateName } from '../state-reducers';
 
-export const selectDocsState = createFeatureSelector<SharedState>(moduleStateName);
-export const selectDocumentState = createSelector(selectDocsState, state => state.document);
-export const selectDocumentsState = createSelector(selectDocumentState, fromDocument.selectAll);
-export const selectDocumentEntitiesState = createSelector(
-  selectDocumentState,
+export const getDocsState = createFeatureSelector<SharedState>(moduleStateName);
+export const getDocumentState = createSelector(getDocsState, state => state.document);
+export const getDocumentsState = createSelector(getDocumentState, fromDocument.selectAll);
+export const getDocumentEntitiesState = createSelector(
+  getDocumentState,
   fromDocument.selectEntities
 );
 export const selectCurrentDocumentIdState = createSelector(
-  selectDocumentState,
+  getDocumentState,
   fromDocument.selectCurrentDocumentId
 );
 export const selectCurrentDocumentState = createSelector(
-  selectDocumentEntitiesState,
+  getDocumentEntitiesState,
   selectCurrentDocumentIdState,
   (entities, id) => entities[id]
 );
 
 export const selectIdRangeHighState = createSelector(
-  selectDocumentState,
+  getDocumentState,
   fromDocument.selectDocumentIdsRangeHigh
 );
 
 export const selectIdRangeLowState = createSelector(
-  selectDocumentState,
+  getDocumentState,
   fromDocument.selectDocumentIdsRangeLow
 );
 
 export const getDocumentByIdSeletor = (id: number) => {
-  return createSelector(selectDocumentEntitiesState, entities => entities[id]);
+  return createSelector(getDocumentEntitiesState, entities => entities[id]);
 };

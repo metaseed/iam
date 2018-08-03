@@ -23,7 +23,7 @@ import {
   DocumentEffectsDelete,
   monitorActionStatus$,
   DocumentEffectsActionTypes,
-  selectDocumentsState,
+  getDocumentsState,
   ActionStatus,
   ActionState
 } from 'shared';
@@ -50,7 +50,7 @@ export class DocListComponent implements OnInit {
   };
 
   isLoadDone$ = merge(
-    this.store.pipe(select(selectDocumentsState)),
+    this.store.pipe(select(getDocumentsState)),
     monitorActionStatus$(
       this.store,
       DocumentEffectsActionTypes.ReadBulkDocMeta,
