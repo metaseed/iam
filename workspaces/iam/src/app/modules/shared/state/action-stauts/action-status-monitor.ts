@@ -3,12 +3,12 @@ import { OperatorFunction } from 'rxjs';
 import { Store, Action } from '@ngrx/store';
 import { Actions, ofType } from '@ngrx/effects';
 import { Injectable } from '@angular/core';
-import { ActionStatusState } from './reducer';
+import { ActionStatusMonitorState } from './reducer';
 import { CorrelationAction, SetActionStatusAction, ActionStatus, ActionState } from './actions';
 
 @Injectable()
 export class ActionStatusMoniter {
-  constructor(private store: Store<ActionStatusState>, private actions$: Actions) {}
+  constructor(private store: Store<ActionStatusMonitorState>, private actions$: Actions) {}
 
   complete(action: CorrelationAction) {
     return tap(undefined, undefined, () => this._sendComplete(action));

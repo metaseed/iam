@@ -1,10 +1,10 @@
 import { Store, MemoizedSelector, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { selectActionStatusState } from './selectors';
+import { getActionStatusState } from './selectors';
 import { timeOutMonitor } from 'core';
 import { ActionStatus, ActionState } from './actions';
-import { ActionStatusState } from './reducer';
+import { ActionStatusMonitorState } from './reducer';
 
 export function ofActionType(...allowedActionType: string[]) {
   return filter((status: ActionStatus) => {
@@ -13,12 +13,11 @@ export function ofActionType(...allowedActionType: string[]) {
 }
 
 export function actionStatus$(
-  store: Store<ActionStatusState>,
-  actionType: string,
-  actionStatusSelector: MemoizedSelector<ActionStatusState, ActionStatus> = selectActionStatusState
+  store: Store<ActionStatusMonitorState>,
+  actionType: string
 ): Observable<ActionStatus> {
   return store.pipe(
-    select(actionStatusSelector),
+    select(getActionStatusState),
     ofActionType(actionType)
   );
 }
@@ -28,10 +27,9 @@ export function monitorActionStatus$(
   actionType: string,
   due: number,
   timeOutHander: (start: ActionStatus) => void,
-  sameActionTypeDiff?: (action: ActionStatus) => boolean,
-  actionStatusSelector: MemoizedSelector<ActionStatusState, ActionStatus> = selectActionStatusState
+  sameActionTypeDiff?: (action: ActionStatus) => boolean
 ): Observable<ActionStatus> {
-  return actionStatus$(store, actionType, actionStatusSelector).pipe(
+  return actionStatus$(store, actionType).pipe(
     timeOutMonitor<ActionStatus, ActionStatus>(
       due,
 

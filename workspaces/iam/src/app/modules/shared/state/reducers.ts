@@ -1,5 +1,5 @@
 import { ActionReducerMap, createFeatureSelector, createSelector } from '@ngrx/store';
-import { actionStatusReducer, ActionStatusState } from './action-stauts/reducer';
+import { actionStatusMonitorReducer, ActionStatusMonitorState } from './action-stauts/reducer';
 import { documentReducer, DocumentState } from './document/reducer';
 import * as fromRoot from '../../../state';
 
@@ -10,16 +10,16 @@ export interface State extends fromRoot.State {
 }
 
 export interface SharedState {
-  actionStatus: ActionStatusState;
+  actionStatusMonitor: ActionStatusMonitorState;
   document: DocumentState;
 }
 
 export const sharedReducers: ActionReducerMap<SharedState> = {
-  actionStatus: actionStatusReducer,
+  actionStatusMonitor: actionStatusMonitorReducer,
   document: documentReducer
 };
 
 export const getSharedState = createFeatureSelector<SharedState>(moduleStateName);
 
 export const getDocumentState = createSelector(getSharedState, state => state.document);
-export const selectActionState = createSelector(getSharedState, s => s.actionStatus);
+export const getActionMonitorState = createSelector(getSharedState, s => s.actionStatusMonitor);

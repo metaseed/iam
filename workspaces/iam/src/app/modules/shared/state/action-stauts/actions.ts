@@ -1,6 +1,5 @@
-import { Action } from '@ngrx/store';
-
 import { PaloadAction } from '../payload-action';
+
 export class CorrelationAction implements PaloadAction {
   type: string;
   payload: any;
@@ -27,7 +26,7 @@ export class ActionStatus {
     public context?: any
   ) {}
   isNotStartStatus() {
-    return status !== ActionState.Start;
+    return this.state !== ActionState.Start;
   }
 }
 
