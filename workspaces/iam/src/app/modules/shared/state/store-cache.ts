@@ -15,7 +15,7 @@ import {
   DocumentEffectsDelete
 } from './document';
 import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from './document/const';
-import { SharedState } from './state-reducers';
+import { SharedState } from './reducers';
 
 @Injectable()
 export class StoreCache implements ICache {

@@ -1,6 +1,6 @@
 import { createSelector } from '@ngrx/store';
 import * as fromDocument from './reducer';
-import { getDocumentState } from '../state-reducers';
+import { getDocumentState } from '../reducers';
 
 export const getDocumentsState = createSelector(getDocumentState, fromDocument.selectAll);
 export const getDocumentEntitiesState = createSelector(

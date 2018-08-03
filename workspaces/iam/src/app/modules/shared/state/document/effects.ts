@@ -7,9 +7,9 @@ import {
   DocumentEffectsReadBulkDocMeta,
   DocumentEffectsActionTypes,
   DocumentEffectsDelete
-} from './effects.actions';
+} from './effects-actions';
 import { switchMap, tap } from 'rxjs/operators';
-import { DocumentEffectsRead, DocumentEffectsCreate, DocumentEffectsSave } from './effects.actions';
+import { DocumentEffectsRead, DocumentEffectsCreate, DocumentEffectsSave } from './effects-actions';
 import { MatSnackBar } from '@angular/material';
 import { DocumentState } from './reducer';
 import { StoreCache } from '../store-cache';
