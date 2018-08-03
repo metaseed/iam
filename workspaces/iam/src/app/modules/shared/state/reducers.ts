@@ -1,5 +1,5 @@
 import { ActionReducerMap, createFeatureSelector, createSelector } from '@ngrx/store';
-import { actionStatusReducer, ActionStatusState } from './action-stauts';
+import { actionStatusReducer, ActionStatusState } from './action-stauts/reducer';
 import { documentReducer, DocumentState } from './document/reducer';
 import * as fromRoot from '../../../state';
 

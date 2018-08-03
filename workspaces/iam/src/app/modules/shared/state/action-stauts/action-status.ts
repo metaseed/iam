@@ -1,35 +1,10 @@
-import { Action, Store, MemoizedSelector, select, State } from '@ngrx/store';
+import { Store, MemoizedSelector, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { PaloadAction } from '../payload-action';
 import { selectActionStatusState } from './selectors';
 import { timeOutMonitor } from 'core';
-export interface CorrelationAction extends PaloadAction {
-  coId: number;
-}
-
-export enum ActionState {
-  Start = 'Start',
-  Succession = 'Succession',
-  Fail = 'Fail',
-  Complete = 'Complete',
-  Timeout = 'Timeout'
-}
-
-export class ActionStatus {
-  constructor(
-    public state: ActionState,
-    public action: CorrelationAction,
-    public message?: string,
-    public context?: any
-  ) {}
-  isNotStartStatus() {
-    return status !== ActionState.Start;
-  }
-}
-export interface ActionStatusState {
-  actionStatus: ActionStatus;
-}
+import { ActionStatus, ActionState } from './actions';
+import { ActionStatusState } from './reducer';
 
 export function ofActionType(...allowedActionType: string[]) {
   return filter((status: ActionStatus) => {

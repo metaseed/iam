@@ -3,14 +3,8 @@ import { OperatorFunction } from 'rxjs';
 import { Store, Action } from '@ngrx/store';
 import { Actions, ofType } from '@ngrx/effects';
 import { Injectable } from '@angular/core';
-import { ActionStatus, CorrelationAction, ActionState, ActionStatusState } from './action-status';
-
-export const SET_ACTION_STATUS_ACTION_TYPE = '[StatusMonitor] Set Action Status';
-
-export class SetActionStatusAction implements Action {
-  readonly type = SET_ACTION_STATUS_ACTION_TYPE;
-  constructor(public payload: ActionStatus) {}
-}
+import { ActionStatusState } from './reducer';
+import { CorrelationAction, SetActionStatusAction, ActionStatus, ActionState } from './actions';
 
 @Injectable()
 export class ActionStatusMoniter {
