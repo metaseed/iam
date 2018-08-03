@@ -113,7 +113,7 @@ export class MarkdownViewerComponent {
         takeUntil(this.onDestroy$)
       )
       .subscribe();
-    var container = this.hostElement;
+    const container = this.hostElement;
     this.lozad = lozad('img[data-src]', { container });
   }
 

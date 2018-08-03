@@ -82,16 +82,16 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.markdown$ = merge(
       this.store.select<Document>(selectCurrentDocumentState).pipe(
-        map(doc => {
-          if (doc && doc.content) {
-            return doc.content.content;
+        map(d => {
+          if (d && d.content) {
+            return d.content.content;
           } else {
             return '';
           }
         })
       ),
-      <Observable<string>>this.markdownService.editorContentChanged$
-    ).pipe(backoff(80, 3000)) as Observable<string>;
+      this.markdownService.editorContentChanged$
+    ).pipe<string>(backoff(80, 3000));
   }
 
   ngOnDestroy() {

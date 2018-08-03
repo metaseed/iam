@@ -28,7 +28,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
   DocumentMode = DocumentMode;
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
   editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState));
-  @Input() markdown: string;
+  @Input() markdown$: Observable<string>;
   @Input() hideToolbar: false;
   @ViewChild('viewContainerDiv') viewerContainerDiv: ElementRef;
   isLockScrollWithView$;
@@ -92,12 +92,12 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
       )
       .subscribe(value => {
         if (this.isLockScrollWithView && value.event) {
-          let edit_div = value.event.target as HTMLElement;
-          let v_per = edit_div.scrollTop / (edit_div.scrollHeight - edit_div.clientHeight);
-          let delta_per = v_per - v_per_last;
+          const edit_div = value.event.target as HTMLElement;
+          const v_per = edit_div.scrollTop / (edit_div.scrollHeight - edit_div.clientHeight);
+          const delta_per = v_per - v_per_last;
           v_per_last = v_per;
-          let view_div = me.viewerContainerDiv.nativeElement;
-          let delta_v_view = (view_div.scrollHeight - view_div.clientHeight) * delta_per;
+          const view_div = me.viewerContainerDiv.nativeElement;
+          const delta_v_view = (view_div.scrollHeight - view_div.clientHeight) * delta_per;
           me.viewerContainerDiv.nativeElement.scrollTop += delta_v_view;
         }
       });
