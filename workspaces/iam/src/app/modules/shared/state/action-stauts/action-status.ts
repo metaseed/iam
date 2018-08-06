@@ -5,7 +5,7 @@ import { Store, MemoizedSelector, select } from '@ngrx/store';
 import { getActionStatusState } from './selectors';
 import { ActionStatus, ActionState } from './actions';
 import { ActionStatusMonitorState } from './reducer';
-import { timeOutMonitor } from './operators/timeout-monitor';
+import { timeOutMonitor } from 'core';
 
 export function ofActionType(...allowedActionType: string[]) {
   return filter((status: ActionStatus) => {
@@ -24,7 +24,7 @@ export function actionStatusState$(
 }
 
 export function monitorActionStatus$(
-  store: Store<ActionStatusMonitorState>,
+  store: Store<any>,
   actionType: string,
   due: number, // time out time in ms
   timeOutHander: (start: ActionStatus) => void,
