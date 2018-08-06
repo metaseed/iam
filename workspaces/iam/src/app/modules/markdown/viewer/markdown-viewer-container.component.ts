@@ -11,7 +11,7 @@ import * as markdown from '../state';
 import { Store, select } from '@ngrx/store';
 import { ElementRef } from '@angular/core';
 import { Subject, merge, asyncScheduler, Observable } from 'rxjs';
-import { DocumentEffectsActionTypes, monitorActionStatus$, actionStatus$ } from 'shared';
+import { DocumentEffectsActionTypes, monitorActionStatus$, actionStatusState$ } from 'shared';
 import { DocumentMode } from '../state/reducers/document';
 import * as fromMarkdown from '../state';
 
@@ -48,7 +48,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
         return v.isNotStartStatus();
       })
     ),
-    actionStatus$(this.store, DocumentEffectsActionTypes.Create).pipe(
+    actionStatusState$(this.store, DocumentEffectsActionTypes.Create).pipe(
       map(v => v.isNotStartStatus())
     )
   ).pipe(

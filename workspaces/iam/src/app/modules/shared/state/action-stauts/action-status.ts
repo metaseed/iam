@@ -1,10 +1,11 @@
-import { Store, MemoizedSelector, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { Store, MemoizedSelector, select } from '@ngrx/store';
+
 import { getActionStatusState } from './selectors';
-import { timeOutMonitor } from 'core';
 import { ActionStatus, ActionState } from './actions';
 import { ActionStatusMonitorState } from './reducer';
+import { timeOutMonitor } from './operators/timeout-monitor';
 
 export function ofActionType(...allowedActionType: string[]) {
   return filter((status: ActionStatus) => {
@@ -12,7 +13,7 @@ export function ofActionType(...allowedActionType: string[]) {
   });
 }
 
-export function actionStatus$(
+export function actionStatusState$(
   store: Store<ActionStatusMonitorState>,
   actionType: string
 ): Observable<ActionStatus> {
@@ -23,20 +24,18 @@ export function actionStatus$(
 }
 
 export function monitorActionStatus$(
-  store: Store<any>,
+  store: Store<ActionStatusMonitorState>,
   actionType: string,
-  due: number,
+  due: number, // time out time in ms
   timeOutHander: (start: ActionStatus) => void,
   sameActionTypeDiff?: (action: ActionStatus) => boolean
 ): Observable<ActionStatus> {
-  return actionStatus$(store, actionType).pipe(
+  return actionStatusState$(store, actionType).pipe(
     timeOutMonitor<ActionStatus, ActionStatus>(
       due,
-
       actionStatus =>
         actionStatus.state === ActionState.Start &&
         (!sameActionTypeDiff ? true : sameActionTypeDiff(actionStatus)),
-
       (start, actionStatus) =>
         start &&
         actionStatus.action.coId === start.action.coId &&
@@ -44,7 +43,6 @@ export function monitorActionStatus$(
         (actionStatus.state === ActionState.Succession ||
           actionStatus.state === ActionState.Fail ||
           actionStatus.state === ActionState.Complete),
-
       start => {
         if (timeOutHander) timeOutHander(start);
         return new ActionStatus(

@@ -1,25 +1,26 @@
-import { catchError, tap, map } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
 import { OperatorFunction } from 'rxjs';
+import { catchError, tap, map } from 'rxjs/operators';
 import { Store, Action } from '@ngrx/store';
 import { Actions, ofType } from '@ngrx/effects';
-import { Injectable } from '@angular/core';
 import { ActionStatusMonitorState } from './reducer';
 import { CorrelationAction, SetActionStatusAction, ActionStatus, ActionState } from './actions';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ActionStatusMoniter {
   constructor(private store: Store<ActionStatusMonitorState>, private actions$: Actions) {}
 
+  // call this function when inner observable complete to monitor the completion of the action
   complete(action: CorrelationAction) {
-    return tap(undefined, undefined, () => this._sendComplete(action));
-  }
-
-  private _sendComplete(action: CorrelationAction) {
-    const coId = action.coId;
-    console.groupCollapsed(`%c${action.type}-${coId}->complete`, 'background-color:#4285f4');
-    console.count(`${action.type}-${coId}->complete`);
-    console.groupEnd();
-    this.store.dispatch(new SetActionStatusAction(new ActionStatus(ActionState.Complete, action)));
+    return tap(undefined, undefined, () => {
+      const coId = action.coId;
+      console.groupCollapsed(`%c${action.type}-${coId}->complete`, 'background-color:#4285f4');
+      console.count(`${action.type}-${coId}->complete`);
+      console.groupEnd();
+      this.store.dispatch(
+        new SetActionStatusAction(new ActionStatus(ActionState.Complete, action))
+      );
+    });
   }
 
   do$ = <T extends Action & { payload }>(actionType: string, pipe: OperatorFunction<T, any>) => {

@@ -3,7 +3,6 @@ import {
   Observable,
   SchedulerLike,
   asyncScheduler,
-  ObservableInput,
   Operator,
   Subscriber,
   TeardownLogic,
@@ -33,12 +32,12 @@ export function timeOutMonitor<T, R>(
   due: number | Date,
   startSelector: (v: T) => boolean,
   stopSelector: (start: T, current: T) => boolean,
-  observableOrValue: ((start: T) => Observable<T | R>) | ((start: T) => T | R) = undefined,
+  observableOrValue?: ((start: T) => Observable<T | R>) | ((start: T) => T | R),
   scheduler: SchedulerLike = asyncScheduler
 ): OperatorFunction<T, T | R> {
   return (source: Observable<T>) => {
-    let absoluteTimeout = isDate(due);
-    let waitFor = absoluteTimeout ? +due - scheduler.now() : Math.abs(<number>due);
+    const absoluteTimeout = isDate(due);
+    const waitFor = absoluteTimeout ? +due - scheduler.now() : Math.abs(<number>due);
     return source.lift(
       new TimeoutWithOperator(
         waitFor,
@@ -96,7 +95,7 @@ class TimeoutWithSubscriber<T, R> extends OuterSubscriber<T, R> {
   private static dispatchTimeout<T, R>(subscriber: TimeoutWithSubscriber<T, R>): void {
     const { observableOrValue } = subscriber;
     if (observableOrValue) {
-      let o = observableOrValue(subscriber.startValue);
+      const o = observableOrValue(subscriber.startValue);
       if (o instanceof Observable) {
         (<any>subscriber)._unsubscribeAndRecycle();
         const sub = o.subscribe(subscriber);
