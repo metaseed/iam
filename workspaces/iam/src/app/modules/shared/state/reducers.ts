@@ -22,4 +22,7 @@ export const sharedReducers: ActionReducerMap<SharedState> = {
 export const getSharedState = createFeatureSelector<SharedState>(moduleStateName);
 
 export const getDocumentState = createSelector(getSharedState, state => state.document);
-export const getActionMonitorState = createSelector(getSharedState, s => s.actionStatusMonitor);
+export const getActionStatusMonitorState = createSelector(
+  getSharedState,
+  s => s.actionStatusMonitor
+);

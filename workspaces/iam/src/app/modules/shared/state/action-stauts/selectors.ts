@@ -1,5 +1,5 @@
 import { createSelector } from '@ngrx/store';
-import { getActionMonitorState } from '../reducers';
+import { getActionStatusMonitorState } from '../reducers';
 import { selectActionStatus } from './reducer';
 
-export const getActionStatusState = createSelector(getActionMonitorState, selectActionStatus);
+export const getActionStatusState = createSelector(getActionStatusMonitorState, selectActionStatus);
