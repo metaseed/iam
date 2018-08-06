@@ -12,7 +12,7 @@ import {
 
 @Injectable()
 export class DocSaveCoordinateService implements OnDestroy {
-  static autoSaveDelayAfterEdit = 5 * 60 * 1000; //5min
+  static autoSaveDelayAfterEdit = 5 * 60 * 1000; // 5min
 
   isDirty$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   isSaving: boolean;

@@ -47,7 +47,30 @@ html {
     content: '\21b0';
     font-size: 0.3rem;
   }
+  .markdown-viewer {
+    h1 {
+      counter-reset: the-h2;
+    }
 
+    h2::before {
+      counter-increment: the-h2;
+      content: counter(the-h2) '. ';
+    }
+    h2 {
+      counter-reset: the-h3;
+    }
+    h3::before {
+      counter-increment: the-h3;
+      content: counter(the-h2) '.' counter(the-h3) '. ';
+    }
+    h3 {
+      counter-reset: the-h4;
+    }
+    h4::before {
+      counter-increment: the-h4;
+      content: counter(the-h2) '.' counter(the-h3) '.' counter(the-h4) '. ';
+    }
+  }
   .CodeMirror {
     height: 100%;
     font-family: inherit;

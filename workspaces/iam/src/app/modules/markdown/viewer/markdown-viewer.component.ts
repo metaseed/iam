@@ -17,7 +17,8 @@ export const NO_ANIMATIONS = 'no-animations';
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'markdown-viewer',
-  template: ''
+  template: '',
+  styleUrls: ['./markdown-viewer.component.scss']
 })
 export class MarkdownViewerComponent {
   static animationsEnabled = false;
