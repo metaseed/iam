@@ -9,13 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { ScrollHideDirective } from './scroll-hide/scroll-hide.directive';
 import { CoreModule } from 'core';
 import { StoreModule } from '@ngrx/store';
-import {
-  SharedState,
-  sharedReducers,
-  StoreCache,
-  ActionStatusMoniter,
-  moduleStateName
-} from './state';
+import { SharedState, sharedReducers, StoreCache, ActionMoniter, moduleStateName } from './state';
 import { EffectsModule } from '@ngrx/effects';
 import { DocumentEffects } from './state/document/effects';
 import { DocEffectsUtil } from './state/document/effects.util';

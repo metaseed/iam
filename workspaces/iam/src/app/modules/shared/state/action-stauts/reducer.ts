@@ -1,13 +1,13 @@
 import { ActionStatusActionTypes, ActionStatus, ActionStatusActions } from './actions';
 
-export interface ActionStatusMonitorState {
+export interface ActionMonitorState {
   actionStatus: ActionStatus;
 }
-const initState: ActionStatusMonitorState = {
+const initState: ActionMonitorState = {
   actionStatus: null
 };
 
-export function actionStatusMonitorReducer(state = initState, action: ActionStatusActions) {
+export function actionMonitorReducer(state = initState, action: ActionStatusActions) {
   switch (action.type) {
     case ActionStatusActionTypes.SetActionStatus: {
       return { ...state, actionStatus: action.payload };
@@ -16,4 +16,4 @@ export function actionStatusMonitorReducer(state = initState, action: ActionStat
       return state;
   }
 }
-export const selectActionStatus = (state: ActionStatusMonitorState) => state.actionStatus;
+export const selectActionStatus = (state: ActionMonitorState) => state.actionStatus;

@@ -4,7 +4,7 @@ import { Store, MemoizedSelector, select } from '@ngrx/store';
 
 import { getActionStatusState } from './selectors';
 import { ActionStatus, ActionState } from './actions';
-import { ActionStatusMonitorState } from './reducer';
+import { ActionMonitorState } from './reducer';
 import { timeOutMonitor } from 'core';
 
 export function ofActionType(...allowedActionType: string[]) {
@@ -14,7 +14,7 @@ export function ofActionType(...allowedActionType: string[]) {
 }
 
 export function actionStatusState$(
-  store: Store<ActionStatusMonitorState>,
+  store: Store<ActionMonitorState>,
   actionType: string
 ): Observable<ActionStatus> {
   return store.pipe(

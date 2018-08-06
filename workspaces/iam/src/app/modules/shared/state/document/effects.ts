@@ -13,7 +13,7 @@ import { DocumentEffectsRead, DocumentEffectsCreate, DocumentEffectsSave } from 
 import { MatSnackBar } from '@angular/material';
 import { DocumentState } from './reducer';
 import { StoreCache } from '../store-cache';
-import { ActionStatusMoniter } from '../action-stauts';
+import { ActionMoniter } from '../action-stauts';
 import { DocEffectsUtil } from './effects.util';
 import { SetIdRangeLow, SetIdRangeHigh, SetCurrentDocumentId } from './actions';
 import { DocMeta, ICache, NET_CACHE_TOKEN, DB_CACHE_TOKEN } from 'core';
@@ -27,7 +27,7 @@ import { NEW_DOC_ID } from './const';
 @Injectable()
 export class DocumentEffects {
   constructor(
-    private monitor: ActionStatusMoniter,
+    private actionMonitor: ActionMoniter,
     private storeCache: StoreCache,
     private util: DocEffectsUtil,
     private state: StoreState<DocumentState>,
@@ -52,7 +52,7 @@ export class DocumentEffects {
   }
 
   @Effect()
-  CreateDocument = this.monitor.do$<DocumentEffectsCreate>(
+  CreateDocument = this.actionMonitor.do$<DocumentEffectsCreate>(
     DocumentEffectsActionTypes.Create,
     tap<DocumentEffectsCreate>(a => {
       this.storeCache.createDoc(a.payload.format);
@@ -60,7 +60,7 @@ export class DocumentEffects {
   );
 
   @Effect()
-  ReadBulkDocMeta = this.monitor.do$<DocumentEffectsReadBulkDocMeta>(
+  ReadBulkDocMeta = this.actionMonitor.do$<DocumentEffectsReadBulkDocMeta>(
     DocumentEffectsActionTypes.ReadBulkDocMeta,
     (() => {
       let keyRangeHigh: number;
@@ -78,14 +78,14 @@ export class DocumentEffects {
           const key = isBelowRange ? keyRangeLow : keyRangeHigh;
           return this.storeCache
             .readBulkDocMeta(key, isBelowRange)
-            .pipe(this.monitor.complete(action));
+            .pipe(this.actionMonitor.complete(action));
         })
       );
     })()
   );
 
   @Effect()
-  ReadDocument = this.monitor.do$<DocumentEffectsRead>(
+  ReadDocument = this.actionMonitor.do$<DocumentEffectsRead>(
     DocumentEffectsActionTypes.ReadDocument,
     pipe(
       tap(action => this.store.dispatch(new SetCurrentDocumentId({ id: action.payload.id }))),
@@ -93,13 +93,13 @@ export class DocumentEffects {
         const actionDoc = action.payload;
         return this.storeCache
           .readDocContent(actionDoc.id, actionDoc.title, actionDoc.format)
-          .pipe(this.monitor.complete(action));
+          .pipe(this.actionMonitor.complete(action));
       })
     )
   );
 
   @Effect()
-  SaveDocument = this.monitor.do$<DocumentEffectsSave>(
+  SaveDocument = this.actionMonitor.do$<DocumentEffectsSave>(
     DocumentEffectsActionTypes.Save,
     pipe(
       switchMap(action => {
@@ -115,14 +115,14 @@ export class DocumentEffects {
             tap(d => {
               this.util.modifyUrlAfterSaved(d.id, newTitle, format);
               this.snackbar.open('New document saved!', 'OK');
-            }, this.monitor.complete(action))
+            }, this.actionMonitor.complete(action))
           );
         } else {
           return this.storeCache.UpdateDocument(doc.metaData, content).pipe(
             tap(d => {
               this.util.modifyUrlAfterSaved(d.id, newTitle, format);
               this.snackbar.open('Saved!', 'OK');
-            }, this.monitor.complete(action))
+            }, this.actionMonitor.complete(action))
           );
         }
       })
@@ -130,10 +130,10 @@ export class DocumentEffects {
   );
 
   @Effect()
-  DeleteDocument = this.monitor.do$<DocumentEffectsDelete>(
+  DeleteDocument = this.actionMonitor.do$<DocumentEffectsDelete>(
     DocumentEffectsActionTypes.Delete,
     switchMap(action =>
-      this.storeCache.deleteDoc(action.payload.id).pipe(this.monitor.complete(action))
+      this.storeCache.deleteDoc(action.payload.id).pipe(this.actionMonitor.complete(action))
     )
   );
 }

@@ -3,12 +3,12 @@ import { OperatorFunction } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import { Store, Action } from '@ngrx/store';
 import { Actions, ofType } from '@ngrx/effects';
-import { ActionStatusMonitorState } from './reducer';
+import { ActionMonitorState } from './reducer';
 import { CorrelationAction, SetActionStatusAction, ActionStatus, ActionState } from './actions';
 
 @Injectable({ providedIn: 'root' })
-export class ActionStatusMoniter {
-  constructor(private store: Store<ActionStatusMonitorState>, private actions$: Actions) {}
+export class ActionMoniter {
+  constructor(private store: Store<ActionMonitorState>, private actions$: Actions) {}
 
   // call this function when inner observable complete to monitor the completion of the action
   complete(action: CorrelationAction) {
