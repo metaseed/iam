@@ -23,7 +23,7 @@ export class ActionMoniter {
     });
   }
 
-  do$ = <T extends Action & { payload }>(actionType: string, pipe: OperatorFunction<T, any>) => {
+  do$ = <T extends CorrelationAction>(actionType: string, pipe: OperatorFunction<T, any>) => {
     let coId: number;
     let action: CorrelationAction;
     return this.actions$.pipe(
