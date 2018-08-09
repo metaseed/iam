@@ -4,7 +4,8 @@ import {
   NET_COMMU_TIMEOUT,
   ContainerRef,
   ScrollEvent,
-  IContainer
+  IContainer,
+  DocumentRef
 } from 'core';
 import { ViewChild } from '@angular/core';
 import * as markdown from '../state';
@@ -18,6 +19,7 @@ import * as fromMarkdown from '../state';
 import { takeUntil, map, observeOn, switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../model/markdown.model';
+import { PlatformLocation } from '@angular/common';
 @Component({
   selector: 'markdown-viewer-container',
   templateUrl: './markdown-viewer-container.component.html',
@@ -60,7 +62,9 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
     private store: Store<any>,
     private snackBar: MatSnackBar,
     @Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private _docRef: DocumentRef,
+    private _location: PlatformLocation
   ) {}
 
   container: IContainer;
@@ -76,6 +80,8 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
     );
     this.scrollDown$ = this.container.scrollDown$;
     (this.markdownService.viewer$ as Subject<IContainer>).next(this.container);
+
+    setTimeout(_ => this.scroll(), 500);
 
     let v_per_last = 0;
     this.isLockScrollWithView$ = this.store.pipe(
@@ -101,6 +107,15 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
           me.viewerContainerDiv.nativeElement.scrollTop += delta_v_view;
         }
       });
+  }
+  private scroll() {
+    const hash = this.getCurrentHash();
+    const element = this._docRef.document.getElementById(hash);
+    element.scrollIntoView();
+    this.viewerContainerDiv.nativeElement.scrollTop = element.offsetTop - 64;
+  }
+  private getCurrentHash() {
+    return decodeURIComponent(this._location.hash.replace(/^#/, ''));
   }
 
   ngOnDestroy() {

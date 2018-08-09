@@ -48,7 +48,7 @@ import { MarkdownConfig } from '../markdown.config';
 import latex from 'markdown-it-latex';
 import { mergeConf, DocumentRef, base64Encode } from 'core';
 import { Router } from '@angular/router';
-//import latex from 'markdown-it-katex';
+// import latex from 'markdown-it-katex';
 import { MermaidPlugin } from './markdown-it-plugins/mermaid.plugin';
 import { CopierService } from 'core';
 import { Subscription } from 'rxjs';
@@ -113,7 +113,7 @@ export class MarkdownViewerService {
           return `${getAddr(this.document.document.location.href)}#${slug}`;
         },
         permalinkClass: 'deep-link',
-        permalinkSymbol: `<i class="material-icons deep-link-icon">link</i>`, //"¶",
+        permalinkSymbol: `<i class="material-icons deep-link-icon">link</i>`, // "¶",
         permalinkBefore: false
       })
       .use(toc, {
@@ -139,17 +139,17 @@ export class MarkdownViewerService {
   }
 
   public render(raw: string): string {
-    let env: any = {};
+    const env: any = {};
     const r = `${this.markdown.render(raw, env)}`;
     this.parsedContent.title = env.title;
     return r;
   }
 
   private DEFAULT_HIGHLIGHT_FUNCTION = (str, lang) => {
-    let language = prismjs.languages[lang];
+    const language = prismjs.languages[lang];
     if (lang && language) {
-      let preNode: Element = this.document.document.createElement('pre');
-      let codeNode = this.document.document.createElement('code');
+      const preNode: Element = this.document.document.createElement('pre');
+      const codeNode = this.document.document.createElement('code');
       preNode.className = (this.showCodeLineNumber ? 'line-numbers' : '') + ' language-' + lang;
       preNode.appendChild(codeNode);
       codeNode.textContent = str;
