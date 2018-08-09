@@ -1,4 +1,4 @@
-import { ICache, DocMeta, DocContent, Document, DocFormat } from 'core';
+import { ICache, DocMeta, DocContent, Document, DocFormat, Logger } from 'core';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
@@ -22,7 +22,11 @@ export class StoreCache implements ICache {
   docMetaData: { hightKey: number; lowKey: number };
 
   public nextLevelCache: ICache;
-  constructor(private store: Store<SharedState>, private state: StoreState<SharedState>) {}
+  constructor(
+    private store: Store<SharedState>,
+    private state: StoreState<SharedState>,
+    private _logger: Logger
+  ) {}
 
   init(nextLevelCache: ICache): ICache {
     this.nextLevelCache = nextLevelCache;
@@ -91,6 +95,7 @@ export class StoreCache implements ICache {
       tap(docContent => {
         // no data in next level, but the next level cache should further fetch from its next level. we would receive it.
         if (!docContent) return;
+
         if (docContent.isDeleted) {
           this.store.dispatch(new DeleteDocument({ id: docContent.id }));
         }
@@ -104,6 +109,14 @@ export class StoreCache implements ICache {
           .readDocMeta(id)
           .pipe(
             tap(meta => {
+              if (meta.contentSha !== docContent.sha) {
+                this._logger.warn(
+                  `metaData.contentSha:${meta.contentSha} is different with document sha: ${
+                    docContent.sha
+                  }, force using document sha`
+                );
+                meta.contentSha = docContent.sha;
+              }
               const doc = new Document(id, meta, docContent);
               if (!document) {
                 this.store.dispatch(new AddDocument({ collectionDocument: doc }));
