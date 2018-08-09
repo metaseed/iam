@@ -15,7 +15,6 @@ import { Inject } from '@angular/core';
 export const NO_ANIMATIONS = 'no-animations';
 
 @Component({
-  // tslint:disable-next-line:component-selector
   selector: 'markdown-viewer',
   template: '',
   styleUrls: ['./markdown-viewer.component.scss']

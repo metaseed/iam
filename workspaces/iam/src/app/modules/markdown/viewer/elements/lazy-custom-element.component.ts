@@ -3,7 +3,7 @@ import { ElementsLoader } from './elements-loader';
 import { Logger } from 'core';
 
 @Component({
-  selector: 'aio-lazy-ce',
+  selector: 'i-i',
   template: ''
 })
 export class LazyCustomElementComponent implements OnInit {
@@ -17,7 +17,7 @@ export class LazyCustomElementComponent implements OnInit {
 
   ngOnInit() {
     if (!this.selector || /[^\w-]/.test(this.selector)) {
-      this.logger.error(new Error(`Invalid selector for 'aio-lazy-ce': ${this.selector}`));
+      this.logger.error(new Error(`Invalid selector for 'i-lazy-ce': ${this.selector}`));
       return;
     }
 
