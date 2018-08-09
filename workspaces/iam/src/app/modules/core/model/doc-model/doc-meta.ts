@@ -18,8 +18,8 @@ export class DocMeta {
     public id: number,
     public title: string,
     public version: Version,
-    public createDate: Date, //utc time
-    public updateDate: Date, //utc time
+    public createDate: Date, // utc time
+    public updateDate: Date, // utc time
     public summary: string,
     public imageData: string,
     public contentSha: string, // sha of file
@@ -41,19 +41,19 @@ export class DocMeta {
   }
 
   static getFirstLine(text) {
-    var index = text.indexOf('\n');
+    let index = text.indexOf('\n');
     if (index === -1) index = undefined;
     return text.substring(0, index);
   }
   static getTitle(content: string) {
-    let re = /\s*#\s(.*)/g;
-    let r = re.exec(content);
+    const re = /\s*#\s(.*)/g;
+    const r = re.exec(content);
     if (r) return r[1];
     return '';
   }
   static getSummary(content: string) {
-    let re = /\s*\*(.*?)\*\s*/g;
-    let r = re.exec(content);
+    const re = /\s*\*(.*?)\*\s*/g;
+    const r = re.exec(content);
     if (r) return r[1];
     return '';
   }
@@ -105,12 +105,13 @@ export class DocMeta {
   }
 
   static deSerialize(metaData: string) {
-    let re = /<!--\stype:iam[\r\n]*([\s\S]*)-->[\s\S]*/gm;
-    let jsonString = re.exec(metaData);
+    const re = /<!--\stype:iam[\r\n]*([\s\S]*)-->[\s\S]*/gm;
+    const jsonString = re.exec(metaData);
     if (!jsonString) return null;
     try {
-      let meta = <DocMeta>JSON.parse(jsonString[1]);
-      if (!meta.contentSha) { // old name is contentId
+      const meta = <DocMeta>JSON.parse(jsonString[1]);
+      if (!meta.contentSha) {
+        // old name is contentId
         const sha = meta['contentId'];
         if (sha) meta.contentSha = sha;
       }
@@ -124,29 +125,28 @@ export class DocMeta {
     }
   }
 
-  //http://jsfiddle.net/handtrix/YvQ5y/
-  //https://stackoverflow.com/questions/34639708/how-do-i-set-crossorigin-attribute-when-using-canvas-todataurl
+  // http://jsfiddle.net/handtrix/YvQ5y/
+  // https://stackoverflow.com/questions/34639708/how-do-i-set-crossorigin-attribute-when-using-canvas-todataurl
   static convertImgToDataUrlViaCanvas(url, outputFormat, width, callback) {
-    var img = document.createElement('img');
+    const img = document.createElement('img');
     img.setAttribute('crossOrigin', 'anonymous');
     img.src = url;
     img.onload = function() {
-      var canvas = document.createElement('canvas');
-      var ctx = canvas.getContext('2d');
-      //document.body.appendChild(canvas);
-      var dataURL;
-      const height = width * (img.height / img.width);
-      canvas.height = height;
+      let canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      // document.body.appendChild(canvas);
+      let dataUrl;
+      const h = width * (img.height / img.width);
+      canvas.height = h;
       canvas.width = width;
       ctx.fillStyle = 'white';
       ctx.font = '15px sans-serif';
-      ctx.drawImage(<HTMLImageElement>this, 0, 0, width, height);
-      dataURL = canvas.toDataURL(outputFormat);
-      callback(dataURL);
+      ctx.drawImage(<HTMLImageElement>this, 0, 0, width, h);
+      dataUrl = canvas.toDataURL(outputFormat);
+      callback(dataUrl);
       canvas = null;
     };
-    var canvas = document.createElement('canvas');
-    var dataURL;
+    const canvas = document.createElement('canvas');
     const height = width * (img.height / img.width);
     canvas.height = height;
     canvas.width = width;
@@ -157,9 +157,9 @@ export class DocMeta {
   }
 
   static convertFileToDataUrlViaFileReader(url, callback) {
-    var xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.onload = function() {
-      var reader = new FileReader();
+      const reader = new FileReader();
       reader.onloadend = function() {
         callback(reader.result);
       };

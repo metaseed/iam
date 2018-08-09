@@ -61,11 +61,11 @@ export class GithubCache implements ICache {
       switchMap(repo =>
         repo.issue.create({ title }).pipe(
           switchMap(issue => {
-            let id = issue.number;
+            const id = issue.number;
             // save docContent;
             return repo.newFile(`${DOCUMENTS_FOLDER_NAME}/${title}_${id}.${format}`, content).pipe(
               switchMap(file => {
-                let url = this.util.getContentUrl(id, title);
+                const url = this.util.getContentUrl(id, title);
 
                 const { meta, metaStr } = DocMeta.serializeContent(
                   id,
@@ -75,15 +75,15 @@ export class GithubCache implements ICache {
                   format,
                   new Date(issue.created_at)
                 );
-                let data: EditIssueParams = {
+                const data: EditIssueParams = {
                   title: title,
                   body: metaStr
                 };
                 // save docMeta to update sha;
                 return repo.issue.edit(id, data).pipe(
-                  map(issue => {
+                  map(is => {
                     const docContent = new DocContent(id, content, file.content.sha);
-                    let doc = new Document(id, meta, docContent);
+                    const doc = new Document(id, meta, docContent);
 
                     return doc;
                   })
@@ -141,7 +141,8 @@ export class GithubCache implements ICache {
       return d;
     };
 
-    const getPageNum = (id, highestId) => Math.floor((highestId - id) / GITHUB_PAGE_SIZE) + 1; // page index start from 1, issue.num start from 1 too.
+    const getPageNum = (id, highestId) => Math.floor((highestId - id) / GITHUB_PAGE_SIZE) + 1;
+    // page index start from 1, issue.num start from 1 too.
 
     const isNearPageFloor = (id, page, highestId) =>
       (highestId - id) / GITHUB_PAGE_SIZE + 1 - page < 0.5;
@@ -245,7 +246,7 @@ export class GithubCache implements ICache {
       state = 0,
       isDeleted = false
     ) => {
-      if(!title) throw new Error('title is empty!');
+      if (!title) throw new Error('title is empty!');
       let uri = `${DOCUMENTS_FOLDER_NAME}/${title}_${id}`;
       if (format) uri = `${uri}.${format}`;
 
@@ -254,7 +255,7 @@ export class GithubCache implements ICache {
 
       return (<Observable<Content>>repo.getContents(uri)).pipe(
         // directly get DocContent
-        map(c => new DocContent(id, c.content, c.sha)),
+        map(content => new DocContent(id, content.content, content.sha)),
         catchError(err => {
           if (err.status === 404) {
             if (state === 0) {
@@ -262,7 +263,8 @@ export class GithubCache implements ICache {
               return this.readDocMeta(id).pipe(
                 switchMap(meta => {
                   docMeta = meta;
-                  return getContent(repo, id, meta.title, meta.format, state, meta.isDeleted); // using the parameters from net via key; means title, format or format is modifyed.
+                  // using the parameters from net via key; means title, format or format is modifyed.
+                  return getContent(repo, id, meta.title, meta.format, state, meta.isDeleted);
                 })
               );
             } else if (format && state === 1) {
@@ -298,7 +300,7 @@ export class GithubCache implements ICache {
           )
           .pipe(
             switchMap(file => {
-              let url = this.util.getContentUrl(oldDocMeta.id, newTitle);
+              const url = this.util.getContentUrl(oldDocMeta.id, newTitle);
               const { meta, metaStr } = DocMeta.serializeContent(
                 oldDocMeta.id,
                 content,
@@ -307,7 +309,7 @@ export class GithubCache implements ICache {
                 oldDocMeta.format,
                 oldDocMeta.createDate
               );
-              let data: EditIssueParams = {
+              const data: EditIssueParams = {
                 title: newTitle,
                 body: metaStr
               };
@@ -352,7 +354,8 @@ export class GithubCache implements ICache {
             const title = issue.title;
             return repo.delFile(`${DOCUMENTS_FOLDER_NAME}/${title}_${id}.md`).pipe(
               catchError(err => {
-                if (err.status === 404) { // already deleted on other computer.
+                if (err.status === 404) {
+                  // already deleted on other computer.
                   return of(id);
                 }
                 throw err;

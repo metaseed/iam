@@ -66,7 +66,7 @@ export class DatabaseCache implements ICache {
       }
     }
 
-    let keyRange: IDBKeyRange = undefined;
+    let keyRange: IDBKeyRange;
     let dir: IDBCursorDirection = isBelowTheKey ? 'next' : 'prev';
     if (key !== undefined) {
       keyRange = isBelowTheKey ? IDBKeyRange.upperBound(key) : IDBKeyRange.lowerBound(key, true);
