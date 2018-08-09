@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 import { HotkeyModule } from '@metaseed/angular-hotkey';
 import { CommandService } from './services/command.service';
 import { UpdateService } from './services/update.service';
-import { Logger } from './services/logger.service';
 import { CopierService } from 'packages/copier.service';
 import { DialogService } from './services/dialog/dialog.service';
 import { DocumentRef } from './dom/document-ref';
@@ -22,7 +21,6 @@ import { Utilities } from './utils';
     WindowRef,
     DocumentRef,
     UpdateService,
-    Logger,
     CopierService,
     DialogService,
     ScrollService,

@@ -1,17 +1,16 @@
-import {
-  NgModule,
-  NgModuleFactoryLoader,
-  SystemJsNgModuleLoader
-} from "@angular/core";
-import { ROUTES } from "@angular/router";
-import { ElementsLoader } from "./elements-loader";
+import { NgModule, NgModuleFactoryLoader, SystemJsNgModuleLoader } from '@angular/core';
+import { ROUTES } from '@angular/router';
+import { ElementsLoader } from './elements-loader';
 import {
   ELEMENT_MODULE_PATHS,
   ELEMENT_MODULE_PATHS_AS_ROUTES,
   ELEMENT_MODULE_PATHS_TOKEN
-} from "./element-registry";
+} from './element-registry';
+import { LazyCustomElementComponent } from './lazy-custom-element.component';
 
 @NgModule({
+  exports: [LazyCustomElementComponent],
+  declarations: [LazyCustomElementComponent],
   providers: [
     ElementsLoader,
     { provide: NgModuleFactoryLoader, useClass: SystemJsNgModuleLoader },

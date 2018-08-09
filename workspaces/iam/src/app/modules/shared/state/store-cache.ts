@@ -96,7 +96,7 @@ export class StoreCache implements ICache {
         }
 
         const documents = getDocumentEntitiesState(this.state.value);
-        let document = documents[id];
+        const document = documents[id];
 
         if (document && document.content && document.content.sha === docContent.sha) return; // nothing changed.
 
