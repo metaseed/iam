@@ -55,7 +55,7 @@ class TimeoutWithOperator<T, R> implements Operator<T, T | R> {
   constructor(
     private waitFor: number,
     private absoluteTimeout: boolean,
-    private startSelector: (T) => boolean,
+    private startSelector: (item: T) => boolean,
     private stopSelector: (start: T, current: T) => boolean,
     private observableOrValue: ((start: T) => Observable<T | R>) | ((start: T) => T | R),
     private scheduler: SchedulerLike
@@ -83,7 +83,7 @@ class TimeoutWithSubscriber<T, R> extends OuterSubscriber<T, R> {
     destination: Subscriber<T>,
     private absoluteTimeout: boolean,
     private waitFor: number,
-    private startSelector: (T) => boolean,
+    private startSelector: (item: T) => boolean,
     private stopSelector: (start: T, current: T) => boolean,
     private observableOrValue: ((start: T) => Observable<R | T>) | ((start: T) => T | R),
     private scheduler: SchedulerLike

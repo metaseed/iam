@@ -9,12 +9,13 @@ import { FormsModule } from '@angular/forms';
 import { ScrollHideDirective } from './scroll-hide/scroll-hide.directive';
 import { CoreModule } from 'core';
 import { StoreModule } from '@ngrx/store';
-import { SharedState, sharedReducers, StoreCache, ActionMoniter, moduleStateName } from './state';
+import { SharedState, reducers, StoreCache, ActionMoniter, moduleStateName } from './state';
 import { EffectsModule } from '@ngrx/effects';
 import { DocumentEffects } from './state/document/effects';
 import { DocEffectsUtil } from './state/document/effects.util';
 import { DatabaseModule } from 'database';
 import { StorageModule } from '../net-storage/storage.module';
+import { effects } from './state/effects';
 
 @NgModule({
   imports: [
@@ -24,8 +25,8 @@ import { StorageModule } from '../net-storage/storage.module';
     MaterialModule,
     RouterModule,
     SplitPaneModule,
-    StoreModule.forFeature<SharedState>(moduleStateName, sharedReducers),
-    EffectsModule.forFeature([DocumentEffects])
+    StoreModule.forFeature<SharedState>(moduleStateName, reducers),
+    EffectsModule.forFeature(effects)
   ],
   declarations: [ReadingPositionIndicatorComponent, BottomNavigationComponent, ScrollHideDirective],
   exports: [

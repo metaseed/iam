@@ -14,7 +14,7 @@ export interface SharedState {
   document: DocumentState;
 }
 
-export const sharedReducers: ActionReducerMap<SharedState> = {
+export const reducers: ActionReducerMap<SharedState> = {
   actionMonitor: actionMonitorReducer,
   document: documentReducer
 };
