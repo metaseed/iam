@@ -21,7 +21,8 @@
       "@metaseed/angular-hotkey": ["../projects/angular-hotkey"],
       "@metaseed/angular-hotkey/*": ["../projects/angular-hotkey/*"],
       "@metaseed/spinner": ["../projects/spinner"],
-      "@metaseed/spinner/*": ["../projects/spinner/*"]
+      "@metaseed/spinner/*": ["../projects/spinner/*"],
+      "lispjs": ["../packages/lisp.js"]
     },
     "typeRoots": ["node_modules/@types"],
     "lib": ["es2017", "dom"]

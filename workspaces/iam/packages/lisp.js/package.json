@@ -2,6 +2,7 @@
   "name": "littlelisp",
   "description": "An interpreter for a little lisp.",
   "author": "Mary Rose Cook <mary@maryrosecook.com> (https://maryrosecook.com/)",
+  "main": "littlelisp.js",
   "version": "0.1.0",
   "scripts": {
     "test": "jasmine-node littlelisp.spec.js"

@@ -110,9 +110,11 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
   }
   private scroll() {
     const hash = this.getCurrentHash();
-    const element = this._docRef.document.getElementById(hash);
-    element.scrollIntoView();
-    this.viewerContainerDiv.nativeElement.scrollTop = element.offsetTop - 64;
+    if (hash) {
+      const element = this._docRef.document.getElementById(hash);
+      element.scrollIntoView();
+      this.viewerContainerDiv.nativeElement.scrollTop = element.offsetTop - 64;
+    }
   }
   private getCurrentHash() {
     return decodeURIComponent(this._location.hash.replace(/^#/, ''));

@@ -55,6 +55,7 @@ import { Subscription } from 'rxjs';
 import { getAddr } from '../utils/getUri';
 import { Utilities } from '../../../core/utils';
 import { take } from 'rxjs/operators';
+import { LispPlugin } from './markdown-it-plugins/lisp';
 
 @Injectable()
 export class MarkdownViewerService {
@@ -74,6 +75,7 @@ export class MarkdownViewerService {
   private markdown: MarkdownIt.MarkdownIt;
   private containerPlugin: ContainerPlugin;
   private mermaidPlugin: MermaidPlugin;
+  private lispPlugin: LispPlugin;
   private showCodeLineNumber: boolean;
   constructor(
     private router: Router,
@@ -89,6 +91,7 @@ export class MarkdownViewerService {
     }
 
     this.markdown = new MarkdownIt(config.markdownIt);
+    this.lispPlugin = new LispPlugin(this.markdown);
     this.markdown
       .use(title)
       .use(markdownVideoPlugin, {
