@@ -11,7 +11,10 @@ var s = `(let ((a 0) (b 1) (c 0))(
             ))
           )
         )`;
-var v = lisp.interpret(lisp.parse(s));
+var s = `(,img ,:'width:100px')
+`;
+var p = lisp.parse(s);
+var v = lisp.interpret(p);
 console.log(v);
 repl.start({
   prompt: '> ',

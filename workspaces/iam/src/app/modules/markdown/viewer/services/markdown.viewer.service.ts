@@ -77,7 +77,7 @@ export class MarkdownViewerService {
   private showCodeLineNumber: boolean;
   constructor(
     private router: Router,
-    private document: DocumentRef,
+    private docRef: DocumentRef,
     private utils: Utilities,
     @Optional() config?: MarkdownConfig
   ) {
@@ -101,7 +101,7 @@ export class MarkdownViewerService {
       .use(ins)
       .use(mark)
       .use(footnote, {
-        getUrl: _ => getAddr(this.document.document.location.href)
+        getUrl: _ => getAddr(this.docRef.document.location.href)
       })
       .use(deflist)
       .use(abbr)
@@ -110,7 +110,7 @@ export class MarkdownViewerService {
         // slugify: string => string,
         permalink: true,
         permalinkHref: (slug, state) => {
-          return `${getAddr(this.document.document.location.href)}#${slug}`;
+          return `${getAddr(this.docRef.document.location.href)}#${slug}`;
         },
         permalinkClass: 'deep-link',
         permalinkSymbol: `<i class="material-icons deep-link-icon">link</i>`, // "¶",
@@ -118,7 +118,7 @@ export class MarkdownViewerService {
       })
       .use(toc, {
         getHref: (slug, state) => {
-          return `${getAddr(this.document.document.location.href)}#${slug}`;
+          return `${getAddr(this.docRef.document.location.href)}#${slug}`;
         },
         includeLevel: [2, 3, 4]
       })
@@ -135,7 +135,7 @@ export class MarkdownViewerService {
     this.markdown.renderer.rules.blockquote_open = function() {
       return '<blockquote class="blockquote">\n';
     };
-    (<any>this.document.document).copier = new CopierService();
+    (<any>this.docRef.document).copier = new CopierService();
   }
 
   public render(raw: string): string {
@@ -148,8 +148,8 @@ export class MarkdownViewerService {
   private DEFAULT_HIGHLIGHT_FUNCTION = (str, lang) => {
     const language = prismjs.languages[lang];
     if (lang && language) {
-      const preNode: Element = this.document.document.createElement('pre');
-      const codeNode = this.document.document.createElement('code');
+      const preNode: Element = this.docRef.document.createElement('pre');
+      const codeNode = this.docRef.document.createElement('code');
       preNode.className = (this.showCodeLineNumber ? 'line-numbers' : '') + ' language-' + lang;
       preNode.appendChild(codeNode);
       codeNode.textContent = str;

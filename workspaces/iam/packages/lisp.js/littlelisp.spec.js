@@ -147,6 +147,21 @@ describe('littleLisp', function() {
         expect(t.interpret(t.parse('((lambda (x y) (0 x y)) 1 2)'))).toEqual([0, 1, 2]);
       });
 
+      it('should return html', () => {
+        expect(t.execute('(.toc)')).toEqual('<i-toc></i-toc>');
+      });
+      it('should return html', () => {
+        expect(t.execute("(,img .:(,p .:'abc'))")).toEqual('<img><p>abc</p></img>');
+      });
+      it('should return html', () => {
+        expect(t.execute("(,img ,:'width:100px')")).toEqual('<img style="width:100px"></img>');
+      });
+      it('should return html', () => {
+        expect(t.execute('(,img .:((,p) (,detail)))')).toEqual(
+          '<img><p></p><detail></detail></img>'
+        );
+      });
+
       it('should return correct result when invoke lambda w params', function() {
         expect(t.interpret(t.parse('((lambda (x) (first (x))) 1)'))).toEqual(1);
       });

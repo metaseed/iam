@@ -25,9 +25,23 @@
     },
     toHtml: function(tag, attributes) {
       let attr = '';
-      const content = attributes.content;
-      delete attributes.content;
-      Object.keys(attributes).forEach(key => (attr += ' ' + key + '="' + attributes[key] + '"'));
+      let content = '';
+      if (attributes) {
+        content = attributes['.'] || attributes.content;
+        delete attributes.content;
+        delete attributes['.'];
+        if (Array.isArray(content)) {
+          let c = '';
+          content.forEach(v => (c += v));
+          content = c;
+        }
+        Object.keys(attributes).forEach(key => {
+          const value = attributes[key];
+          if (key === ',') key = 'style';
+          attr += ' ' + key + '="' + value + '"';
+          return attr;
+        });
+      }
       const html = `<${tag}${attr}>${content || ''}</${tag}>`;
       return html;
     },
@@ -173,10 +187,29 @@
   };
 
   var categorize = function(input) {
-    const a = input.split(':');
-    if (a.length === 2) {
-      const p = a[1] === '' ? undefined : parseValue(a[1]);
-      return { type: 'namedParam', name: a[0], param: p };
+    function findFirstColon(str) {
+      let quoteSingle;
+      for (let i = 0; i < str.length; i++) {
+        if (str[i] === ':') {
+          if (quoteSingle === undefined) {
+            return i;
+          }
+        } else if (str[i] === "'") {
+          if (quoteSingle === undefined) {
+            quoteSingle = i;
+          } else {
+            quoteSingle = undefined;
+          }
+        }
+      }
+      return undefined;
+    }
+    const i = findFirstColon(input);
+    if (i) {
+      const key = input.slice(0, i);
+      const value = input.slice(i + 1);
+      const p = value === '' ? undefined : parseValue(value);
+      return { type: 'namedParam', name: key, param: p };
     } else {
       return parseValue(input);
     }
@@ -201,7 +234,20 @@
       } else if (token === ')') {
         return list;
       } else {
-        return parenthesize(input, list.concat(categorize(token)));
+        const ct = categorize(token);
+        // function name
+        if (!list.length && ct.type === 'identifier') {
+          if (ct.value[0] === '.') {
+            list.push({ type: 'identifier', value: 'toHtml' });
+            list.push({ type: 'string', value: 'i-' + ct.value.substr(1) });
+            return parenthesize(input, list);
+          } else if (ct.value[0] === ',') {
+            list.push({ type: 'identifier', value: 'toHtml' });
+            list.push({ type: 'string', value: ct.value.substr(1) });
+            return parenthesize(input, list);
+          }
+        }
+        return parenthesize(input, list.concat(ct));
       }
     }
   };
