@@ -35,7 +35,7 @@ export class LispPlugin {
       this.gState = state;
     });
 
-    md.inline.ruler.before('backticks', 'lisp', this.parse);
+    md.inline.ruler.before('emphasis', 'lisp', this.parse);
   };
 
   parse = (state, silent?: boolean) => {

@@ -14,7 +14,7 @@ import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import * as CodeMirror from 'codemirror';
 // import 'codemirror/addon/scroll/simplescrollbars';
 import 'codemirror/addon/display/fullscreen';
-import 'codemirror/mode/gfm/gfm';
+import 'codemirror/mode/gfm/gfm'; // github flavored markdown
 import 'codemirror/addon/dialog/dialog';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/search/searchcursor';
