@@ -2,7 +2,7 @@ import * as MarkdownIt from 'markdown-it';
 import { littleLisp } from 'lispjs';
 export class LispPlugin {
   config = {
-    markerPattern: /\*\([\s\S]*?\)\*/m
+    markerPattern: /\*\([\s\S]*?\)\*/gm
   };
 
   gState;
@@ -63,7 +63,9 @@ export class LispPlugin {
     // while(pos < max && )
 
     // Detect lisp markdown
-    match = this.config.markerPattern.exec(state.src);
+    const regex = this.config.markerPattern;
+    regex.lastIndex = start;
+    match = regex.exec(state.src);
     match = !match
       ? []
       : match.filter(function(m: string) {
