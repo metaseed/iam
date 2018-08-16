@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import { startWith, takeUntil /*, subscribeOn */, subscribeOn } from 'rxjs/operators';
 import { Subject, combineLatest, asapScheduler } from 'rxjs'; // rxjs 6
-import { Scheduler } from 'rxjs';
 import { TocItem, TocService } from '../../services/toc.service';
 import { ScrollService } from 'core';
 import { Title } from '@angular/platform-browser';
@@ -96,19 +95,24 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.tocService.tocList.pipe(takeUntil(this.onDestroy)).subscribe(tocList => {
-      this.tocList = tocList;
-      const itemCount = count(this.tocList, item => item.level !== 'h1');
+    this.tocService.tocList
+      .pipe(
+        takeUntil(this.onDestroy),
+        subscribeOn(asapScheduler)
+      )
+      .subscribe(tocList => {
+        this.tocList = tocList;
+        const itemCount = count(this.tocList, item => item.level !== 'h1');
 
-      this.type =
-        itemCount > 0
-          ? this.isEmbedded
-            ? itemCount > this.primaryMax
-              ? 'EmbeddedExpandable'
-              : 'EmbeddedSimple'
-            : 'Floating'
-          : 'None';
-    });
+        this.type =
+          itemCount > 0
+            ? this.isEmbedded
+              ? itemCount > this.primaryMax
+                ? 'EmbeddedExpandable'
+                : 'EmbeddedSimple'
+              : 'Floating'
+            : 'None';
+      });
   }
 
   ngAfterViewInit() {
@@ -117,7 +121,7 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
       // which, in turn, are caused by the rendering that happened due to a ChangeDetection.
       // Without asap, we would be updating the model while still in a ChangeDetection handler, which is disallowed by Angular.
       combineLatest(
-        this.tocService.activeItemIndex.pipe(subscribeOn(asapScheduler)), //rxjs 6
+        this.tocService.activeItemIndex.pipe(subscribeOn(asapScheduler)),
         this.items.changes.pipe(startWith(this.items))
       )
         .pipe(takeUntil(this.onDestroy))
@@ -127,9 +131,9 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
           }
 
-          const e = items.toArray()[index].nativeElement;
+          const e: HTMLElement = items.toArray()[index].nativeElement;
           const p = e.offsetParent;
-
+          if (!p) return;
           const eRect = e.getBoundingClientRect();
           const pRect = p.getBoundingClientRect();
 
@@ -154,7 +158,6 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   onClick(event) {
     if (!this.elementRef.nativeElement.contains(event.target)) {
-      // similar checks
       this.show = false;
     }
   }
