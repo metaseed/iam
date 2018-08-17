@@ -57,7 +57,7 @@ export class CodemirrorToolbarComponent implements OnInit {
     });
 
     this._subscription = _commandService.commands.subscribe(c => this.handleCommand(c));
-    let me = this;
+    const me = this;
     this._editorService.editorLoaded$
       .pipe(takeUntil(this.destroy$))
       .subscribe((editor: CodeMirror.Editor) => {
@@ -123,10 +123,10 @@ export class CodemirrorToolbarComponent implements OnInit {
         me.editor = editor;
         me.doc = <any>editor;
         const configs = CodemirrorToolbarComponent.COMMANDS_CONFIG;
-        let option = {};
-        for (let key in configs) {
+        const option = {};
+        for (const key in configs) {
           if (configs.hasOwnProperty(key)) {
-            var config = configs[key];
+            const config = configs[key];
             option[config.hotKey] = function(editor) {
               me.insertContent(key);
             };
@@ -134,8 +134,8 @@ export class CodemirrorToolbarComponent implements OnInit {
         }
 
         option['Ctrl-M Q'] = function(editor) {
-          //(<HTMLElement>(me.div.nativeElement)).click();
-          //document.activeElement.blur();
+          // (<HTMLElement>(me.div.nativeElement)).click();
+          // document.activeElement.blur();
           editor.display.input.textarea.blur();
         };
         option['Ctrl-Up'] = 'scrollLineUp';
@@ -199,7 +199,7 @@ Jump to line*/
     }
 
     const config = CodemirrorToolbarComponent.COMMANDS_CONFIG[type];
-    let startSize = config.startSize;
+    const startSize = config.startSize;
     // let selectionText: string = this.editor.getModel().getValueInRange(selection);
     selectionText = config.func(selectionText, '');
     this.doc.replaceSelection(selectionText, 'around');
@@ -227,7 +227,7 @@ Jump to line*/
     // this.doc.extendSelection(<any>{ line: p.line, ch: p.ch + 2 })
     // this.editor.executeEdits('', [{ identifier: null, range: selection, text: selectionText, forceMoveMarkers: true }]);
     // if (selection.startColumn == selection.endColumn && selection.startLineNumber == selection.endLineNumber) {
-    //   selection = new monaco.Selection(selection.startLineNumber, selection.startColumn + startSize, selection.endLineNumber, selection.startColumn + startSize + config.command.length);
+    // selection = new monaco.Selection(selection.startLineNumber, selection.startColumn + startSize, selection.endLineNumber, selection.startColumn + startSize + config.command.length);
     //   this.editor.setSelection(selection);
     // }
     // this.editor.layout();

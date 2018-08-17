@@ -91,19 +91,19 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
       this.editor = editor;
     });
     (<any>CodeMirror).commands.save = this.save;
-    let cmds = (<any>CodeMirror).commands;
+    const cmds = (<any>CodeMirror).commands;
     cmds.scrollLineUp = function(cm) {
-      var info = cm.getScrollInfo();
+      const info = cm.getScrollInfo();
       if (!cm.somethingSelected()) {
-        var visibleBottomLine = cm.lineAtHeight(info.top + info.clientHeight, 'local');
+        const visibleBottomLine = cm.lineAtHeight(info.top + info.clientHeight, 'local');
         if (cm.getCursor().line >= visibleBottomLine) cm.execCommand('goLineUp');
       }
       cm.scrollTo(null, info.top - cm.defaultTextHeight());
     };
     cmds.scrollLineDown = function(cm) {
-      var info = cm.getScrollInfo();
+      const info = cm.getScrollInfo();
       if (!cm.somethingSelected()) {
-        var visibleTopLine = cm.lineAtHeight(info.top, 'local') + 1;
+        const visibleTopLine = cm.lineAtHeight(info.top, 'local') + 1;
         if (cm.getCursor().line <= visibleTopLine) cm.execCommand('goLineDown');
       }
       cm.scrollTo(null, info.top + cm.defaultTextHeight());

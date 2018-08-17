@@ -78,5 +78,8 @@ div.markdown-code:hover > button {
 @import '~codemirror/addon/dialog/dialog';
 @import '~codemirror/addon/search/matchesonscrollbar';
 .cm-em {
-  letter-spacing: 0.1rem;
+  letter-spacing: 0.12rem;
+}
+.cm-fat-cursor .CodeMirror-cursor {
+  width: 1rem;
 }

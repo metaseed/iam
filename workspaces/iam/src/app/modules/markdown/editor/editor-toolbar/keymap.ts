@@ -4,6 +4,7 @@ import 'codemirror/keymap/emacs';
 
 export class KeyMap {
   constructor(cm) {
-    //  cm.setOption('keyMap', 'vim');
+    // cm.setOption('keyMap', 'vim');
+    // cm.setOption('keyMap', 'sublime');
   }
 }
