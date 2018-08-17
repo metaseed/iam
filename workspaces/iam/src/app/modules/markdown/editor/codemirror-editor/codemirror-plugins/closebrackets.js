@@ -143,6 +143,8 @@
               break;
             }
           }
+        } else {
+          start = undefined;
         }
         if (start) {
           stop = p[1];
