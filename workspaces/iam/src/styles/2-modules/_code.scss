@@ -31,8 +31,8 @@ code-tabs mat-tab-body {
 // TERMINAL / SHELL TEXT STYLES
 
 code-example.code-shell,
-code-example[language="sh"],
-code-example[language="bash"] {
+code-example[language='sh'],
+code-example[language='bash'] {
   background-color: $darkgray;
 }
 
@@ -85,8 +85,10 @@ i-code pre {
   color: $darkred;
 }
 
-.copy-button,.wrap-button{
-  position: absolute;
+.copy-button,
+.wrap-button {
+  position: sticky;
+  float: right;
   top: -0.3rem;
 
   visibility: collapse;
@@ -104,9 +106,8 @@ i-code pre {
   right: 0;
 }
 .wrap-button {
-  right:3rem;
+  right: 3rem;
 }
-
 
 .lang-sh .copy-button,
 .lang-bash .copy-button {
@@ -125,7 +126,7 @@ i-code pre {
   transform: none;
 }
 
-[role="tabpanel"] {
+[role='tabpanel'] {
   transition: none;
 }
 
@@ -240,8 +241,8 @@ ol.linenums {
 /* SHELL / TERMINAL CODE BLOCKS */
 
 code-example.code-shell,
-code-example[language="sh"],
-code-example[language="bash"] {
+code-example[language='sh'],
+code-example[language='bash'] {
   & .pnk,
   .blk,
   .pln,
