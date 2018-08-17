@@ -24,13 +24,24 @@ import { HtmlParser } from '@angular/compiler';
 import { takeUntil, map } from 'rxjs/operators';
 import { Utilities } from '../../../../core/utils';
 import { VerticalSplitPaneComponent } from '../../../../shared/split-pane/vertical-split-pane.component';
+
+interface ICommandConfig {
+  [key: string]: {
+    command: string;
+    func: (selectedText: string, defaultText: string, config?: any) => string;
+    startSize?: number;
+    endSize: number;
+    hotKey: string;
+  };
+}
+
 @Component({
   selector: 'ms-codemirror-toolbar',
   templateUrl: './codemirror-toolbar.component.html',
   styleUrls: ['./codemirror-toolbar.component.scss']
 })
 export class CodemirrorToolbarComponent implements OnInit {
-  private static COMMANDS_CONFIG;
+  private static COMMANDS_CONFIG: ICommandConfig;
   destroy$ = new Subject();
   _subscription: Subscription;
   _options: any;
@@ -66,13 +77,13 @@ export class CodemirrorToolbarComponent implements OnInit {
             Bold: {
               command: 'Bold',
               func: (selectedText, defaultText) => `**${selectedText || defaultText}**`,
-              startSize: 2,
+              endSize: 2,
               hotKey: 'Ctrl-M B'
             },
             Italic: {
               command: 'Italic',
               func: (selectedText, defaultText) => `*${selectedText || defaultText}*`,
-              startSize: 1,
+              endSize: 1,
               hotKey: 'Ctrl-M I'
             },
             Heading: {
@@ -84,19 +95,19 @@ export class CodemirrorToolbarComponent implements OnInit {
             Reference: {
               command: 'Reference',
               func: (selectedText, defaultText) => `> ${selectedText || defaultText}`,
-              startSize: 2,
+              endSize: 2,
               hotKey: 'Ctrl-M R'
             },
             Link: {
               command: 'Link',
               func: (selectedText, defaultText) => `[${selectedText || defaultText}](http://)`,
-              startSize: 1,
+              endSize: 1,
               hotKey: 'Ctrl-M L'
             },
             Image: {
               command: 'Image',
               func: (selectedText, defaultText) => `![${selectedText || defaultText}](http://)`,
-              startSize: 2,
+              endSize: 1,
               hotKey: 'Ctrl-M M'
             },
             Ul: {
@@ -108,13 +119,29 @@ export class CodemirrorToolbarComponent implements OnInit {
             Ol: {
               command: 'Ol',
               func: (selectedText, defaultText) => `1 ${selectedText || defaultText}`,
-              startSize: 2,
+              endSize: 2,
               hotKey: 'Ctrl-M O'
             },
             Code: {
               command: 'Code',
-              func: (selectedText, defaultText) =>
-                '```lang\r\n' + (selectedText || defaultText) + '\r\n```',
+              func: (selectedText, defaultText, config) => {
+                const pos = this.doc.getCursor();
+                const cur = (this.editor as any).getSearchCursor(/^\s*```[^\S\n\r]*(\S+)/, pos);
+                let found = cur.findPrevious();
+                let lang: string;
+                if (found) {
+                  lang = cur.pos.match[1];
+                } else {
+                  found = cur.findNext();
+                  if (found) {
+                    lang = cur.pos.match[1];
+                  } else {
+                    lang = '';
+                  }
+                }
+                config.startSize = lang ? lang.length + 4 : 3;
+                return '```' + lang + '\r\n' + (selectedText || defaultText) + '\r\n```';
+              },
               startSize: 3,
               hotKey: 'Ctrl-M C'
             }
@@ -201,8 +228,16 @@ Jump to line*/
     const config = CodemirrorToolbarComponent.COMMANDS_CONFIG[type];
     const startSize = config.startSize;
     // let selectionText: string = this.editor.getModel().getValueInRange(selection);
-    selectionText = config.func(selectionText, '');
-    this.doc.replaceSelection(selectionText, 'around');
+    selectionText = config.func(selectionText, '', config);
+    if (config.startSize !== undefined) {
+      this.doc.replaceSelection(selectionText, 'start');
+      for (let i = 0; i < config.startSize; i++) this.editor.execCommand('goCharRight');
+    } else if (config.endSize !== undefined) {
+      this.doc.replaceSelection(selectionText);
+      for (let i = 0; i < config.endSize; i++) this.editor.execCommand('goCharLeft');
+    }
+    this.editor.focus();
+
     if (config.command === 'Ul') {
       this._hideIcons.Ul = true;
       this._hideIcons.Ol = false;
