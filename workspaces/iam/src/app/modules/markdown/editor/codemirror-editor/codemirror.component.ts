@@ -147,6 +147,19 @@ export class CodemirrorComponent implements ControlValueAccessor {
     this.instance.on('change', () => {
       this.updateValue(this.instance.getValue());
     });
+    this.instance.on('cursorActivity', doc => {
+      const cur = doc.getCursor();
+      const coords = this.instance.cursorCoords(cur);
+      const ele = document.elementFromPoint(coords.left, coords.top + 5 /*add offset to select*/);
+      const curDiv: HTMLElement = doc.display.cursorDiv;
+      if (ele.className.includes('cm-em')) {
+        if (!curDiv.classList.contains('cursor-italic')) {
+          curDiv.classList.add('cursor-italic');
+        }
+      } else {
+        curDiv.classList.remove('cursor-italic');
+      }
+    });
 
     this.instance.on('focus', () => {
       this.focus.emit();

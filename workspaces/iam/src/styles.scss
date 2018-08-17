@@ -83,3 +83,6 @@ div.markdown-code:hover > button {
 .cm-fat-cursor .CodeMirror-cursor {
   width: 1rem;
 }
+.CodeMirror-cursors.cursor-italic > div {
+  transform: rotate(15deg);
+}
