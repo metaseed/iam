@@ -22,7 +22,7 @@ import 'codemirror/addon/search/search';
 // import 'codemirror/addon/scroll/annotatescrollbar';
 import 'codemirror/addon/search/matchesonscrollbar';
 import 'codemirror/addon/search/jump-to-line';
-import 'codemirror/addon/edit/closebrackets';
+import './codemirror-plugins/closebrackets';
 import 'codemirror/addon/fold/xml-fold';
 import 'codemirror/addon/edit/closetag';
 import 'codemirror/addon/edit/matchbrackets';
