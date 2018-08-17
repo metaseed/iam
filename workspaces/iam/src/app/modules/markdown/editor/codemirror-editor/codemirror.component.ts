@@ -22,6 +22,11 @@ import 'codemirror/addon/search/search';
 // import 'codemirror/addon/scroll/annotatescrollbar';
 import 'codemirror/addon/search/matchesonscrollbar';
 import 'codemirror/addon/search/jump-to-line';
+import 'codemirror/addon/edit/closebrackets';
+import 'codemirror/addon/fold/xml-fold';
+import 'codemirror/addon/edit/closetag';
+import 'codemirror/addon/edit/matchbrackets';
+import 'codemirror/addon/edit/matchtags';
 
 import { MarkdownEditorService } from '../services/markdown.editor.service';
 import { Store } from '@ngrx/store';
@@ -88,6 +93,16 @@ export class CodemirrorComponent implements ControlValueAccessor {
       lineNumbers: this.showLineNumber,
       // scrollbarStyle: 'simple',
       lineWrapping: true,
+      // autoCloseBrackets: {
+      //   pairs: '()[]{}\'\'""',
+      //   triples: '`',
+      //   explode: '[]{}',
+      //   override: true
+      // },
+      autoCloseBrackets: true,
+      autoCloseTags: true,
+      matchBrackets: true,
+      matchTags: { bothTags: true },
       extraKeys: {
         F11: function(cm) {
           cm.setOption('fullScreen', !cm.getOption('fullScreen'));
