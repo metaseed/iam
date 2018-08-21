@@ -77,9 +77,9 @@ div.markdown-code:hover > button {
 @import '~codemirror/addon/display/fullscreen';
 @import '~codemirror/addon/dialog/dialog';
 @import '~codemirror/addon/search/matchesonscrollbar';
-.cm-em {
-  letter-spacing: 0.12rem;
-}
+// .cm-em {
+// letter-spacing: 0.12rem;
+// }
 .cm-fat-cursor .CodeMirror-cursor {
   width: 1rem;
 }

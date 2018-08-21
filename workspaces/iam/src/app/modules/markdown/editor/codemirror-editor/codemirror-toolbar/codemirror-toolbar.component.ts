@@ -30,7 +30,7 @@ interface ICommandConfig {
     command: string;
     func: (selectedText: string, defaultText: string, config?: any) => string;
     startSize?: number;
-    endSize: number;
+    endSize?: number;
     hotKey: string;
   };
 }
@@ -76,7 +76,23 @@ export class CodemirrorToolbarComponent implements OnInit {
           CodemirrorToolbarComponent.COMMANDS_CONFIG = {
             Bold: {
               command: 'Bold',
-              func: (selectedText, defaultText) => `**${selectedText || defaultText}**`,
+              func: (selectedText, defaultText) => {
+                // const pos = this.doc.getCursor();
+                // const cur = (this.editor as any).getSearchCursor(/\*+/, pos);
+                // let found = cur.findPrevious();
+                // let lang: string;
+                // if (found) {
+                //   lang = cur.pos.match[1];
+                // } else {
+                //   found = cur.findNext();
+                //   if (found) {
+                //     lang = cur.pos.match[1];
+                //   } else {
+                //     lang = '';
+                //   }
+                // }
+                return `**${selectedText || defaultText}**`;
+              },
               endSize: 2,
               hotKey: 'Ctrl-M B'
             },

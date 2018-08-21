@@ -152,7 +152,7 @@ export class CodemirrorComponent implements ControlValueAccessor {
       const coords = this.instance.cursorCoords(cur);
       const ele = document.elementFromPoint(coords.left, coords.top + 5 /*add offset to select*/);
       const curDiv: HTMLElement = doc.display.cursorDiv;
-      if (ele.className.includes('cm-em')) {
+      if (ele && ele.className.includes('cm-em')) {
         if (!curDiv.classList.contains('cursor-italic')) {
           curDiv.classList.add('cursor-italic');
         }
