@@ -47,10 +47,10 @@ export class GithubStorage extends Requestable {
           // IIFE
           const me = this;
           let replayObservable: ReplaySubject<Repository>;
-          let hasError = true;
+          let hasError = false;
           return function(this: Subscriber<Repository>, source: Observable<ConfigModel>) {
             // called every time when subscribe
-            if (hasError) {
+            if (hasError || !replayObservable) {
               replayObservable = new ReplaySubject(1);
               source
                 .pipe(
