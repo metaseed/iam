@@ -17,7 +17,7 @@ import { UserInfo } from './user-info';
 import { Repository } from './repository';
 import { Requestable } from './requestable';
 import { GITHUB_AUTHENTICATION } from './tokens';
-import { ConfigService, ConfigModel } from 'core';
+import { ConfigService, ConfigModel, backoff } from 'core';
 
 @Injectable()
 export class GithubStorage extends Requestable {
@@ -47,10 +47,10 @@ export class GithubStorage extends Requestable {
           // IIFE
           const me = this;
           let replayObservable: ReplaySubject<Repository>;
-          const hasError = false;
+          let hasError = true;
           return function(this: Subscriber<Repository>, source: Observable<ConfigModel>) {
             // called every time when subscribe
-            if (!replayObservable) {
+            if (hasError) {
               replayObservable = new ReplaySubject(1);
               source
                 .pipe(
@@ -58,17 +58,25 @@ export class GithubStorage extends Requestable {
                     const user = config.storage.github.userName;
                     const name = config.storage.github.dataRepoName;
                     return me.getRepos(user, name).pipe(
+                      // backoff<Repository>(80, 1000),
                       catchError(err => {
                         if (err.status === 404) {
                           return me.newRepos(name);
                         } else {
+                          hasError = true;
+                          console.log(err);
                           return throwError(err);
                         }
                       })
                     );
                   })
                 )
-                .subscribe(o => replayObservable.next(o), err => replayObservable.error(err));
+                .subscribe(
+                  o => {
+                    replayObservable.next(o), (hasError = false);
+                  },
+                  err => replayObservable.error(err)
+                );
             }
             return replayObservable.subscribe(this);
           };
