@@ -82,3 +82,14 @@ body {
 .CodeMirror-cursors.cursor-italic > div {
   transform: rotate(15deg);
 }
+
+@media (min-width: 840px) and (orientation: portrait) {
+  .CodeMirror-dialog-top {
+    top: 10rem;
+  }
+}
+@media (min-width: 960px) and (orientation: landscape) {
+  .CodeMirror-dialog-top {
+    top: 10rem;
+  }
+}

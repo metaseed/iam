@@ -1,6 +1,6 @@
 import { Component, Input, Output, ViewChild, EventEmitter, forwardRef } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
-// import 'codemirror/addon/dialog/dialog.css'
+// import 'codemirror/addon/dialog/dialog.css';
 
 import * as CodeMirror from 'codemirror';
 // import 'codemirror/addon/scroll/simplescrollbars';
@@ -14,8 +14,8 @@ import 'codemirror/addon/search/search';
 import 'codemirror/addon/search/matchesonscrollbar';
 import 'codemirror/addon/search/jump-to-line';
 import './codemirror-plugins/closebrackets';
-import 'codemirror/addon/fold/xml-fold';
-import 'codemirror/addon/edit/closetag';
+// import 'codemirror/addon/fold/xml-fold';
+// import 'codemirror/addon/edit/closetag';
 import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/addon/edit/matchtags';
 

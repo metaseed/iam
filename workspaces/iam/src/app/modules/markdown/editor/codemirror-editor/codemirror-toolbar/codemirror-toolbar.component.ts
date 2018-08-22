@@ -1,27 +1,11 @@
-import {
-  Component,
-  OnInit,
-  AfterViewInit,
-  Input,
-  Renderer,
-  ViewChild,
-  HostBinding
-} from '@angular/core';
+import { Component, OnInit, Input, HostBinding } from '@angular/core';
 import { MarkdownComponent } from '../../../markdown.component';
-import { DomSanitizer } from '@angular/platform-browser';
 
 import { Subscription, Subject } from 'rxjs';
-import { DocService } from 'home';
 import { MarkdownEditorService } from '../..';
-import { CommandService, Command, DocumentRef } from 'core';
-import { Store, select } from '@ngrx/store';
-import * as doc from '../../../state/actions/document';
-import * as edit from '../../../state/actions/edit';
-import { OnDestroy } from '@angular/core';
-import * as fromMarkdown from '../../../state';
+import { CommandService, Command } from 'core';
 import * as CodeMirror from 'codemirror';
-import { HtmlParser } from '@angular/compiler';
-import { takeUntil, map } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Utilities } from '../../../../core/utils';
 import { VerticalSplitPaneComponent } from '../../../../shared/split-pane/vertical-split-pane.component';
 
@@ -49,25 +33,22 @@ export class CodemirrorToolbarComponent implements OnInit {
   doc: CodeMirror.Doc;
   isScreenWide$ = this.utils.isScreenWide$;
 
-  @HostBinding('style.width') width;
+  @HostBinding('style.width')
+  width;
 
   constructor(
     public markdown: MarkdownComponent,
     private _verticalSplitPane: VerticalSplitPaneComponent,
     private _editorService: MarkdownEditorService,
     private utils: Utilities,
-    private _docService: DocService,
-    private _renderer: Renderer,
-    private _commandService: CommandService,
-    private _docRef: DocumentRef,
-    private _domSanitizer: DomSanitizer
+    private _commandService: CommandService
   ) {
     this._verticalSplitPane.notifySizeDidChange.pipe(takeUntil(this.destroy$)).subscribe(s => {
       if (this.width === s.primary) return;
       this.width = `${s.primary}px`;
     });
 
-    this._subscription = _commandService.commands.subscribe(c => this.handleCommand(c));
+    this._subscription = this._commandService.commands.subscribe(c => this.handleCommand(c));
     const me = this;
     this._editorService.editorLoaded$
       .pipe(takeUntil(this.destroy$))
@@ -170,7 +151,7 @@ export class CodemirrorToolbarComponent implements OnInit {
         for (const key in configs) {
           if (configs.hasOwnProperty(key)) {
             const config = configs[key];
-            option[config.hotKey] = function(editor) {
+            option[config.hotKey] = function() {
               me.insertContent(key);
             };
           }
@@ -202,7 +183,7 @@ Jump to line*/
         me.editor.setOption('extraKeys', (<any>CodeMirror).normalizeKeyMap(option));
       });
   }
-  more = event => {};
+  more = () => {};
 
   // command(command: string) {
   //   if (command === 'Undo') {
@@ -242,7 +223,6 @@ Jump to line*/
     }
 
     const config = CodemirrorToolbarComponent.COMMANDS_CONFIG[type];
-    const startSize = config.startSize;
     // let selectionText: string = this.editor.getModel().getValueInRange(selection);
     selectionText = config.func(selectionText, '', config);
     if (config.startSize !== undefined) {
