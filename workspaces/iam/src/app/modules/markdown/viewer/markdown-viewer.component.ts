@@ -4,13 +4,14 @@ import { MarkdownViewerService } from './services/markdown.viewer.service';
 import { Logger, DocumentRef } from 'core';
 import lozad from 'packages/lazy-load';
 import { TocComponent } from './elements/toc/toc.component';
-import { of, Observable, timer } from 'rxjs';
+import { of, Observable, timer, combineLatest, Subject } from 'rxjs';
 import { TocService } from './services/toc.service';
-import { switchMap, tap, catchError, takeUntil } from 'rxjs/operators';
+import { switchMap, tap, catchError, takeUntil, map } from 'rxjs/operators';
 import { ElementsLoader } from './elements/elements-loader';
 import { getAddr } from './utils/getUri';
 import { MarkdownViewerContainerComponent } from './markdown-viewer-container.component';
 import { Inject } from '@angular/core';
+import { ActiveElementService } from './services/active-element.service';
 
 export const NO_ANIMATIONS = 'no-animations';
 
@@ -77,22 +78,26 @@ export class MarkdownViewerComponent {
   protected currViewContainer: HTMLElement = document.createElement('div');
   protected nextViewContainer: HTMLElement = document.createElement('div');
 
-  private onDestroy$ = new EventEmitter<void>();
+  private destroy$ = new EventEmitter<void>();
   // The new document is ready to be inserted into the viewer.
   // (Embedded components have been loaded and instantiated, if necessary.)
-  @Output() docReady = new EventEmitter<void>();
+  @Output()
+  docReady = new EventEmitter<void>();
 
   // The previous document has been removed from the viewer.
   // (The leaving animation (if any) has been completed and the node has been removed from the DOM.)
-  @Output() docRemoved = new EventEmitter<void>();
+  @Output()
+  docRemoved = new EventEmitter<void>();
 
   // The new document has been inserted into the viewer.
   // (The node has been inserted into the DOM, but the entering animation may still be in progress.)
-  @Output() docInserted = new EventEmitter<void>();
+  @Output()
+  docInserted = new EventEmitter<void>();
 
   // The new document has been fully rendered into the viewer.
   // (The entering animation has been completed.)
-  @Output() docRendered = new EventEmitter<void>();
+  @Output()
+  docRendered = new EventEmitter<void>();
 
   constructor(
     @Inject(MarkdownViewerContainerComponent) private parent: MarkdownViewerContainerComponent,
@@ -103,14 +108,15 @@ export class MarkdownViewerComponent {
     private service: MarkdownViewerService,
     private tocService: TocService,
     private titleService: Title,
-    private elementsLoader: ElementsLoader
+    private elementsLoader: ElementsLoader,
+    private activeElementService: ActiveElementService
   ) {
     (<any>document).iamMarkdownIsPureViewMode = true;
     this.hostElement = elementRef.nativeElement;
     this.docContents$
       .pipe(
         switchMap(newDoc => this.render(newDoc)),
-        takeUntil(this.onDestroy$)
+        takeUntil(this.destroy$)
       )
       .subscribe();
     const container = this.hostElement;
@@ -118,7 +124,7 @@ export class MarkdownViewerComponent {
   }
 
   ngOnDestroy() {
-    this.onDestroy$.emit();
+    this.destroy$.emit();
   }
   protected swapViews(onInsertedCb = () => {}): Observable<void> {
     const raf$ = new Observable<void>(subscriber => {

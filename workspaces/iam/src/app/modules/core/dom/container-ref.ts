@@ -1,5 +1,5 @@
 import { map, auditTime, share } from 'rxjs/operators';
-import { fromEvent, Observable } from 'rxjs';
+import { fromEvent, Observable, ReplaySubject } from 'rxjs';
 import { NgZone } from '@angular/core';
 
 export class ScrollEvent {
@@ -13,6 +13,7 @@ export interface IContainer {
   touchStart$: Observable<TouchEvent>;
   touchMove$: Observable<TouchEvent>;
   touchEnd$: Observable<TouchEvent>;
+  activeElement$: Observable<Element>;
   nativeElement: HTMLElement | Window | Document;
   contentHeight: number;
   viewportHeight: number;
@@ -27,6 +28,7 @@ export class ContainerRef implements IContainer {
   touchStart$: Observable<TouchEvent>;
   touchEnd$: Observable<TouchEvent>;
   touchMove$: Observable<TouchEvent>;
+  activeElement$: Observable<Element> = new ReplaySubject(1);
 
   constructor(
     public nativeElement: HTMLElement | Window | Document = window,

@@ -1,13 +1,4 @@
-import {
-  Component,
-  Input,
-  Output,
-  ViewChild,
-  EventEmitter,
-  ViewEncapsulation,
-  forwardRef,
-  Inject
-} from '@angular/core';
+import { Component, Input, Output, ViewChild, EventEmitter, forwardRef } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 // import 'codemirror/addon/dialog/dialog.css'
 
@@ -31,13 +22,10 @@ import 'codemirror/addon/edit/matchtags';
 import { MarkdownEditorService } from '../services/markdown.editor.service';
 import { Store } from '@ngrx/store';
 import * as markdown from '../../state';
-import * as fromEdit from '../../state/actions/edit';
 import { KeyMap } from '../editor-toolbar/keymap';
 import { Subject } from 'rxjs';
-import { ContainerRef, ScrollEvent, IContainer } from 'core';
-import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../../model/markdown.model';
 import { Utilities } from 'core';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, map, switchMap } from 'rxjs/operators';
 /**
  * Usage : <codemirror [(ngModel)]="markdown" [config]="{...}"></codemirror>
  */
@@ -59,14 +47,20 @@ import { takeUntil } from 'rxjs/operators';
 export class CodemirrorComponent implements ControlValueAccessor {
   //    var map = {"Alt-Space": function(cm){...}}
   //    editor.addKeyMap(map);
-  @Input() config;
-  @Output() change = new EventEmitter();
-  @Output() focus = new EventEmitter();
-  @Output() blur = new EventEmitter();
+  @Input()
+  config;
+  @Output()
+  change = new EventEmitter();
+  @Output()
+  focus = new EventEmitter();
+  @Output()
+  blur = new EventEmitter();
 
-  @ViewChild('host') host;
+  @ViewChild('host')
+  host;
 
-  @Output() instance = null;
+  @Output()
+  instance = null;
 
   _value = '';
   private showLineNumber;
@@ -74,12 +68,7 @@ export class CodemirrorComponent implements ControlValueAccessor {
   /**
    * Constructor
    */
-  constructor(
-    private service: MarkdownEditorService,
-    @Inject(MARKDOWN_SERVICE_TOKEN) private markdownService: IMarkdownService,
-    private store: Store<markdown.MarkdownState>,
-    private utils: Utilities
-  ) {
+  constructor(private service: MarkdownEditorService, private utils: Utilities) {
     this.utils.isScreenWide$
       .pipe(takeUntil(this.destroy$))
       .subscribe(wide => (this.showLineNumber = wide));
@@ -130,6 +119,13 @@ export class CodemirrorComponent implements ControlValueAccessor {
 
   ngAfterViewInit() {
     this.service.editorLoaded$.next(this.instance);
+    this.service.markdownService.viewer$
+      .pipe(switchMap(v => v.activeElement$))
+      .subscribe(element => {
+        if (!element) return;
+        const lines = JSON.parse(element.getAttribute('data-source-lines'));
+        this.instance.scrollIntoView({ line: lines[0], ch: 0 });
+      });
   }
   destroy$ = new Subject();
 
@@ -168,9 +164,7 @@ export class CodemirrorComponent implements ControlValueAccessor {
     this.instance.on('blur', () => {
       this.blur.emit();
     });
-    this._keyMap = new KeyMap(this.instance);
   }
-  private _keyMap: KeyMap;
 
   refresh() {
     this.instance.refresh();

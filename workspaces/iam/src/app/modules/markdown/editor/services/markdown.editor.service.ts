@@ -1,6 +1,11 @@
 import { Subject } from 'rxjs';
+import { Injectable, Inject } from '@angular/core';
+import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../../model/markdown.model';
 
+@Injectable()
 export class MarkdownEditorService {
+  constructor(@Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService) {}
+
   public contentChanged$ = new Subject<string>();
   public docLoaded$ = new Subject<CodeMirror.Editor>();
   public onTouched$ = new Subject();

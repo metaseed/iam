@@ -4,10 +4,8 @@ import { Observable } from 'rxjs';
 import { Action } from '@ngrx/store';
 import { tap, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { MarkdownService } from './markdown.service';
 import { RefreshAction } from './state/actions/document';
 import { DocumentActionTypes } from './state/actions/document';
-import { MARKDOWN_SERVICE_TOKEN } from './model/markdown.model';
 import { DocumentEffectsRead } from 'shared';
 
 @Injectable()
@@ -22,14 +20,10 @@ export class MarkdownEffects {
   private onRefresh() {
     if (this.router.url.startsWith('/doc/new')) return;
     const params = this.router.parseUrl(this.router.url).queryParams;
-    let title = params['title'];
-    let num = +params['id'];
-    let format = params['f'];
+    const title = params['title'];
+    const num = +params['id'];
+    const format = params['f'];
     return new DocumentEffectsRead({ id: num, title, format });
   }
-  constructor(
-    private actions$: Actions,
-    private router: Router,
-    @Inject(MARKDOWN_SERVICE_TOKEN) private markdownService: MarkdownService
-  ) {}
+  constructor(private actions$: Actions, private router: Router) {}
 }

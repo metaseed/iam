@@ -56,6 +56,7 @@ import { getAddr } from '../utils/getUri';
 import { Utilities } from '../../../core/utils';
 import { take } from 'rxjs/operators';
 import { LispPlugin } from './markdown-it-plugins/lisp';
+import { sourceLine } from './markdown-it-plugins/source-line';
 
 @Injectable()
 export class MarkdownViewerService {
@@ -94,6 +95,7 @@ export class MarkdownViewerService {
     this.lispPlugin = new LispPlugin(this.markdown);
     this.markdown
       .use(title)
+      .use(sourceLine)
       .use(markdownVideoPlugin, {
         youtube: { width: 640, height: 390 }
       })

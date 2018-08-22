@@ -1,14 +1,9 @@
-import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { TocComponent } from "./toc.component";
-import {
-  MatSnackBarModule,
-  MatIconModule,
-  MatButtonModule
-} from "@angular/material";
-import { TocService } from "../../services/toc.service";
-import { WithCustomElementComponent } from "../element-registry";
-import { Type } from "@angular/core";
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { TocComponent } from './toc.component';
+import { MatSnackBarModule, MatIconModule, MatButtonModule } from '@angular/material';
+import { WithCustomElementComponent } from '../element-registry';
+import { Type } from '@angular/core';
 
 @NgModule({
   imports: [CommonModule, MatSnackBarModule, MatIconModule, MatButtonModule],

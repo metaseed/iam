@@ -31,7 +31,7 @@ const appRoutes: Routes = [
     loadChildren: 'app/modules/me/me.module#MeModule'
   },
 
-  { path: 'home', component: HomeComponent, data: { key: 'home' } /*for routeReuse*/},
+  { path: 'home', component: HomeComponent, data: { key: 'home' } /*for routeReuse*/ },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', component: NotFoundComponent }
 ];
