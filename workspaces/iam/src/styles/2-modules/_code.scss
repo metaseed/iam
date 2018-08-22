@@ -85,28 +85,35 @@ i-code pre {
   color: $darkred;
 }
 
-.copy-button,
-.wrap-button {
-  position: sticky;
-  float: right;
-  top: -0.3rem;
+.markdown-code {
+  position: relative;
+  display: flex;
+  flex-direction: column;
 
-  visibility: collapse;
-  z-index: 2;
-  color: $blue-grey-200;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  &:hover {
-    color: $mediumgray;
+  &:hover > .code-buttons > button {
+    visibility: visible;
   }
-}
 
-.copy-button {
-  right: 0;
-}
-.wrap-button {
-  right: 7rem;
+  .code-buttons {
+    height: 0;
+    position: sticky;
+    z-index: 2;
+    top: 4px;
+    display: flex;
+    justify-content: flex-end;
+
+    .code-button {
+      padding: 0 6px;
+      visibility: collapse;
+      color: $blue-grey-200;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      &:hover {
+        color: $mediumgray;
+      }
+    }
+  }
 }
 
 .lang-sh .copy-button,

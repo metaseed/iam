@@ -159,12 +159,19 @@ export class MarkdownViewerService {
       try {
         prismjs.highlightElement(codeNode);
 
-        return `<div class="markdown-code" style="position:relative"><button class="material-icons wrap-button" onclick="const e=event.target.parentElement.getElementsByTagName('code')[0];if(e.wrap){e.style['white-space']='pre';e.wrap=false}else{e.style['white-space']='pre-wrap';e.wrap=true}">wrap_text</button><button class="material-icons copy-button no-print"
-        title="Copy code snippet"
-        originalstr=${base64Encode(str)}
-        onclick="document.copier.copyText(this.attributes.originalstr.value,true)">
-        <span aria-hidden="true">content_copy</span>
-      </button>${preNode.outerHTML}</div>`;
+        return `<div class="markdown-code">
+<div class="code-buttons">
+<button class="material-icons code-button"
+onclick="const e=event.target.parentElement.parentElement.getElementsByTagName('code')[0];if(e.wrap){e.style['white-space']='pre';e.wrap=false}else{e.style['white-space']='pre-wrap';e.wrap=true}">
+wrap_text
+</button>
+
+<button class="material-icons code-button no-print"
+title="Copy code snippet"
+originalstr=${base64Encode(str)}
+onclick="document.copier.copyText(this.attributes.originalstr.value,true)">
+<span aria-hidden="true">content_copy</span>
+</button></div>${preNode.outerHTML}</div>`;
       } catch (e) {
         console.error(e);
       }
