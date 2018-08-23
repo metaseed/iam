@@ -58,6 +58,8 @@ export class CodemirrorToolbarComponent implements OnInit {
             Bold: {
               command: 'Bold',
               func: (selectedText, defaultText) => {
+                // disabled because of after edit the content would scroll because of this event
+
                 // const pos = this.doc.getCursor();
                 // const cur = (this.editor as any).getSearchCursor(/\*+/, pos);
                 // let found = cur.findPrevious();
@@ -173,8 +175,8 @@ export class CodemirrorToolbarComponent implements OnInit {
         option['End'] = 'goLineEnd';
         option['Ctrl-Left'] = 'goWordLeft';
         option['Ctrl-Right'] = 'goWordRight';
-        option['Ctrl-Alt-Left'] = 'goGroupLeft';
-        option['Ctrl-Alt-Right'] = 'goGroupRight';
+        option['Ctrl-Alt-Left'] = 'goSubwordLeft';
+        option['Ctrl-Alt-Right'] = 'goSubwordRight';
         option['Ctrl-Backspace'] = 'delWordBefore';
         option['Ctrl-Shift-Backspace'] = 'delWordAfter';
         option['Ctrl-Alt-Backspace'] = 'delGroupBefore';
@@ -194,7 +196,9 @@ export class CodemirrorToolbarComponent implements OnInit {
         // const keyMap = (CodeMirror as any).keyMap;
         // option['Ctrl-a'] = keyMap['default']['Alt-G'];
 
-        option['Ctrl-Shift-\\'] = commands['goToBracket'];
+        option['Alt-\\'] = commands['goToBracket'];
+        option['Alt-Shift-\\'] = commands['selectBetweenBrackets'];
+        option['Alt-Shift-Right'] = commands['selectScope'];
         option['Ctrl-Enter'] = commands['insertLineAfter'];
         option['Ctrl-Shift-Enter'] = commands['insertLineBefore'];
         option['Alt-Up'] = commands['swapLineUp'];
@@ -203,6 +207,9 @@ export class CodemirrorToolbarComponent implements OnInit {
         option['Ctrl-I'] = commands['selectLine'];
         option['Ctrl-D'] = commands['selectNextOccurrence'];
         option['Ctrl-H'] = commands['replace'];
+        option['Alt-Shift+Down'] = commands['duplicateLine'];
+        option['Backspace'] = commands['smartBackspace'];
+        option['Alt-M'] = 'showInCenter';
 
         /*
 Ctrl-F / Cmd-F Start searching
