@@ -164,7 +164,7 @@ export class MarkdownViewerService {
         return `<div class="markdown-code">
 <div class="code-buttons">
 <button class="material-icons code-button"
-onclick="const e=event.target.parentElement.parentElement.getElementsByTagName('code')[0];if(e.wrap){e.style['white-space']='pre';e.wrap=false}else{e.style['white-space']='pre-wrap';e.wrap=true}">
+onclick="const e=event.target.parentElement.parentElement.getElementsByTagName('code')[0];if(!e.nowrap){e.style['white-space']='pre';e.nowrap=true}else{e.style['white-space']='pre-wrap';e.nowrap=false}">
 wrap_text
 </button>
 
