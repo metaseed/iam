@@ -22,7 +22,6 @@ import 'codemirror/addon/edit/matchtags';
 import { MarkdownEditorService } from '../services/markdown.editor.service';
 import { Store } from '@ngrx/store';
 import * as markdown from '../../state';
-import { KeyMap } from '../editor-toolbar/keymap';
 import { Subject } from 'rxjs';
 import { Utilities } from 'core';
 import { takeUntil, map, switchMap } from 'rxjs/operators';
@@ -124,7 +123,11 @@ export class CodemirrorComponent implements ControlValueAccessor {
       .subscribe(element => {
         if (!element) return;
         const lines = JSON.parse(element.getAttribute('data-source-lines'));
-        this.instance.scrollIntoView({ line: lines[0], ch: 0 });
+        try {
+          this.instance.scrollIntoView({ line: lines[0] + 1, ch: 0 });
+        } catch (e) {
+          console.log(e);
+        }
       });
   }
   destroy$ = new Subject();

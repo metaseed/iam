@@ -31,9 +31,12 @@ import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from './model/markdown.model
 export class MarkdownComponent implements OnInit, OnDestroy {
   isFullScreen: boolean;
   fixEditButton = false;
-  @ViewChild(MarkdownViewerContainerComponent) viewer: MarkdownViewerContainerComponent;
-  @ViewChild('viewerDiv') viewerDiv: ElementRef;
-  @ViewChild('editorDiv') editorDiv: ElementRef;
+  @ViewChild(MarkdownViewerContainerComponent)
+  viewer: MarkdownViewerContainerComponent;
+  @ViewChild('viewerDiv')
+  viewerDiv: ElementRef;
+  @ViewChild('editorDiv')
+  editorDiv: ElementRef;
 
   private destroy$ = new Subject();
 
@@ -120,6 +123,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
         take(1)
       )
       .subscribe();
+    // setTimeout(_ => (this.viewerDiv.nativeElement as HTMLElement).focus(), 1000);
   }
 
   showDemo() {

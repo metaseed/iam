@@ -30,9 +30,12 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
   DocumentMode = DocumentMode;
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
   editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState));
-  @Input() markdown$: Observable<string>;
-  @Input() hideToolbar: false;
-  @ViewChild('viewContainerDiv') viewerContainerDiv: ElementRef;
+  @Input()
+  markdown$: Observable<string>;
+  @Input()
+  hideToolbar: false;
+  @ViewChild('viewContainerDiv')
+  viewerContainerDiv: ElementRef;
   isLockScrollWithView$;
   isLockScrollWithView;
 
@@ -78,6 +81,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
       undefined,
       this.ngZone
     );
+    this.viewerContainerDiv.nativeElement.focus();
     this.scrollDown$ = this.container.scrollDown$;
     (this.markdownService.viewer$ as Subject<IContainer>).next(this.container);
 

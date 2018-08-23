@@ -13,6 +13,7 @@ import { DocSaveCoordinateService } from './services/doc-save-coordinate-service
 import { CanDeactivateGuard } from './services/can-deactive-guard.service';
 import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
 import { SharedModule } from 'shared';
+import { KeyMapService } from './services/keymap.service';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,7 @@ import { SharedModule } from 'shared';
     MaterialModule
   ],
   exports: [EditorToolbarComponent, MarkdownEditorComponent, CodemirrorComponent],
-  providers: [MarkdownEditorService, DocSaveCoordinateService, CanDeactivateGuard],
+  providers: [KeyMapService, MarkdownEditorService, DocSaveCoordinateService, CanDeactivateGuard],
   entryComponents: [DocDirtyNotifyDialog]
 })
 export class MarkdownEditorModule {}

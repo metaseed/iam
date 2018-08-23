@@ -164,22 +164,41 @@ export class CodemirrorToolbarComponent implements OnInit {
         };
         option['Ctrl-Up'] = 'scrollLineUp';
         option['Ctrl-Down'] = 'scrollLineDown';
-        option['Alt-F'] = 'findPersistent';
+        option['Ctrl-F'] = 'findPersistent';
+        option['Shift-Delete'] = 'killLine';
+        option['Shift-Backspace'] = 'delLineLeft';
+        option['Ctrl-Shift-K'] = 'deleteLine';
+        option['Home'] = 'goLineStart';
+        option['End'] = 'goLineEnd';
+        option['Ctrl-Left'] = 'goWordLeft';
+        option['Ctrl-Right'] = 'goWordRight';
+        option['Ctrl-Alt-Left'] = 'goGroupLeft';
+        option['Ctrl-Alt-Right'] = 'goGroupRight';
+        option['Ctrl-Backspace'] = 'delWordBefore';
+        option['Ctrl-Shift-Backspace'] = 'delWordAfter';
+        option['Ctrl-Alt-Backspace'] = 'delGroupBefore';
+        option['Ctrl-Alt-Shift-Backspace'] = 'delGroupAfter';
+        option['Tab'] = cm => {
+          if (cm.somethingSelected()) {
+            cm.indentSelection('add');
+            return;
+          }
+
+          if (undefined) cm.replaceSelection('\t', 'end', '+input');
+          else cm.execCommand('insertSoftTab');
+        };
+        option['Shift-Tab'] = cm => {
+          cm.indentSelection('subtract');
+        };
+
         /*
-      Ctrl-F / Cmd-F
-Start searching
-Ctrl-G / Cmd-G
-Find next
-Shift-Ctrl-G / Shift-Cmd-G
-Find previous
-Shift-Ctrl-F / Cmd-Option-F
-Replace
-Shift-Ctrl-R / Shift-Cmd-Option-F
-Replace all
-Alt-F
-Persistent search (dialog doesn't autoclose, enter to find next, Shift-Enter to find previous)
-Alt-G
-Jump to line*/
+Ctrl-F / Cmd-F Start searching
+Ctrl-G / Cmd-G Find next
+Shift-Ctrl-G / Shift-Cmd-G Find previous
+Shift-Ctrl-F / Cmd-Option-F Replace
+Shift-Ctrl-R / Shift-Cmd-Option-F Replace all
+Alt-F Persistent search (dialog doesn't autoclose, enter to find next, Shift-Enter to find previous)
+Alt-G Jump to line*/
         me.editor.setOption('extraKeys', (<any>CodeMirror).normalizeKeyMap(option));
       });
   }
