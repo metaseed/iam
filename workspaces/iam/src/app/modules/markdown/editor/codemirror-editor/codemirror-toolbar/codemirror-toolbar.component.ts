@@ -163,6 +163,7 @@ export class CodemirrorToolbarComponent implements OnInit {
           editor.display.input.textarea.blur();
         };
         option['Ctrl-Up'] = 'scrollLineUp';
+        option['Ctrl-G'] = 'jumpToLine';
         option['Ctrl-Down'] = 'scrollLineDown';
         option['Ctrl-F'] = 'findPersistent';
         option['Shift-Delete'] = 'killLine';
@@ -183,13 +184,25 @@ export class CodemirrorToolbarComponent implements OnInit {
             cm.indentSelection('add');
             return;
           }
-
           if (undefined) cm.replaceSelection('\t', 'end', '+input');
           else cm.execCommand('insertSoftTab');
         };
         option['Shift-Tab'] = cm => {
           cm.indentSelection('subtract');
         };
+        const commands = (CodeMirror as any).commands;
+        // const keyMap = (CodeMirror as any).keyMap;
+        // option['Ctrl-a'] = keyMap['default']['Alt-G'];
+
+        option['Ctrl-Shift-\\'] = commands['goToBracket'];
+        option['Ctrl-Enter'] = commands['insertLineAfter'];
+        option['Ctrl-Shift-Enter'] = commands['insertLineBefore'];
+        option['Alt-Up'] = commands['swapLineUp'];
+        option['Alt-Down'] = commands['swapLineDown'];
+        option['Ctrl-/'] = commands['toggleCommentIndented'];
+        option['Ctrl-I'] = commands['selectLine'];
+        option['Ctrl-D'] = commands['selectNextOccurrence'];
+        option['Ctrl-H'] = commands['replace'];
 
         /*
 Ctrl-F / Cmd-F Start searching

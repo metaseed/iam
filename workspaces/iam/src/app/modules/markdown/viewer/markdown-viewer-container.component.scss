@@ -14,4 +14,7 @@
 .markdown-viewer {
   max-width: 1000px;
   margin: auto;
+  &:focus {
+    outline: none;
+  }
 }

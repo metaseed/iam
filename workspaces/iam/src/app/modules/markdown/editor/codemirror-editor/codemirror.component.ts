@@ -17,8 +17,11 @@ import './codemirror-plugins/closebrackets';
 // import 'codemirror/addon/fold/xml-fold';
 // import 'codemirror/addon/edit/closetag';
 import 'codemirror/addon/edit/matchbrackets';
+import 'codemirror/addon/edit/closebrackets';
+import 'codemirror/addon/fold/foldcode';
+import 'codemirror/addon/fold/brace-fold';
 import 'codemirror/addon/edit/matchtags';
-
+import 'codemirror/addon/comment/comment';
 import { MarkdownEditorService } from '../services/markdown.editor.service';
 import { Store } from '@ngrx/store';
 import * as markdown from '../../state';
@@ -118,17 +121,17 @@ export class CodemirrorComponent implements ControlValueAccessor {
 
   ngAfterViewInit() {
     this.service.editorLoaded$.next(this.instance);
-    this.service.markdownService.viewer$
-      .pipe(switchMap(v => v.activeElement$))
-      .subscribe(element => {
-        if (!element) return;
-        const lines = JSON.parse(element.getAttribute('data-source-lines'));
-        try {
-          this.instance.scrollIntoView({ line: lines[0] + 1, ch: 0 });
-        } catch (e) {
-          console.log(e);
-        }
-      });
+    // this.service.markdownService.viewer$
+    //   .pipe(switchMap(v => v.activeElement$))
+    //   .subscribe(element => {
+    //     if (!element) return;
+    //     const lines = JSON.parse(element.getAttribute('data-source-lines'));
+    //     try {
+    //       this.instance.scrollIntoView({ line: lines[0] + 1, ch: 0 });
+    //     } catch (e) {
+    //       console.log(e);
+    //     }
+    //   });
   }
   destroy$ = new Subject();
 
