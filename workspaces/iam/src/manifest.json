@@ -5,9 +5,9 @@
   "display": "standalone",
   "start_url": "./index.html",
   "short_name": "i'm",
-  "theme_color": "#1976D2",
+  "theme_color": "#24292e",
   "description": "i'm writing your professional life",
-  "background_color": "#1976D2",
+  "background_color": "#24292e",
   "related_applications": [],
   "prefer_related_applications": false,
   "icons": [
