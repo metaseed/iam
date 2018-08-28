@@ -95,7 +95,6 @@ export class MarkdownViewerService {
     this.lispPlugin = new LispPlugin(this.markdown);
     this.markdown
       .use(title)
-      .use(sourceLine)
       .use(markdownVideoPlugin, {
         youtube: { width: 640, height: 390 }
       })
@@ -128,7 +127,9 @@ export class MarkdownViewerService {
         includeLevel: [2, 3, 4]
       })
       .use(latex)
-      .use(imsize, { autofill: true });
+      .use(imsize, { autofill: true },
+      )
+      .use(sourceLine);
 
     this.mermaidPlugin = new MermaidPlugin(this.markdown);
 

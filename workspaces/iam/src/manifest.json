@@ -10,6 +10,7 @@
   "background_color": "#24292e",
   "related_applications": [],
   "prefer_related_applications": false,
+  "permissions": ["contextMenus"],
   "icons": [
     {
       "src": "./assets/icons/favicon-96x96.png",
