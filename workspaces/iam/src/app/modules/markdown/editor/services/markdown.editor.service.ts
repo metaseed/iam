@@ -4,7 +4,11 @@ import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../../model/markdown.m
 
 @Injectable()
 export class MarkdownEditorService {
-  constructor(@Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService) {}
+  private editor: CodeMirror.Doc & CodeMirror.Editor;
+
+  constructor(@Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService) {
+    this.editorLoaded$.subscribe(e => (this.editor = e as any));
+  }
 
   public contentChanged$ = new Subject<string>();
   public docLoaded$ = new Subject<CodeMirror.Editor>();
@@ -15,5 +19,10 @@ export class MarkdownEditorService {
   public _editorRefresh$ = new Subject();
   refresh() {
     this._editorRefresh$.next();
+  }
+
+  public goToLine(lineNumber) {
+    this.editor.setCursor(lineNumber);
+    this.editor.execCommand('showInCenter');
   }
 }

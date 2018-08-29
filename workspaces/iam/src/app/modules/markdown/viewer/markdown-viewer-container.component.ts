@@ -20,6 +20,7 @@ import { takeUntil, map, observeOn, switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../model/markdown.model';
 import { PlatformLocation } from '@angular/common';
+import { EditItAction } from '../state';
 
 @Component({
   selector: 'markdown-viewer-container',
@@ -112,6 +113,13 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
           me.viewerContainerDiv.nativeElement.scrollTop += delta_v_view;
         }
       });
+
+    (this.viewerContainerDiv.nativeElement as HTMLElement).addEventListener(
+      'edit-it',
+      (e: CustomEvent) => {
+        this.store.dispatch(new EditItAction(e.detail));
+      }
+    );
   }
   private scroll() {
     const hash = this.getCurrentHash();

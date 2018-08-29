@@ -27,6 +27,23 @@ body {
 }
 
 .markdown-viewer {
+  .edit-it-content:hover {
+    > .edit-it {
+      .edit-it-icon {
+        visibility: visible;
+        cursor: pointer;
+      }
+    }
+  }
+  .edit-it {
+    .edit-it-icon {
+      vertical-align: middle;
+      padding-right: 2px;
+      color: #6e6e6e;
+      visibility: hidden;
+    }
+  }
+
   h1:hover,
   h2:hover,
   h3:hover,

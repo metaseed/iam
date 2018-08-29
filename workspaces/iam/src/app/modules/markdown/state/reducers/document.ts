@@ -1,4 +1,5 @@
 import { DocumentActions, DocumentActionTypes } from '../actions/document';
+import { sourceLine } from '../../viewer/services/markdown-it-plugins/source-line';
 
 export enum DocumentMode {
   View,
@@ -8,6 +9,7 @@ export enum DocumentMode {
 export interface State {
   mode: DocumentMode;
   showPreview: boolean | null;
+  editIt?: { element: HTMLElement; sourceLine: [number, number] };
 }
 
 const initialState: State = {
@@ -45,6 +47,12 @@ export function reducer(state = initialState, action: DocumentActions): State {
         showPreview: false
       };
     }
+    case DocumentActionTypes.EditIt: {
+      return {
+        ...state,
+        editIt: action.payload
+      };
+    }
 
     default:
       return state;
@@ -53,3 +61,4 @@ export function reducer(state = initialState, action: DocumentActions): State {
 
 export const getMode = (state: State) => state.mode;
 export const getShowPreview = (state: State) => state.showPreview;
+export const getEditIt = (state: State) => state.editIt;

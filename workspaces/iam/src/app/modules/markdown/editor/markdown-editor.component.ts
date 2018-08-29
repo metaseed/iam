@@ -26,6 +26,7 @@ import {
 } from 'shared';
 import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../model/markdown.model';
 import { IContainer, ContainerRef } from 'core';
+import { selectDocumentEditItState, EditMode } from '../state';
 
 @Component({
   selector: 'ms-markdown-editor',
@@ -37,7 +38,8 @@ export class MarkdownEditorComponent {
   destroy$ = new Subject();
   DocumentMode = DocumentMode;
 
-  @ViewChild(CodemirrorComponent) codeMirrorComponent: CodemirrorComponent;
+  @ViewChild(CodemirrorComponent)
+  codeMirrorComponent: CodemirrorComponent;
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
 
@@ -68,6 +70,15 @@ export class MarkdownEditorComponent {
     this.editorService.editorLoaded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       setTimeout(() => (this.editorLoaded = true), 0);
     });
+
+    this.store
+      .select(selectDocumentEditItState)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ element, sourceLine } = {} as any) => {
+        if (!sourceLine) return;
+        this.store.dispatch(new EditMode());
+        setTimeout(() => this.editorService.goToLine(sourceLine[0]), 0);
+      });
 
     this.contentChangeSubscription = this.editorService.contentChanged$.subscribe(this
       .markdownService.editorContentChanged$ as Subject<string>);

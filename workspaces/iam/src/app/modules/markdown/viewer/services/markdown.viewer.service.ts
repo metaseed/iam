@@ -53,7 +53,7 @@ import { MermaidPlugin } from './markdown-it-plugins/mermaid.plugin';
 import { CopierService } from 'core';
 import { Subscription } from 'rxjs';
 import { getAddr } from '../utils/getUri';
-import { Utilities } from '../../../core/utils';
+import { Utilities, addFunctionToHeader } from 'core';
 import { take } from 'rxjs/operators';
 import { LispPlugin } from './markdown-it-plugins/lisp';
 import { sourceLine } from './markdown-it-plugins/source-line';
@@ -127,8 +127,7 @@ export class MarkdownViewerService {
         includeLevel: [2, 3, 4]
       })
       .use(latex)
-      .use(imsize, { autofill: true },
-      )
+      .use(imsize, { autofill: true })
       .use(sourceLine);
 
     this.mermaidPlugin = new MermaidPlugin(this.markdown);
@@ -142,6 +141,18 @@ export class MarkdownViewerService {
       return '<blockquote class="blockquote">\n';
     };
     (<any>this.docRef.document).copier = new CopierService();
+
+    function wrap_text(event) {
+      const e = event.target.parentElement.parentElement.getElementsByTagName('code')[0];
+      if (!e.nowrap) {
+        e.style['white-space'] = 'pre';
+        e.nowrap = true;
+      } else {
+        e.style['white-space'] = 'pre-wrap';
+        e.nowrap = false;
+      }
+    }
+    addFunctionToHeader(wrap_text);
   }
 
   public render(raw: string): string {
@@ -159,13 +170,20 @@ export class MarkdownViewerService {
       preNode.className = (this.showCodeLineNumber ? 'line-numbers' : '') + ' language-' + lang;
       preNode.appendChild(codeNode);
       codeNode.textContent = str;
+
       try {
         prismjs.highlightElement(codeNode);
 
         return `<div class="markdown-code">
 <div class="code-buttons">
+
 <button class="material-icons code-button"
-onclick="const e=event.target.parentElement.parentElement.getElementsByTagName('code')[0];if(!e.nowrap){e.style['white-space']='pre';e.nowrap=true}else{e.style['white-space']='pre-wrap';e.nowrap=false}">
+onclick="editEvent(event.target.parentElement.parentElement.parentElement)">
+edit
+</button>
+
+<button class="material-icons code-button"
+onclick="wrap_text(event)">
 wrap_text
 </button>
 

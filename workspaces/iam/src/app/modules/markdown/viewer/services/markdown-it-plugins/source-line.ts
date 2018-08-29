@@ -1,6 +1,23 @@
 import * as Markdown from 'markdown-it';
-
-export const sourceLine = (md: Markdown.MarkdownIt) => {
+import { addFunctionToHeader } from 'core';
+export function sourceLine(
+  md: Markdown.MarkdownIt,
+  {
+    permalinkClass = 'edit-it',
+    permalinkBefore = false,
+    permalinkSymbol = `<i class="material-icons edit-it-icon">edit</i>` // "¶",
+  } = {}
+) {
+  function editEvent(target) {
+    const element: HTMLElement = target;
+    element.dispatchEvent(
+      new CustomEvent('edit-it', {
+        bubbles: true,
+        detail: { element, sourceLine: JSON.parse(element.getAttribute('data-source-lines')) }
+      })
+    );
+  }
+  addFunctionToHeader(editEvent);
   // const ruleKeys = Object.keys(md.renderer.rules);
   // ruleKeys.forEach(key => {
   //   const originalRule = md.renderer.rules[key];
@@ -14,33 +31,41 @@ export const sourceLine = (md: Markdown.MarkdownIt) => {
   // });
 
   const originalHeadingOpen = md.renderer.rules.heading_open;
+  md.core.ruler.push('source_line', state => {
+    const tokens = state.tokens;
 
-  md.renderer.rules.heading_open = function(...args) {
-    const [tokens, idx, options, env, render] = args;
+    tokens.filter(t => t.map).forEach(token => {
+      const parentMap = JSON.stringify(token.map); // start from 0
+      token.attrSet('data-source-lines', parentMap);
+      token.attrSet('class', 'edit-it-content');
+      const linkTokens = [
+        Object.assign(new state.Token('link_open', 'a', 1), {
+          attrs: [
+            ['class', permalinkClass],
+            ['onclick', 'editEvent(event.target.parentElement.parentElement)'],
+            ['aria-hidden', 'true']
+          ]
+        }),
+        Object.assign(new state.Token('html_block', '', 0), {
+          content: permalinkSymbol
+        }),
+        new state.Token('link_close', 'a', -1)
+      ];
 
-    const token = tokens[idx];
-    if (token.tag === 'h1') {
-      tokens.forEach(token => {
-        const parentMap = JSON.stringify(token.map); // start from 0
-        token.attrSet('data-source-lines', parentMap);
-        token.attrSet('data-source-lines-', 'true');
-        if (token.children) {
-          token.children.forEach(tk => {
-            if (tk.map) {
-              tk.attrSet('data-source-lines', JSON.stringify(tk.map));
-            } else {
-              tk.attrSet('data-source-lines', parentMap);
-            }
-          });
-        }
-      });
-    }
+      if (token.children) {
+        token.children.forEach(tk => {
+          if (tk.map) {
+            tk.attrSet('data-source-lines', JSON.stringify(tk.map));
+          } else {
+            tk.attrSet('data-source-lines', parentMap);
+          }
+        });
+        token.attrSet('data-source-lines-children', parentMap);
 
-    // Execute original rule.
-    if (originalHeadingOpen) {
-      return originalHeadingOpen.apply(this, args);
-    } else {
-      return render.renderToken(tokens, idx, options);
-    }
-  };
-};
+        token.children.push(...linkTokens);
+      } else if (token.type === 'fence') {
+        // code
+      }
+    });
+  });
+}
