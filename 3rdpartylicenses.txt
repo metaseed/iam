@@ -1688,10 +1688,10 @@ Apache License
 MIT
 MIT
 
-@angular/service-worker@6.1.0
+@ngrx/store@6.0.1
 MIT
 MIT
 
-@ngrx/store@6.0.1
+@angular/service-worker@6.1.0
 MIT
 MIT
