@@ -54,7 +54,6 @@ import { CopierService } from 'core';
 import { Subscription } from 'rxjs';
 import { getAddr } from '../utils/getUri';
 import { Utilities, addFunctionToHeader } from 'core';
-import { take } from 'rxjs/operators';
 import { LispPlugin } from './markdown-it-plugins/lisp';
 import { sourceLine } from './markdown-it-plugins/source-line';
 

@@ -7,7 +7,7 @@
   "short_name": "i'm",
   "theme_color": "#24292e",
   "description": "i'm writing your professional life",
-  "background_color": "#24292e",
+  "background_color": "#1976d2",
   "related_applications": [],
   "prefer_related_applications": false,
   "permissions": ["contextMenus"],
