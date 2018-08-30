@@ -16,19 +16,31 @@ import {
   host: { style: 'height: 100%' }
 })
 export class SplitPaneComponent implements OnChanges {
-  @ViewChild('primaryComponent') primaryComponent: ElementRef;
-  @ViewChild('secondaryComponent') secondaryComponent: ElementRef;
+  @ViewChild('primaryComponent')
+  primaryComponent: ElementRef;
+  @ViewChild('secondaryComponent')
+  secondaryComponent: ElementRef;
 
-  @Input('primary-component-initialratio') initialRatio: number = 0.5;
-  @Input('primary-component-minsize') primaryMinSize: number = 0;
-  @Input('secondary-component-minsize') secondaryMinSize: number = 0;
-  @Input('separator-thickness') separatorThickness: number = 6;
-  @Input('primary-component-toggled-off') primaryToggledOff: boolean = false;
-  @Input('secondary-component-toggled-off') secondaryToggledOff: boolean = false;
-  @Input('local-storage-key') localStorageKey: string = null;
-  @Output('on-change') notifySizeDidChange: EventEmitter<any> = new EventEmitter<any>();
-  @Output('on-begin-resizing') notifyBeginResizing: EventEmitter<any> = new EventEmitter<any>();
-  @Output('on-ended-resizing') notifyEndedResizing: EventEmitter<any> = new EventEmitter<any>();
+  @Input('primary-component-initialratio')
+  initialRatio: number = 0.5;
+  @Input('primary-component-minsize')
+  primaryMinSize: number = 0;
+  @Input('secondary-component-minsize')
+  secondaryMinSize: number = 0;
+  @Input('separator-thickness')
+  separatorThickness: number = 6;
+  @Input('primary-component-toggled-off')
+  primaryToggledOff: boolean = false;
+  @Input('secondary-component-toggled-off')
+  secondaryToggledOff: boolean = false;
+  @Input('local-storage-key')
+  localStorageKey: string = null;
+  @Output('on-change')
+  notifySizeDidChange: EventEmitter<any> = new EventEmitter<any>();
+  @Output('on-begin-resizing')
+  notifyBeginResizing: EventEmitter<any> = new EventEmitter<any>();
+  @Output('on-ended-resizing')
+  notifyEndedResizing: EventEmitter<any> = new EventEmitter<any>();
 
   primarySizeBeforeTogglingOff: number;
   secondarySizeBeforTogglingOff: number;
@@ -61,7 +73,10 @@ export class SplitPaneComponent implements OnChanges {
         this.secondarySizeBeforTogglingOff = this.getSecondarySize();
         this.applySizeChange(0);
       } else {
-        this.applySizeChange(this.primarySizeBeforeTogglingOff);
+        const size =
+          (this.getAvailableSize() * this.primarySizeBeforeTogglingOff) /
+          (this.primarySizeBeforeTogglingOff + this.secondarySizeBeforTogglingOff);
+        this.applySizeChange(size);
       }
     } else if (changes['secondaryToggledOff']) {
       if (changes['secondaryToggledOff'].currentValue === true) {
@@ -69,7 +84,7 @@ export class SplitPaneComponent implements OnChanges {
         this.secondarySizeBeforTogglingOff = this.getSecondarySize();
         this.applySizeChange(this.getTotalSize());
       } else {
-        let size =
+        const size =
           (this.getAvailableSize() * this.primarySizeBeforeTogglingOff) /
           (this.primarySizeBeforeTogglingOff + this.secondarySizeBeforTogglingOff);
         this.applySizeChange(size);
@@ -152,7 +167,7 @@ export class SplitPaneComponent implements OnChanges {
     this.secondaryComponent.nativeElement.style.cursor = 'auto';
 
     if (this.localStorageKey != null) {
-      let ratio = this.getPrimarySize() / this.getTotalSize();
+      const ratio = this.getPrimarySize() / this.getTotalSize();
       localStorage.setItem(this.localStorageKey, JSON.stringify(ratio));
     }
 

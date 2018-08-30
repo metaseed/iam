@@ -8,16 +8,16 @@ export function sourceLine(
     permalinkSymbol = `<i class="material-icons edit-it-icon">edit</i>` // "¶",
   } = {}
 ) {
-  function editEvent(target) {
-    const element: HTMLElement = target;
+  const edit_event = `function edit_event(target) {
+    const element = target;
     element.dispatchEvent(
       new CustomEvent('edit-it', {
         bubbles: true,
         detail: { element, sourceLine: JSON.parse(element.getAttribute('data-source-lines')) }
       })
     );
-  }
-  addFunctionToHeader(editEvent);
+  }`;
+  addFunctionToHeader(edit_event);
   // const ruleKeys = Object.keys(md.renderer.rules);
   // ruleKeys.forEach(key => {
   //   const originalRule = md.renderer.rules[key];
@@ -42,7 +42,7 @@ export function sourceLine(
         Object.assign(new state.Token('link_open', 'a', 1), {
           attrs: [
             ['class', permalinkClass],
-            ['onclick', 'editEvent(event.target.parentElement.parentElement)'],
+            ['onclick', 'edit_event(event.target.parentElement.parentElement)'],
             ['aria-hidden', 'true']
           ]
         }),

@@ -22,9 +22,9 @@ export function prefixScript(url, onloadFunction) {
   newScript.src = url;
 }
 
-export function addFunctionToHeader(fun: Function) {
+export function addFunctionToHeader(fun: string) {
   const newScript = document.createElement('script');
-  newScript.onerror = err => console.log('could not add function: ' + fun.toString());
+  newScript.onerror = err => console.log('could not add function: ' + fun);
   document.head.appendChild(newScript);
-  newScript.text = fun.toString();
+  newScript.text = fun;
 }

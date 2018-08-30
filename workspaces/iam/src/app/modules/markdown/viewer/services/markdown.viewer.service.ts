@@ -142,7 +142,7 @@ export class MarkdownViewerService {
     };
     (<any>this.docRef.document).copier = new CopierService();
 
-    function wrap_text(event) {
+    const wrap_text = `function wrap_text(event) {
       const e = event.target.parentElement.parentElement.getElementsByTagName('code')[0];
       if (!e.nowrap) {
         e.style['white-space'] = 'pre';
@@ -151,7 +151,7 @@ export class MarkdownViewerService {
         e.style['white-space'] = 'pre-wrap';
         e.nowrap = false;
       }
-    }
+    }`;
     addFunctionToHeader(wrap_text);
   }
 
