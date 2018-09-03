@@ -37,6 +37,7 @@ body {
   }
   .edit-it {
     .edit-it-icon {
+      width: 0;
       vertical-align: middle;
       padding-right: 2px;
       color: #6e6e6e;
@@ -60,6 +61,7 @@ body {
     .deep-link-icon {
       vertical-align: middle; // float: left;
       // margin-left: -18px;
+      // width: 0;
       padding-right: 2px;
       color: #6e6e6e;
       visibility: hidden;
