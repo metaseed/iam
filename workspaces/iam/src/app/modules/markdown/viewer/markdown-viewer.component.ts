@@ -47,10 +47,7 @@ export class MarkdownViewerComponent {
     addTitleAndToc();
   }
 
-
-
   private destroy$ = new EventEmitter<void>();
-
 
   constructor(
     @Inject(MarkdownViewerContainerComponent) private parent: MarkdownViewerContainerComponent,
@@ -59,7 +56,8 @@ export class MarkdownViewerComponent {
     private service: MarkdownViewerService,
     private tocService: TocService,
     private titleService: Title,
-    private elementsLoader: ElementsLoader  ) {
+    private elementsLoader: ElementsLoader
+  ) {
     (<any>document).iamMarkdownIsPureViewMode = true;
     this.hostElement = elementRef.nativeElement;
     const container = this.hostElement;
@@ -68,7 +66,7 @@ export class MarkdownViewerComponent {
 
   ngOnDestroy() {
     this.destroy$.emit();
-
+  }
 }
 
 // https://jsfiddle.net/axtn/a91fsar3/
