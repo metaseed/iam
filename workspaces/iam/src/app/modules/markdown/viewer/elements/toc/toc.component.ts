@@ -34,7 +34,8 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
   isSmallScreen: boolean;
   isCollapsed = true;
   isEmbedded = false;
-  @ViewChildren('tocItem') private items: QueryList<ElementRef>;
+  @ViewChildren('tocItem')
+  private items: QueryList<ElementRef>;
   private onDestroy = new Subject();
   private primaryMax = 4;
   tocList: TocItem[];
@@ -101,8 +102,7 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
         subscribeOn(asapScheduler)
       )
       .subscribe(tocList => {
-        this.tocList = tocList;
-        const itemCount = count(this.tocList, item => item.level !== 'h1');
+        const itemCount = count(tocList, item => item.level !== 'h1');
 
         this.type =
           itemCount > 0
@@ -112,6 +112,7 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
                 : 'EmbeddedSimple'
               : 'Floating'
             : 'None';
+        this.tocList = tocList;
       });
   }
 

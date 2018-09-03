@@ -5,7 +5,7 @@ html {
 }
 
 .markdown-container {
-  .blockquote {
+  blockquote {
     @include mat-typography-level-to-styles($iam-typography-config, blockquote);
     color: #555;
     --x-height-multiplier: 0.375;

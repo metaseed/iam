@@ -3,11 +3,12 @@ import { ElementsLoader } from './elements-loader';
 import { Logger } from 'core';
 
 @Component({
-  selector: 'i-i',
+  selector: 'i-l',
   template: ''
 })
 export class LazyCustomElementComponent implements OnInit {
-  @Input() selector = '';
+  @Input()
+  selector = '';
 
   constructor(
     private elementRef: ElementRef,

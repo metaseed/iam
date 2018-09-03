@@ -56,7 +56,8 @@ import { getAddr } from '../utils/getUri';
 import { Utilities, addFunctionToHeader } from 'core';
 import { LispPlugin } from './markdown-it-plugins/lisp';
 import { sourceLine } from './markdown-it-plugins/source-line';
-
+import MarkdonwItIncrementalDom from 'markdown-it-incremental-dom';
+import * as IncrementalDom from 'incremental-dom';
 @Injectable()
 export class MarkdownViewerService {
   private defaultConfig: MarkdownConfig = {
@@ -93,6 +94,9 @@ export class MarkdownViewerService {
     this.markdown = new MarkdownIt(config.markdownIt);
     this.lispPlugin = new LispPlugin(this.markdown);
     this.markdown
+      .use(MarkdonwItIncrementalDom, IncrementalDom, {
+        incrementalizeDefaultRules: true
+      })
       .use(title)
       .use(markdownVideoPlugin, {
         youtube: { width: 640, height: 390 }
@@ -132,13 +136,7 @@ export class MarkdownViewerService {
     this.mermaidPlugin = new MermaidPlugin(this.markdown);
 
     this.containerPlugin = new ContainerPlugin(this.markdown, 'warning');
-    // Beautify output of parser for html content
-    this.markdown.renderer.rules.table_open = function() {
-      return '<table class="table table-striped">\n';
-    };
-    this.markdown.renderer.rules.blockquote_open = function() {
-      return '<blockquote class="blockquote">\n';
-    };
+
     (<any>this.docRef.document).copier = new CopierService();
 
     const wrap_text = `function wrap_text(event) {
@@ -154,9 +152,13 @@ export class MarkdownViewerService {
     addFunctionToHeader(wrap_text);
   }
 
-  public render(raw: string): string {
+  public render(target: HTMLElement, raw: string): string {
     const env: any = {};
-    const r = `${this.markdown.render(raw, env)}`;
+    // because the increatal dom could not work with web components(angular elements)
+    // have to using original render here.
+    // todo: find solution to using the markdown-it-incremental0-dom later.
+    const r = (target.innerHTML = this.markdown.render(raw, env));
+    // const r = IncrementalDom.patch(target, (this.markdown as any).renderToIncrementalDOM(raw, env));
     this.parsedContent.title = env.title;
     return r;
   }
