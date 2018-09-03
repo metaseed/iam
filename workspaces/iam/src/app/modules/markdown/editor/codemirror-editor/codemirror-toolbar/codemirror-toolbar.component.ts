@@ -6,8 +6,8 @@ import { MarkdownEditorService } from '../..';
 import { CommandService, Command } from 'core';
 import * as CodeMirror from 'codemirror';
 import { takeUntil } from 'rxjs/operators';
-import { Utilities } from '../../../../core/utils';
-import { VerticalSplitPaneComponent } from '../../../../shared/split-pane/vertical-split-pane.component';
+import { Utilities } from 'core';
+import { VerticalSplitPaneComponent } from 'shared';
 
 interface ICommandConfig {
   [key: string]: {
@@ -224,20 +224,12 @@ Alt-G Jump to line*/
   }
   more = () => {};
 
-  // command(command: string) {
-  //   if (command === 'Undo') {
-  //     this.editor.execCommand('undo');
-  //   } else if (command === 'Redo') {
-  //     this.editor.execCommand('redo');
-  //   }
-  // }
-
   @Input()
   get options(): any {
     return this._options;
   }
 
-  _hideIcons: any = { Ol: true, Italic: true, Link: true };
+  _hideIcons: any = { Ol: false, Italic: false, Link: false };
   set options(value: any) {
     this._options = value || {
       hideIcons: []
@@ -273,25 +265,25 @@ Alt-G Jump to line*/
     }
     this.editor.focus();
 
-    if (config.command === 'Ul') {
-      this._hideIcons.Ul = true;
-      this._hideIcons.Ol = false;
-    } else if (config.command === 'Ol') {
-      this._hideIcons.Ul = false;
-      this._hideIcons.Ol = true;
-    } else if (config.command === 'Bold') {
-      this._hideIcons.Bold = true;
-      this._hideIcons.Italic = false;
-    } else if (config.command === 'Italic') {
-      this._hideIcons.Bold = false;
-      this._hideIcons.Italic = true;
-    } else if (config.command === 'Link') {
-      this._hideIcons.Link = true;
-      this._hideIcons.Image = false;
-    } else if (config.command === 'Image') {
-      this._hideIcons.Link = false;
-      this._hideIcons.Image = true;
-    }
+    // if (config.command === 'Ul') {
+    //   this._hideIcons.Ul = true;
+    //   this._hideIcons.Ol = false;
+    // } else if (config.command === 'Ol') {
+    //   this._hideIcons.Ul = false;
+    //   this._hideIcons.Ol = true;
+    // } else if (config.command === 'Bold') {
+    // this._hideIcons.Bold = true;
+    //   this._hideIcons.Italic = false;
+    // } else if (config.command === 'Italic') {
+    //   this._hideIcons.Bold = false;
+    //   this._hideIcons.Italic = true;
+    // } else if (config.command === 'Link') {
+    //   this._hideIcons.Link = true;
+    //   this._hideIcons.Image = false;
+    // } else if (config.command === 'Image') {
+    //   this._hideIcons.Link = false;
+    //   this._hideIcons.Image = true;
+    // }
 
     // let p = this.doc.getCursor();
     // this.doc.extendSelection(<any>{ line: p.line, ch: p.ch + 2 })

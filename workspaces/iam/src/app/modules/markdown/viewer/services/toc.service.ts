@@ -67,7 +67,10 @@ export class TocService {
     const anchorLinks: NodeListOf<HTMLAnchorElement> = div.querySelectorAll('a');
     for (let i = 0; i < anchorLinks.length; i++) {
       const anchorLink = anchorLinks[i];
-      if (!anchorLink.classList.contains('deep-link')) {
+      if (
+        !anchorLink.classList.contains('deep-link') &&
+        !anchorLink.classList.contains('edit-it')
+      ) {
         // this is an anchor that contains actual content that we want to keep
         // move the contents of the anchor into its parent
         const parent = anchorLink.parentNode!;

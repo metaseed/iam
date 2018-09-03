@@ -1,9 +1,7 @@
 import { Component, Input, Output, ViewChild, EventEmitter, forwardRef } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
-// import 'codemirror/addon/dialog/dialog.css';
 
 import * as CodeMirror from 'codemirror';
-// import 'codemirror/addon/scroll/simplescrollbars';
 import 'codemirror/addon/display/fullscreen';
 import 'codemirror/mode/gfm/gfm'; // github flavored markdown
 import 'codemirror/addon/dialog/dialog';
@@ -16,18 +14,16 @@ import 'codemirror/addon/search/jump-to-line';
 // import 'codemirror/addon/fold/xml-fold';
 // import 'codemirror/addon/edit/closetag';
 import 'codemirror/addon/edit/matchbrackets';
-import './codemirror-plugins/closebrackets';
 // import 'codemirror/addon/edit/closebrackets';
+import './codemirror-plugins/closebrackets';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/brace-fold';
 import 'codemirror/addon/edit/matchtags';
 import 'codemirror/addon/comment/comment';
 import { MarkdownEditorService } from '../services/markdown.editor.service';
-import { Store } from '@ngrx/store';
-import * as markdown from '../../state';
 import { Subject } from 'rxjs';
 import { Utilities } from 'core';
-import { takeUntil, map, switchMap } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 /**
  * Usage : <codemirror [(ngModel)]="markdown" [config]="{...}"></codemirror>
  */
