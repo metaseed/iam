@@ -3,6 +3,8 @@
   width: 18%;
   position: fixed;
   top: 76px;
+  height: fit-content;
+  max-height: 100%;
   right: 8px;
   bottom: 12px;
   overflow-y: auto;
@@ -82,10 +84,10 @@ i-toc.embedded {
     }
   }
   button.toc-more-items::after {
-    content: "expand_less";
+    content: 'expand_less';
   }
   button.toc-more-items.collapsed::after {
-    content: "more_horiz";
+    content: 'more_horiz';
   }
   .mat-icon.collapsed {
     @include rotate(0deg);
@@ -103,7 +105,7 @@ i-toc.embedded {
     li {
       letter-spacing: 0.3px;
       font-weight: 400;
-      &>em {
+      & > em {
         letter-spacing: 0.3px;
       }
       box-sizing: border-box;
@@ -114,7 +116,7 @@ i-toc.embedded {
       transition: all 0.3s ease-in-out;
       margin: 0;
       &.h1:after {
-        content: "";
+        content: '';
         display: block;
         height: 1px;
         width: 40%;
@@ -144,7 +146,7 @@ i-toc.embedded {
           color: $blue;
           font-weight: 500;
           &:before {
-            content: "";
+            content: '';
             border-radius: 50%;
             left: -3px;
             top: 12px;
@@ -160,7 +162,7 @@ i-toc.embedded {
       &:before {
         border-left: 1px solid $lightgray;
         bottom: 0;
-        content: "";
+        content: '';
         left: 0;
         position: absolute;
         top: 0;
@@ -172,7 +174,7 @@ i-toc.embedded {
         bottom: calc(100% - 14px);
       }
       &:not(.active):hover a:before {
-        content: "";
+        content: '';
         border-radius: 50%;
         left: -3px;
         top: 12px;
@@ -185,6 +187,6 @@ i-toc.embedded {
   }
 }
 
-i-toc.embedded>div.collapsed li.secondary {
+i-toc.embedded > div.collapsed li.secondary {
   display: none;
 }
