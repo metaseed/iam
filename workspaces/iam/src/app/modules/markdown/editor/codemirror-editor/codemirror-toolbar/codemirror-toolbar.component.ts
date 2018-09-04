@@ -207,6 +207,7 @@ export class CodemirrorToolbarComponent implements OnInit {
         option['Ctrl-I'] = commands['selectLine'];
         option['Ctrl-D'] = commands['selectNextOccurrence'];
         option['Ctrl-H'] = commands['replace'];
+        option['Esc'] = commands['singleSelectionTop'];
         option['Alt-Shift+Down'] = commands['duplicateLine'];
         option['Backspace'] = commands['smartBackspace'];
         option['Alt-M'] = 'showInCenter';
