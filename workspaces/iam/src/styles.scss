@@ -32,7 +32,6 @@ body {
       .edit-it-icon {
         visibility: visible;
         cursor: pointer;
-        font-size: 1.8rem;
       }
     }
   }
@@ -40,6 +39,7 @@ body {
     .edit-it-icon {
       vertical-align: middle;
       padding-right: 2px;
+      font-size: 1.8rem;
       color: #6e6e6e;
       visibility: hidden;
     }
