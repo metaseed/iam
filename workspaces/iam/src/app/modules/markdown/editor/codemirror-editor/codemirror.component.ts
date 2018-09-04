@@ -80,6 +80,8 @@ export class CodemirrorComponent implements ControlValueAccessor {
       lineNumbers: this.showLineNumber,
       // scrollbarStyle: 'simple',
       lineWrapping: true,
+      // styleActiveLine: true,
+      // styleActiveSelected: true,
       // autoCloseBrackets: {
       //   pairs: '()[]{}\'\'""',
       //   triples: '`',

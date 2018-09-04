@@ -77,7 +77,9 @@ export class MarkdownEditorComponent {
       .subscribe(({ element, sourceLine } = {} as any) => {
         if (!sourceLine) return;
         this.store.dispatch(new EditMode());
-        setTimeout(() => this.editorService.goToLine(sourceLine[0]), 0);
+        setTimeout(() => {
+          this.editorService.selectLines(sourceLine);
+        }, 0);
       });
 
     this.contentChangeSubscription = this.editorService.contentChanged$.subscribe(this

@@ -3,7 +3,7 @@ import { WindowRef, IContainer } from 'core';
 import { Subject, Observable, config, ReplaySubject, asyncScheduler } from 'rxjs';
 import { takeUntil, switchMap, subscribeOn } from 'rxjs/operators';
 
-const TRANSITION_DURATION = '.1s';
+const TRANSITION_DURATION = '.18s';
 
 export interface ScrollHideItem {
   container$: Observable<IContainer>;
