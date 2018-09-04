@@ -94,18 +94,18 @@ export class CodemirrorToolbarComponent implements OnInit {
             Reference: {
               command: 'Reference',
               func: (selectedText, defaultText) => `> ${selectedText || defaultText}`,
-              endSize: 2,
+              startSize: 2,
               hotKey: 'Ctrl-M R'
             },
             Link: {
               command: 'Link',
-              func: (selectedText, defaultText) => `[${selectedText || defaultText}](http://)`,
+              func: (selectedText, defaultText) => `[${selectedText || defaultText}]()`,
               endSize: 1,
               hotKey: 'Ctrl-M L'
             },
             Image: {
               command: 'Image',
-              func: (selectedText, defaultText) => `![${selectedText || defaultText}](http://)`,
+              func: (selectedText, defaultText) => `![${selectedText || defaultText}]()`,
               endSize: 1,
               hotKey: 'Ctrl-M M'
             },
@@ -118,7 +118,7 @@ export class CodemirrorToolbarComponent implements OnInit {
             Ol: {
               command: 'Ol',
               func: (selectedText, defaultText) => `1 ${selectedText || defaultText}`,
-              endSize: 2,
+              startSize: 2,
               hotKey: 'Ctrl-M O'
             },
             Code: {

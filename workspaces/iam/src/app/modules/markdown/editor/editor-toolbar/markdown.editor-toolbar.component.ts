@@ -141,8 +141,11 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     }
   }
 
+  private _hideHeight;
   get hideHeight() {
-    return (this.toolbar.nativeElement as HTMLElement).offsetHeight;
+    if (!this._hideHeight)
+      this._hideHeight = (this.toolbar.nativeElement as HTMLElement).offsetHeight;
+    return this._hideHeight;
   }
 
   ngAfterViewInit() {}

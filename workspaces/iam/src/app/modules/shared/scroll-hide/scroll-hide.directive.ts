@@ -3,12 +3,13 @@ import { WindowRef, IContainer } from 'core';
 import { Subject, Observable, config, ReplaySubject, asyncScheduler } from 'rxjs';
 import { takeUntil, switchMap, subscribeOn } from 'rxjs/operators';
 
-const TRANSITION_DURATION = '.36s';
+const TRANSITION_DURATION = '.1s';
 
 export interface ScrollHideItem {
   container$: Observable<IContainer>;
   marginTop?: HTMLElement & { _margin?: number };
   container?: IContainer;
+  containerScrollTopOnTouchStart?: number;
 }
 
 @Directive({
@@ -17,12 +18,17 @@ export interface ScrollHideItem {
 export class ScrollHideDirective implements OnDestroy {
   private _destroy$ = new Subject();
 
-  @HostBinding('style.width') width = '100%';
-  @HostBinding('style.visibility') visibility = 'visible';
-  @HostBinding('style.position') position = 'fixed';
-  @HostBinding('style.z-index') zIndex = 1000;
+  @HostBinding('style.width')
+  width = '100%';
+  @HostBinding('style.visibility')
+  visibility = 'visible';
+  @HostBinding('style.position')
+  position = 'fixed';
+  @HostBinding('style.z-index')
+  zIndex = 1000;
 
   private _top;
+  private _deltaSinceTouchStart = 0;
   get top() {
     return this._top;
   }
@@ -35,11 +41,16 @@ export class ScrollHideDirective implements OnDestroy {
     }
   }
 
-  @HostBinding('style.left') left = '0';
-  @HostBinding('style.transition-duration') transitionDuration = TRANSITION_DURATION;
-  @HostBinding('style.transition-delay') t_d = '0s';
-  @HostBinding('style.transition-property') transitionProperty = 'top';
-  @HostBinding('style.transition-timing-function') t_f = 'ease-in-out';
+  @HostBinding('style.left')
+  left = '0';
+  @HostBinding('style.transition-duration')
+  transitionDuration = TRANSITION_DURATION;
+  @HostBinding('style.transition-delay')
+  t_d = '0s';
+  @HostBinding('style.transition-property')
+  transitionProperty = 'top';
+  @HostBinding('style.transition-timing-function')
+  t_f = 'ease-in-out';
   private _hide = false;
 
   @Input()
@@ -55,7 +66,7 @@ export class ScrollHideDirective implements OnDestroy {
 
   private _hideHeight_minus: number;
   get hideHeight() {
-    return this._hideHeight_minus || this.height_minus;
+    return this._hideHeight_minus || this._height_minus;
   }
   @Input()
   set hideHeight(v: number) {
@@ -64,20 +75,21 @@ export class ScrollHideDirective implements OnDestroy {
 
   private _containerItems: ScrollHideItem[];
 
-  setMargin = (o: 'Set' | 'Clear') => {
-    if (!this._containerItems) return;
-    const v = o === 'Set' ? this.height : 0;
+  setMargin = ((lastPara = '') => (o: 'Set' | 'Clear') => {
+    if (!this._containerItems || lastPara === o) return;
+    lastPara = o;
+    const v = o === 'Set' ? this._height : 0;
 
     this._containerItems.forEach(item => {
       const margin = item.marginTop;
-      if (!margin || (v !== 0 && item.container.scrollTop > this.height) || margin._margin === v)
+      if (!margin || (v !== 0 && item.container.scrollTop > this._height) || margin._margin === v)
         return;
       margin._margin = v;
       (this._windowRef.nativeElement as Window).requestAnimationFrame(
         () => (margin.style.marginTop = v + 'px')
       );
     });
-  };
+  })();
 
   @Input()
   set scrollHide(containerItems: ScrollHideItem[]) {
@@ -93,15 +105,17 @@ export class ScrollHideDirective implements OnDestroy {
     const containerItems = this._containerItems;
     if (containerItems.length === 0) return;
 
+    this.caculateHeight();
+
     containerItems.forEach(item => {
       const configContainer = (container: IContainer) => {
         const marginElement = item.marginTop || (container.nativeElement as HTMLElement);
         marginElement.style.transitionDuration = TRANSITION_DURATION;
         marginElement.style.transitionProperty = 'margin-top';
         marginElement.style.transitionTimingFunction = 'ease-in-out';
-        marginElement.style.marginTop = this.height + 'px';
+        marginElement.style.marginTop = this._height + 'px';
         item.marginTop = marginElement;
-        item.marginTop._margin = this.height;
+        item.marginTop._margin = this._height;
         item.container = container;
       };
 
@@ -168,11 +182,15 @@ export class ScrollHideDirective implements OnDestroy {
         )
         .subscribe(e => {
           if (this._hide) return;
-          // e.preventDefault();
+          // console.log('touchStart: ', e);
+          this._containerItems.forEach(it => {
+            it.containerScrollTopOnTouchStart = it.container.scrollTop;
+          });
           disableScroll = true;
           disableAnimation();
           lastY = e.touches[0].clientY;
           startY = lastY;
+          this._deltaSinceTouchStart = 0;
         });
 
       container$
@@ -182,10 +200,10 @@ export class ScrollHideDirective implements OnDestroy {
         )
         .subscribe(e => {
           if (this._hide) return;
-          // e.preventDefault();
+          // console.log('touchEnd: ', e);
           if (startY - lastY) {
             // isdown
-            if (this.top > this.height_half_minus) {
+            if (this.top > this._height_half_minus) {
               this.top = 0;
               this.setMargin('Set');
             } else {
@@ -193,7 +211,7 @@ export class ScrollHideDirective implements OnDestroy {
               this.setMargin('Clear');
             }
           } else {
-            if (this.top < this.height_half_minus) {
+            if (this.top < this._height_half_minus) {
               this.top = 0;
               this.setMargin('Set');
             } else {
@@ -215,39 +233,51 @@ export class ScrollHideDirective implements OnDestroy {
           if (this._hide) return;
 
           const y = e.touches[0].clientY;
-          const delt = y - lastY;
+          const deltSinceLastTouchMove = y - lastY;
           lastY = y;
 
-          const top = this.top + delt;
-          this.top = Math.min(Math.max(this.height_minus, top), 0);
-          // console.log(e, top);
+          const top = this.top + deltSinceLastTouchMove;
+          this._deltaSinceTouchStart = this._deltaSinceTouchStart + deltSinceLastTouchMove;
+          this.top = Math.min(Math.max(this._height_minus, top), 0);
+          // console.log('touchMove: ', e, top);
           this._containerItems.forEach(it => {
-            if (it.container.scrollTop > this.height) return;
-            const margin = it.marginTop;
-            let v = margin._margin + delt;
-            v = Math.min(Math.max(0, v), this.height);
-            if (v !== margin._margin) {
-              it.container.scrollTop += delt;
+            /* get scrollTop of container*/
+            const scrollTop = it.containerScrollTopOnTouchStart - this._deltaSinceTouchStart;
+            if (scrollTop > this._height || scrollTop < 0) {
+              this.setMargin('Clear');
+              return;
+            }
+
+            const marginElement = it.marginTop;
+            let marginValue = marginElement._margin + deltSinceLastTouchMove;
+            marginValue = Math.min(Math.max(0, marginValue), this._height);
+            if (marginValue !== marginElement._margin) {
+              it.container.scrollTop += deltSinceLastTouchMove;
               (this._windowRef.nativeElement as Window).requestAnimationFrame(
-                () => (margin.style.marginTop = v + 'px')
+                () => (marginElement.style.marginTop = marginValue + 'px')
               );
-              margin._margin = v;
+              marginElement._margin = marginValue;
             }
           });
         });
     });
   }
 
-  get height() {
+  private _height: number;
+  caculateHeight() {
     const v = (this._elementRef.nativeElement as HTMLElement).offsetHeight;
-    this.height_minus = -v;
-    this.height_half_minus = -v / 2;
-    return v;
+    this._height_minus = -v;
+    this._height_half_minus = -v / 2;
+    this._height = v;
   }
-  height_minus: number;
-  height_half_minus: number;
+  private _height_minus: number;
+  private _height_half_minus: number;
 
-  constructor(private _elementRef: ElementRef, private _windowRef: WindowRef) {}
+  constructor(private _elementRef: ElementRef, private _windowRef: WindowRef) {
+    _windowRef.resizeEvent$.pipe(takeUntil(this._destroy$)).subscribe(e => {
+      this.caculateHeight();
+    });
+  }
   ngOnDestroy(): void {
     this._destroy$.next();
   }
