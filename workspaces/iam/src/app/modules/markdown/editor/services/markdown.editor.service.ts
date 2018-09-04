@@ -22,11 +22,14 @@ export class MarkdownEditorService {
   }
 
   public goToLine(lineNumber) {
+    this.editor.focus();
     this.editor.setCursor(lineNumber);
     this.editor.execCommand('showInCenter');
   }
 
-  public selectLine(line: number) {
+  public selectLine(line) {
+    // this.editor.setCursor(line);
+    this.editor.focus();
     this.editor.setSelection({ line: line, ch: 0 }, { line: line + 1, ch: 0 });
     this.editor.execCommand('showInCenter');
   }
