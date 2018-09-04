@@ -78,7 +78,7 @@ export class MarkdownEditorComponent {
         if (!sourceLine) return;
         this.store.dispatch(new EditMode());
         setTimeout(() => {
-          this.editorService.selectLines(sourceLine);
+          this.editorService.selectLine(sourceLine[0]);
         }, 0);
       });
 

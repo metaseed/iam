@@ -76,13 +76,13 @@ export class CodemirrorToolbarComponent implements OnInit {
                 // }
                 return `**${selectedText || defaultText}**`;
               },
-              endSize: 2,
+              startSize: 2,
               hotKey: 'Ctrl-M B'
             },
             Italic: {
               command: 'Italic',
               func: (selectedText, defaultText) => `*${selectedText || defaultText}*`,
-              endSize: 1,
+              startSize: 1,
               hotKey: 'Ctrl-M I'
             },
             Heading: {
@@ -256,14 +256,20 @@ Alt-G Jump to line*/
     const config = CodemirrorToolbarComponent.COMMANDS_CONFIG[type];
     // let selectionText: string = this.editor.getModel().getValueInRange(selection);
     selectionText = config.func(selectionText, '', config);
-    if (config.startSize !== undefined) {
+    const position = this.doc.getCursor();
+    if (config.startSize) {
       this.doc.replaceSelection(selectionText, 'start');
-      for (let i = 0; i < config.startSize; i++) this.editor.execCommand('goCharRight');
-    } else if (config.endSize !== undefined) {
-      this.doc.replaceSelection(selectionText);
-      for (let i = 0; i < config.endSize; i++) this.editor.execCommand('goCharLeft');
+      this.editor.focus();
+      this.doc.setCursor({ line: position.line, ch: position.ch + config.startSize });
+      // for (let i = 0; i < config.startSize; i++) this.editor.execCommand('goCharRight');
+    } else if (config.endSize) {
+      this.doc.replaceSelection(selectionText, 'around');
+      const end = this.doc.getCursor('to');
+      this.editor.focus();
+      this.doc.setCursor({ line: end.line, ch: end.ch - config.endSize });
+
+      // for (let i = 0; i < config.endSize; i++) this.editor.execCommand('goCharLeft');
     }
-    this.editor.focus();
 
     // if (config.command === 'Ul') {
     //   this._hideIcons.Ul = true;

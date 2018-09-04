@@ -26,8 +26,8 @@ export class MarkdownEditorService {
     this.editor.execCommand('showInCenter');
   }
 
-  public selectLines(lines: [number, number]) {
-    this.editor.setSelection({ line: lines[0], ch: 0 }, { line: lines[1], ch: 0 });
+  public selectLine(line: number) {
+    this.editor.setSelection({ line: line, ch: 0 }, { line: line + 1, ch: 0 });
     this.editor.execCommand('showInCenter');
   }
 }
