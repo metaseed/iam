@@ -7,8 +7,9 @@ const TRANSITION_DURATION = '.18s';
 
 export interface ContainerItem {
   container$: Observable<IContainer>;
-  elementWithMarginTop?: HTMLElement;
+  elementWithMarginTop?: HTMLElement & { _margin?: number };
   container?: IContainer;
+  containerScrollTopOnTouchStart?: number;
 }
 
 @Directive({
@@ -61,7 +62,7 @@ export class ScrollHideDirective implements OnDestroy {
       this.visibility = 'hidden';
     } else {
       this.visibility = 'visible';
-      asyncScheduler.schedule(_ => this.setMargin('Set'));
+      asyncScheduler.schedule(_ => this.setMargins('Set'));
     }
     this._hide = v;
   }
@@ -69,35 +70,16 @@ export class ScrollHideDirective implements OnDestroy {
   @Input()
   set hideHeight(v: number) {
     this._hideHeight_minus = -v;
+    this._hideHeight_half_minus = -v / 2;
   }
   private _hideHeight_minus: number;
-  get hideHeight() {
+  private _hideHeight_half_minus: number;
+  get hideHeightMinus() {
     return this._hideHeight_minus || this._height_minus;
   }
 
-  private _containerItems: ContainerItem[];
-
-  setMargin = ((lastPara = '') => (o: 'Set' | 'Clear') => {
-    if (!this._containerItems || lastPara === o) return;
-
-    const v = o === 'Set' ? this._height : 0;
-    this._containerItems.forEach(item => {
-      const marginElement = item.elementWithMarginTop;
-
-      (this._windowRef.nativeElement as Window).requestAnimationFrame(
-        () => (marginElement.style.marginTop = v + 'px')
-      );
-    });
-    lastPara = o;
-  })();
-
-  @Input()
-  set scrollHide(containerItems: ContainerItem[]) {
-    if (!containerItems) return;
-    if (!Array.isArray(containerItems)) {
-      throw new Error('scrollHide attribute should be an array!');
-    }
-    this._containerItems = containerItems;
+  get hideHeightHalfMinus() {
+    return this._hideHeight_half_minus || this._height_half_minus;
   }
 
   private _height: number;
@@ -109,6 +91,44 @@ export class ScrollHideDirective implements OnDestroy {
     this._height_half_minus = -v / 2;
     this._height = v;
   }
+
+  private _containerItems: ContainerItem[];
+
+  setMargin = (contariner: ContainerItem, o: 'Set' | 'Clear') => {
+    const v = o === 'Set' ? this._height : 0;
+    const marginElement = contariner.elementWithMarginTop;
+    if (!marginElement || marginElement._margin === v) return;
+
+    const scrollTop = contariner.container.scrollTop;
+    // set margin, but scrollTop is big
+    if (scrollTop > this._height && v !== 0) {
+      return;
+    }
+    // remove margin, but scrollTop is small
+    if (scrollTop > 0 && scrollTop <= this._height && v === 0) {
+      return;
+    }
+    (this._windowRef.nativeElement as Window).requestAnimationFrame(() => {
+      marginElement.style.marginTop = v + 'px';
+    });
+    marginElement._margin = v;
+  };
+
+  setMargins = (o: 'Set' | 'Clear') => {
+    if (!this._containerItems) return;
+    this._containerItems.forEach(item => this.setMargin(item, o));
+  };
+
+  @Input()
+  set scrollHide(containerItems: ContainerItem[]) {
+    if (!containerItems) return;
+    if (!Array.isArray(containerItems)) {
+      throw new Error('scrollHide attribute should be an array!');
+    }
+    this._containerItems = containerItems;
+  }
+
+  private _deltaSinceTouchStart = 0;
 
   constructor(private _elementRef: ElementRef, private _windowRef: WindowRef) {
     _windowRef.resizeEvent$.pipe(takeUntil(this._destroy$)).subscribe(e => {
@@ -135,6 +155,7 @@ export class ScrollHideDirective implements OnDestroy {
         marginElement.style.transitionTimingFunction = 'ease-in-out';
         marginElement.style.marginTop = this._height + 'px';
         item.elementWithMarginTop = marginElement;
+        item.elementWithMarginTop._margin = this._height;
         item.container = container;
       };
 
@@ -183,11 +204,13 @@ export class ScrollHideDirective implements OnDestroy {
           if (disableScroll || this._hide) return;
           disableScroll = true;
           if (e.isDown) {
-            this.setMargin('Clear');
-            this.top = this.hideHeight;
+            this.setMargins('Clear');
+            this.top = this.hideHeightMinus;
+            // console.log('scrollDown');
           } else {
-            this.setMargin('Set');
+            this.setMargins('Set');
             this.top = 0;
+            // console.log('scrollup');
           }
           disableScroll = false;
         });
@@ -205,8 +228,12 @@ export class ScrollHideDirective implements OnDestroy {
           disableScroll = true;
           disableAnimation();
           // console.log('touchStart: ', e);
+          this._containerItems.forEach(it => {
+            it.containerScrollTopOnTouchStart = it.container.scrollTop;
+          });
           lastY = e.touches[0].clientY;
           startY = lastY;
+          this._deltaSinceTouchStart = 0;
         });
 
       container$
@@ -219,22 +246,23 @@ export class ScrollHideDirective implements OnDestroy {
 
           // console.log('touchEnd: ', e);
 
-          // isdown
-          if (startY - lastY) {
-            if (this.top > this._height_half_minus) {
+          const delta = startY - lastY;
+          if (delta !== 0) {
+            if (this.top > this.hideHeightHalfMinus) {
               this.top = 0;
-              this.setMargin('Set');
+              this.setMargins('Set');
             } else {
-              this.top = this.hideHeight;
-              this.setMargin('Clear');
+              this.top = this.hideHeightMinus;
+              this.setMargins('Clear');
             }
           } else {
-            if (this.top < this._height_half_minus) {
-              this.top = 0;
-              this.setMargin('Set');
+            // click
+            if (this.top === 0) {
+              this.top = this.hideHeightMinus;
+              this.setMargins('Clear');
             } else {
-              this.top = this.hideHeight;
-              this.setMargin('Clear');
+              this.top = 0;
+              this.setMargins('Set');
             }
           }
 
@@ -257,24 +285,24 @@ export class ScrollHideDirective implements OnDestroy {
           lastY = y;
 
           const top = this.top + deltSinceLastTouchMove;
+          this._deltaSinceTouchStart = this._deltaSinceTouchStart + deltSinceLastTouchMove;
           // [-height,0]
-          this.top = Math.min(Math.max(this._height_minus, top), 0);
+          this.top = Math.min(Math.max(this.hideHeightMinus, top), 0);
+          console.log('top', this.top);
           // console.log('touchMove: ', e, top);
           this._containerItems.forEach(it => {
             /* get scrollTop of container*/
-            if (this.top <= this._height_minus) {
-              this.setMargin('Clear');
-              return;
-            } else if (this.top >= 0) {
-              this.setMargin('Set');
-              return;
-            }
-
+            const scrollTop = it.containerScrollTopOnTouchStart - this._deltaSinceTouchStart;
+            // console.log(scrollTop, it.containerScrollTopOnTouchStart, this._deltaSinceTouchStart);
             const marginElement = it.elementWithMarginTop;
-            // [0, height]
-            const marginValue = this._height + this.top;
+            if (scrollTop >= this._height && marginElement._margin === 0) return;
+
+            // console.log(marginValue);
             (this._windowRef.nativeElement as Window).requestAnimationFrame(() => {
+              // [0, height]
+              const marginValue = this._height + this.top;
               marginElement.style.marginTop = marginValue + 'px';
+              marginElement._margin = marginValue;
               it.container.scrollTop -= marginValue;
             });
           });
