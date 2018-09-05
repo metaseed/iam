@@ -7,9 +7,8 @@ const TRANSITION_DURATION = '.18s';
 
 export interface ContainerItem {
   container$: Observable<IContainer>;
-  elementWithMarginTop?: HTMLElement & { _margin?: number };
+  elementWithMarginTop?: HTMLElement;
   container?: IContainer;
-  containerScrollTopOnTouchStart?: number;
 }
 
 @Directive({
@@ -41,8 +40,6 @@ export class ScrollHideDirective implements OnDestroy {
   transitionProperty = 'top';
   @HostBinding('style.transition-timing-function')
   t_f = 'ease-in-out';
-
-  private _deltaSinceTouchStart = 0;
 
   private _top;
   get top() {
@@ -86,12 +83,10 @@ export class ScrollHideDirective implements OnDestroy {
     const v = o === 'Set' ? this._height : 0;
     this._containerItems.forEach(item => {
       const marginElement = item.elementWithMarginTop;
-      if (!marginElement || marginElement._margin === v) return;
 
       (this._windowRef.nativeElement as Window).requestAnimationFrame(
         () => (marginElement.style.marginTop = v + 'px')
       );
-      marginElement._margin = v;
     });
     lastPara = o;
   })();
@@ -140,7 +135,6 @@ export class ScrollHideDirective implements OnDestroy {
         marginElement.style.transitionTimingFunction = 'ease-in-out';
         marginElement.style.marginTop = this._height + 'px';
         item.elementWithMarginTop = marginElement;
-        item.elementWithMarginTop._margin = this._height;
         item.container = container;
       };
 
@@ -211,12 +205,8 @@ export class ScrollHideDirective implements OnDestroy {
           disableScroll = true;
           disableAnimation();
           // console.log('touchStart: ', e);
-          this._containerItems.forEach(it => {
-            it.containerScrollTopOnTouchStart = it.container.scrollTop;
-          });
           lastY = e.touches[0].clientY;
           startY = lastY;
-          this._deltaSinceTouchStart = 0;
         });
 
       container$
@@ -267,29 +257,26 @@ export class ScrollHideDirective implements OnDestroy {
           lastY = y;
 
           const top = this.top + deltSinceLastTouchMove;
-          this._deltaSinceTouchStart = this._deltaSinceTouchStart + deltSinceLastTouchMove;
           // [-height,0]
           this.top = Math.min(Math.max(this._height_minus, top), 0);
           // console.log('touchMove: ', e, top);
           this._containerItems.forEach(it => {
             /* get scrollTop of container*/
-            const scrollTop = it.containerScrollTopOnTouchStart - this._deltaSinceTouchStart;
-            if (scrollTop >= this._height || scrollTop <= 0) {
+            if (this.top <= this._height_minus) {
               this.setMargin('Clear');
+              return;
+            } else if (this.top >= 0) {
+              this.setMargin('Set');
               return;
             }
 
             const marginElement = it.elementWithMarginTop;
-            let marginValue = marginElement._margin + deltSinceLastTouchMove;
             // [0, height]
-            marginValue = Math.min(Math.max(0, marginValue), this._height);
-            if (marginValue !== marginElement._margin) {
-              (this._windowRef.nativeElement as Window).requestAnimationFrame(() => {
-                marginElement.style.marginTop = marginValue + 'px';
-                it.container.scrollTop += deltSinceLastTouchMove;
-              });
-              marginElement._margin = marginValue;
-            }
+            const marginValue = this._height + this.top;
+            (this._windowRef.nativeElement as Window).requestAnimationFrame(() => {
+              marginElement.style.marginTop = marginValue + 'px';
+              it.container.scrollTop -= marginValue;
+            });
           });
         });
     });
