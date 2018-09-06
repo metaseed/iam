@@ -243,7 +243,7 @@ export class ScrollHideDirective implements OnDestroy {
           if (this._hide) return;
 
           disableScroll = true;
-          // disableAnimation();
+          disableAnimation();
           // console.log('touchStart: ', e);
           this._containerItems.forEach(it => {
             it.containerScrollTopOnTouchStart = it.container.scrollTop;
@@ -283,7 +283,7 @@ export class ScrollHideDirective implements OnDestroy {
             }
           }
           this.modifyStyle();
-          // enableAnimation();
+          enableAnimation();
           disableScroll = false;
         });
 
