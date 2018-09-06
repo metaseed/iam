@@ -53,7 +53,7 @@ import { MermaidPlugin } from './markdown-it-plugins/mermaid.plugin';
 import { CopierService } from 'core';
 import { Subscription } from 'rxjs';
 import { getAddr } from '../utils/getUri';
-import { Utilities, addFunctionToHeader } from 'core';
+import { Utilities } from 'core';
 import { LispPlugin } from './markdown-it-plugins/lisp';
 import { sourceLine } from './markdown-it-plugins/source-line';
 import MarkdonwItIncrementalDom from 'markdown-it-incremental-dom';
@@ -138,18 +138,6 @@ export class MarkdownViewerService {
     this.containerPlugin = new ContainerPlugin(this.markdown, 'warning');
 
     (<any>this.docRef.document).copier = new CopierService();
-
-    const wrap_text = `function wrap_text(event) {
-      const e = event.target.parentElement.parentElement.getElementsByTagName('code')[0];
-      if (!e.nowrap) {
-        e.style['white-space'] = 'pre';
-        e.nowrap = true;
-      } else {
-        e.style['white-space'] = 'pre-wrap';
-        e.nowrap = false;
-      }
-    }`;
-    addFunctionToHeader(wrap_text);
   }
 
   public render(target: HTMLElement, raw: string): string {
