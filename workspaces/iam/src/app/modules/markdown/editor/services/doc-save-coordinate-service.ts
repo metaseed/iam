@@ -41,7 +41,7 @@ export class DocSaveCoordinateService implements OnDestroy {
         takeUntil(this.destroy$),
         combineLatest(this.editor$)
       )
-      .subscribe(([, editor]) => this.checkDirty(editor));
+      .subscribe(([content, editor]) => this.checkDirty(editor));
 
     actionStatusState$(this.store, DocumentEffectsActionTypes.Save)
       .pipe(
@@ -72,8 +72,10 @@ export class DocSaveCoordinateService implements OnDestroy {
 
   private checkDirty(editor) {
     const oldValue = this.isDirty$.value;
+    if (!this.contentGeneration) return; // initial content load
+
     const isDirty = !editor.getDoc().isClean(this.contentGeneration);
-    if (oldValue != isDirty) {
+    if (oldValue !== isDirty) {
       this.isDirty$.next(isDirty);
     }
   }

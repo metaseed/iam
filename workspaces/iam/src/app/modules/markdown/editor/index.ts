@@ -1,1 +1,1 @@
-export * from './services/markdown.editor.service';
+export * from './services';

@@ -1,11 +1,10 @@
 import { Component, OnInit, Input, HostBinding } from '@angular/core';
-import { MarkdownComponent } from '../../../markdown.component';
-
 import { Subscription, Subject } from 'rxjs';
-import { MarkdownEditorService } from '../..';
+import { takeUntil } from 'rxjs/operators';
+import { MarkdownComponent } from '../../../markdown.component';
+import { MarkdownEditorService } from '../../services';
 import { CommandService, Command } from 'core';
 import * as CodeMirror from 'codemirror';
-import { takeUntil } from 'rxjs/operators';
 import { Utilities } from 'core';
 import { VerticalSplitPaneComponent } from 'shared';
 
