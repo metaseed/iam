@@ -20,7 +20,7 @@ import { takeUntil, map, observeOn, switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../model/markdown.model';
 import { PlatformLocation } from '@angular/common';
-import { EditItAction } from '../state';
+import { EditItAction, selectViewState } from '../state';
 
 @Component({
   selector: 'markdown-viewer-container',
@@ -43,6 +43,20 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
 
   defaultTimeoutHandler = err =>
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
+
+  isScrollDown$ = this.store
+    .select(selectViewState)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(viewState => {
+      // default value is null
+      const v = viewState.isScrollDown;
+      if (v === null || !this.viewerContainerDiv) return;
+      if (v) {
+        this.viewerContainerDiv.nativeElement.scrollTop += 50;
+      } else {
+        this.viewerContainerDiv.nativeElement.scrollTop -= 50;
+      }
+    });
 
   isLoadDone$ = merge(
     monitorActionStatus$(

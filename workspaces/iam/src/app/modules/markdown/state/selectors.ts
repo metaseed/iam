@@ -2,6 +2,7 @@ import { createSelector, createFeatureSelector } from '@ngrx/store';
 import { MarkdownState, moduleStateName } from './state-reducers';
 import * as fromDocument from './reducers/document';
 import * as fromEdit from './reducers/edit';
+import { getViewScroll } from './reducers/view';
 // document
 export const selectMarkdownState = createFeatureSelector<MarkdownState>(moduleStateName);
 export const selectDocumentState = createSelector(selectMarkdownState, state => state.document);
@@ -27,3 +28,4 @@ export const selectEditLockScrollWithViewState = createSelector(
 
 // view
 export const selectViewState = createSelector(selectMarkdownState, state => state.view);
+export const selectViewScrollState = createSelector(selectViewState, getViewScroll);

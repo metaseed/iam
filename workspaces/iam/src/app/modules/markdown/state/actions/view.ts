@@ -2,13 +2,11 @@ import { Action } from '@ngrx/store';
 import { ScrollEvent } from 'core';
 
 export enum ViewActionTypes {
-    NotUsed = '[View] Scroll Down',
+  Scroll = '[View] Scroll'
 }
 
-export class NotUsed implements Action {
-    readonly type = ViewActionTypes.NotUsed;
-    constructor(public payload: ScrollEvent) { }
+export class ViewScrollAction implements Action {
+  readonly type = ViewActionTypes.Scroll;
+  constructor(public payload: { isScrollDown: boolean }) {}
 }
-
-export type ViewActions =
-    | NotUsed;
+export type ViewActions = ViewScrollAction;

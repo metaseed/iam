@@ -7,6 +7,8 @@ import { CommandService, Command } from 'core';
 import * as CodeMirror from 'codemirror';
 import { Utilities } from 'core';
 import { VerticalSplitPaneComponent } from 'shared';
+import { Store } from '@ngrx/store';
+import { MarkdownState, ViewScrollAction } from '../../../state';
 
 interface ICommandConfig {
   [key: string]: {
@@ -36,11 +38,11 @@ export class CodemirrorToolbarComponent implements OnInit {
   width;
 
   constructor(
-    public markdown: MarkdownComponent,
     private _verticalSplitPane: VerticalSplitPaneComponent,
     private _editorService: MarkdownEditorService,
     private utils: Utilities,
-    private _commandService: CommandService
+    private _commandService: CommandService,
+    private _store: Store<MarkdownState>
   ) {
     this._verticalSplitPane.notifySizeDidChange.pipe(takeUntil(this.destroy$)).subscribe(s => {
       if (this.width === s.primary) return;
@@ -157,11 +159,14 @@ export class CodemirrorToolbarComponent implements OnInit {
             };
           }
         }
-
         option['Ctrl-M Q'] = function(editor) {
-          // (<HTMLElement>(me.div.nativeElement)).click();
-          // document.activeElement.blur();
           editor.display.input.textarea.blur();
+        };
+        option['Ctrl-Alt-Up'] = () => {
+          this._store.dispatch(new ViewScrollAction({ isScrollDown: false }));
+        };
+        option['Ctrl-Alt-Down'] = () => {
+          this._store.dispatch(new ViewScrollAction({ isScrollDown: true }));
         };
         option['Ctrl-Up'] = 'scrollLineUp';
         option['Ctrl-G'] = 'jumpToLine';
