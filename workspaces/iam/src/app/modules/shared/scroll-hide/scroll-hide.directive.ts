@@ -52,6 +52,7 @@ export class ScrollHideDirective implements OnDestroy {
       this.visibility = 'visible';
       asyncScheduler.schedule(_ => this.setMargins('Set'));
     }
+    this.caculateHeight();
     this._hide = v;
   }
 
@@ -121,10 +122,7 @@ export class ScrollHideDirective implements OnDestroy {
     if (scrollTop > this._height && v !== 0) {
       return;
     }
-    // remove margin, but scrollTop is small
-    if (scrollTop > 0 && scrollTop <= this._height && v === 0) {
-      return;
-    }
+
     marginElement._marginChanged = true;
     marginElement._margin = v;
   };
