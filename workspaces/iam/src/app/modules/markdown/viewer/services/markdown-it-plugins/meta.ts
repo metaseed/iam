@@ -34,8 +34,16 @@ export class MetaPlugin {
           });
         }
         if (meta.version) {
-          content += '<div class="meta-version">' + meta.version + '</div>';
+          content += `<span class="meta-version"> v${meta.version} </span>`;
         }
+        if (meta.updateDate) {
+          if (meta.createDate) {
+            const createDate = meta.createDate;
+            content += `<span class="meta-date"> ${createDate.toLocaleDateString()} - </span>`;
+          }
+          content += `<span class="meta-date">  ${meta.updateDate.toLocaleDateString()}</span>`;
+        }
+
         if (meta.tag) {
           content += '<ul class="meta-tags">';
           meta.tag.forEach(tag => {
@@ -98,7 +106,7 @@ export class MetaPlugin {
       token = state.push('meta_close', 'meta', -1);
       token.markup = '---';
     }
-    (this.markdownIt as any).meta = d;
+    (this.markdownIt as any).meta = Object.assign({}, (this.markdownIt as any).meta, d);
     return true;
   };
 }

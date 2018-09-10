@@ -11,6 +11,7 @@ import { MarkdownViewerContainerComponent } from './markdown-viewer-container.co
 import { Inject } from '@angular/core';
 import { of, asyncScheduler, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { Document } from 'core';
 
 export const NO_ANIMATIONS = 'no-animations';
 
@@ -25,14 +26,14 @@ export class MarkdownViewerComponent {
   lozad: any;
   private hostElement: HTMLElement;
   private updateToc = new Subject<string>();
-  private updateContent = new Subject<string>();
+  private updateContent = new Subject<Document>();
 
   @Input()
-  set model(value: string) {
-    if (!value) return;
-
+  set model(value: Document) {
+    if (!value || !value.content || !value.content.content) return;
     this.updateContent.next(value);
-    this.updateToc.next(value);
+    const content = value.content.content;
+    this.updateToc.next(content);
   }
 
   private destroy$ = new EventEmitter<void>();

@@ -59,6 +59,8 @@ import { sourceLine } from './markdown-it-plugins/source-line';
 import MarkdonwItIncrementalDom from 'markdown-it-incremental-dom';
 import * as IncrementalDom from 'incremental-dom';
 import { MetaPlugin } from './markdown-it-plugins/meta';
+import { Document } from 'core';
+
 @Injectable()
 export class MarkdownViewerService {
   private defaultConfig: MarkdownConfig = {
@@ -144,12 +146,13 @@ export class MarkdownViewerService {
     (<any>this.docRef.document).copier = new CopierService();
   }
 
-  public render(target: HTMLElement, raw: string): string {
+  public render(target: HTMLElement, raw: Document): string {
     const env: any = {};
     // because the increatal dom could not work with web components(angular elements)
     // have to using original render here.
     // todo: find solution to using the markdown-it-incremental0-dom later.
-    const r = (target.innerHTML = this.markdown.render(raw, env));
+    (this.markdown as any).meta = raw.metaData;
+    const r = (target.innerHTML = this.markdown.render(raw.content.content, env));
     // const r = IncrementalDom.patch(target, (this.markdown as any).renderToIncrementalDOM(raw, env));
     this.parsedContent.title = env.title;
     return r;
