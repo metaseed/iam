@@ -58,6 +58,7 @@ import { LispPlugin } from './markdown-it-plugins/lisp';
 import { sourceLine } from './markdown-it-plugins/source-line';
 import MarkdonwItIncrementalDom from 'markdown-it-incremental-dom';
 import * as IncrementalDom from 'incremental-dom';
+import { MetaPlugin } from './markdown-it-plugins/meta';
 @Injectable()
 export class MarkdownViewerService {
   private defaultConfig: MarkdownConfig = {
@@ -77,6 +78,8 @@ export class MarkdownViewerService {
   private containerPlugin: ContainerPlugin;
   private mermaidPlugin: MermaidPlugin;
   private lispPlugin: LispPlugin;
+  private metaPlugin: MetaPlugin;
+
   private showCodeLineNumber: boolean;
   constructor(
     private router: Router,
@@ -92,6 +95,7 @@ export class MarkdownViewerService {
     }
 
     this.markdown = new MarkdownIt(config.markdownIt);
+    this.metaPlugin = new MetaPlugin(this.markdown);
     this.lispPlugin = new LispPlugin(this.markdown);
     this.markdown
       .use(MarkdonwItIncrementalDom, IncrementalDom, {
