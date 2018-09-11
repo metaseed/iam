@@ -33,15 +33,19 @@ export class MetaPlugin {
             content += '</author>';
           });
         }
-        if (meta.version) {
-          content += `<span class="meta-version"> v${meta.version} </span>`;
-        }
-        if (meta.updateDate) {
-          if (meta.createDate) {
-            const createDate = meta.createDate;
-            content += `<span class="meta-date"> ${createDate.toLocaleDateString()} - </span>`;
+        if (meta.version || meta.updateDate) {
+          content += `<div class="meta-version-date">`;
+          if (meta.version) {
+            content += `<span class="meta-version"> v${meta.version} </span>`;
           }
-          content += `<span class="meta-date">  ${meta.updateDate.toLocaleDateString()}</span>`;
+          if (meta.updateDate) {
+            if (meta.createDate) {
+              const createDate = meta.createDate;
+              content += `<span style="margin-left:10px" class="meta-date">${createDate.toLocaleDateString()} - </span>`;
+            }
+            content += `<span class="meta-date">  ${meta.updateDate.toLocaleDateString()}</span>`;
+          }
+          content += `</div>`;
         }
 
         if (meta.tag) {
