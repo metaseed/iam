@@ -50,9 +50,11 @@ export class ScrollHideDirective implements OnDestroy {
       this.visibility = 'hidden';
     } else {
       this.visibility = 'visible';
-      asyncScheduler.schedule(_ => this.setMargins('Set'));
+      asyncScheduler.schedule(_ => {
+        this.caculateHeight();
+        this.setMargins('Set');
+      });
     }
-    this.caculateHeight();
     this._hide = v;
   }
 
@@ -71,6 +73,12 @@ export class ScrollHideDirective implements OnDestroy {
     return this._hideHeight_half_minus || this._height_half_minus;
   }
 
+  private get height() {
+    if (this._height === 0) {
+      this.caculateHeight();
+    }
+    return this._height;
+  }
   private _height: number;
   private _height_minus: number;
   private _height_half_minus: number;
@@ -113,7 +121,7 @@ export class ScrollHideDirective implements OnDestroy {
   }
 
   setMargin = (contariner: ContainerItem, o: 'Set' | 'Clear') => {
-    const v = o === 'Set' ? this._height : 0;
+    const v = o === 'Set' ? this.height : 0;
     const marginElement = contariner.elementWithMarginTop;
     if (!marginElement || marginElement._margin === v) return;
 
