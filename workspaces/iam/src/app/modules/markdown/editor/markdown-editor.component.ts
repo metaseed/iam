@@ -27,6 +27,7 @@ import {
 import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../model/markdown.model';
 import { IContainer, ContainerRef } from 'core';
 import { selectDocumentEditItState, EditMode } from '../state';
+import { KeyMapService } from './services';
 
 @Component({
   selector: 'ms-markdown-editor',
@@ -63,6 +64,7 @@ export class MarkdownEditorComponent {
     private dialog: MatDialog,
     @Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService,
     private editorService: MarkdownEditorService,
+    private keyMapService: KeyMapService, // reference keyMapService
     private docSaveCoordinater: DocSaveCoordinateService,
     private store: Store<fromMarkdown.MarkdownState>,
     private ngZone: NgZone
