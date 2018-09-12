@@ -16,7 +16,7 @@ export class Hotkey {
       return: '\u23CE', // ⏎
       backspace: '\u232B' // ⌫
     };
-    const comboSplit: string[] = combo.split('-');
+    const comboSplit: string[] = combo.split('+');
 
     for (let i = 0; i < comboSplit.length; i++) {
       // try to resolve command / ctrl based on OS:
@@ -31,7 +31,7 @@ export class Hotkey {
       comboSplit[i] = map[comboSplit[i].toLowerCase()] || comboSplit[i];
     }
 
-    return comboSplit.join(' - ');
+    return comboSplit.join(' + ');
   }
 
   /**

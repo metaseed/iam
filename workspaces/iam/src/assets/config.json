@@ -1,10 +1,10 @@
 {
   "hotkeys": {
-    "ctrl-b": ["Bold"],
-    "ctrl-i": ["Italic"],
-    "ctrl-h": ["Heading"],
-    "ctrl-right": ["AppComponent.Forward", "MainComponent.MoveRight"],
-    "ctrl-m f": ["Focus"]
+    "ctrl+b": ["Bold"],
+    "ctrl+i": ["Italic"],
+    "ctrl+h": ["Heading"],
+    "ctrl+right": ["AppComponent.Forward", "MainComponent.MoveRight"],
+    "ctrl+m f": ["Focus"]
   },
 
   "storage": {
