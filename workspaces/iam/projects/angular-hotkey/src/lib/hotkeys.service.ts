@@ -97,7 +97,7 @@ export class HotkeysService {
   }
 
   remove(hotkey?: Hotkey | Hotkey[]): Hotkey | Hotkey[] {
-    let temp: Hotkey[] = [];
+    const temp: Hotkey[] = [];
     if (!hotkey) {
       for (const key of this.hotkeys) {
         temp.push(<Hotkey>this.remove(key));
