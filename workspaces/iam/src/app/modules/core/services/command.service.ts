@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HotkeysService, Hotkey } from '@metaseed/angular-hotkey';
 import { Subject, Observable } from 'rxjs';
 import { ConfigService, ConfigModel } from '../config/config.service';
@@ -17,13 +17,10 @@ export class CommandService {
 
   constructor(private hotkeysService: HotkeysService, private configService: ConfigService) {
     this.subject = new Subject<Command>();
-    this.commands = this.subject.asObservable();
+    this.commands = this.subject;
     configService.config$.subscribe(config => {
       this.config = config;
-      for (const key in config.hotkeys) {
-        if (!config.hotkeys.hasOwnProperty(key)) {
-          continue;
-        }
+      for (const key of Object.keys(config.hotkeys)) {
         const commands = config.hotkeys[key];
         hotkeysService.add(new Hotkey(key, (ev, combo) => this.hotkey(ev, combo, commands)));
       }

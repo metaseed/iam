@@ -56,8 +56,8 @@ export class HotkeysService {
 
   add(hotkey: Hotkey | Hotkey[], specificEvent?: string): Hotkey | Hotkey[] {
     if (Array.isArray(hotkey)) {
-      let temp: Hotkey[] = [];
-      for (let key of hotkey) {
+      const temp: Hotkey[] = [];
+      for (const key of hotkey) {
         temp.push(<Hotkey>this.add(key, specificEvent));
       }
       return temp;
@@ -72,8 +72,8 @@ export class HotkeysService {
         // if the callback is executed directly `hotkey.get('w').callback()`
         // there will be no event, so just execute the callback.
         if (event) {
-          let target: HTMLElement = <HTMLElement>(event.target || event.srcElement); // srcElement is IE only
-          let nodeName: string = target.nodeName.toUpperCase();
+          const target: HTMLElement = <HTMLElement>(event.target || event.srcElement); // srcElement is IE only
+          const nodeName: string = target.nodeName.toUpperCase();
 
           // check if the input has a mousetrap class, and skip checking preventIn if so
           if ((' ' + target.className + ' ').indexOf(' mousetrap ') > -1) {
@@ -99,18 +99,18 @@ export class HotkeysService {
   remove(hotkey?: Hotkey | Hotkey[]): Hotkey | Hotkey[] {
     let temp: Hotkey[] = [];
     if (!hotkey) {
-      for (let key of this.hotkeys) {
+      for (const key of this.hotkeys) {
         temp.push(<Hotkey>this.remove(key));
       }
       return temp;
     }
     if (Array.isArray(hotkey)) {
-      for (let key of hotkey) {
+      for (const key of hotkey) {
         temp.push(<Hotkey>this.remove(key));
       }
       return temp;
     }
-    let index = this.findHotkey(<Hotkey>hotkey);
+    const index = this.findHotkey(<Hotkey>hotkey);
     if (index > -1) {
       this.hotkeys.splice(index, 1);
       this.mousetrap.unbind((<Hotkey>hotkey).combo);
@@ -124,8 +124,8 @@ export class HotkeysService {
       return this.hotkeys;
     }
     if (Array.isArray(combo)) {
-      let temp: Hotkey[] = [];
-      for (let key of combo) {
+      const temp: Hotkey[] = [];
+      for (const key of combo) {
         temp.push(<Hotkey>this.get(key));
       }
       return temp;
@@ -143,8 +143,8 @@ export class HotkeysService {
       return this.pause(this.hotkeys);
     }
     if (Array.isArray(hotkey)) {
-      let temp: Hotkey[] = [];
-      for (let key of hotkey) {
+      const temp: Hotkey[] = [];
+      for (const key of hotkey) {
         temp.push(<Hotkey>this.pause(key));
       }
       return temp;
@@ -159,13 +159,13 @@ export class HotkeysService {
       return this.unpause(this.pausedHotkeys);
     }
     if (Array.isArray(hotkey)) {
-      let temp: Hotkey[] = [];
-      for (let key of hotkey) {
+      const temp: Hotkey[] = [];
+      for (const key of hotkey) {
         temp.push(<Hotkey>this.unpause(key));
       }
       return temp;
     }
-    let index: number = this.pausedHotkeys.indexOf(<Hotkey>hotkey);
+    const index: number = this.pausedHotkeys.indexOf(<Hotkey>hotkey);
     if (index > -1) {
       this.add(hotkey);
       return this.pausedHotkeys.splice(index, 1);

@@ -6,32 +6,32 @@ export class Hotkey {
   _formatted: string[];
 
   static symbolize(combo: string): string {
-    let map: any = {
-      command: "\u2318", // ⌘
-      shift: "\u21E7", // ⇧
-      left: "\u2190", // ←
-      right: "\u2192", // →
-      up: "\u2191", // ↑
-      down: "\u2193", // ↓
-      return: "\u23CE", // ⏎
-      backspace: "\u232B" // ⌫
+    const map: any = {
+      command: '\u2318', // ⌘ on Mac, Ctrl on Windows
+      shift: '\u21E7', // ⇧
+      left: '\u2190', // ←
+      right: '\u2192', // →
+      up: '\u2191', // ↑
+      down: '\u2193', // ↓
+      return: '\u23CE', // ⏎
+      backspace: '\u232B' // ⌫
     };
-    let comboSplit: string[] = combo.split("+");
+    const comboSplit: string[] = combo.split('-');
 
     for (let i = 0; i < comboSplit.length; i++) {
       // try to resolve command / ctrl based on OS:
-      if (comboSplit[i] === "mod") {
-        if (window.navigator && window.navigator.platform.indexOf("Mac") >= 0) {
-          comboSplit[i] = "command";
+      if (comboSplit[i] === 'mod') {
+        if (window.navigator && window.navigator.platform.indexOf('Mac') >= 0) {
+          comboSplit[i] = 'command';
         } else {
-          comboSplit[i] = "ctrl";
+          comboSplit[i] = 'ctrl';
         }
       }
 
-      comboSplit[i] = map[comboSplit[i]] || comboSplit[i];
+      comboSplit[i] = map[comboSplit[i].toLowerCase()] || comboSplit[i];
     }
 
-    return comboSplit.join(" + ");
+    return comboSplit.join(' - ');
   }
 
   /**
@@ -46,24 +46,19 @@ export class Hotkey {
    */
   constructor(
     public combo: string | string[],
-    public callback: (
-      event: KeyboardEvent,
-      combo: string
-    ) => ExtendedKeyboardEvent | boolean,
-    public allowIn?: string[],
-    public description?: string | Function,
+    public callback: (event: KeyboardEvent, combo: string) => ExtendedKeyboardEvent | boolean,
+    public allowIn: string[] = [],
+    public description: string | Function = '',
     public action?: string,
     public persistent?: boolean
   ) {
     this.combo = Array.isArray(combo) ? combo : [<string>combo];
-    this.allowIn = allowIn || [];
-    this.description = description || "";
   }
 
   get formatted(): string[] {
     if (!this._formatted) {
-      let combo: string = this.combo[0];
-      let sequence: string[] = combo.split(/[\s]/);
+      const combo: string = this.combo[0];
+      const sequence: string[] = combo.split(/[\s]/);
       for (let i = 0; i < sequence.length; i++) {
         sequence[i] = Hotkey.symbolize(sequence[i]);
       }
