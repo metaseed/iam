@@ -7,7 +7,6 @@ import { MarkdownState, ViewScrollAction } from '../../state';
 import { CommandService, Command } from 'core';
 import { MarkdownEditorService } from './markdown.editor.service';
 import { Store } from '@ngrx/store';
-import { takeUntil } from 'rxjs/operators';
 
 interface ICommandConfig {
   [key: string]: {
@@ -33,7 +32,6 @@ export class KeyMapService {
     // cm.setOption('keyMap', 'sublime');
     this._commandService.commands.subscribe(c => this.handleCommand(c));
 
-    const me = this;
     this._editorService.editorLoaded$.subscribe((editor: CodeMirror.Editor) => {
       if (!KeyMapService.COMMANDS_CONFIG) {
         KeyMapService.COMMANDS_CONFIG = {
@@ -112,75 +110,79 @@ export class KeyMapService {
           }
         };
       }
-      me.editor = <any>editor;
+      this.editor = <any>editor;
       const configs = KeyMapService.COMMANDS_CONFIG;
       const option = {};
       for (const key in configs) {
         if (configs.hasOwnProperty(key)) {
           const config = configs[key];
           option[config.hotKey] = function() {
-            me.insertContent(key);
+            this.insertContent(key);
           };
         }
       }
-      option['Ctrl-M Q'] = function(editor) {
-        editor.display.input.textarea.blur();
-      };
-      option['Ctrl-Alt-Up'] = () => {
-        this._store.dispatch(new ViewScrollAction({ isScrollDown: false }));
-      };
-      option['Ctrl-Alt-Down'] = () => {
-        this._store.dispatch(new ViewScrollAction({ isScrollDown: true }));
-      };
-      option['Ctrl-Up'] = 'scrollLineUp';
-      option['Ctrl-G'] = 'jumpToLine';
-      option['Ctrl-Down'] = 'scrollLineDown';
-      option['Ctrl-F'] = 'findPersistent';
-      option['Shift-Delete'] = 'killLine';
-      option['Shift-Backspace'] = 'delLineLeft';
-      option['Ctrl-Shift-K'] = 'deleteLine';
-      option['Home'] = 'goLineStart';
-      option['End'] = 'goLineEnd';
-      option['Ctrl-Left'] = 'goWordLeft';
-      option['Ctrl-Right'] = 'goWordRight';
-      option['Ctrl-Alt-Left'] = 'goSubwordLeft';
-      option['Ctrl-Alt-Right'] = 'goSubwordRight';
-      option['Ctrl-Backspace'] = 'delWordBefore';
-      option['Ctrl-Shift-Backspace'] = 'delWordAfter';
-      option['Ctrl-Alt-Backspace'] = 'delGroupBefore';
-      option['Ctrl-Alt-Shift-Backspace'] = 'delGroupAfter';
-      option['Tab'] = cm => {
-        if (cm.somethingSelected()) {
-          cm.indentSelection('add');
-          return;
-        }
-        if (undefined) cm.replaceSelection('\t', 'end', '+input');
-        else cm.execCommand('insertSoftTab');
-      };
-      option['Shift-Tab'] = cm => {
-        cm.indentSelection('subtract');
-      };
-      const commands = (CodeMirror as any).commands;
-      // const keyMap = (CodeMirror as any).keyMap;
-      // option['Ctrl-a'] = keyMap['default']['Alt-G'];
+      this.codeMirrorMaps(option);
+    });
+  }
 
-      option['Alt-\\'] = commands['goToBracket'];
-      option['Alt-Shift-\\'] = commands['selectBetweenBrackets'];
-      option['Alt-Shift-Right'] = commands['selectScope'];
-      option['Ctrl-Enter'] = commands['insertLineAfter'];
-      option['Ctrl-Shift-Enter'] = commands['insertLineBefore'];
-      option['Alt-Up'] = commands['swapLineUp'];
-      option['Alt-Down'] = commands['swapLineDown'];
-      option['Ctrl-/'] = commands['toggleCommentIndented'];
-      option['Ctrl-I'] = commands['selectLine'];
-      option['Ctrl-D'] = commands['selectNextOccurrence'];
-      option['Ctrl-H'] = commands['replace'];
-      option['Esc'] = commands['singleSelectionTop'];
-      option['Alt-Shift+Down'] = commands['duplicateLine'];
-      option['Backspace'] = commands['smartBackspace'];
-      option['Alt-M'] = 'showInCenter';
+  codeMirrorMaps(option) {
+    option['Ctrl-M Q'] = function(editor) {
+      editor.display.input.textarea.blur();
+    };
+    option['Ctrl-Alt-Up'] = () => {
+      this._store.dispatch(new ViewScrollAction({ isScrollDown: false }));
+    };
+    option['Ctrl-Alt-Down'] = () => {
+      this._store.dispatch(new ViewScrollAction({ isScrollDown: true }));
+    };
+    option['Ctrl-Up'] = 'scrollLineUp';
+    option['Ctrl-G'] = 'jumpToLine';
+    option['Ctrl-Down'] = 'scrollLineDown';
+    option['Ctrl-F'] = 'findPersistent';
+    option['Shift-Delete'] = 'killLine';
+    option['Shift-Backspace'] = 'delLineLeft';
+    option['Ctrl-Shift-K'] = 'deleteLine';
+    option['Home'] = 'goLineStart';
+    option['End'] = 'goLineEnd';
+    option['Ctrl-Left'] = 'goWordLeft';
+    option['Ctrl-Right'] = 'goWordRight';
+    option['Ctrl-Alt-Left'] = 'goSubwordLeft';
+    option['Ctrl-Alt-Right'] = 'goSubwordRight';
+    option['Ctrl-Backspace'] = 'delWordBefore';
+    option['Ctrl-Shift-Backspace'] = 'delWordAfter';
+    option['Ctrl-Alt-Backspace'] = 'delGroupBefore';
+    option['Ctrl-Alt-Shift-Backspace'] = 'delGroupAfter';
+    option['Tab'] = cm => {
+      if (cm.somethingSelected()) {
+        cm.indentSelection('add');
+        return;
+      }
+      if (undefined) cm.replaceSelection('\t', 'end', '+input');
+      else cm.execCommand('insertSoftTab');
+    };
+    option['Shift-Tab'] = cm => {
+      cm.indentSelection('subtract');
+    };
+    const commands = (CodeMirror as any).commands;
+    // const keyMap = (CodeMirror as any).keyMap;
+    // option['Ctrl-a'] = keyMap['default']['Alt-G'];
 
-      /*
+    option['Alt-\\'] = commands['goToBracket'];
+    option['Alt-Shift-\\'] = commands['selectBetweenBrackets'];
+    option['Alt-Shift-Right'] = commands['selectScope'];
+    option['Ctrl-Enter'] = commands['insertLineAfter'];
+    option['Ctrl-Shift-Enter'] = commands['insertLineBefore'];
+    option['Alt-Up'] = commands['swapLineUp'];
+    option['Alt-Down'] = commands['swapLineDown'];
+    option['Ctrl-/'] = commands['toggleCommentIndented'];
+    option['Ctrl-I'] = commands['selectLine'];
+    option['Ctrl-D'] = commands['selectNextOccurrence'];
+    option['Ctrl-H'] = commands['replace'];
+    option['Esc'] = commands['singleSelectionTop'];
+    option['Alt-Shift+Down'] = commands['duplicateLine'];
+    option['Backspace'] = commands['smartBackspace'];
+    option['Alt-M'] = 'showInCenter';
+    /*
 Ctrl-F / Cmd-F Start searching
 Ctrl-G / Cmd-G Find next
 Shift-Ctrl-G / Shift-Cmd-G Find previous
@@ -188,8 +190,7 @@ Shift-Ctrl-F / Cmd-Option-F Replace
 Shift-Ctrl-R / Shift-Cmd-Option-F Replace all
 Alt-F Persistent search (dialog doesn't autoclose, enter to find next, Shift-Enter to find previous)
 Alt-G Jump to line*/
-      me.editor.setOption('extraKeys', (<any>CodeMirror).normalizeKeyMap(option));
-    });
+    this.editor.setOption('extraKeys', (<any>CodeMirror).normalizeKeyMap(option));
   }
 
   handleCommand(command: Command) {
