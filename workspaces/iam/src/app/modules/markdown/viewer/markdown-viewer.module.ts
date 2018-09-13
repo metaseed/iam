@@ -15,6 +15,7 @@ import { ElementsModule } from './elements/elements.module';
 import { TocService } from './services/toc.service';
 import { Utilities } from '../../core/utils';
 import { ActiveElementService } from './services/active-element.service';
+import { Store, State } from '@ngrx/store';
 
 @NgModule({
   declarations: [MarkdownViewerComponent, ViewerToolbarComponent, MarkdownViewerContainerComponent],
@@ -41,7 +42,7 @@ export class MarkdownViewerModule {
         {
           provide: MarkdownViewerService,
           useFactory: configureMarkdownService,
-          deps: [Router, DocumentRef, Utilities, 'MarkdownConfig']
+          deps: [Router, DocumentRef, Utilities, State, Store, 'MarkdownConfig']
         }
       ]
     };
@@ -52,7 +53,9 @@ export function configureMarkdownService(
   router: Router,
   document: DocumentRef,
   utils: Utilities,
+  state: State<any>,
+  store: Store<any>,
   config: MarkdownConfig
 ) {
-  return new MarkdownViewerService(router, document, utils, config);
+  return new MarkdownViewerService(router, document, utils, state, store, config);
 }

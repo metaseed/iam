@@ -17,26 +17,24 @@ export class DocMeta {
   private constructor(
     public id: number,
     public title: string,
-    public version: Version,
     public createDate: Date, // utc time
     public updateDate: Date, // utc time
     public summary: string,
     public imageData: string,
     public contentSha: string, // sha of file
-    public tags: any, // in issue as labels
     public format = 'md', // sufix
     public isDeleted = false
   ) {}
 
-  private serialize(contentUrl: string) {
+  static serialize(meta: DocMeta, contentUrl: string) {
     return `
 <!-- type:iam
-    ${JSON.stringify(this, (key, value) => {
+    ${JSON.stringify(meta, (key, value) => {
       if (key.startsWith('_')) return undefined;
       return value;
     })}
 -->
-> please visit: **[${this.title}](${contentUrl})**
+> please visit: **[${meta.title}](${contentUrl})**
 `;
   }
 
@@ -67,40 +65,30 @@ export class DocMeta {
     return '';
   }
 
-  private static getVersion(content: string) {
-    return undefined;
-  }
-
-  private static getTags(content: string) {
-    return undefined;
-  }
-
   static serializeContent(
     id: number,
     content: string,
     contentSha: string,
     contentUrl: string,
     format: string,
-    createDate: Date
+    createDate: Date,
+    oldMeta: DocMeta
   ) {
     const title = DocMeta.getTitle(content);
     const summary = DocMeta.getSummary(content);
     const picUrl = DocMeta.getFirstPicture(content);
-    const version = DocMeta.getVersion(content);
-    const tags = DocMeta.getTags(content);
-    const meta = new DocMeta(
+    const newMeta = new DocMeta(
       id,
       title,
-      version,
       createDate,
       new Date(),
       summary,
       picUrl,
       contentSha,
-      tags,
       format
     );
-    const metaStr = meta.serialize(contentUrl);
+    const meta = { ...oldMeta, ...newMeta } as DocMeta;
+    const metaStr = DocMeta.serialize(meta, contentUrl);
     return { meta, metaStr };
   }
 

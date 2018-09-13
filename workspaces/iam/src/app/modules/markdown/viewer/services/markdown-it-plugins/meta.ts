@@ -4,7 +4,7 @@ import * as MarkdownIt from 'markdown-it';
 import YAML from 'js-yaml';
 
 export class MetaPlugin {
-  constructor(private markdownIt: MarkdownIt.MarkdownIt) {
+  constructor(private markdownIt: MarkdownIt.MarkdownIt, private updateMeta: (object) => void) {
     this.markdownIt.use(this.metaPlugin);
   }
 
@@ -13,7 +13,7 @@ export class MetaPlugin {
     md.renderer.rules.meta_close = (tokens, index) => '</articleinfo>';
     md.renderer.rules.meta_body = (tokens, index) => {
       try {
-        const meta = (md as any).meta;
+        const meta = tokens[index].meta;
         let content = '';
         if (meta.author) {
           let link;
@@ -101,6 +101,7 @@ export class MetaPlugin {
     }
 
     const d = YAML.safeLoad(data.join('\n'), { json: true });
+
     state.line = line + 1;
     if (d) {
       let token = state.push('meta_open', 'meta', 1);
@@ -109,8 +110,9 @@ export class MetaPlugin {
       token.meta = d;
       token = state.push('meta_close', 'meta', -1);
       token.markup = '---';
+      this.updateMeta(d);
     }
-    (this.markdownIt as any).meta = Object.assign({}, (this.markdownIt as any).meta, d);
+    // (this.markdownIt as any).meta = Object.assign({}, (this.markdownIt as any).meta, d);
     return true;
   };
 }

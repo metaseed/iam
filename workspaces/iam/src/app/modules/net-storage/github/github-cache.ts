@@ -34,7 +34,7 @@ export class GithubCache implements ICache {
     meta = DocMeta.deSerialize(issue.body);
     if (!meta) meta = {} as DocMeta;
     meta.id = meta.id || issue.number;
-    meta.tags = issue.labels;
+    // meta.tags = issue.labels;
     meta.updateDate = meta.updateDate || new Date(issue.updated_at);
     meta.createDate = meta.createDate || new Date(issue.created_at);
     // meta.format = meta.format || 'md';
@@ -73,7 +73,8 @@ export class GithubCache implements ICache {
                   file.content.sha, // update sha
                   url,
                   format,
-                  new Date(issue.created_at)
+                  new Date(issue.created_at),
+                  undefined
                 );
                 const data: EditIssueParams = {
                   title: title,
@@ -307,7 +308,8 @@ export class GithubCache implements ICache {
                 file.content.sha,
                 url,
                 oldDocMeta.format,
-                oldDocMeta.createDate
+                oldDocMeta.createDate,
+                oldDocMeta
               );
               const data: EditIssueParams = {
                 title: newTitle,

@@ -26,14 +26,12 @@ export class MarkdownViewerComponent {
   lozad: any;
   private hostElement: HTMLElement;
   private updateToc = new Subject<string>();
-  private updateContent = new Subject<Document>();
+  private updateContent = new Subject<string>();
 
   @Input()
-  set model(value: Document) {
-    if (!value || !value.content || !value.content.content) return;
+  set model(value: string) {
     this.updateContent.next(value);
-    const content = value.content.content;
-    this.updateToc.next(content);
+    this.updateToc.next(value);
   }
 
   private destroy$ = new EventEmitter<void>();

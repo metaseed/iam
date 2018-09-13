@@ -51,7 +51,7 @@ import { Router } from '@angular/router';
 // import latex from 'markdown-it-katex';
 import { MermaidPlugin } from './markdown-it-plugins/mermaid.plugin';
 import { CopierService } from 'core';
-import { Subscription } from 'rxjs';
+import { Subscription, asyncScheduler } from 'rxjs';
 import { getAddr } from '../utils/getUri';
 import { Utilities } from 'core';
 import { LispPlugin } from './markdown-it-plugins/lisp';
@@ -60,6 +60,9 @@ import MarkdonwItIncrementalDom from 'markdown-it-incremental-dom';
 import * as IncrementalDom from 'incremental-dom';
 import { MetaPlugin } from './markdown-it-plugins/meta';
 import { Document } from 'core';
+import { MarkdownState } from '../../state';
+import { State, Store } from '@ngrx/store';
+import { selectCurrentDocumentState, UpsertDocument, UpdateDocument } from 'shared';
 
 @Injectable()
 export class MarkdownViewerService {
@@ -74,7 +77,6 @@ export class MarkdownViewerService {
     }
   };
 
-  public parsedContent: { title?: string } = {};
   mediaChangeSubscription: Subscription;
   private markdown: MarkdownIt.MarkdownIt;
   private containerPlugin: ContainerPlugin;
@@ -87,6 +89,8 @@ export class MarkdownViewerService {
     private router: Router,
     private docRef: DocumentRef,
     private utils: Utilities,
+    private state: State<any>,
+    private store: Store<any>,
     @Optional() config?: MarkdownConfig
   ) {
     this.utils.isScreenWide$.subscribe(wide => (this.showCodeLineNumber = wide));
@@ -97,13 +101,17 @@ export class MarkdownViewerService {
     }
 
     this.markdown = new MarkdownIt(config.markdownIt);
-    this.metaPlugin = new MetaPlugin(this.markdown);
+    this.metaPlugin = new MetaPlugin(this.markdown, this.updateMeta);
     this.lispPlugin = new LispPlugin(this.markdown);
     this.markdown
       .use(MarkdonwItIncrementalDom, IncrementalDom, {
         incrementalizeDefaultRules: true
       })
-      .use(title)
+      .use(
+        title((title, level) => {
+          this.updateMeta({ title });
+        }, 1)
+      )
       .use(markdownVideoPlugin, {
         youtube: { width: 640, height: 390 }
       })
@@ -146,15 +154,50 @@ export class MarkdownViewerService {
     (<any>this.docRef.document).copier = new CopierService();
   }
 
-  public render(target: HTMLElement, raw: Document): string {
+  private updateMeta = meta => {
+    function isDiff(obj, withObj) {
+      for (const key of Object.keys(obj)) {
+        const value = obj[key];
+        const withValue = withObj[key];
+        if (value !== withValue) {
+          if (typeof value === 'object') {
+            if (isDiff(value, withValue)) return true;
+          } else {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    if (!meta) return;
+    asyncScheduler.schedule(
+      state => {
+        const doc = selectCurrentDocumentState(state);
+        if (!isDiff(meta, doc.metaData)) return;
+        const newMeta = {
+          ...doc.metaData,
+          ...meta
+        };
+        // this.store.dispatch(
+        //   new UpdateDocument({
+        //     collectionDocument: { id: doc.id, changes: {...doc, }
+        //   })
+        // );
+      },
+      0,
+      this.state.value
+    );
+  };
+
+  public render(target: HTMLElement, raw: string): string {
     const env: any = {};
     // because the increatal dom could not work with web components(angular elements)
     // have to using original render here.
     // todo: find solution to using the markdown-it-incremental0-dom later.
-    (this.markdown as any).meta = raw.metaData;
-    const r = (target.innerHTML = this.markdown.render(raw.content.content, env));
+    // (this.markdown as any).meta = raw.metaData;
+    const r = (target.innerHTML = this.markdown.render(raw, env));
     // const r = IncrementalDom.patch(target, (this.markdown as any).renderToIncrementalDOM(raw, env));
-    this.parsedContent.title = env.title;
     return r;
   }
 
