@@ -9,8 +9,8 @@
 
   "storage": {
     "github": {
-      "userName":"metasong",
-      "dataRepoName":"iam-data"
+      "userName": "metasong",
+      "dataRepoName": "iam-data"
     }
   }
 }
