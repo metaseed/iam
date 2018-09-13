@@ -2,7 +2,7 @@ import * as doc from './state/actions/document';
 import { Component, OnInit, ViewChild, Inject, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { APP_BASE_HREF } from '@angular/common';
-import { take, map, tap, takeUntil, combineLatest } from 'rxjs/operators';
+import { take, map, tap, takeUntil, combineLatest, filter } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocFormat, backoff } from 'core';
 import { Store, select } from '@ngrx/store';
@@ -84,6 +84,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.markdown$ = merge(
       this.store.select<Document>(selectCurrentDocumentState).pipe(
+        filter(d => d && !d.isUpdateMeta),
         map(d => {
           if (!d || !d.content) return '';
           return d.content.content;

@@ -100,17 +100,22 @@ export class MetaPlugin {
       data.push(str);
     }
 
-    const d = YAML.safeLoad(data.join('\n'), { json: true });
+    try {
+      const d = YAML.safeLoad(data.join('\n'), { json: true });
 
-    state.line = line + 1;
-    if (d) {
-      let token = state.push('meta_open', 'meta', 1);
-      token.markup = '---';
-      token = state.push('meta_body', 'meta-body', 0);
-      token.meta = d;
-      token = state.push('meta_close', 'meta', -1);
-      token.markup = '---';
-      this.updateMeta(d);
+      state.line = line + 1;
+      if (d) {
+        let token = state.push('meta_open', 'meta', 1);
+        token.markup = '---';
+        token = state.push('meta_body', 'meta-body', 0);
+        token.meta = d;
+        token = state.push('meta_close', 'meta', -1);
+        token.markup = '---';
+        this.updateMeta(d);
+      }
+    } catch (e) {
+      console.log(e);
+      return false;
     }
     // (this.markdownIt as any).meta = Object.assign({}, (this.markdownIt as any).meta, d);
     return true;

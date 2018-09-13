@@ -179,11 +179,14 @@ export class MarkdownViewerService {
           ...doc.metaData,
           ...meta
         };
-        // this.store.dispatch(
-        //   new UpdateDocument({
-        //     collectionDocument: { id: doc.id, changes: {...doc, }
-        //   })
-        // );
+        this.store.dispatch(
+          new UpdateDocument({
+            collectionDocument: {
+              id: doc.id,
+              changes: { ...doc, ...{ metaData: newMeta, isUpdateMeta: true } }
+            }
+          })
+        );
       },
       0,
       this.state.value
