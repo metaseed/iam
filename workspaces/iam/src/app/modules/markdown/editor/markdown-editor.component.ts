@@ -25,7 +25,7 @@ import {
   NEW_DOC_ID
 } from 'shared';
 import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../model/markdown.model';
-import { IContainer, ContainerRef } from 'core';
+import { IContainer, ContainerRef, ICanComponentDeactivate } from 'core';
 import { selectDocumentEditItState, EditMode } from '../state';
 import { KeyMapService } from './services';
 
@@ -34,7 +34,7 @@ import { KeyMapService } from './services';
   templateUrl: './markdown-editor.component.html',
   styleUrls: ['./markdown-editor.component.scss']
 })
-export class MarkdownEditorComponent {
+export class MarkdownEditorComponent implements ICanComponentDeactivate {
   editorLoaded = false;
   destroy$ = new Subject();
   DocumentMode = DocumentMode;
@@ -64,12 +64,12 @@ export class MarkdownEditorComponent {
     private dialog: MatDialog,
     @Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService,
     private editorService: MarkdownEditorService,
-    private keyMapService: KeyMapService, // reference keyMapService
-    private docSaveCoordinater: DocSaveCoordinateService,
+    private keyMapService: KeyMapService, // need to reference keyMapService to construct it.
+    private docSaveCoordinatorService: DocSaveCoordinateService,
     private store: Store<fromMarkdown.MarkdownState>,
     private ngZone: NgZone
   ) {
-    this.editorService.editorLoaded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+    this.editorService.docEditorLoaded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       setTimeout(() => (this.editorLoaded = true), 0);
     });
 
@@ -84,7 +84,7 @@ export class MarkdownEditorComponent {
         }, 0);
       });
 
-    this.contentChangeSubscription = this.editorService.contentChanged$.subscribe(this
+    this.contentChangeSubscription = this.editorService.docContentModified$.subscribe(this
       .markdownService.editorContentChanged$ as Subject<string>);
 
     this.docMode$.pipe(takeUntil(this.destroy$)).subscribe(mode => {
@@ -116,6 +116,7 @@ export class MarkdownEditorComponent {
     this.destroy$.next();
   }
 
+  // implements ICanComponentDeactivate
   canDeactivate(): Observable<boolean> {
     const deleteNewDoc = () => {
       const id = selectCurrentDocumentIdState(this.state.value);
@@ -123,7 +124,8 @@ export class MarkdownEditorComponent {
         this.store.dispatch(new DocumentEffectsDelete({ id }));
       }
     };
-    if (this.docSaveCoordinater.isDirty$.value) {
+
+    if (this.docSaveCoordinatorService.isDirty$.value) {
       return this.dialog
         .open(DocDirtyNotifyDialog)
         .afterClosed()

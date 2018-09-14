@@ -320,8 +320,8 @@ export class GithubCache implements ICache {
               return repo.issue.edit(meta.id, data).pipe(
                 tap(d => {
                   if (newTitle !== oldDocMeta.title) {
+                    // delete old docContent, if title changed.
                     repo
-                      // delete old docContent, if title changed.
                       .delFileViaSha(
                         `${DOCUMENTS_FOLDER_NAME}/${oldDocMeta.title}_${oldDocMeta.id}.${
                           oldDocMeta.format

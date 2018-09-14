@@ -1,7 +1,7 @@
 import { Routes, RouterModule } from '@angular/router';
 import { MarkdownEditorComponent } from './markdown-editor.component';
 import { NgModule } from '@angular/core';
-import { CanDeactivateGuard } from './services/can-deactive-guard.service';
+import { CanDeactivateGuard } from 'core';
 
 const markdownEditorRoutes: Routes = [
   {

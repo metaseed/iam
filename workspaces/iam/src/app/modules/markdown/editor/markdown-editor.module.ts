@@ -10,7 +10,7 @@ import { MaterialModule } from '../../material/material.module';
 import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
 import { CodemirrorToolbarComponent } from './codemirror-editor/codemirror-toolbar/codemirror-toolbar.component';
 import { DocSaveCoordinateService } from './services/doc-save-coordinate-service';
-import { CanDeactivateGuard } from './services/can-deactive-guard.service';
+import { CanDeactivateGuard } from '../../core/services/can-deactive-guard.service';
 import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
 import { SharedModule } from 'shared';
 import { KeyMapService } from './services/keymap.service';

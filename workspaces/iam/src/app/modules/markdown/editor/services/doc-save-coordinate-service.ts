@@ -17,7 +17,7 @@ export class DocSaveCoordinateService implements OnDestroy {
   isDirty$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   isSaving: boolean;
 
-  private editor$ = this.editorService.editorLoaded$;
+  private editor$ = this.editorService.docEditorLoaded$;
   private contentGeneration: number;
   private destroy$ = new Subject();
 
@@ -32,11 +32,11 @@ export class DocSaveCoordinateService implements OnDestroy {
         if (isDirty) this.store.dispatch(new DocumentEffectsSave({ content: editor.getValue() }));
       });
 
-    this.editorService.docLoaded$.subscribe((editor: CodeMirror.Editor) => {
+    this.editorService.docContentSet$.subscribe((editor: CodeMirror.Editor) => {
       this.docLoadedHandler(editor);
     });
 
-    this.editorService.contentChanged$
+    this.editorService.docContentModified$
       .pipe(
         takeUntil(this.destroy$),
         combineLatest(this.editor$)

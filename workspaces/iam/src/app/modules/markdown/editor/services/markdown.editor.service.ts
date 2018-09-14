@@ -7,19 +7,15 @@ export class MarkdownEditorService {
   private editor: CodeMirror.Doc & CodeMirror.Editor;
 
   constructor(@Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService) {
-    this.editorLoaded$.subscribe(e => (this.editor = e as any));
+    this.docEditorLoaded$.subscribe(e => (this.editor = e as any));
   }
 
-  public contentChanged$ = new Subject<string>();
-  public docLoaded$ = new Subject<CodeMirror.Editor>();
-  public onTouched$ = new Subject();
-  // should not in store. this is a complex object,
-  // and after in store, it's should be freezed, if then do modification, exception occures because of storeFreeze
-  public editorLoaded$ = new Subject<CodeMirror.Editor>();
-  public _editorRefresh$ = new Subject();
-  refresh() {
-    this._editorRefresh$.next();
-  }
+  // when doc content changes set via [model] change
+  public docContentSet$ = new Subject<CodeMirror.Editor>();
+  // when doc content changes set via editor box
+  public docContentModified$ = new Subject<string>();
+  // when doc editor(codemirror) loaded in browser
+  public docEditorLoaded$ = new Subject<CodeMirror.Editor>();
 
   public goToLine(lineNumber) {
     this.editor.focus();
@@ -28,7 +24,6 @@ export class MarkdownEditorService {
   }
 
   public selectLine(line) {
-    // this.editor.setCursor(line);
     this.editor.focus();
     this.editor.setSelection({ line: line, ch: 0 }, { line: line + 1, ch: 0 });
     this.editor.execCommand('showInCenter');

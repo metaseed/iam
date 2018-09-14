@@ -58,7 +58,7 @@ export class CodemirrorComponent implements ControlValueAccessor {
   host;
 
   @Output()
-  instance = null;
+  codemirror = null;
 
   _value = '';
   private showLineNumber;
@@ -66,7 +66,7 @@ export class CodemirrorComponent implements ControlValueAccessor {
   /**
    * Constructor
    */
-  constructor(private service: MarkdownEditorService, private utils: Utilities) {
+  constructor(private editorService: MarkdownEditorService, private utils: Utilities) {
     this.utils.isScreenWide$
       .pipe(takeUntil(this.destroy$))
       .subscribe(wide => (this.showLineNumber = wide));
@@ -118,7 +118,7 @@ export class CodemirrorComponent implements ControlValueAccessor {
   }
 
   ngAfterViewInit() {
-    this.service.editorLoaded$.next(this.instance);
+    this.editorService.docEditorLoaded$.next(this.codemirror);
     // this.service.markdownService.viewer$
     //   .pipe(switchMap(v => v.activeElement$))
     //   .subscribe(element => {
@@ -141,15 +141,15 @@ export class CodemirrorComponent implements ControlValueAccessor {
    * Initialize codemirror
    */
   codemirrorInit(config) {
-    this.instance = CodeMirror.fromTextArea(this.host.nativeElement, config);
-    this.instance.setValue(this._value);
+    this.codemirror = CodeMirror.fromTextArea(this.host.nativeElement, config);
+    this.codemirror.setValue(this._value);
 
-    this.instance.on('change', () => {
-      this.updateValue(this.instance.getValue());
+    this.codemirror.on('change', () => {
+      this.updateValue(this.codemirror.getValue());
     });
-    this.instance.on('cursorActivity', doc => {
+    this.codemirror.on('cursorActivity', doc => {
       const cur = doc.getCursor();
-      const coords = this.instance.cursorCoords(cur);
+      const coords = this.codemirror.cursorCoords(cur);
       const ele = document.elementFromPoint(coords.left, coords.top + 5 /*add offset to select*/);
       const curDiv: HTMLElement = doc.display.cursorDiv;
       if (ele && ele.className.includes('cm-em')) {
@@ -161,17 +161,17 @@ export class CodemirrorComponent implements ControlValueAccessor {
       }
     });
 
-    this.instance.on('focus', () => {
+    this.codemirror.on('focus', () => {
       this.focus.emit();
     });
 
-    this.instance.on('blur', () => {
+    this.codemirror.on('blur', () => {
       this.blur.emit();
     });
   }
 
   refresh() {
-    this.instance.refresh();
+    this.codemirror.refresh();
   }
 
   /**
@@ -180,7 +180,7 @@ export class CodemirrorComponent implements ControlValueAccessor {
   updateValue(value) {
     this.value = value;
     this.onTouched();
-    this.service.contentChanged$.next(value);
+    this.editorService.docContentModified$.next(value);
     this.change.emit(value);
   }
 
@@ -188,10 +188,10 @@ export class CodemirrorComponent implements ControlValueAccessor {
    * Implements ControlValueAccessor
    */
   writeValue(value) {
-    if (value !== undefined && this.instance) {
+    if (value !== undefined && this.codemirror) {
       this._value = value || '';
-      this.instance.setValue(this._value);
-      if (value) this.service.docLoaded$.next(this.instance);
+      this.codemirror.setValue(this._value);
+      if (value) this.editorService.docContentSet$.next(this.codemirror);
     }
   }
   onChange(_) {}

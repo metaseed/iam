@@ -59,7 +59,6 @@ import { DocumentEffectsSave, DocumentEffectsCreate } from 'shared';
 })
 export class EditorToolbarComponent implements OnInit, AfterViewInit {
   DocumentMode = DocumentMode;
-  isFullScreen: boolean;
   editor: any;
   @ViewChild('toolbar', { read: ElementRef })
   toolbar: ElementRef;
@@ -75,8 +74,6 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     public markdown: MarkdownComponent,
     private _editorService: MarkdownEditorService,
     public docService: DocService,
-    private _renderer: Renderer,
-    private _commandService: CommandService,
     private store: Store<fromMarkdown.MarkdownState>,
     private state: State<fromMarkdown.MarkdownState>,
     public docSaver: DocSaveCoordinateService,
@@ -87,7 +84,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
       .observe(['(orientation: portrait)', '(orientation: landscape)'])
       .pipe(takeUntil(this._destroy$))
       .subscribe(_ => {});
-    this._editorService.editorLoaded$.pipe(takeUntil(this._destroy$)).subscribe(editor => {
+    this._editorService.docEditorLoaded$.pipe(takeUntil(this._destroy$)).subscribe(editor => {
       this.editor = editor;
     });
     (<any>CodeMirror).commands.save = this.save;
@@ -132,7 +129,6 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   };
 
   togglePreview() {
-    this.editorResize();
     const markdownState: fromMarkdown.MarkdownState = this.state.value.markdown;
     if (markdownState.document.showPreview) {
       this.store.dispatch(new doc.HidePreview());
@@ -160,16 +156,6 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     event.stopPropagation();
   }
 
-  fullScreen() {
-    this.isFullScreen = !this.isFullScreen;
-    this._renderer.setElementStyle(
-      document.body,
-      'overflowY',
-      this.isFullScreen ? 'hidden' : 'auto'
-    );
-    this.editorResize();
-  }
-
   lockScrollWithView = false;
   more(event: { item: HTMLElement }) {
     if (event.item.id === '0') {
@@ -182,10 +168,5 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
       // });
       // dialogRef.componentInstance.myDialog._accept.subscribe(() => {});
     }
-  }
-  editorResize(timeOut: number = 100) {
-    setTimeout(() => {
-      this._editorService.refresh();
-    }, timeOut);
   }
 }

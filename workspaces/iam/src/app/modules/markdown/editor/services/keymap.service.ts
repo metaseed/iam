@@ -32,7 +32,7 @@ export class KeyMapService {
     // cm.setOption('keyMap', 'sublime');
     this._commandService.commands.subscribe(c => this.handleCommand(c));
 
-    this._editorService.editorLoaded$.subscribe((editor: CodeMirror.Editor) => {
+    this._editorService.docEditorLoaded$.subscribe((editor: CodeMirror.Editor) => {
       if (!KeyMapService.COMMANDS_CONFIG) {
         KeyMapService.COMMANDS_CONFIG = {
           Bold: {
