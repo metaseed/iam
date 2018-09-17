@@ -1,32 +1,32 @@
 import { createSelector } from '@ngrx/store';
 import * as fromDocument from './reducer';
-import { getDocumentState } from '../reducers';
+import { selectDocumentState } from '../state';
 
-export const getDocumentsState = createSelector(getDocumentState, fromDocument.selectAll);
-export const getDocumentEntitiesState = createSelector(
-  getDocumentState,
+export const selectDocumentsState = createSelector(selectDocumentState, fromDocument.selectAll);
+export const selectDocumentEntitiesState = createSelector(
+  selectDocumentState,
   fromDocument.selectEntities
 );
 export const selectCurrentDocumentIdState = createSelector(
-  getDocumentState,
+  selectDocumentState,
   fromDocument.selectCurrentDocumentId
 );
 export const selectCurrentDocumentState = createSelector(
-  getDocumentEntitiesState,
+  selectDocumentEntitiesState,
   selectCurrentDocumentIdState,
   (entities, id) => entities[id]
 );
 
 export const selectIdRangeHighState = createSelector(
-  getDocumentState,
+  selectDocumentState,
   fromDocument.selectDocumentIdsRangeHigh
 );
 
 export const selectIdRangeLowState = createSelector(
-  getDocumentState,
+  selectDocumentState,
   fromDocument.selectDocumentIdsRangeLow
 );
 
 export const getDocumentByIdSeletor = (id: number) => {
-  return createSelector(getDocumentEntitiesState, entities => entities[id]);
+  return createSelector(selectDocumentEntitiesState, entities => entities[id]);
 };

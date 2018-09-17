@@ -6,7 +6,7 @@ import { Store, State as StoreState } from '@ngrx/store';
 import {
   UpsertDocuments,
   DeleteDocuments,
-  getDocumentEntitiesState,
+  selectDocumentEntitiesState,
   AddDocument,
   UpdateDocument,
   DeleteDocument,
@@ -15,7 +15,7 @@ import {
   DocumentEffectsDelete
 } from './document';
 import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from './document/const';
-import { SharedState } from './reducers';
+import { SharedState } from './state';
 
 @Injectable()
 export class StoreCache implements ICache {
@@ -66,7 +66,7 @@ export class StoreCache implements ICache {
         } else {
           const array = new Array<Document>();
           metaArray.forEach(meta => {
-            const docDic = getDocumentEntitiesState(this.state.value);
+            const docDic = selectDocumentEntitiesState(this.state.value);
             const doc = docDic[meta.id];
 
             if (doc && doc.metaData.updateDate.getTime() === meta.updateDate.getTime()) return;
@@ -100,7 +100,7 @@ export class StoreCache implements ICache {
           this.store.dispatch(new DeleteDocument({ id: docContent.id }));
         }
 
-        const documents = getDocumentEntitiesState(this.state.value);
+        const documents = selectDocumentEntitiesState(this.state.value);
         const document = documents[id];
 
         if (document && document.content && document.content.sha === docContent.sha) return; // nothing changed.

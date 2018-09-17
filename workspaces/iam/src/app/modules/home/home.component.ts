@@ -11,7 +11,7 @@ import { switchIfEmit } from '../core/operators/switchIfEmit';
 import { MSG_DISPLAY_TIMEOUT, Document } from 'core';
 
 import {
-  getDocumentsState,
+  selectDocumentsState,
   ActionState,
   SharedState,
   DocumentEffectsReadBulkDocMeta
@@ -35,7 +35,7 @@ export class HomeComponent {
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
-  private initDocs$ = this.store.pipe(select(getDocumentsState));
+  private initDocs$ = this.store.pipe(select(selectDocumentsState));
   docs$: Observable<Document[]>;
   ActionStatus = ActionState;
 

@@ -12,15 +12,19 @@ export class ActionMoniter {
 
   // call this function when inner observable complete to monitor the completion of the action
   complete(action: CorrelationAction) {
-    return tap(undefined, undefined, () => {
-      const coId = action.coId;
-      console.groupCollapsed(`%c${action.type}-${coId}->complete`, 'background-color:#4285f4');
-      console.count(`${action.type}-${coId}->complete`);
-      console.groupEnd();
-      this.store.dispatch(
-        new SetActionStatusAction(new ActionStatus(ActionState.Complete, action))
-      );
-    });
+    return tap(
+      undefined,
+      err => console.error(err),
+      () => {
+        const coId = action.coId;
+        console.groupCollapsed(`%c${action.type}-${coId}->complete`, 'background-color:#4285f4');
+        console.count(`${action.type}-${coId}->complete`);
+        console.groupEnd();
+        this.store.dispatch(
+          new SetActionStatusAction(new ActionStatus(ActionState.Complete, action))
+        );
+      }
+    );
   }
 
   do$ = <T extends CorrelationAction>(actionType: string, pipe: OperatorFunction<T, any>) => {

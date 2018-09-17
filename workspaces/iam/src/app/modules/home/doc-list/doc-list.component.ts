@@ -1,21 +1,6 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
-  ViewChild,
-  ElementRef
-} from '@angular/core';
-import {
-  Document,
-  WindowRef,
-  NET_COMMU_TIMEOUT,
-  MSG_DISPLAY_TIMEOUT,
-  IContainer,
-  ContainerRef
-} from 'core';
-import { MatDialog, MatSnackBar } from '@angular/material';
+import { Component, OnInit, Input, ElementRef } from '@angular/core';
+import { Document, NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT, IContainer, ContainerRef } from 'core';
+import { MatSnackBar } from '@angular/material';
 import { Store, select } from '@ngrx/store';
 import {
   State,
@@ -23,15 +8,13 @@ import {
   DocumentEffectsDelete,
   monitorActionStatus$,
   DocumentEffectsActionTypes,
-  getDocumentsState,
-  ActionStatus,
+  selectDocumentsState,
   ActionState
 } from 'shared';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
-import { Subject, ReplaySubject, merge, asyncScheduler, from, of } from 'rxjs';
-import { takeUntil, filter, map, observeOn, tap, auditTime, startWith } from 'rxjs/operators';
-import { Router, RouterState, NavigationExtras } from '@angular/router';
-import { switchIfEmit } from 'core';
+import { Subject, merge, asyncScheduler } from 'rxjs';
+import { takeUntil, filter, map, observeOn, auditTime, startWith } from 'rxjs/operators';
+import { Router, NavigationExtras } from '@angular/router';
 
 const REFRESH_AUDITE_TIME = 3000;
 
@@ -44,13 +27,13 @@ export class DocListComponent implements OnInit {
   private docs;
   private destroy$ = new Subject();
 
-  private defaultTimeoutHandler = (action: string, info?: string) => (start: ActionStatus) => {
+  private defaultTimeoutHandler = (action: string, info?: string) => () => {
     console.warn('action timeout:' + action + (info ? `--${info}` : ''));
     this.snackBar.open(action + 'time out.', 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
   isLoadDone$ = merge(
-    this.store.pipe(select(getDocumentsState)),
+    this.store.pipe(select(selectDocumentsState)),
     monitorActionStatus$(
       this.store,
       DocumentEffectsActionTypes.ReadBulkDocMeta,
@@ -101,7 +84,6 @@ export class DocListComponent implements OnInit {
     public elementRef: ElementRef,
     private store: Store<State>,
     private router: Router,
-    private windowRef: WindowRef,
     private snackBar: MatSnackBar
   ) {
     this.container = new ContainerRef(elementRef.nativeElement);
@@ -128,7 +110,7 @@ export class DocListComponent implements OnInit {
         }),
         auditTime(REFRESH_AUDITE_TIME)
       )
-      .subscribe(e => {
+      .subscribe(() => {
         this.getMore();
       });
     this.panToRefresh();
