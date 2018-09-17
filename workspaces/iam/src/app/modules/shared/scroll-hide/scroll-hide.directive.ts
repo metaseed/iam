@@ -59,6 +59,9 @@ export class ScrollHideDirective implements OnDestroy {
   }
 
   @Input()
+  clickToggleEnable = true;
+
+  @Input()
   set hideHeight(v: number) {
     this._hideHeight_minus = -v;
     this._hideHeight_half_minus = -v / 2;
@@ -278,7 +281,7 @@ export class ScrollHideDirective implements OnDestroy {
               this.top = this.hideHeightMinus;
               this.setMargins('Clear');
             }
-          } else {
+          } else if (this.clickToggleEnable) {
             // click
             if (this.top === 0) {
               this.top = this.hideHeightMinus;

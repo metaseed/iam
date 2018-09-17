@@ -14,8 +14,8 @@ export class DocSearchService {
 
   constructor() {}
 
-  search(docs:Document[], keyword: string) {
-    if(keyword.trim()==''){
+  search(docs: Document[], keyword: string) {
+    if (keyword.trim() === '') {
       return docs;
     }
     const fuse = new Fuse(docs, this.options);

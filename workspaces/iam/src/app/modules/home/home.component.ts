@@ -1,12 +1,12 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { DocService } from './services/doc.service';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
-import { DocSearchService } from './services/doc-search.service';
+import { DocSearchService } from '../shared/services/doc-search.service';
 import { Store, select } from '@ngrx/store';
 import { Observable, from, Subject } from 'rxjs';
 import { map, debounceTime, distinctUntilChanged, combineLatest, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
-import { DocSearchComponent } from './doc-search/doc-search.component';
+import { DocSearchComponent } from 'shared';
 import { switchIfEmit } from '../core/operators/switchIfEmit';
 import { MSG_DISPLAY_TIMEOUT, Document } from 'core';
 
@@ -25,7 +25,8 @@ import {
 export class HomeComponent {
   private destroy$ = new Subject();
 
-  @ViewChild(DocSearchComponent) docSearch: DocSearchComponent;
+  @ViewChild(DocSearchComponent)
+  docSearch: DocSearchComponent;
   @ViewChild('docList', { read: ElementRef })
   scrollDocs: ElementRef;
 

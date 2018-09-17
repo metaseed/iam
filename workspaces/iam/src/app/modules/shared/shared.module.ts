@@ -1,5 +1,5 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { CommonModule as cm, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ReadingPositionIndicatorComponent } from './reading-position-indicator/reading-position-indicator.component';
 import { MaterialModule } from 'material';
 import { BottomNavigationComponent } from './bottom-navigation/bottom-navigation.component';
@@ -9,19 +9,20 @@ import { FormsModule } from '@angular/forms';
 import { ScrollHideDirective } from './scroll-hide/scroll-hide.directive';
 import { CoreModule } from 'core';
 import { StoreModule } from '@ngrx/store';
-import { SharedState, reducers, StoreCache, ActionMoniter, moduleStateName } from './state';
+import { SharedState, reducers, StoreCache, moduleStateName } from './state';
 import { EffectsModule } from '@ngrx/effects';
-import { DocumentEffects } from './state/document/effects';
 import { DocEffectsUtil } from './state/document/effects.util';
 import { DatabaseModule } from 'database';
 import { StorageModule } from '../net-storage/storage.module';
 import { effects } from './state/effects';
+import { DocSearchComponent } from './doc-search/doc-search.component';
+import { DocSearchService } from './services/doc-search.service';
 
 @NgModule({
   imports: [
     StorageModule,
     DatabaseModule,
-    cm,
+    CommonModule,
     MaterialModule,
     RouterModule,
     SplitPaneModule,
@@ -30,14 +31,15 @@ import { effects } from './state/effects';
   ],
   declarations: [ReadingPositionIndicatorComponent, BottomNavigationComponent, ScrollHideDirective],
   exports: [
+    DocSearchComponent,
     ScrollHideDirective,
     ReadingPositionIndicatorComponent,
     BottomNavigationComponent,
     SplitPaneModule,
     /* re-exporting */
     CommonModule,
-    CoreModule,
-    FormsModule
+    FormsModule,
+    CoreModule
   ],
   providers: [
     /*should have no provides in shared module*/
@@ -47,7 +49,7 @@ export class SharedModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: SharedModule,
-      providers: [DocEffectsUtil, StoreCache]
+      providers: [DocEffectsUtil, StoreCache, DocSearchService]
     };
   }
 }
