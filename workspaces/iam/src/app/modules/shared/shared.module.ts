@@ -29,7 +29,12 @@ import { DocSearchService } from './services/doc-search.service';
     StoreModule.forFeature<SharedState>(moduleStateName, reducers),
     EffectsModule.forFeature(effects)
   ],
-  declarations: [ReadingPositionIndicatorComponent, BottomNavigationComponent, ScrollHideDirective],
+  declarations: [
+    DocSearchComponent,
+    ReadingPositionIndicatorComponent,
+    BottomNavigationComponent,
+    ScrollHideDirective
+  ],
   exports: [
     DocSearchComponent,
     ScrollHideDirective,
