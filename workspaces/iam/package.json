@@ -6,7 +6,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --source-map --host=0.0.0.0",
-    "hmr": "ng serve --hmr",
+    "hmr": "ng serve --hmr --source-map --host=0.0.0.0",
     "build": "ng build --prod --named-chunks",
     "update:monaco": "ncp ../../node_modules/monaco-editor/min/ ./assets/monaco-editor/",
     "deploy": "ng build --prod --named-chunks --base-href /iam/ && angular-cli-ghpages --dir dist/iam && start http://metaseed.github.io/iam",

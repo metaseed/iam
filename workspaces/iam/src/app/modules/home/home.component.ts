@@ -26,7 +26,7 @@ export class HomeComponent {
   private destroy$ = new Subject();
 
   @ViewChild(DocSearchComponent)
-  docSearch: DocSearchComponent;
+  docSearchComponent: DocSearchComponent;
   @ViewChild('docList', { read: ElementRef })
   scrollDocs: ElementRef;
 
@@ -66,7 +66,7 @@ export class HomeComponent {
     this._rememberScrollPosition();
 
     let isSearching;
-    const filteredDocs$ = this.docSearch.Search.pipe(
+    const filteredDocs$ = this.docSearchComponent.Search.pipe(
       debounceTime(280),
       distinctUntilChanged(),
       tap(keyword => {

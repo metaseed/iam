@@ -85,6 +85,29 @@ i-code pre {
   color: $darkred;
 }
 
+.markdown-code__lang {
+  position: absolute;
+  z-index: 1;
+  background: #ddd;
+  height: 18px;
+  line-height: 16px;
+  min-width: 46px;
+  text-align: center;
+  padding-right: 18px;
+}
+.markdown-code__lang::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  border: #ddd;
+  right: 0;
+  border-right: transparent;
+  border-bottom: transparent;
+  border-width: 9px;
+  border-style: solid;
+  background: #f5f2f0;
+}
+
 .markdown-code {
   position: relative;
   display: flex;

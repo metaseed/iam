@@ -108,10 +108,9 @@ export class MetaPlugin {
         let token = state.push('meta_open', 'meta', 1);
         token.markup = '---';
         token = state.push('meta_body', 'meta-body', 0);
-        token.meta = d;
+        token.meta = this.updateMeta(d);
         token = state.push('meta_close', 'meta', -1);
         token.markup = '---';
-        this.updateMeta(d);
       }
     } catch (e) {
       console.log(e);

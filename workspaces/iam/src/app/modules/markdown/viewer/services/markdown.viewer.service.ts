@@ -170,27 +170,29 @@ export class MarkdownViewerService {
       return false;
     }
 
-    if (!meta) return;
+    if (!meta) return meta;
+    const doc = selectCurrentDocumentState(this.state.value);
+    if (!doc || !doc.metaData) return meta;
+    if (!isDiff(meta, doc.metaData)) return doc.metaData;
+    const newMeta = {
+      ...doc.metaData,
+      ...meta
+    };
     asyncScheduler.schedule(
-      state => {
-        const doc = selectCurrentDocumentState(state);
-        if (!isDiff(meta, doc.metaData)) return;
-        const newMeta = {
-          ...doc.metaData,
-          ...meta
-        };
+      m => {
         this.store.dispatch(
           new UpdateDocument({
             collectionDocument: {
               id: doc.id,
-              changes: { ...doc, ...{ metaData: newMeta, isUpdateMeta: true } }
+              changes: { ...doc, ...{ metaData: m, isUpdateMeta: true } }
             }
           })
         );
       },
       0,
-      this.state.value
+      newMeta
     );
+    return newMeta;
   };
 
   public render(target: HTMLElement, raw: string): string {
@@ -217,6 +219,7 @@ export class MarkdownViewerService {
         prismjs.highlightElement(codeNode);
 
         return `<div class="markdown-code">
+<div class="markdown-code__lang">${lang}</div>
 <div class="code-buttons">
 
 <button class="material-icons code-button"
