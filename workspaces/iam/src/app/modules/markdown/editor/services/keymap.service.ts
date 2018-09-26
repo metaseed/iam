@@ -116,8 +116,9 @@ export class KeyMapService {
       for (const key in configs) {
         if (configs.hasOwnProperty(key)) {
           const config = configs[key];
+          const me = this;
           option[config.hotKey] = function() {
-            this.insertContent(key);
+            me.insertContent(key);
           };
         }
       }

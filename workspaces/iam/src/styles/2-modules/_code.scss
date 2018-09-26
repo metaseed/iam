@@ -99,13 +99,9 @@ i-code pre {
   content: '';
   position: absolute;
   z-index: 1;
-  border: #ddd;
   right: 0;
-  border-right: transparent;
-  border-bottom: transparent;
-  border-width: 9px;
-  border-style: solid;
-  background: #f5f2f0;
+  border-right: 8px solid #f5f2f0;
+  border-top: 18px solid #ddd;
 }
 
 .markdown-code {
