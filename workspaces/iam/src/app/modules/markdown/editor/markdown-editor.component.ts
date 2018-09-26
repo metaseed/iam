@@ -64,7 +64,6 @@ export class MarkdownEditorComponent implements ICanComponentDeactivate {
     private dialog: MatDialog,
     @Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService,
     private editorService: MarkdownEditorService,
-    private keyMapService: KeyMapService, // need to reference keyMapService to construct it.
     private docSaveCoordinatorService: DocSaveCoordinateService,
     private store: Store<fromMarkdown.MarkdownState>,
     private ngZone: NgZone

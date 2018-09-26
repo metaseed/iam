@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Utilities } from 'core';
 import { VerticalSplitPaneComponent } from 'shared';
+import { KeyMapService } from '../../services';
 
 @Component({
   selector: 'ms-codemirror-toolbar',
@@ -17,7 +18,11 @@ export class CodemirrorToolbarComponent implements OnInit {
   @HostBinding('style.width')
   width;
 
-  constructor(private _verticalSplitPane: VerticalSplitPaneComponent, private _utils: Utilities) {
+  constructor(
+    private _verticalSplitPane: VerticalSplitPaneComponent,
+    private _utils: Utilities,
+    private _keyMapService: KeyMapService
+  ) {
     this._verticalSplitPane.notifySizeDidChange.pipe(takeUntil(this._destroy$)).subscribe(s => {
       if (this.width === s.primary) return;
       this.width = `${s.primary}px`;
@@ -28,6 +33,9 @@ export class CodemirrorToolbarComponent implements OnInit {
   @Input()
   get options(): any {
     return this._options;
+  }
+  insertContent(action: string) {
+    this._keyMapService.insertContent(action);
   }
 
   _hideIcons: any = { Ol: false, Italic: false, Link: false };
