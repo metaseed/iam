@@ -108,7 +108,11 @@ export class DocumentEffects {
         const format = action.payload.format;
         const newTitle = DocMeta.getTitle(action.payload.content);
 
-        if (!newTitle) return throwError(new Error('Must define a title!'));
+        if (!newTitle) {
+          const msg = 'Must define a title!';
+          this.snackbar.open(msg, 'OK');
+          return throwError(new Error(msg));
+        }
 
         if (doc.id === NEW_DOC_ID) {
           return this.storeCache.CreateDocument(content, format).pipe(
