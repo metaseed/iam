@@ -1,33 +1,20 @@
-import {
-  Component,
-  OnInit,
-  AfterViewInit,
-  Input,
-  Renderer,
-  ViewChild,
-  Inject,
-  ElementRef
-} from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, Inject, ElementRef } from '@angular/core';
 import { MarkdownComponent } from '../../markdown.component';
-import { DomSanitizer } from '@angular/platform-browser';
 
-import { Subscription, Subject, Observable, merge } from 'rxjs';
+import { Subject } from 'rxjs';
 import { DocService } from 'home';
 import { MarkdownEditorService } from '..';
-import { CommandService, Command, DocumentRef, DocFormat, ScrollEvent } from 'core';
+import { DocFormat } from 'core';
 import * as fromMarkdown from '../../state';
 import { DocumentMode } from '../../state/reducers/document';
-import { Store, select, State } from '@ngrx/store';
+import { Store, State } from '@ngrx/store';
 import * as doc from '../../state/actions/document';
 import * as edit from '../../state/actions/edit';
 import * as CodeMirror from 'codemirror';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';
-import { MatToolbar, MatDialog } from '@angular/material';
-import { takeUntil, map, share } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Utilities } from '../../../core/utils';
-import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../../model/markdown.model';
-import { HtmlAstPath } from '@angular/compiler';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { DocumentEffectsSave, DocumentEffectsCreate } from 'shared';
 
@@ -77,8 +64,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     private store: Store<fromMarkdown.MarkdownState>,
     private state: State<fromMarkdown.MarkdownState>,
     public docSaver: DocSaveCoordinateService,
-    private _breakpointObserver: BreakpointObserver,
-    @Inject(MARKDOWN_SERVICE_TOKEN) private _markdownService: IMarkdownService
+    private _breakpointObserver: BreakpointObserver
   ) {
     this._breakpointObserver
       .observe(['(orientation: portrait)', '(orientation: landscape)'])
@@ -143,7 +129,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     this.hideHeight = (this.toolbar.nativeElement as HTMLElement).offsetHeight;
   }
 
-  toViewMode = event => {
+  toViewMode = () => {
     this.store.dispatch(new doc.ViewMode());
   };
 

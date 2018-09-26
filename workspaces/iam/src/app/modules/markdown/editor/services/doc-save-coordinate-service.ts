@@ -59,13 +59,15 @@ export class DocSaveCoordinateService implements OnDestroy {
   }
 
   private docLoadedHandler(editor: CodeMirror.Editor) {
-    this.contentGeneration = editor.getDoc().changeGeneration();
+    const doc = editor.getDoc();
+    this.contentGeneration = doc.changeGeneration();
+    doc.clearHistory();
     this.checkDirty(editor);
   }
 
   private docSavedHandler(editor: CodeMirror.Editor) {
     if (editor) {
-      this.contentGeneration = editor.getDoc().changeGeneration();
+      this.contentGeneration = editor.getDoc().changeGeneration(false);
       this.checkDirty(editor);
     }
   }
