@@ -7,6 +7,7 @@ import { MarkdownState, ViewScrollAction } from '../../state';
 import { CommandService, Command } from 'core';
 import { MarkdownEditorService } from './markdown.editor.service';
 import { Store } from '@ngrx/store';
+import { DEFAULT_NEW_DOC_CONTENT, DEFAULT_DOC_META } from 'shared';
 
 interface ICommandConfig {
   [key: string]: {
@@ -71,7 +72,7 @@ export class KeyMapService {
             command: 'Image',
             func: (selectedText, defaultText) => `![${selectedText || defaultText}]()`,
             endSize: 1,
-            hotKey: 'Ctrl-M M'
+            hotKey: 'Ctrl-M Ctrl-I'
           },
           Ul: {
             command: 'Ul',
@@ -183,6 +184,7 @@ export class KeyMapService {
     option['Alt-Shift+Down'] = commands['duplicateLine'];
     option['Backspace'] = commands['smartBackspace'];
     option['Alt-M'] = 'showInCenter';
+    option['Ctrl-M M'] = this.insertMeta;
     /*
 Ctrl-F / Cmd-F Start searching
 Ctrl-G / Cmd-G Find next
@@ -192,6 +194,12 @@ Shift-Ctrl-R / Shift-Cmd-Option-F Replace all
 Alt-F Persistent search (dialog doesn't autoclose, enter to find next, Shift-Enter to find previous)
 Alt-G Jump to line*/
     this.editor.setOption('extraKeys', (<any>CodeMirror).normalizeKeyMap(option));
+  }
+
+  private insertMeta(cm) {
+    cm.setCursor({ line: 1, ch: 0 });
+    cm.replaceSelection(DEFAULT_DOC_META, 'start');
+    cm.focus();
   }
 
   handleCommand(command: Command) {
@@ -205,6 +213,9 @@ Alt-G Jump to line*/
 
     if (type === 'Focus') {
       this.editor.focus();
+      return;
+    } else if (type === 'Meta') {
+      this.insertMeta(this.editor);
       return;
     }
 
