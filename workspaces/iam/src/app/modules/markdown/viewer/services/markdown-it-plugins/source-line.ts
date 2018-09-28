@@ -27,11 +27,13 @@ export function sourceLine(
       const parentMap = JSON.stringify(token.map); // start from 0
       token.attrSet('data-source-lines', parentMap);
       token.attrSet('class', 'edit-it-content');
+      token.attrSet('onmouseenter', 'md_edit_mouseenter()');
+      token.attrSet('onmouseleave', 'md_edit_mouseleave()');
       const linkTokens = [
         Object.assign(new state.Token('link_open', 'a', 1), {
           attrs: [
             ['class', permalinkClass],
-            ['onclick', 'edit_event(event.target.parentElement.parentElement)'],
+            ['onclick', 'md_edit_event(event.target.parentElement.parentElement)'],
             ['aria-hidden', 'true']
           ]
         }),

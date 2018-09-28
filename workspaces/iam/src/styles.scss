@@ -29,7 +29,7 @@ body {
 .markdown-viewer {
   .edit-it-content:hover {
     > .edit-it {
-      .edit-it-icon {
+      > .edit-it-icon {
         visibility: visible;
         cursor: pointer;
       }
