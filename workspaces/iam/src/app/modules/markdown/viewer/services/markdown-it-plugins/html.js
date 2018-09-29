@@ -4,48 +4,42 @@ module.exports = (incrementalDom, enableIDOM) => md => {
     const [tokens, idx, , env, self] = args;
     if (enableIDOM) {
       const { elementClose, elementOpen, elementVoid, text, skipNode, skip } = incrementalDom;
-      return () => {
+      const content = tokens[idx].content.trimStart();
+      if (content.startsWith('<i-')) {
         // return function to bypass
-        const content = tokens[idx].content.trimStart();
-        if (content.startsWith('<i-')) {
-          const tag = content.match(/^<(i-[^>]+)>/)[1];
-          if (tag) {
+        const tag = content.match(/^<(i-[^>]+)>/)[1];
+        if (tag) {
+          return () => {
             elementOpen(tag);
             skip();
             elementClose(tag);
-          }
+          };
         }
-        skipNode();
-        return originalRule(...args);
-      };
-    } else {
-      return originalRule(...args);
+      }
     }
+    return originalRule(...args);
   };
 
   md.renderer.rules.html_inline = function(...args) {
     const [tokens, idx, , env, self] = args;
     if (enableIDOM) {
       const { elementClose, elementOpen, elementVoid, text, skipNode, skip } = incrementalDom;
-      return () => {
-        const content = tokens[idx].content.trimStart();
-        if (content.startsWith('<i-')) {
-          const tag = content.match(/^<(i-.*)>/)[1];
-          if (tag) {
+      const content = tokens[idx].content.trimStart();
+      if (content.startsWith('<i-')) {
+        const tag = content.match(/^<(i-.*)>/)[1];
+        if (tag) {
+          return () => {
             elementOpen(tag);
             skip();
-          }
+          };
         } else if (content.startsWith('</i-')) {
           const tag = content.match(/^<\/(i-[^>]+)>/)[1];
           if (tag) {
-            elementClose(tag);
+            return () => elementClose(tag);
           }
         }
-        skipNode();
-        return originalRule(...args);
-      };
-    } else {
-      return originalRule(...args);
+      }
     }
+    return originalRule(...args);
   };
 };

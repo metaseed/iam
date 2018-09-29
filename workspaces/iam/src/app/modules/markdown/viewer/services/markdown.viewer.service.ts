@@ -65,7 +65,7 @@ import { MarkdownState } from '../../state';
 import { State, Store } from '@ngrx/store';
 import { selectCurrentDocumentState, UpsertDocument, UpdateDocument } from 'shared';
 
-const enableIDOM = false;
+const enableIDOM = true;
 
 @Injectable()
 export class MarkdownViewerService {
