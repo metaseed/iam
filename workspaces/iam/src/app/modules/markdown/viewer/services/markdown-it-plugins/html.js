@@ -4,9 +4,10 @@ module.exports = incrementalDom => md => {
     const { elementClose, elementOpen, elementVoid, text, skipNode, skip } = incrementalDom;
     const originalRule = md.renderer.rules.html_block;
     return () => {
+      // return function to bypass
       const content = tokens[idx].content.trimStart();
       if (content.startsWith('<i-')) {
-        const tag = content.match(/^<(i-.*)>/)[1];
+        const tag = content.match(/^<(i-[^>]+)>/)[1];
         if (tag) {
           elementOpen(tag);
           skip();
@@ -31,7 +32,7 @@ module.exports = incrementalDom => md => {
           skip();
         }
       } else if (content.startsWith('</i-')) {
-        const tag = content.match(/^<\/(i-.*)>/)[1];
+        const tag = content.match(/^<\/(i-[^>]+)>/)[1];
         if (tag) {
           elementClose(tag);
         }

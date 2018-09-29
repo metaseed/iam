@@ -13,7 +13,7 @@ export class MetaPlugin {
     md.renderer.rules.meta_close = (tokens, index) => '</articleinfo>';
     md.renderer.rules.meta_body = (tokens, index) => {
       try {
-        const meta = tokens[index].meta;
+        const meta = (tokens[index] as any).docmeta;
         let content = '';
         if (meta.author) {
           let link;
@@ -56,9 +56,6 @@ export class MetaPlugin {
           content += '</ul>';
         }
         if (meta.enable && meta.enable.length > 0) {
-          if (meta.enable.includes('toc')) {
-            content += '<i-toc></i-toc>';
-          }
         }
         return content;
       } catch (e) {
@@ -108,7 +105,12 @@ export class MetaPlugin {
         let token = state.push('meta_open', 'meta', 1);
         token.markup = '---';
         token = state.push('meta_body', 'meta-body', 0);
-        token.meta = this.updateMeta(d);
+        token.docmeta = this.updateMeta(d);
+        if (token.docmeta.enable.includes('toc')) {
+          // put web component in html block; should not render it directly.
+          token = state.push('html_block', '', 0);
+          token.content = '<i-toc>/n</i-toc>';
+        }
         token = state.push('meta_close', 'meta', -1);
         token.markup = '---';
       }
