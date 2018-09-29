@@ -39,6 +39,7 @@ import * as mark from 'markdown-it-mark';
 import * as abbr from 'markdown-it-abbr';
 import * as deflist from 'markdown-it-deflist';
 import * as title from './markdown-it-plugins/title';
+import * as html from './markdown-it-plugins/html';
 import * as footnote from './markdown-it-plugins/footnote';
 import * as imsize from './markdown-it-plugins/imsize';
 import * as anchor from './markdown-it-plugins/anchor';
@@ -63,6 +64,8 @@ import { Document } from 'core';
 import { MarkdownState } from '../../state';
 import { State, Store } from '@ngrx/store';
 import { selectCurrentDocumentState, UpsertDocument, UpdateDocument } from 'shared';
+
+const enableIDOM = true;
 
 @Injectable()
 export class MarkdownViewerService {
@@ -145,7 +148,8 @@ export class MarkdownViewerService {
       })
       .use(latex)
       .use(imsize, { autofill: true })
-      .use(sourceLine);
+      .use(sourceLine)
+      .use(html(IncrementalDom));
 
     this.mermaidPlugin = new MermaidPlugin(this.markdown);
 
@@ -201,9 +205,21 @@ export class MarkdownViewerService {
     // have to using original render here.
     // todo: find solution to using the markdown-it-incremental0-dom later.
     // (this.markdown as any).meta = raw.metaData;
-    const r = (target.innerHTML = this.markdown.render(raw, env));
-    // const r = IncrementalDom.patch(target, (this.markdown as any).renderToIncrementalDOM(raw, env));
-    return r;
+    if (enableIDOM) {
+      try {
+        const r = IncrementalDom.patch(
+          target,
+          (this.markdown as any).renderToIncrementalDOM(raw, env)
+        );
+
+        return r;
+      } catch (e) {
+        console.log(e);
+        return e;
+      }
+    } else {
+      const r = (target.innerHTML = this.markdown.render(raw, env));
+    }
   }
 
   private DEFAULT_HIGHLIGHT_FUNCTION = (str, lang) => {
