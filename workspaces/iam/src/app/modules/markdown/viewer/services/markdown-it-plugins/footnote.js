@@ -1,16 +1,11 @@
-// Process footnotes
-//
-"use strict";
-
-////////////////////////////////////////////////////////////////////////////////
-// Renderer partials
+'use strict';
 
 function render_footnote_anchor_name(tokens, idx, options, env /*, slf*/) {
   var n = Number(tokens[idx].meta.id + 1).toString();
-  var prefix = "";
+  var prefix = '';
 
-  if (typeof env.docId === "string") {
-    prefix = "-" + env.docId + "-";
+  if (typeof env.docId === 'string') {
+    prefix = '-' + env.docId + '-';
   }
 
   return prefix + n;
@@ -20,38 +15,36 @@ function render_footnote_caption(tokens, idx /*, options, env, slf*/) {
   var n = Number(tokens[idx].meta.id + 1).toString();
 
   if (tokens[idx].meta.subId > 0) {
-    n += ":" + tokens[idx].meta.subId;
+    n += ':' + tokens[idx].meta.subId;
   }
 
-  return "[" + n + "]";
+  return '[' + n + ']';
 }
 
 function render_footnote_block_open(tokens, idx, options) {
   return (
-    (options.xhtmlOut
-      ? '<hr class="footnotes-sep" />\n'
-      : '<hr class="footnotes-sep">\n') +
+    (options.xhtmlOut ? '<hr class="footnotes-sep" />\n' : '<hr class="footnotes-sep">\n') +
     '<section class="footnotes">\n' +
     '<ol class="footnotes-list">\n'
   );
 }
 
 function render_footnote_block_close() {
-  return "</ol>\n</section>\n";
+  return '</ol>\n</section>\n';
 }
 
 function render_footnote_open(tokens, idx, options, env, slf) {
   var id = slf.rules.footnote_anchor_name(tokens, idx, options, env, slf);
 
   if (tokens[idx].meta.subId > 0) {
-    id += ":" + tokens[idx].meta.subId;
+    id += ':' + tokens[idx].meta.subId;
   }
 
   return '<li id="fn' + id + '" class="footnote-item">';
 }
 
 function render_footnote_close() {
-  return "</li>\n";
+  return '</li>\n';
 }
 
 module.exports = function footnote_plugin(md, conf) {
@@ -59,31 +52,25 @@ module.exports = function footnote_plugin(md, conf) {
   var parseLinkLabel = md.helpers.parseLinkLabel,
     isSpace = md.utils.isSpace;
 
-  md.renderer.rules.footnote_ref = function render_footnote_ref(
-    tokens,
-    idx,
-    options,
-    env,
-    slf
-  ) {
+  md.renderer.rules.footnote_ref = function render_footnote_ref(tokens, idx, options, env, slf) {
     var id = slf.rules.footnote_anchor_name(tokens, idx, options, env, slf);
     var caption = slf.rules.footnote_caption(tokens, idx, options, env, slf);
     var refid = id;
 
     if (tokens[idx].meta.subId > 0) {
-      refid += ":" + tokens[idx].meta.subId;
+      refid += ':' + tokens[idx].meta.subId;
     }
 
     return (
       '<sup class="footnote-ref"><a href="' +
       config.getUrl() +
-      "#fn" +
+      '#fn' +
       id +
       '" id="fnref' +
       refid +
       '">' +
       caption +
-      "</a></sup>"
+      '</a></sup>'
     );
   };
   md.renderer.rules.footnote_block_open = render_footnote_block_open;
@@ -100,16 +87,12 @@ module.exports = function footnote_plugin(md, conf) {
     var id = slf.rules.footnote_anchor_name(tokens, idx, options, env, slf);
 
     if (tokens[idx].meta.subId > 0) {
-      id += ":" + tokens[idx].meta.subId;
+      id += ':' + tokens[idx].meta.subId;
     }
 
     /* ↩ with escape code to prevent display as Apple Emoji on iOS */
     return (
-      ' <a href="' +
-      config.getUrl() +
-      "#fnref" +
-      id +
-      '" class="footnote-backref">\u21a9\uFE0E</a>'
+      ' <a href="' + config.getUrl() + '#fnref' + id + '" class="footnote-backref">\u21a9\uFE0E</a>'
     );
   };
 
@@ -172,9 +155,9 @@ module.exports = function footnote_plugin(md, conf) {
       state.env.footnotes.refs = {};
     }
     label = state.src.slice(start + 2, pos - 2);
-    state.env.footnotes.refs[":" + label] = -1;
+    state.env.footnotes.refs[':' + label] = -1;
 
-    token = new state.Token("footnote_reference_open", "", 1);
+    token = new state.Token('footnote_reference_open', '', 1);
     token.meta = { label: label };
     token.level = state.level++;
     state.tokens.push(token);
@@ -186,16 +169,14 @@ module.exports = function footnote_plugin(md, conf) {
 
     posAfterColon = pos;
     initial = offset =
-      state.sCount[startLine] +
-      pos -
-      (state.bMarks[startLine] + state.tShift[startLine]);
+      state.sCount[startLine] + pos - (state.bMarks[startLine] + state.tShift[startLine]);
 
     while (pos < max) {
       ch = state.src.charCodeAt(pos);
 
       if (isSpace(ch)) {
         if (ch === 0x09) {
-          offset += 4 - offset % 4;
+          offset += 4 - (offset % 4);
         } else {
           offset++;
         }
@@ -211,7 +192,7 @@ module.exports = function footnote_plugin(md, conf) {
 
     state.bMarks[startLine] = posAfterColon;
     state.blkIndent += 4;
-    state.parentType = "footnote";
+    state.parentType = 'footnote';
 
     if (state.sCount[startLine] < state.blkIndent) {
       state.sCount[startLine] += state.blkIndent;
@@ -225,7 +206,7 @@ module.exports = function footnote_plugin(md, conf) {
     state.sCount[startLine] = oldSCount;
     state.bMarks[startLine] = oldBMark;
 
-    token = new state.Token("footnote_reference_close", "", -1);
+    token = new state.Token('footnote_reference_close', '', -1);
     token.level = --state.level;
     state.tokens.push(token);
 
@@ -279,7 +260,7 @@ module.exports = function footnote_plugin(md, conf) {
         (tokens = [])
       );
 
-      token = state.push("footnote_ref", "", 0);
+      token = state.push('footnote_ref', '', 0);
       token.meta = { id: footnoteId };
 
       state.env.footnotes.list[footnoteId] = { tokens: tokens };
@@ -336,7 +317,7 @@ module.exports = function footnote_plugin(md, conf) {
     pos++;
 
     label = state.src.slice(start + 2, pos - 1);
-    if (typeof state.env.footnotes.refs[":" + label] === "undefined") {
+    if (typeof state.env.footnotes.refs[':' + label] === 'undefined') {
       return false;
     }
 
@@ -345,18 +326,18 @@ module.exports = function footnote_plugin(md, conf) {
         state.env.footnotes.list = [];
       }
 
-      if (state.env.footnotes.refs[":" + label] < 0) {
+      if (state.env.footnotes.refs[':' + label] < 0) {
         footnoteId = state.env.footnotes.list.length;
         state.env.footnotes.list[footnoteId] = { label: label, count: 0 };
-        state.env.footnotes.refs[":" + label] = footnoteId;
+        state.env.footnotes.refs[':' + label] = footnoteId;
       } else {
-        footnoteId = state.env.footnotes.refs[":" + label];
+        footnoteId = state.env.footnotes.refs[':' + label];
       }
 
       footnoteSubId = state.env.footnotes.list[footnoteId].count;
       state.env.footnotes.list[footnoteId].count++;
 
-      token = state.push("footnote_ref", "", 0);
+      token = state.push('footnote_ref', '', 0);
       token.meta = { id: footnoteId, subId: footnoteSubId, label: label };
     }
 
@@ -385,16 +366,16 @@ module.exports = function footnote_plugin(md, conf) {
     }
 
     state.tokens = state.tokens.filter(function(tok) {
-      if (tok.type === "footnote_reference_open") {
+      if (tok.type === 'footnote_reference_open') {
         insideRef = true;
         current = [];
         currentLabel = tok.meta.label;
         return false;
       }
-      if (tok.type === "footnote_reference_close") {
+      if (tok.type === 'footnote_reference_close') {
         insideRef = false;
         // prepend ':' to avoid conflict with Object.prototype members
-        refTokens[":" + currentLabel] = current;
+        refTokens[':' + currentLabel] = current;
         return false;
       }
       if (insideRef) {
@@ -408,35 +389,35 @@ module.exports = function footnote_plugin(md, conf) {
     }
     list = state.env.footnotes.list;
 
-    token = new state.Token("footnote_block_open", "", 1);
+    token = new state.Token('footnote_block_open', '', 1);
     state.tokens.push(token);
 
     for (i = 0, l = list.length; i < l; i++) {
-      token = new state.Token("footnote_open", "", 1);
+      token = new state.Token('footnote_open', '', 1);
       token.meta = { id: i, label: list[i].label };
       state.tokens.push(token);
 
       if (list[i].tokens) {
         tokens = [];
 
-        token = new state.Token("paragraph_open", "p", 1);
+        token = new state.Token('paragraph_open', 'p', 1);
         token.block = true;
         tokens.push(token);
 
-        token = new state.Token("inline", "", 0);
+        token = new state.Token('inline', '', 0);
         token.children = list[i].tokens;
-        token.content = "";
+        token.content = '';
         tokens.push(token);
 
-        token = new state.Token("paragraph_close", "p", -1);
+        token = new state.Token('paragraph_close', 'p', -1);
         token.block = true;
         tokens.push(token);
       } else if (list[i].label) {
-        tokens = refTokens[":" + list[i].label];
+        tokens = refTokens[':' + list[i].label];
       }
 
       state.tokens = state.tokens.concat(tokens);
-      if (state.tokens[state.tokens.length - 1].type === "paragraph_close") {
+      if (state.tokens[state.tokens.length - 1].type === 'paragraph_close') {
         lastParagraph = state.tokens.pop();
       } else {
         lastParagraph = null;
@@ -444,7 +425,7 @@ module.exports = function footnote_plugin(md, conf) {
 
       t = list[i].count > 0 ? list[i].count : 1;
       for (j = 0; j < t; j++) {
-        token = new state.Token("footnote_anchor", "", 0);
+        token = new state.Token('footnote_anchor', '', 0);
         token.meta = { id: i, subId: j, label: list[i].label };
         state.tokens.push(token);
       }
@@ -453,18 +434,18 @@ module.exports = function footnote_plugin(md, conf) {
         state.tokens.push(lastParagraph);
       }
 
-      token = new state.Token("footnote_close", "", -1);
+      token = new state.Token('footnote_close', '', -1);
       state.tokens.push(token);
     }
 
-    token = new state.Token("footnote_block_close", "", -1);
+    token = new state.Token('footnote_block_close', '', -1);
     state.tokens.push(token);
   }
 
-  md.block.ruler.before("reference", "footnote_def", footnote_def, {
-    alt: ["paragraph", "reference"]
+  md.block.ruler.before('reference', 'footnote_def', footnote_def, {
+    alt: ['paragraph', 'reference']
   });
-  md.inline.ruler.after("image", "footnote_inline", footnote_inline);
-  md.inline.ruler.after("footnote_inline", "footnote_ref", footnote_ref);
-  md.core.ruler.after("inline", "footnote_tail", footnote_tail);
+  md.inline.ruler.after('image', 'footnote_inline', footnote_inline);
+  md.inline.ruler.after('footnote_inline', 'footnote_ref', footnote_ref);
+  md.core.ruler.after('inline', 'footnote_tail', footnote_tail);
 };

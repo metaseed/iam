@@ -9,6 +9,7 @@ export class MetaPlugin {
   }
 
   metaPlugin = (md: MarkdownIt.MarkdownIt) => {
+    md.block.ruler.before('code', 'meta', this.metaParser, { alt: [] });
     md.renderer.rules.meta_open = (tokens, index) => '<articleinfo class="doc-meta">';
     md.renderer.rules.meta_close = (tokens, index) => '</articleinfo>';
     md.renderer.rules.meta_body = (tokens, index) => {
@@ -63,11 +64,9 @@ export class MetaPlugin {
         return e;
       }
     };
-
-    md.block.ruler.before('code', 'meta', this.metaParser, { alt: [] });
   };
 
-  get = (state, line) => {
+  getLine = (state, line) => {
     const pos = state.bMarks[line];
     const max = state.eMarks[line];
     return state.src.substr(pos, max - pos);
@@ -80,15 +79,17 @@ export class MetaPlugin {
     if (state.tShift[startLine] < 0) {
       return false;
     }
-    if (!this.get(state, startLine).match(/^---$/)) {
+    if (!this.getLine(state, startLine).match(/^---$/)) {
       return false;
     }
     const data = [];
     let line = startLine;
+    let findEnd = false;
     while (line < endLine) {
       line++;
-      const str = this.get(state, line);
+      const str = this.getLine(state, line);
       if (str.match(/^---$/)) {
+        findEnd = true;
         break;
       }
       if (state.tShift[line] < 0) {
@@ -96,6 +97,8 @@ export class MetaPlugin {
       }
       data.push(str);
     }
+
+    if (!findEnd) return;
 
     try {
       const d = YAML.safeLoad(data.join('\n'), { json: true });
@@ -106,7 +109,7 @@ export class MetaPlugin {
         token.markup = '---';
         token = state.push('meta_body', 'meta-body', 0);
         token.docmeta = this.updateMeta(d);
-        if (token.docmeta.enable.includes('toc')) {
+        if (token.docmeta && token.docmeta.enable.includes('toc')) {
           // put web component in html block; should not render it directly.
           token = state.push('html_block', '', 0);
           token.content = '<i-toc>/n</i-toc>';

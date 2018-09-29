@@ -214,11 +214,12 @@ export class MarkdownViewerService {
 
         return r;
       } catch (e) {
-        console.log(e);
+        console.error(e);
         return e;
       }
     } else {
       const r = (target.innerHTML = this.markdown.render(raw, env));
+      return r;
     }
   }
 

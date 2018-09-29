@@ -36,11 +36,3 @@ export class ContainerPlugin {
     };
   };
 }
-
-// console.log(md.render('::: spoiler click me\n*content*\n:::\n'));
-
-// Output:
-//
-// <details><summary>click me</summary>
-// <p><em>content</em></p>
-// </details>

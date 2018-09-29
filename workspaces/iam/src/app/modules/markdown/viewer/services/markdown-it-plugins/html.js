@@ -32,11 +32,11 @@ module.exports = (incrementalDom, enableIDOM) => md => {
             elementOpen(tag);
             skip();
           };
-        } else if (content.startsWith('</i-')) {
-          const tag = content.match(/^<\/(i-[^>]+)>/)[1];
-          if (tag) {
-            return () => elementClose(tag);
-          }
+        }
+      } else if (content.startsWith('</i-')) {
+        const tag = content.match(/^<\/(i-[^>]+)>/)[1];
+        if (tag) {
+          return () => elementClose(tag);
         }
       }
     }
