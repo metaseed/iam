@@ -65,7 +65,7 @@ import { MarkdownState } from '../../state';
 import { State, Store } from '@ngrx/store';
 import { selectCurrentDocumentState, UpsertDocument, UpdateDocument } from 'shared';
 
-const enableIDOM = true;
+const enableIDOM = false;
 
 @Injectable()
 export class MarkdownViewerService {
@@ -149,7 +149,7 @@ export class MarkdownViewerService {
       .use(latex)
       .use(imsize, { autofill: true })
       .use(sourceLine)
-      .use(html(IncrementalDom));
+      .use(html(IncrementalDom, enableIDOM));
 
     this.mermaidPlugin = new MermaidPlugin(this.markdown);
 
