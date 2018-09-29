@@ -15,6 +15,7 @@ module.exports = (incrementalDom, enableIDOM) => md => {
             elementClose(tag);
           }
         }
+        skipNode();
         return originalRule(...args);
       };
     } else {
@@ -40,6 +41,7 @@ module.exports = (incrementalDom, enableIDOM) => md => {
             elementClose(tag);
           }
         }
+        skipNode();
         return originalRule(...args);
       };
     } else {
