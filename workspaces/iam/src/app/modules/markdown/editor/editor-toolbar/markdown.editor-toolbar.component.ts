@@ -129,7 +129,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
     this.hideHeight = (this.toolbar.nativeElement as HTMLElement).offsetHeight;
   }
 
-  toViewMode = () => {
+  toViewMode = event => {
     this.store.dispatch(new doc.ViewMode());
   };
 

@@ -50,14 +50,14 @@ export class MarkdownViewerComponent {
     const container = this.hostElement;
     this.lozad = lozad('img[data-src]', { container });
 
-    this.updateContent.pipe(debounceTime(800, asyncScheduler)).subscribe(value => {
+    this.updateContent.pipe(debounceTime(500, asyncScheduler)).subscribe(value => {
       this.service.render(this.hostElement, value);
       this.lozad.observe();
 
       const targetElement = this.parent.viewerContainerDiv.nativeElement;
       this.elementsLoader.loadContainedCustomElements(targetElement).subscribe();
     });
-    this.updateToc.pipe(debounceTime(5000, asyncScheduler)).subscribe(_ => {
+    this.updateToc.pipe(debounceTime(3000, asyncScheduler)).subscribe(_ => {
       const docId = getAddr(this.documentRef.document.location.href);
       const targetElement = this.parent.viewerContainerDiv.nativeElement;
       let addTitleAndToc = () => {

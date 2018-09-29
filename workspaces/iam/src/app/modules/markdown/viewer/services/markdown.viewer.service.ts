@@ -239,7 +239,7 @@ export class MarkdownViewerService {
 <div class="code-buttons">
 
 <button class="material-icons code-button"
-onclick="edit_event(event.target.parentElement.parentElement.parentElement)">
+onclick="md_edit_event(event.target.parentElement.parentElement.parentElement)">
 edit
 </button>
 
