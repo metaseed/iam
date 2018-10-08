@@ -49,7 +49,6 @@ import { MarkdownConfig } from '../markdown.config';
 import latex from 'markdown-it-latex';
 import { mergeConf, DocumentRef, base64Encode } from 'core';
 import { Router } from '@angular/router';
-// import latex from 'markdown-it-katex';
 import { MermaidPlugin } from './markdown-it-plugins/mermaid.plugin';
 import { CopierService } from 'core';
 import { Subscription, asyncScheduler } from 'rxjs';
@@ -146,9 +145,9 @@ export class MarkdownViewerService {
         },
         includeLevel: [2, 3, 4]
       })
-      .use(latex)
       .use(imsize, { autofill: true })
       .use(sourceLine)
+      .use(latex)
       .use(html(IncrementalDom, enableIDOM));
 
     this.mermaidPlugin = new MermaidPlugin(this.markdown);
@@ -201,15 +200,29 @@ export class MarkdownViewerService {
 
   public render(target: HTMLElement, raw: string): string {
     const env: any = {};
-    // because the increatal dom could not work with web components(angular elements)
-    // have to using original render here.
-    // todo: find solution to using the markdown-it-incremental0-dom later.
     // (this.markdown as any).meta = raw.metaData;
     if (enableIDOM) {
       try {
+        const code_inline_before: any = this.markdown.renderer.rules.code_inline; // latex code_inline rule or default
+        const { elementClose, elementOpen, elementVoid, text, skipNode, skip } = IncrementalDom;
+
+        const md = this.markdown;
+        const irender = md['IncrementalDOMRenderer'];
+        const irender_code_inline_rule = irender.rules.code_inline;
+        // override the irender rules
+        irender.rules.code_inline = (...args) => {
+          const [tokens, idx, options, env, slf] = args;
+          const content = tokens[idx].content;
+          if (content.startsWith('$') || content.startsWith('@')) {
+            // latex
+            return code_inline_before(...args);
+          }
+          return irender_code_inline_rule(...args);
+        };
+
         const r = IncrementalDom.patch(
           target,
-          (this.markdown as any).renderToIncrementalDOM(raw, env)
+          irender.render(md.parse(raw, env), (md as any).options, env)
         );
 
         return r;
