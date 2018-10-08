@@ -48,7 +48,7 @@ export class KeyMapService {
             command: 'Italic',
             func: (selectedText, defaultText) => `*${selectedText || defaultText}*`,
             startSize: 1,
-            hotKey: 'Ctrl-M I'
+            hotKey: 'Ctrl-M T'
           },
           Heading: {
             command: 'Heading',
@@ -72,7 +72,7 @@ export class KeyMapService {
             command: 'Image',
             func: (selectedText, defaultText) => `![${selectedText || defaultText}]()`,
             endSize: 1,
-            hotKey: 'Ctrl-M Ctrl-I'
+            hotKey: 'Ctrl-M I'
           },
           Ul: {
             command: 'Ul',
