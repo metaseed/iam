@@ -48,11 +48,11 @@ export class MetaPlugin {
           }
           content += `</div>`;
         }
-
-        if (meta.tag) {
+        const tag = meta.tags || meta.tag;
+        if (tag) {
           content += '<ul class="meta-tags">';
-          meta.tag.forEach(tag => {
-            content += '<li class="meta-tag">' + tag + '</li>';
+          tag.forEach(t => {
+            content += '<li class="meta-tag">' + t + '</li>';
           });
           content += '</ul>';
         }
