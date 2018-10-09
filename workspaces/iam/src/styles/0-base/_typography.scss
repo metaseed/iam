@@ -5,35 +5,6 @@ html {
 }
 
 .markdown-container {
-  blockquote {
-    @include mat-typography-level-to-styles($iam-typography-config, blockquote);
-    color: #555;
-    --x-height-multiplier: 0.375;
-    --baseline-multiplier: 0.17;
-    font-style: italic;
-    border-left: 3px solid rgba(0, 0, 0, 0.84);
-    padding-left: 20px;
-    margin-left: 0px; // padding-bottom: 2px;
-    // border-left: 0.25rem solid #eceeef;
-  }
-  pre[class*='language-'] {
-    font-size: 90%;
-    line-height: 1.2;
-    margin: 0;
-    code {
-      // line-height: inherit;
-      font-family: $code-font;
-      font-size: 90%;
-      white-space: pre-wrap;
-    }
-  }
-
-  code {
-    margin: 0;
-    background-color: rgba(27, 31, 35, 0.05);
-    font-family: $code-font;
-    border-radius: 3px;
-  }
   kbd {
     display: inline-block;
     padding: 3px 5px;
@@ -56,6 +27,51 @@ html {
     font-size: 0.3rem;
   }
   .markdown-viewer {
+    blockquote {
+      @include mat-typography-level-to-styles($iam-typography-config, blockquote);
+      color: #555;
+      --x-height-multiplier: 0.375;
+      --baseline-multiplier: 0.17;
+      font-style: italic;
+      border-left: 3px solid rgba(0, 0, 0, 0.84);
+      padding-left: 20px;
+      margin-left: 0px; // padding-bottom: 2px;
+      // border-left: 0.25rem solid #eceeef;
+    }
+    pre[class*='language-'] {
+      font-family: $code-font;
+      font-size: 1.4rem;
+      line-height: 1.9rem;
+      margin: 0.8em 0 0;
+    }
+    code {
+      margin: 0;
+      background-color: #f5f2f0;
+      font-family: $code-font;
+      font-size: 1.4rem;
+      line-height: 1.9rem;
+      white-space: pre-wrap;
+    }
+
+    pre:not(.line-numbers)[data-line] {
+      padding: 1em;
+    }
+    pre.line-numbers {
+      margin-top: 0.8em;
+      line-height: 1.9rem;
+      .line-numbers-rows {
+        font-family: $code-font;
+        font-size: 1.4rem;
+        line-height: 1.9rem;
+      }
+    }
+    pre .line-highlight {
+      margin-top: 1em;
+    }
+    .line-highlight:before,
+    .line-highlight[data-end]:after {
+      left: 0em;
+    }
     h1 {
       counter-reset: the-h2;
     }
