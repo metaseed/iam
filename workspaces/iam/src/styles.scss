@@ -10,6 +10,7 @@ body {
 @import '~markdown-it-latex/src/katex.css';
 @import '~prismjs/themes/prism';
 @import '~prismjs/plugins/line-numbers/prism-line-numbers';
+@import '~prismjs/plugins/line-highlight/prism-line-highlight';
 @media all and (min-width: 960px) {
   ::-webkit-scrollbar {
     width: 6px;

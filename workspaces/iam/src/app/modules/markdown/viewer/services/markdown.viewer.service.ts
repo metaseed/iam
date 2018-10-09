@@ -5,7 +5,6 @@ import * as prismjs from 'prismjs';
 // import 'prismjs/components/prism-core';
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-c';
-
 import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-cpp';
@@ -27,6 +26,7 @@ import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-vim';
 import 'prismjs/components/prism-yaml';
 import 'prismjs/plugins/line-numbers/prism-line-numbers';
+import 'prismjs/plugins/line-highlight/prism-line-highlight';
 import * as MarkdownIt from 'markdown-it';
 import * as markdownVideoPlugin from 'markdown-it-video';
 import * as tasklists from 'markdown-it-task-lists';
@@ -43,6 +43,7 @@ import * as html from './markdown-it-plugins/html';
 import * as footnote from './markdown-it-plugins/footnote';
 import * as imsize from './markdown-it-plugins/imsize';
 import * as anchor from './markdown-it-plugins/anchor';
+import { fence } from './markdown-it-plugins/fence';
 import * as toc from './markdown-it-plugins/toc';
 import { ContainerPlugin } from './markdown-it-plugins/container';
 import { MarkdownConfig } from '../markdown.config';
@@ -128,6 +129,7 @@ export class MarkdownViewerService {
       })
       .use(deflist)
       .use(abbr)
+      .use(fence)
       .use(anchor, {
         level: 1,
         // slugify: string => string,
@@ -198,9 +200,10 @@ export class MarkdownViewerService {
     return newMeta;
   };
 
+  env: any = {};
+  target: HTMLElement;
   public render(target: HTMLElement, raw: string): string {
-    const env: any = {};
-    // (this.markdown as any).meta = raw.metaData;
+    this.target = target;
     if (enableIDOM) {
       try {
         const code_inline_before: any = this.markdown.renderer.rules.code_inline; // latex code_inline rule or default
@@ -222,7 +225,7 @@ export class MarkdownViewerService {
 
         const r = IncrementalDom.patch(
           target,
-          irender.render(md.parse(raw, env), (md as any).options, env)
+          irender.render(md.parse(raw, this.env), md['options'], this.env)
         );
 
         return r;
@@ -231,24 +234,31 @@ export class MarkdownViewerService {
         return e;
       }
     } else {
-      const r = (target.innerHTML = this.markdown.render(raw, env));
+      const r = (target.innerHTML = this.markdown.render(raw, this.env));
       return r;
     }
   }
 
-  private DEFAULT_HIGHLIGHT_FUNCTION = (str, lang) => {
+  private DEFAULT_HIGHLIGHT_FUNCTION = (str, lang: string) => {
+    const reg = /\s+{[ ,-\d+]+}/;
+    lang = lang.replace(reg, '');
+    const hlLineNumbers = this.env.highlightLineNumbers;
     const language = prismjs.languages[lang];
     if (lang && language) {
-      const preNode: Element = this.docRef.document.createElement('pre');
+      const preNode: HTMLElement = this.docRef.document.createElement('pre');
       const codeNode = this.docRef.document.createElement('code');
       preNode.className = (this.showCodeLineNumber ? 'line-numbers' : '') + ' language-' + lang;
       preNode.appendChild(codeNode);
       codeNode.textContent = str;
+      if (hlLineNumbers) preNode.setAttribute('data-line', hlLineNumbers);
+      preNode.style.visibility = 'collapse';
+      this.target.appendChild(preNode);
 
       try {
         prismjs.highlightElement(codeNode);
-
-        return `<div class="markdown-code">
+        preNode.style.visibility = 'visible';
+        this.target.removeChild(preNode);
+        const r = `<div class="markdown-code">
 <div class="markdown-code__lang">${lang}</div>
 <div class="code-buttons">
 
@@ -268,6 +278,8 @@ originalstr=${base64Encode(str)}
 onclick="document.copier.copyText(this.attributes.originalstr.value,true)">
 <span aria-hidden="true">content_copy</span>
 </button></div>${preNode.outerHTML}</div>`;
+
+        return r;
       } catch (e) {
         console.error(e);
       }
