@@ -55,7 +55,7 @@ html {
 
     pre:not(.line-numbers)[data-line] {
       padding: 1em;
-      padding-left: 1.5em;
+      padding-left: 1.7em;
     }
     pre.line-numbers {
       margin-top: 0.8em;
@@ -63,7 +63,7 @@ html {
       .line-numbers-rows {
         font-family: $code-font;
         font-size: 1.4rem;
-        line-height: 1.9rem;
+        line-height: 1rem;
       }
     }
     pre .line-highlight {
