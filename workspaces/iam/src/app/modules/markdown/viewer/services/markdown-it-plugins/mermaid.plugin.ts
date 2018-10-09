@@ -6,7 +6,7 @@ export class MermaidPlugin {
   }
   mermaidChart = code => {
     try {
-      let id = 'id' + uid();
+      const id = 'id' + uid();
       this.mermaid().then(mermaid => {
         mermaid.parse(code);
         mermaid.init(undefined, `#${id}`);

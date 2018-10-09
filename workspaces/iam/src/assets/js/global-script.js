@@ -36,7 +36,7 @@ function md_edit_event(target) {
   element.dispatchEvent(
     new CustomEvent('edit-it', {
       bubbles: true,
-      detail: { element, sourceLine: JSON.parse(element.getAttribute('data-source-lines')) }
+      detail: { sourceLine: JSON.parse(element.getAttribute('data-source-lines')) }
     })
   );
 }

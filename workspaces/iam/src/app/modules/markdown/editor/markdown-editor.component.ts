@@ -75,7 +75,7 @@ export class MarkdownEditorComponent implements ICanComponentDeactivate {
     this.store
       .select(selectDocumentEditItState)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(({ element, sourceLine } = {} as any) => {
+      .subscribe(({ sourceLine } = {} as any) => {
         if (!sourceLine) return;
         this.store.dispatch(new EditMode());
         setTimeout(() => {
