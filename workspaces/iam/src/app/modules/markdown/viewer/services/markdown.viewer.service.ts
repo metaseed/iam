@@ -250,7 +250,10 @@ export class MarkdownViewerService {
       preNode.className = (this.showCodeLineNumber ? 'line-numbers' : '') + ' language-' + lang;
       preNode.appendChild(codeNode);
       codeNode.textContent = str;
-      if (hlLineNumbers) preNode.setAttribute('data-line', hlLineNumbers);
+      if (hlLineNumbers) {
+        preNode.setAttribute('data-line', hlLineNumbers);
+        codeNode.style['white-space'] = 'pre';
+      }
       preNode.style.visibility = 'collapse';
       this.target.appendChild(preNode);
 

@@ -9,12 +9,10 @@ window.addEventListener(
 
 function wrap_text(event) {
   const e = event.target.parentElement.parentElement.getElementsByTagName('code')[0];
-  if (!e.nowrap) {
+  if (e.style['white-space'] === 'pre-wrap') {
     e.style['white-space'] = 'pre';
-    e.nowrap = true;
   } else {
     e.style['white-space'] = 'pre-wrap';
-    e.nowrap = false;
   }
 }
 
