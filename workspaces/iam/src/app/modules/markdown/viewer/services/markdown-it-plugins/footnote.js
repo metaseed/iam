@@ -29,7 +29,8 @@ function render_footnote_block_open(tokens, idx, options) {
   );
 }
 
-function render_footnote_block_close() {
+function render_footnote_block_close(tokens, idx, options, env, slf) {
+  env.footnotes = null; // redo from start next time.
   return '</ol>\n</section>\n';
 }
 
@@ -62,7 +63,7 @@ module.exports = function footnote_plugin(md, conf) {
     }
 
     return (
-      '<sup class="footnote-ref"><a href="' +
+      '<sup class="footnote-ref has-tooltip"><a href="' +
       config.getUrl() +
       '#fn' +
       id +
@@ -440,7 +441,6 @@ module.exports = function footnote_plugin(md, conf) {
 
     token = new state.Token('footnote_block_close', '', -1);
     state.tokens.push(token);
-    state.env.footnotes = null; // redo from start next time.
   }
 
   md.block.ruler.before('reference', 'footnote_def', footnote_def, {
