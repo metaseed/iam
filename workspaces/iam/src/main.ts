@@ -1,5 +1,4 @@
-//import './polyfills';
-import { enableProdMode } from '@angular/core';
+import { enableProdMode, ApplicationRef } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import 'hammerjs';
 
@@ -7,18 +6,21 @@ import { AppModule } from 'app/app.module';
 import { environment } from 'environments/environment';
 
 import { hmrBootstrap } from 'hmr';
+import { enableDebugTools } from '@angular/platform-browser';
 
 if (environment.production) {
   enableProdMode();
 }
 
 const bootstrap = platformBrowserDynamic().bootstrapModule(AppModule);
-// .then(() => {
-//   // if ('serviceWorker' in navigator) {
-//   //   navigator.serviceWorker.register('/ngsw-worker.js');
-//   // }
-// })
-// .catch(err => console.log(err));
+
+if (!environment.production) {
+  bootstrap.then(moduleRef => {
+    const applicationRef = moduleRef.injector.get(ApplicationRef);
+    const appComponent = applicationRef.components[0];
+    enableDebugTools(appComponent);
+  });
+}
 
 if (environment.hmr) {
   if (module['hot']) {
