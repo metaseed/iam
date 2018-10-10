@@ -63,7 +63,9 @@ module.exports = function footnote_plugin(md, conf) {
     }
 
     return (
-      '<sup class="footnote-ref has-tooltip"><a href="' +
+      '<sup class="footnote-ref has-tooltip" data-id="fn' +
+      id +
+      '" onmouseenter=md_footnote_tooltip()><a href="' +
       config.getUrl() +
       '#fn' +
       id +

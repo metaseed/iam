@@ -38,3 +38,17 @@ function md_edit_event(target) {
     })
   );
 }
+
+function md_footnote_tooltip() {
+  const id = event.target.getAttribute('data-id');
+  const has = event.target.getElementsByClassName('tooltip');
+  if (!has.length) {
+    const e = document.getElementById(id).firstElementChild.cloneNode(true);
+    while (e.lastElementChild && e.lastElementChild.tagName === 'A') {
+      e.removeChild(e.lastElementChild);
+    }
+    e.removeAttribute('id');
+    e.classList.add('tooltip');
+    event.target.appendChild(e);
+  }
+}
