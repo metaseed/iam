@@ -440,6 +440,7 @@ module.exports = function footnote_plugin(md, conf) {
 
     token = new state.Token('footnote_block_close', '', -1);
     state.tokens.push(token);
+    state.env.footnotes = null; // redo from start next time.
   }
 
   md.block.ruler.before('reference', 'footnote_def', footnote_def, {
