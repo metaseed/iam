@@ -1,6 +1,6 @@
-import { PaloadAction } from '../payload-action';
+import { IPayloadAction } from '../payload-action';
 
-export class CorrelationAction implements PaloadAction {
+export class CorrelationAction implements IPayloadAction {
   type: string;
   payload: any;
   coId = Date.now();
@@ -30,7 +30,7 @@ export class ActionStatus {
   }
 }
 
-export class SetActionStatusAction implements PaloadAction {
+export class SetActionStatusAction implements IPayloadAction {
   type = ActionStatusActionTypes.SetActionStatus;
   constructor(public payload: ActionStatus) {}
 }

@@ -1,4 +1,4 @@
 import { Action } from '@ngrx/store';
-export interface PaloadAction extends Action {
+export interface IPayloadAction extends Action {
   payload: any;
 }
