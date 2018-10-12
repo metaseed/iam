@@ -156,7 +156,7 @@ export class MarkdownViewerService {
 
     this.containerPlugin = new ContainerPlugin(this.markdown, 'warning');
 
-    (<any>this.docRef.document).copier = new CopierService();
+    this.docRef.document['copier'] = new CopierService();
   }
 
   private updateMeta = meta => {
@@ -271,7 +271,7 @@ edit
 </button>
 
 <button class="material-icons code-button"
-onclick="wrap_text(event)">
+onclick="md_code_wrapText()">
 wrap_text
 </button>
 

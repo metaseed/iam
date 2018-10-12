@@ -4,3 +4,5 @@ export interface ISearchItem {
   title: string;
   text_matches: [{ fragment: string; matches: [{ text: string; indices: [number] }] }];
 }
+
+export type SearchResult = Array<ISearchItem>;

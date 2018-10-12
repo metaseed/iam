@@ -3,7 +3,7 @@ import { Observable, throwError, Subscription, concat, asyncScheduler, of } from
 import { Injectable } from '@angular/core';
 import { GithubStorage } from './github';
 import { switchMap, map, toArray, count, startWith, tap, catchError, take } from 'rxjs/operators';
-import { Document } from 'core';
+import { Document, SearchResult } from 'core';
 import { AsyncScheduler } from 'rxjs/internal/scheduler/AsyncScheduler';
 import { Issue, EditIssueParams } from './issues/issue';
 import { Repository } from './repository';
@@ -363,7 +363,7 @@ export class GithubCache implements ICache {
                 throw err;
               }),
               map<File, number>(_ => {
-                return id; // false is processed by error of observable
+                return id; // fault is processed by error of observable
               })
             );
           })
@@ -371,4 +371,12 @@ export class GithubCache implements ICache {
       })
     );
   }
+
+  // search(query: string): Observable<SearchResult> {
+  //   return this.githubStorage.init().pipe(
+  //     switchMap(repo => {
+  //       const sr = repo.searchCode(query);
+  //     })
+  //   );
+  // }
 }

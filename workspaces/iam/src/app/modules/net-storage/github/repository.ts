@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { Issue } from './issues/issue';
 import { from } from 'rxjs';
 import { base64Encode, base64Decode } from 'core';
-import { map, flatMap, tap, catchError } from 'rxjs/operators';
+import { map, flatMap, tap, catchError, observeOn } from 'rxjs/operators';
 @Injectable()
 export class Repository extends Requestable {
   // remoteRepo: any;
@@ -121,6 +121,15 @@ export class Repository extends Requestable {
         tap(x => console.log(x), e => console.log(e)),
         map(x => <File>x)
       );
+  }
+
+  searchCode(query: string, folder = 'documents', extension = 'md') {
+    return this._http.get(`githubapi/search/code`, {
+      params: {
+        q: `${query}+in:file+extension:${extension}+path:${folder}+repo:${this.fullName}`
+      },
+      observe: 'response'
+    });
   }
 
   private decodeContent(content: Content | Array<Content>) {

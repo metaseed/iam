@@ -10,11 +10,11 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private auth: AuthService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
-    if (req.url.startsWith('githubapi')|| req.url.startsWith('https://api.github.com')) {
+    if (req.url.startsWith('githubapi') || req.url.startsWith('https://api.github.com')) {
       const authToken = this.auth.getToken();
 
       const authReq = req.clone({
-        url: this.getURL(req.url.replace('githubapi','')),
+        url: this.getURL(req.url.replace('githubapi', '')),
         headers: req.headers
           .set('Authorization', authToken)
           .set('Content-Type', 'application/json;charset=UTF-8')
