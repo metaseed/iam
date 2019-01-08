@@ -1,7 +1,7 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { DocService } from './services/doc.service';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
-import { DocSearchService } from '../shared/services/doc-search.service';
+import { StoreSearchService } from '../cache/services/store-search.service';
 import { Store, select } from '@ngrx/store';
 import { Observable, from, Subject } from 'rxjs';
 import { map, debounceTime, distinctUntilChanged, combineLatest, tap } from 'rxjs/operators';
@@ -35,14 +35,14 @@ export class HomeComponent {
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
-  private initDocs$ = this.store.pipe(select(selectDocumentsState));
+  private initDocs$ = this.store.select(selectDocumentsState);
   docs$: Observable<Document[]>;
   ActionStatus = ActionState;
 
   constructor(
     private store: Store<SharedState>,
     public docService: DocService,
-    private docSearchService: DocSearchService,
+    private docSearchService: StoreSearchService,
     private router: Router,
     private snackBar: MatSnackBar
   ) {}

@@ -32,5 +32,5 @@ export interface ICache {
   // retrun the id;  fault would be processed by observable error hanlder
   deleteDoc(id: number): Observable<number>;
 
-  // search(query: string): Observable<SearchResult>;
+  search(query: string): Observable<SearchResult>;
 }

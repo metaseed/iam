@@ -9,7 +9,7 @@ export const selectDocumentEntitiesState = createSelector(
 );
 export const selectCurrentDocumentIdState = createSelector(
   selectDocumentState,
-  fromDocument.selectCurrentDocumentId
+  fromDocument.getCurrentDocumentId
 );
 export const selectCurrentDocumentState = createSelector(
   selectDocumentEntitiesState,
@@ -19,12 +19,12 @@ export const selectCurrentDocumentState = createSelector(
 
 export const selectIdRangeHighState = createSelector(
   selectDocumentState,
-  fromDocument.selectDocumentIdsRangeHigh
+  fromDocument.getDocumentIdsRangeHigh
 );
 
 export const selectIdRangeLowState = createSelector(
   selectDocumentState,
-  fromDocument.selectDocumentIdsRangeLow
+  fromDocument.getDocumentIdsRangeLow
 );
 
 export const getDocumentByIdSeletor = (id: number) => {

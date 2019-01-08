@@ -9,18 +9,17 @@ import { FormsModule } from '@angular/forms';
 import { ScrollHideDirective } from './scroll-hide/scroll-hide.directive';
 import { CoreModule } from 'core';
 import { StoreModule } from '@ngrx/store';
-import { SharedState, reducers, StoreCache, moduleStateName } from './state';
+import { SharedState, reducers, moduleStateName } from './state';
 import { EffectsModule } from '@ngrx/effects';
 import { DocEffectsUtil } from './state/document/effects.util';
 import { DatabaseModule } from 'database';
-import { StorageModule } from '../net-storage/storage.module';
+import { NetStorageModule } from '../net-storage/storage.module';
 import { effects } from './state/effects';
 import { DocSearchComponent } from './doc-search/doc-search.component';
-import { DocSearchService } from './services/doc-search.service';
 
 @NgModule({
   imports: [
-    StorageModule,
+    NetStorageModule,
     DatabaseModule,
     CommonModule,
     MaterialModule,
@@ -54,7 +53,7 @@ export class SharedModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: SharedModule,
-      providers: [DocEffectsUtil, StoreCache, DocSearchService]
+      providers: [DocEffectsUtil]
     };
   }
 }

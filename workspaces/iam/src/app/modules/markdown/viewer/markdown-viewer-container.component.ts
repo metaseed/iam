@@ -12,7 +12,7 @@ import * as markdown from '../state';
 import { Store, select } from '@ngrx/store';
 import { ElementRef } from '@angular/core';
 import { Subject, merge, asyncScheduler, Observable } from 'rxjs';
-import { DocumentEffectsActionTypes, monitorActionStatus$, actionStatusState$ } from 'shared';
+import { DocumentEffectsActionType, monitorActionStatus$, actionStatusState$ } from 'shared';
 import { DocumentMode } from '../state/reducers/document';
 import * as fromMarkdown from '../state';
 
@@ -61,7 +61,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
   isLoadDone$ = merge(
     monitorActionStatus$(
       this.store,
-      DocumentEffectsActionTypes.ReadDocument,
+      DocumentEffectsActionType.ReadDocument,
       NET_COMMU_TIMEOUT,
       this.defaultTimeoutHandler
     ).pipe(
@@ -69,7 +69,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
         return v.isNotStartStatus();
       })
     ),
-    actionStatusState$(this.store, DocumentEffectsActionTypes.Create).pipe(
+    actionStatusState$(this.store, DocumentEffectsActionType.Create).pipe(
       map(v => v.isNotStartStatus())
     )
   ).pipe(

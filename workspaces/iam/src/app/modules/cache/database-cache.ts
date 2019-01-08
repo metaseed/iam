@@ -1,26 +1,22 @@
-import { Database, ModifyAction } from './database-engine';
+import { Database, ModifyAction } from '../database/database-engine';
 import { Injectable } from '@angular/core';
 import { Document, DocMeta, DocContent, DocFormat } from 'core';
-import { Observable, throwError, combineLatest, of, from, concat, asyncScheduler } from 'rxjs';
+import { Observable, from, concat, asyncScheduler } from 'rxjs';
 import {
   toArray,
   tap,
   switchMap,
   map,
   count,
-  withLatestFrom,
   filter,
-  observeOn,
   subscribeOn,
   catchError
 } from 'rxjs/operators';
 import { ICache, DataTables } from 'core';
-import { GithubCache } from 'net-storage';
-import { tapObservable } from '../core/utils/debug';
 
 const DB_PAGE_SIZE = 50;
 export interface IterableDocuments extends IterableIterator<Observable<Document>> {}
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class DatabaseCache implements ICache {
   public nextLevelCache: ICache;
 
@@ -242,6 +238,10 @@ export class DatabaseCache implements ICache {
         );
       })
     );
+  }
+
+  search(query: string) {
+    return this.nextLevelCache.search(query);
   }
 }
 // todo: up low key state value;

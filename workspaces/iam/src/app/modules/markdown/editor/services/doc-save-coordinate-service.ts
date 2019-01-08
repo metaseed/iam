@@ -7,7 +7,7 @@ import {
   ActionState,
   DocumentEffectsSave,
   actionStatusState$,
-  DocumentEffectsActionTypes
+  DocumentEffectsActionType
 } from 'shared';
 
 @Injectable()
@@ -43,7 +43,7 @@ export class DocSaveCoordinateService implements OnDestroy {
       )
       .subscribe(([content, editor]) => this.checkDirty(editor));
 
-    actionStatusState$(this.store, DocumentEffectsActionTypes.Save)
+    actionStatusState$(this.store, DocumentEffectsActionType.Save)
       .pipe(
         takeUntil(this.destroy$),
         combineLatest(this.editor$)

@@ -3,12 +3,7 @@ import { Router } from '@angular/router';
 import { Document, NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT } from 'core';
 import { Store } from '@ngrx/store';
 import { MatSnackBar } from '@angular/material';
-import {
-  monitorActionStatus$,
-  DocumentEffectsActionTypes,
-  ActionStatus,
-  ActionState
-} from 'shared';
+import { monitorActionStatus$, DocumentEffectsActionType, ActionStatus, ActionState } from 'shared';
 import { takeUntil, map } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -20,10 +15,13 @@ import { Subject } from 'rxjs';
 export class DocItemComponent implements OnInit {
   showDelete: boolean;
   destroy$ = new Subject();
-  @Input() doc: Document;
+  @Input()
+  doc: Document;
 
-  @Output() delete = new EventEmitter<Document>();
-  @Output() show = new EventEmitter<Document>();
+  @Output()
+  delete = new EventEmitter<Document>();
+  @Output()
+  show = new EventEmitter<Document>();
 
   onDelete = doc => this.delete.next(doc);
 
@@ -39,9 +37,9 @@ export class DocItemComponent implements OnInit {
 
   isDeleteDone$ = monitorActionStatus$(
     this.store,
-    DocumentEffectsActionTypes.Delete,
+    DocumentEffectsActionType.Delete,
     NET_COMMU_TIMEOUT,
-    this.defaultTimeoutHandler(DocumentEffectsActionTypes.Delete),
+    this.defaultTimeoutHandler(DocumentEffectsActionType.Delete),
     actionStatus => actionStatus.action.payload.id === this.doc.id
   ).pipe(
     takeUntil(this.destroy$),

@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
 import { GithubStorageModule } from './github/github-storage.module';
 
-
 @NgModule({
   imports: [GithubStorageModule],
   exports: [GithubStorageModule],
-  providers: [],
+  providers: []
 })
-export class StorageModule { }
+export class NetStorageModule {}

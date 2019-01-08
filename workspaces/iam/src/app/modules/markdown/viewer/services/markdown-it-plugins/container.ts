@@ -1,6 +1,5 @@
 import * as MarkdownIt from 'markdown-it';
-import * as markdownContainer from './container';
-
+import * as markdownContainer from './common-container';
 
 export class ContainerPlugin {
   constructor(

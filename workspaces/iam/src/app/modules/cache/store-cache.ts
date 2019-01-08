@@ -1,6 +1,6 @@
 import { ICache, DocMeta, DocContent, Document, DocFormat, Logger } from 'core';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, merge } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { Store, State as StoreState } from '@ngrx/store';
 import {
@@ -12,10 +12,13 @@ import {
   DeleteDocument,
   SetCurrentDocumentId,
   selectCurrentDocumentIdState,
-  DocumentEffectsDelete
-} from './document';
-import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from './document/const';
-import { SharedState } from './state';
+  DocumentEffectsDelete,
+  SetSearchResultAction,
+  selectDocumentsState
+} from '../shared/state/document';
+import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../shared/state/document/const';
+import { SharedState } from '../shared/state/state';
+import { StoreSearchService } from './services/store-search.service';
 
 @Injectable()
 export class StoreCache implements ICache {
@@ -25,7 +28,8 @@ export class StoreCache implements ICache {
   constructor(
     private store: Store<SharedState>,
     private state: StoreState<SharedState>,
-    private _logger: Logger
+    private _logger: Logger,
+    private _storeSearchService: StoreSearchService
   ) {}
 
   init(nextLevelCache: ICache): ICache {
@@ -159,5 +163,16 @@ export class StoreCache implements ICache {
         this.store.dispatch(new DeleteDocument({ id }));
       })
     );
+  }
+
+  search(query: string) {
+    const docs = selectDocumentsState(this.state.value);
+    const fromStoreCache$ = this._storeSearchService.search(docs, query);
+
+    const fromNextCache$ = this.nextLevelCache
+      .search(query)
+      .pipe(tap(searchResult => this.store.dispatch(new SetSearchResultAction({ searchResult }))));
+
+    return merge(fromStoreCache$, fromNextCache$);
   }
 }

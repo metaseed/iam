@@ -7,7 +7,7 @@ import {
   DocumentEffectsReadBulkDocMeta,
   DocumentEffectsDelete,
   monitorActionStatus$,
-  DocumentEffectsActionTypes,
+  DocumentEffectsActionType,
   selectDocumentsState,
   ActionState
 } from 'shared';
@@ -36,9 +36,9 @@ export class DocListComponent implements OnInit {
     this.store.pipe(select(selectDocumentsState)),
     monitorActionStatus$(
       this.store,
-      DocumentEffectsActionTypes.ReadBulkDocMeta,
+      DocumentEffectsActionType.ReadBulkDocMeta,
       NET_COMMU_TIMEOUT,
-      this.defaultTimeoutHandler(DocumentEffectsActionTypes.ReadBulkDocMeta)
+      this.defaultTimeoutHandler(DocumentEffectsActionType.ReadBulkDocMeta)
     ).pipe(
       takeUntil(this.destroy$),
       filter(a => a.action.payload.isBelowRange === false),
@@ -61,9 +61,9 @@ export class DocListComponent implements OnInit {
 
   isLoadMoreDone$ = monitorActionStatus$(
     this.store,
-    DocumentEffectsActionTypes.ReadBulkDocMeta,
+    DocumentEffectsActionType.ReadBulkDocMeta,
     NET_COMMU_TIMEOUT,
-    this.defaultTimeoutHandler(DocumentEffectsActionTypes.ReadBulkDocMeta, 'load-more')
+    this.defaultTimeoutHandler(DocumentEffectsActionType.ReadBulkDocMeta, 'load-more')
   ).pipe(
     takeUntil(this.destroy$),
     filter(a => a.action.payload.isBelowRange === true),

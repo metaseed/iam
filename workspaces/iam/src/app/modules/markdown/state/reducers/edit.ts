@@ -11,7 +11,7 @@ export interface State {
 export const initialState: State = {
   save: '',
   lockScrollWithView: false,
-  editor: undefined,//undefined: initial value; null: unloaded, other value: loaded
+  editor: undefined, // undefined: initial value; null: unloaded, other value: loaded
   content: undefined
 };
 

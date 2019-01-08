@@ -19,7 +19,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { SharedModule } from 'shared';
 import { EffectsModule } from '@ngrx/effects';
 import { AppEffects } from './state/app.effects';
-import { StorageModule } from './modules/net-storage/storage.module';
+import { NetStorageModule } from './modules/net-storage/storage.module';
 import { DatabaseModule, schema } from 'database';
 import { RouteReuseStrategy } from '@angular/router';
 import { CustomRouteReuseStrategy } from './routeReuseStrategy';
@@ -45,7 +45,7 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
     BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
-    StorageModule,
+    NetStorageModule,
     CoreModule,
     HomeModule,
     SharedModule.forRoot(),

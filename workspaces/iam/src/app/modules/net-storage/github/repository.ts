@@ -6,7 +6,7 @@ import { Content } from './model/content';
 import { File } from './model/file';
 import { HttpClient } from '@angular/common/http';
 import { Issue } from './issues/issue';
-import { from } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { base64Encode, base64Decode } from 'core';
 import { map, flatMap, tap, catchError, observeOn } from 'rxjs/operators';
 @Injectable()
@@ -46,7 +46,7 @@ export class Repository extends Requestable {
       })
     );
   }
-  //https://developer.github.com/v3/repos/contents/#update-a-file
+  // https://developer.github.com/v3/repos/contents/#update-a-file
   updateFile(path, contents, sha, branch = 'master') {
     return this.request('PUT', `/repos/${this.fullName}/contents/${path}`, {
       path: 'pp',
@@ -66,7 +66,7 @@ export class Repository extends Requestable {
     );
   }
 
-  //https://developer.github.com/v3/repos/contents/#create-a-file
+  // https://developer.github.com/v3/repos/contents/#create-a-file
   newFile(path: string, content: string) {
     return this.request('PUT', `/repos/${this.fullName}/contents/${path}`, {
       message: 'create file',
@@ -110,23 +110,20 @@ export class Repository extends Requestable {
   delFileViaSha(path: string, sha: string, branch: string = 'master') {
     const filePath = path ? encodeURI(path) : '';
     return this._http
-      .delete(`githubapi/repos/${this.fullName}/contents/${filePath}`, {
+      .delete<File>(`githubapi/repos/${this.fullName}/contents/${filePath}`, {
         params: {
           message: 'delete file',
           sha: sha,
           branch
         }
       })
-      .pipe(
-        tap(x => console.log(x), e => console.log(e)),
-        map(x => <File>x)
-      );
+      .pipe(tap(x => console.log(x), e => console.log(e)));
   }
 
   searchCode(query: string, folder = 'documents', extension = 'md') {
     return this._http.get(`githubapi/search/code`, {
       params: {
-        q: `${query}+in:file+extension:${extension}+path:${folder}+repo:${this.fullName}`
+        q: `${encodeURI(query)}+in:file+extension:${extension}+path:${folder}+repo:${this.fullName}`
       },
       observe: 'response'
     });

@@ -1,14 +1,13 @@
-import { ICache, DataTables, DocMeta, DocContent, DocFormat } from 'core';
-import { Observable, throwError, Subscription, concat, asyncScheduler, of } from 'rxjs';
+import { ICache, DocMeta, DocContent, DocFormat, SearchResult } from 'core';
+import { Observable, throwError, concat, asyncScheduler, of } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { GithubStorage } from './github';
-import { switchMap, map, toArray, count, startWith, tap, catchError, take } from 'rxjs/operators';
-import { Document, SearchResult } from 'core';
-import { AsyncScheduler } from 'rxjs/internal/scheduler/AsyncScheduler';
-import { Issue, EditIssueParams } from './issues/issue';
-import { Repository } from './repository';
+import { GithubStorage } from '../net-storage/github/github';
+import { switchMap, map, startWith, tap, catchError, take } from 'rxjs/operators';
+import { Document } from 'core';
+import { Issue, EditIssueParams } from '../net-storage/github/issues/issue';
+import { Repository } from '../net-storage/github/repository';
 import { Content } from 'net-storage';
-import { DOCUMENTS_FOLDER_NAME } from '../../home/const';
+import { DOCUMENTS_FOLDER_NAME } from '../home/const';
 import { gitHubCacheUtil } from './github-cache.util';
 
 const GITHUB_PAGE_SIZE = 50;
@@ -82,10 +81,9 @@ export class GithubCache implements ICache {
                 };
                 // save docMeta to update sha;
                 return repo.issue.edit(id, data).pipe(
-                  map(is => {
+                  map(() => {
                     const docContent = new DocContent(id, content, file.content.sha);
                     const doc = new Document(id, meta, docContent);
-
                     return doc;
                   })
                 );
@@ -110,7 +108,7 @@ export class GithubCache implements ICache {
       isBelowTheKey,
       isNearPageFloor = undefined /*undefined: only this page*/
     ) => {
-      const mapIssueToMeta = (issues: Issue[], i) => {
+      const mapIssueToMeta = (issues: Issue[]) => {
         if (issues.length > 0 && page === 1) {
           this.highestId = issues[0].number;
         }
@@ -148,7 +146,7 @@ export class GithubCache implements ICache {
     const isNearPageFloor = (id, page, highestId) =>
       (highestId - id) / GITHUB_PAGE_SIZE + 1 - page < 0.5;
 
-    const isLastPage = (page, highestId) => page === Math.floor(this.highestId / GITHUB_PAGE_SIZE);
+    const isLastPage = (page, highestId) => page === Math.floor(highestId / GITHUB_PAGE_SIZE);
     const isFirstPage = page => page === 1;
 
     const getHighestId = () => {
@@ -251,7 +249,6 @@ export class GithubCache implements ICache {
       let uri = `${DOCUMENTS_FOLDER_NAME}/${title}_${id}`;
       if (format) uri = `${uri}.${format}`;
 
-      let docMeta: DocMeta;
       if (isDeleted) return of(new DocContent(id, undefined, undefined, isDeleted));
 
       return (<Observable<Content>>repo.getContents(uri)).pipe(
@@ -263,7 +260,6 @@ export class GithubCache implements ICache {
               state = 1;
               return this.readDocMeta(id).pipe(
                 switchMap(meta => {
-                  docMeta = meta;
                   // using the parameters from net via key; means title, format or format is modifyed.
                   return getContent(repo, id, meta.title, meta.format, state, meta.isDeleted);
                 })
@@ -318,7 +314,7 @@ export class GithubCache implements ICache {
 
               // save docMeta
               return repo.issue.edit(meta.id, data).pipe(
-                tap(d => {
+                tap(() => {
                   if (newTitle !== oldDocMeta.title) {
                     // delete old docContent, if title changed.
                     repo
@@ -332,13 +328,12 @@ export class GithubCache implements ICache {
                       .subscribe();
                   }
                 }),
-                map(a => {
+                map(() => {
                   const doc = new Document(
                     meta.id,
                     meta,
                     new DocContent(meta.id, content, file.content.sha)
                   );
-
                   return doc;
                 })
               );
@@ -372,11 +367,18 @@ export class GithubCache implements ICache {
     );
   }
 
-  // search(query: string): Observable<SearchResult> {
-  //   return this.githubStorage.init().pipe(
-  //     switchMap(repo => {
-  //       const sr = repo.searchCode(query);
-  //     })
-  //   );
-  // }
+  search(query: string): Observable<SearchResult> {
+    return this.githubStorage.init().pipe(
+      switchMap(repo => {
+        return repo.searchCode(query).pipe(
+          map(reps =>
+            (reps.body as any).items.map(item => {
+              const { id, title, ext } = DocMeta.parseDocumentName(item.name);
+              return { id, score: item.score, title, text_matches: item.text_matches };
+            })
+          )
+        );
+      })
+    );
+  }
 }
