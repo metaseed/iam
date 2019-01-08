@@ -1,3 +1,8 @@
-<p>
-  doc-search-list works!
-</p>
+<iam-doc-search-bar clickToggleEnable="false"></iam-doc-search-bar>
+<!-- [scrollHide]="[{ container: searchResult }]" -->
+<div #searchResult>
+  <doc-search-item
+    [item]="searchItem"
+    *ngFor="let searchItem of (searchResult$ | async); trackBy: trackByFunc"
+  ></doc-search-item>
+</div>

@@ -9,6 +9,7 @@ import { DocItemComponent } from './doc-list/doc-item/doc-item.component';
 import { DocDeleteComponent } from './doc-list/doc-item/doc-delete/doc-delete.component';
 import { SharedModule } from 'shared';
 import { ScrollingModule } from '@angular/cdk-experimental/scrolling';
+import { HomeTopBarComponent } from './home-top-bar/home-top-bar.component';
 
 @NgModule({
   imports: [SharedModule, ScrollingModule, MaterialModule, SpinnerModule],
@@ -17,7 +18,8 @@ import { ScrollingModule } from '@angular/cdk-experimental/scrolling';
     HomeComponent,
     DocListComponent,
     DocDeleteComponent,
-    DocItemComponent
+    DocItemComponent,
+    HomeTopBarComponent
   ],
   exports: [HomeComponent],
   providers: [DocService],

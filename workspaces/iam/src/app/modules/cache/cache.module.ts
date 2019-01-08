@@ -5,18 +5,16 @@ import { DatabaseCache } from './database-cache';
 import { NetStorageModule } from 'net-storage';
 import { GithubCache } from './github-cache';
 import { gitHubCacheUtil } from './github-cache.util';
-import { SharedModule } from 'shared';
 import { StoreCache } from './store-cache';
 import { StoreSearchService } from './services/store-search.service';
 
 @NgModule({
-  imports: [DatabaseModule, NetStorageModule, SharedModule],
+  imports: [DatabaseModule, NetStorageModule],
   exports: [],
   providers: [
     { provide: DB_CACHE_TOKEN, useClass: DatabaseCache },
     { provide: NET_CACHE_TOKEN, useClass: GithubCache },
     { provide: STORE_CACHE_TOKEN, useClass: StoreCache },
-    { provide: CACHE_FACADE_TOKEN, useClass: StoreCache },
     gitHubCacheUtil,
     StoreSearchService
   ]

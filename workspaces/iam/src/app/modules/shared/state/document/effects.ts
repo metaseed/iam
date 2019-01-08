@@ -29,7 +29,6 @@ export class DocumentEffects {
   constructor(
     private actionMonitor: ActionMoniter,
     @Inject(CACHE_FACADE_TOKEN)
-    @Inject(CACHE_FACADE_TOKEN)
     private cacheFacade: ICache,
     private util: DocEffectsUtil,
     private state: StoreState<DocumentState>,

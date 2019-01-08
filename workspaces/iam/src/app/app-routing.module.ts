@@ -27,6 +27,10 @@ const appRoutes: Routes = [
     loadChildren: 'app/modules/me/me.module#MeModule'
   },
   {
+    path: 'search',
+    loadChildren: 'app/modules/search/doc-search.module#DocSearchModule'
+  },
+  {
     path: 'me',
     loadChildren: 'app/modules/me/me.module#MeModule'
   },

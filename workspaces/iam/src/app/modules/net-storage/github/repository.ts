@@ -122,6 +122,7 @@ export class Repository extends Requestable {
 
   searchCode(query: string, folder = 'documents', extension = 'md') {
     return this._http.get(`githubapi/search/code`, {
+      headers: { Accept: 'application/vnd.github.v3.text-match+json' },
       params: {
         q: `${encodeURI(query)}+in:file+extension:${extension}+path:${folder}+repo:${this.fullName}`
       },

@@ -1,5 +1,5 @@
 import { Directive, HostBinding, ElementRef, Input, OnDestroy } from '@angular/core';
-import { WindowRef, IContainer } from 'core';
+import { WindowRef, IContainer, ContainerRef } from 'core';
 import { Subject, Observable, ReplaySubject, asyncScheduler } from 'rxjs';
 import { takeUntil, switchMap, subscribeOn } from 'rxjs/operators';
 
@@ -149,7 +149,12 @@ export class ScrollHideDirective implements OnDestroy {
     if (!Array.isArray(containerItems)) {
       throw new Error('scrollHide attribute should be an array!');
     }
-    this._containerItems = containerItems;
+    this._containerItems = containerItems.map(item => {
+      if (item.container && item.container instanceof ElementRef) {
+        item.container = new ContainerRef((item as any).nativeElement);
+      }
+      return item;
+    });
   }
 
   private _deltaSinceTouchStart = 0;

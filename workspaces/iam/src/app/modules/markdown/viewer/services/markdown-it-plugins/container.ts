@@ -1,5 +1,5 @@
 import * as MarkdownIt from 'markdown-it';
-import * as markdownContainer from './common-container';
+import { container_plugin } from './common-container';
 
 export class ContainerPlugin {
   constructor(
@@ -8,7 +8,7 @@ export class ContainerPlugin {
     private option?: { validate: (params) => any; render: (tokens, idx) => string }
   ) {
     this.option = this.option || this.DEFAULT_CONTAINER_FUNCTION(name);
-    this.markdown.use(markdownContainer, name, this.option);
+    this.markdown.use(container_plugin, name, this.option);
   }
 
   private DEFAULT_CONTAINER_FUNCTION = (

@@ -5,10 +5,10 @@
 }
 
 .doc-card {
-  padding: 1rem,.6rem;
+  padding: 1rem, 0.6rem;
   margin-top: 3px;
   display: flex;
-  flex-grow:1;
+  flex-grow: 1;
   flex-direction: column;
   justify-content: space-between;
   &__row {
@@ -23,16 +23,10 @@
   }
 }
 
-
-
 // .doc-card:hover {
 //   left: .1em;
 //   background-color: #DDD;
 // }
-.doc-header-image {
-  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
-  background-size: cover;
-}
 
 $font-size: 2.2rem;
 $line-height: 1.2;

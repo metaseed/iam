@@ -1,2 +1,3 @@
 export * from './cache.module';
-export * from './cache-facade';
+export * from './services/store-search.service';
+export * from './store-cache';

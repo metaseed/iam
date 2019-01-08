@@ -76,9 +76,9 @@ export class DocListComponent implements OnInit {
         v.state === ActionState.Timeout
       );
     }),
+
     startWith(true)
   );
-
   public container: IContainer;
   constructor(
     public elementRef: ElementRef,

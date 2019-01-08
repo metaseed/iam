@@ -6,7 +6,6 @@ import { Store, select } from '@ngrx/store';
 import { Observable, from, Subject } from 'rxjs';
 import { map, debounceTime, distinctUntilChanged, combineLatest, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
-import { DocSearchComponent } from 'shared';
 import { switchIfEmit } from '../core/operators/switchIfEmit';
 import { MSG_DISPLAY_TIMEOUT, Document } from 'core';
 
@@ -25,8 +24,6 @@ import {
 export class HomeComponent {
   private destroy$ = new Subject();
 
-  @ViewChild(DocSearchComponent)
-  docSearchComponent: DocSearchComponent;
   @ViewChild('docList', { read: ElementRef })
   scrollDocs: ElementRef;
 
@@ -65,32 +62,20 @@ export class HomeComponent {
   ngOnInit() {
     this._rememberScrollPosition();
 
-    let isSearching;
-    const filteredDocs$ = this.docSearchComponent.Search.pipe(
-      debounceTime(280),
-      distinctUntilChanged(),
-      tap(keyword => {
-        if (keyword.trim() === '') {
-          isSearching = false;
-        }
-        isSearching = true;
-      }),
-      combineLatest(this.initDocs$),
-      map(([keyword, docs]) => {
-        return this.docSearchService.search(docs, keyword);
-      })
-    );
+    this.docs$ = this.initDocs$;
+    this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: false }));
+    //   from([this.initDocs$, filteredDocs$]).pipe(
 
-    this.docs$ = from([this.initDocs$, filteredDocs$]).pipe(
-      switchIfEmit(),
-      tap(docs => {
-        if (docs.length <= 1) {
-          if (!isSearching)
-            // 0: initial value ; 1: nav back from url doc show;
-            this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: false }));
-        }
-      })
-    );
+    //     switchIfEmit(),
+    //     tap(docs => {
+    //       if (docs.length <= 1) {
+    //         if (!isSearching)
+    //           // 0: initial value ; 1: nav back from url doc show;
+    //           this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: false }));
+    //       }
+    //     })
+    //   );
+    // }
   }
 
   ngOnDestroy() {

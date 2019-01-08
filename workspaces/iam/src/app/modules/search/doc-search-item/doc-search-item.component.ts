@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { ISearchItem, ITextMatche } from 'core';
 
 @Component({
   selector: 'doc-search-item',
@@ -6,10 +7,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./doc-search-item.component.scss']
 })
 export class DocSearchItemComponent implements OnInit {
+  @Input()
+  item: ISearchItem;
+  constructor() {}
 
-  constructor() { }
+  getMatches(textMatches: ITextMatche) {
+    let r = textMatches;
 
-  ngOnInit() {
+    return r;
   }
-
+  ngOnInit() {}
 }

@@ -4,5 +4,6 @@
         "monokai",
         "scrollable",
         "snackbar"
-    ]
+    ],
+    "prettier.singleQuote": true
 }

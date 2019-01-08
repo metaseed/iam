@@ -55,4 +55,5 @@ export type DocumentEffectsActions =
   | DocumentEffectsDelete
   | DocumentEffectsCreate
   | DocumentEffectsSave
-  | DocumentEffectsRead;
+  | DocumentEffectsRead
+  | DocumentEffectsSearch;
