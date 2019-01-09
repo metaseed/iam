@@ -1,0 +1,17 @@
+.fragment {
+  white-space: pre-wrap;
+  ::ng-deep em {
+    background: yellow;
+  }
+}
+:host {
+  display: inline-block;
+  max-width: 1000px;
+  width: 100%;
+  display: flex;
+}
+
+mat-card {
+  width: 100%;
+  margin-top: 3px;
+}

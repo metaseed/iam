@@ -1,6 +1,13 @@
-<mat-card>
-  <mat-card-header> {{ item.title }} ({{ item.score }})</mat-card-header>
+<mat-card (click)="onClick($event)">
+  <mat-card-header>
+    <mat-card-title>{{ item.title }}</mat-card-title>
+    <mat-card-subtitle> {{ item.score }}</mat-card-subtitle>
+  </mat-card-header>
   <mat-card-content>
-    <div *ngFor="let textMatch of item.text_matches" [innerHTML]="getMatches(textMatch)"></div>
+    <div
+      class="fragment"
+      *ngFor="let textMatch of item.text_matches"
+      [innerHTML]="getMatches(textMatch)"
+    ></div>
   </mat-card-content>
 </mat-card>

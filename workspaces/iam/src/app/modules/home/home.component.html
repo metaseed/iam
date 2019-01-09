@@ -1,2 +1,2 @@
-<home-top-bar></home-top-bar>
+<home-top-bar [scrollHide]="[{ container: docList.container }]"></home-top-bar>
 <doc-list #docList [documents]="docs$ | async"></doc-list>

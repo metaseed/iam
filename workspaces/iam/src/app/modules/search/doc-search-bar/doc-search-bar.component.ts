@@ -12,6 +12,6 @@ export class DocSearchBarComponent implements OnInit {
   ngOnInit() {}
 
   onSearch(e) {
-    this.search.emit(e);
+    this.search.emit(e.trim());
   }
 }

@@ -18,16 +18,14 @@ export class DocSearchListComponent implements OnInit {
   constructor(private _store: Store<any>) {}
 
   ngOnInit() {
-    let isSearching;
     this.docSearchComponent.search
       .pipe(
-        debounceTime(280),
+        debounceTime(500),
         distinctUntilChanged(),
         tap(keyword => {
           if (keyword.trim() === '') {
-            isSearching = false;
+            return;
           }
-          isSearching = true;
           this._store.dispatch(new DocumentEffectsSearch({ query: keyword }));
         })
       )
