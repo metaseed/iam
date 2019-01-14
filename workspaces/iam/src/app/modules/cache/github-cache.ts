@@ -1,4 +1,4 @@
-import { ICache, DocMeta, DocContent, DocFormat, SearchResult } from 'core';
+import { ICache, DocMeta, DocContent, DocFormat, SearchResult, SearchResultSource } from 'core';
 import { Observable, throwError, concat, asyncScheduler, of, merge, BehaviorSubject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { GithubStorage } from '../net-storage/github/github';
@@ -380,7 +380,7 @@ export class GithubCache implements ICache {
                   score: item.score,
                   title: <string>item.title,
                   text_matches: item.text_matches,
-                  fromIssue: true
+                  source: SearchResultSource.netIssue
                 };
               })
             )
@@ -403,7 +403,7 @@ export class GithubCache implements ICache {
         searchR.forEach(item => {
           let index = lastSearchResult.findIndex(v => v.id === item.id);
           if (index !== -1) {
-            if (!item.fromIssue) {
+            if (item.source !== SearchResultSource.netIssue) {
               lastSearchResult = [...lastSearchResult];
               lastSearchResult[index] = item;
             }

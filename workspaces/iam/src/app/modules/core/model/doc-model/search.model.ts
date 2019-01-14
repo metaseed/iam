@@ -6,7 +6,8 @@ export interface ITextMatche {
 export enum SearchResultSource {
   store,
   indexdb,
-  net
+  netCode,
+  netIssue
 }
 export interface ISearchItem {
   id: number;

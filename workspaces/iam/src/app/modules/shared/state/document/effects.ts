@@ -20,7 +20,8 @@ import { DocMeta, CACHE_FACADE_TOKEN, ICache } from 'core';
 import {
   selectIdRangeHighState,
   selectIdRangeLowState,
-  selectCurrentDocumentState
+  selectCurrentDocumentState,
+  selectSearchResultState
 } from './selectors';
 import { NEW_DOC_ID } from './const';
 
@@ -130,7 +131,15 @@ export class DocumentEffects {
   SearchDocument = this.actionMonitor.do$<DocumentEffectsSearch>(
     DocumentEffectsActionType.Search,
     switchMap(action =>
-      this.cacheFacade.search(action.payload.query).pipe(this.actionMonitor.complete(action))
+      this.cacheFacade.search(action.payload.query).pipe(
+        this.actionMonitor.complete(action),
+        tap(null, null, () => {
+          let searchResult = selectSearchResultState(this.state.value);
+          if (searchResult.length === 0) {
+            this.snackbar.open('Find Nothing!', null, { duration: 2000 });
+          }
+        })
+      )
     )
   );
 }
