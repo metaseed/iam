@@ -1,6 +1,6 @@
-import * as Markdown from 'markdown-it';
+import * as MarkdownIt from 'markdown-it';
 export function sourceLine(
-  md: Markdown.MarkdownIt,
+  md: MarkdownIt,
   {
     permalinkClass = 'edit-it',
     permalinkBefore = false,
@@ -23,40 +23,42 @@ export function sourceLine(
   md.core.ruler.push('source_line', state => {
     const tokens = state.tokens;
 
-    tokens.filter(t => t.map).forEach(token => {
-      const parentMap = JSON.stringify(token.map); // start from 0
-      token.attrSet('data-source-lines', parentMap);
-      token.attrSet('class', 'edit-it-content');
-      token.attrSet('onmouseenter', 'md_edit_mouseenter()');
-      token.attrSet('onmouseleave', 'md_edit_mouseleave()');
-      const linkTokens = [
-        Object.assign(new state.Token('link_open', 'a', 1), {
-          attrs: [
-            ['class', permalinkClass],
-            ['onclick', 'md_edit_event(event.target.parentElement.parentElement)'],
-            ['aria-hidden', 'true']
-          ]
-        }),
-        Object.assign(new state.Token('html_block', '', 0), {
-          content: permalinkSymbol
-        }),
-        new state.Token('link_close', 'a', -1)
-      ];
+    tokens
+      .filter(t => t.map)
+      .forEach(token => {
+        const parentMap = JSON.stringify(token.map); // start from 0
+        token.attrSet('data-source-lines', parentMap);
+        token.attrSet('class', 'edit-it-content');
+        token.attrSet('onmouseenter', 'md_edit_mouseenter()');
+        token.attrSet('onmouseleave', 'md_edit_mouseleave()');
+        const linkTokens = [
+          Object.assign(new state.Token('link_open', 'a', 1), {
+            attrs: [
+              ['class', permalinkClass],
+              ['onclick', 'md_edit_event(event.target.parentElement.parentElement)'],
+              ['aria-hidden', 'true']
+            ]
+          }),
+          Object.assign(new state.Token('html_block', '', 0), {
+            content: permalinkSymbol
+          }),
+          new state.Token('link_close', 'a', -1)
+        ];
 
-      if (token.children) {
-        token.children.forEach(tk => {
-          if (tk.map) {
-            tk.attrSet('data-source-lines', JSON.stringify(tk.map));
-          } else {
-            tk.attrSet('data-source-lines', parentMap);
-          }
-        });
-        token.attrSet('data-source-lines-children', parentMap);
+        if (token.children) {
+          token.children.forEach(tk => {
+            if (tk.map) {
+              tk.attrSet('data-source-lines', JSON.stringify(tk.map));
+            } else {
+              tk.attrSet('data-source-lines', parentMap);
+            }
+          });
+          token.attrSet('data-source-lines-children', parentMap);
 
-        token.children.push(...linkTokens);
-      } else if (token.type === 'fence') {
-        // code
-      }
-    });
+          token.children.push(...linkTokens);
+        } else if (token.type === 'fence') {
+          // code
+        }
+      });
   });
 }

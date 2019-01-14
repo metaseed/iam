@@ -4,11 +4,11 @@ import * as MarkdownIt from 'markdown-it';
 import YAML from 'js-yaml';
 
 export class MetaPlugin {
-  constructor(private markdownIt: MarkdownIt.MarkdownIt, private updateMeta: (object) => void) {
+  constructor(private markdownIt: MarkdownIt, private updateMeta: (object) => void) {
     this.markdownIt.use(this.metaPlugin);
   }
 
-  metaPlugin = (md: MarkdownIt.MarkdownIt) => {
+  metaPlugin = (md: MarkdownIt) => {
     md.block.ruler.before('code', 'meta', this.metaParser, { alt: [] });
     md.renderer.rules.meta_open = (tokens, index) => '<articleinfo class="doc-meta">';
     md.renderer.rules.meta_close = (tokens, index) => '</articleinfo>';

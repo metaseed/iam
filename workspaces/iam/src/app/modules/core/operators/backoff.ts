@@ -7,7 +7,7 @@ ajax('/api/endpoint')
 */
 export function backoff<T>(maxTries, ms) {
   return pipe(
-    retryWhen(attempts =>
+    retryWhen<T>(attempts =>
       range(1, maxTries).pipe(
         zip(attempts, i => i), // attach number sequence to the errors observable
         map(i => i * i), // every error correspond to a squared result of number

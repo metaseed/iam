@@ -1,7 +1,7 @@
 import * as MarkdownIt from 'markdown-it';
 import { uid } from 'core';
 export class MermaidPlugin {
-  constructor(private markdownIt: MarkdownIt.MarkdownIt) {
+  constructor(private markdownIt: MarkdownIt) {
     this.markdownIt.use(this.mermaidPlugin, 'mermaid');
   }
   mermaidChart = code => {
@@ -68,7 +68,7 @@ export class MermaidPlugin {
     return this._mermaid;
   }
 
-  mermaidPlugin = (markdown: MarkdownIt.MarkdownIt) => {
+  mermaidPlugin = (markdown: MarkdownIt) => {
     const temp = markdown.renderer.rules.fence.bind(markdown.renderer.rules);
 
     markdown.renderer.rules.fence = (tokens, idx, options, env, slf) => {

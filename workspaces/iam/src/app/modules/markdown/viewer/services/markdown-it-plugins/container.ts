@@ -3,7 +3,7 @@ import { container_plugin } from './common-container';
 
 export class ContainerPlugin {
   constructor(
-    private markdown: MarkdownIt.MarkdownIt,
+    private markdown: MarkdownIt,
     name: string,
     private option?: { validate: (params) => any; render: (tokens, idx) => string }
   ) {

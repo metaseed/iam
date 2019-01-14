@@ -20,21 +20,24 @@ export class StoreSearchService {
   };
 
   search(docs: Document[], keyword: string) {
-    const fuse = new Fuse(docs, this.options);
+    const fuse = new Fuse(docs, <any>this.options);
     const sr = fuse
-      .search<{
-        item: Document;
-        score: number;
-        matches: [
-          {
-            indices: Array<[number, number]>;
-            key: string;
-            value: string;
-          }
-        ];
-      }>(keyword)
+      .search(
+        // <{
+        //   item: Document;
+        //   score: number;
+        //   matches: [
+        //     {
+        //       indices: Array<[number, number]>;
+        //       key: string;
+        //       value: string;
+        //     }
+        //   ];
+        // }>
+        keyword
+      )
       .map(
-        d =>
+        (d: any) =>
           ({
             id: d.item.id,
             score: 1 - d.score, // 0-1

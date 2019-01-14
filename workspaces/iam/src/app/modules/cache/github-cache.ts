@@ -357,7 +357,7 @@ export class GithubCache implements ICache {
                 }
                 throw err;
               }),
-              map<File, number>(_ => {
+              map(_ => {
                 return id; // fault is processed by error of observable
               })
             );

@@ -7,12 +7,12 @@ export class LispPlugin {
 
   gState;
 
-  constructor(private markdownIt: MarkdownIt.MarkdownIt, options?) {
+  constructor(private markdownIt: MarkdownIt, options?) {
     this.config = { ...this.config, ...options };
     this.markdownIt.use(this.lispPlugin, this.config);
   }
 
-  lispPlugin = (md: MarkdownIt.MarkdownIt, options) => {
+  lispPlugin = (md: MarkdownIt, options) => {
     md.renderer.rules.lisp_open = function(tokens, index) {
       return '';
     };

@@ -81,7 +81,7 @@ export class MarkdownViewerService {
   };
 
   mediaChangeSubscription: Subscription;
-  private markdown: MarkdownIt.MarkdownIt;
+  private markdown: MarkdownIt;
   private containerPlugin: ContainerPlugin;
   private mermaidPlugin: MermaidPlugin;
   private lispPlugin: LispPlugin;
