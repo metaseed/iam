@@ -124,7 +124,7 @@ export class Repository extends Requestable {
     return this._http.get(`githubapi/search/issues`, {
       headers: { Accept: 'application/vnd.github.v3.text-match+json' },
       params: {
-        q: `${query.replace(' ', '+')}+repo:${this.fullName}`
+        q: `${query.replace(' ', '+')}+state:open+repo:${this.fullName}`
       },
       observe: 'response'
     });

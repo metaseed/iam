@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as Fuse from 'fuse.js';
-import { Document, ISearchItem } from 'core';
+import { Document, ISearchItem, SearchResultSource } from 'core';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 
@@ -45,7 +45,8 @@ export class StoreSearchService {
             text_matches: d.matches.map(m => ({
               fragment: m.value,
               matches: m.indices.map(idx => ({ text: keyword, indices: idx }))
-            }))
+            })),
+            source: SearchResultSource.store
           } as ISearchItem)
       );
     return of(sr);

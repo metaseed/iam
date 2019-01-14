@@ -401,13 +401,8 @@ export class GithubCache implements ICache {
           return searchR;
         }
         searchR.forEach(item => {
-          let index = -1;
-          if (
-            lastSearchResult.some((v, i) => {
-              index = i;
-              return v.id === item.id;
-            })
-          ) {
+          let index = lastSearchResult.findIndex(v => v.id === item.id);
+          if (index !== -1) {
             if (!item.fromIssue) {
               lastSearchResult = [...lastSearchResult];
               lastSearchResult[index] = item;

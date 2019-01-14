@@ -1,48 +1,36 @@
 <mat-toolbar color="primary" style="z-index: 20;pointer-events:all" #toolbar>
   <mat-toolbar-row>
-    <button mat-icon-button routerLinkActive [routerLink]="['/home']">
-      <mat-icon>
-        arrow_back
-      </mat-icon>
+    <button mat-icon-button routerLinkActive (click)="back($event)">
+      <mat-icon> arrow_back </mat-icon>
     </button>
     <span style="flex:1 1 auto; margin:2.4rem;">Edit</span>
 
-    <button mat-icon-button (click)="undo()">
-      <mat-icon>
-        undo
-      </mat-icon>
-    </button>
-    <button mat-icon-button (click)="redo()">
-      <mat-icon>
-        redo
-      </mat-icon>
-    </button>
+    <button mat-icon-button (click)="undo()"><mat-icon> undo </mat-icon></button>
+    <button mat-icon-button (click)="redo()"><mat-icon> redo </mat-icon></button>
 
-
-    <button mat-icon-button (click)="save()" [class.save-button]="(docSaver.isDirty$ | async) && !docSaver.isSaving" [class.saving]="docSaver.isSaving">
+    <button
+      mat-icon-button
+      (click)="save()"
+      [class.save-button]="(docSaver.isDirty$ | async) && !docSaver.isSaving"
+      [class.saving]="docSaver.isSaving"
+    >
       <mat-icon>save</mat-icon>
     </button>
-    <button mat-icon-button *ngIf="isScreenWide$|async" (click)="togglePreview()">
-      <mat-icon>{{(showPreview$|async)?'chrome_reader_mode':'chrome_reader_mode'}}</mat-icon>
+    <button mat-icon-button *ngIf="(isScreenWide$ | async)" (click)="togglePreview()">
+      <mat-icon>{{
+        (showPreview$ | async) ? 'chrome_reader_mode' : 'chrome_reader_mode'
+      }}</mat-icon>
     </button>
-    <button mat-icon-button (click)="toViewMode($event)">
-      <mat-icon>
-        visibility
-      </mat-icon>
-    </button>
-    <button mat-icon-button [matMenuTriggerFor]="menu">
-      <mat-icon>
-        more_vert
-      </mat-icon>
-    </button>
+    <button mat-icon-button (click)="toViewMode($event)"><mat-icon> visibility </mat-icon></button>
+    <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon> more_vert </mat-icon></button>
     <mat-menu #menu>
-      <button mat-menu-item (click)="more($event)" *ngIf="isScreenWide$|async ">{{lockScrollWithView?'UnLock Scroll':'Lock Scroll'}}</button>
+      <button mat-menu-item (click)="more($event)" *ngIf="(isScreenWide$ | async)">
+        {{ lockScrollWithView ? 'UnLock Scroll' : 'Lock Scroll' }}
+      </button>
       <button mat-menu-item (click)="more($event)">Key Map</button>
       <button mat-menu-item (click)="more($event)" disabled>Item 2</button>
-      <button mat-menu-item (click)=" more($event)">Item 4</button>
+      <button mat-menu-item (click)="more($event)">Item 4</button>
     </mat-menu>
-
   </mat-toolbar-row>
-
 </mat-toolbar>
 <ms-codemirror-toolbar style="pointer-events:all;"></ms-codemirror-toolbar>

@@ -1,6 +1,8 @@
-<iam-doc-search-bar clickToggleEnable="false"></iam-doc-search-bar>
-<!-- [scrollHide]="[{ container: searchResult }]" -->
-<div #searchResult class="search-result">
+<iam-doc-search-bar
+  clickToggleEnable="false"
+  [scrollHide]="[{ container: search }]"
+></iam-doc-search-bar>
+<div #search class="search-result">
   <doc-search-item
     [item]="searchItem"
     *ngFor="let searchItem of (searchResult$ | async); trackBy: trackByFunc"

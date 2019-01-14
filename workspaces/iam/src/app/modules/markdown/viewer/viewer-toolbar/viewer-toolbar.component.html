@@ -1,32 +1,20 @@
 <mat-toolbar color="primary" #toolbar>
   <mat-toolbar-row>
-
-    <button routerLinkActive [routerLink]="['/home']" mat-icon-button>
+    <button routerLinkActive (click)="back($event)" mat-icon-button>
       <mat-icon>arrow_back</mat-icon>
     </button>
 
     <span style="flex:1 1 auto;margin:2.4rem">Document</span>
 
-
-    <button mat-icon-button (click)="toEditMode($event)">
-      <mat-icon>
-        mode_edit
-      </mat-icon>
-    </button>
-    <button mat-icon-button [matMenuTriggerFor]="menu">
-      <mat-icon>
-        more_vert
-      </mat-icon>
-    </button>
+    <button mat-icon-button (click)="toEditMode($event)"><mat-icon> mode_edit </mat-icon></button>
+    <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon> more_vert </mat-icon></button>
     <mat-menu #menu>
       <button mat-menu-item (click)="onRefresh($event)">
         <mat-icon>refresh</mat-icon>
         <span>Refresh</span>
       </button>
-      <button mat-menu-item [disabled]="true">Item 2</button>
-      <button mat-menu-item>Item 3</button>
+      <button mat-menu-item [disabled]="true">Item 2</button> <button mat-menu-item>Item 3</button>
       <button mat-menu-item>Item 4</button>
     </mat-menu>
-
   </mat-toolbar-row>
 </mat-toolbar>

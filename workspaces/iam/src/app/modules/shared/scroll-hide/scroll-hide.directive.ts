@@ -150,8 +150,12 @@ export class ScrollHideDirective implements OnDestroy {
       throw new Error('scrollHide attribute should be an array!');
     }
     this._containerItems = containerItems.map(item => {
-      if (item.container && item.container instanceof ElementRef) {
-        item.container = new ContainerRef((item as any).nativeElement);
+      if (item.container) {
+        if (item.container instanceof ElementRef) {
+          item.container = new ContainerRef((item as any).nativeElement);
+        } else if (item.container instanceof HTMLElement) {
+          item.container = new ContainerRef(item.container);
+        }
       }
       return item;
     });

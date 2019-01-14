@@ -157,7 +157,7 @@ export class SplitPaneComponent implements OnChanges {
     // We do not allow both the primary and secondary content to be toggled off
     // at the same time, because then it would be very confusing.
     if (this.primaryToggledOff && this.secondaryToggledOff) {
-      throw 'You cannot toggle off both the primary and secondary component';
+      console.warn('You cannot toggle off both the primary and secondary component');
     }
   }
 

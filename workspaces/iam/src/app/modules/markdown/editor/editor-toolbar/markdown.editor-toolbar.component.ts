@@ -16,6 +16,7 @@ import { DocSaveCoordinateService } from '../services/doc-save-coordinate-servic
 import { takeUntil } from 'rxjs/operators';
 import { Utilities } from '../../../core/utils';
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { Location } from '@angular/common';
 import { DocumentEffectsSave, DocumentEffectsCreate } from 'shared';
 
 @Component({
@@ -57,6 +58,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   showPreview$ = this.store.select(fromMarkdown.selectDocumentShowPreviewState);
 
   constructor(
+    private location: Location,
     private utils: Utilities,
     public markdown: MarkdownComponent,
     private _editorService: MarkdownEditorService,
@@ -97,6 +99,10 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
 
   ngDestroy() {
     this._destroy$.next();
+  }
+
+  back(e) {
+    this.location.back();
   }
 
   save = () => {

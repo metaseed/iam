@@ -1,7 +1,16 @@
-import { ICache, DocMeta, DocContent, Document, DocFormat, Logger } from 'core';
+import {
+  ICache,
+  DocMeta,
+  DocContent,
+  Document,
+  DocFormat,
+  Logger,
+  SearchResult,
+  SearchResultSource
+} from 'core';
 import { Injectable } from '@angular/core';
 import { Observable, of, merge } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { tap, catchError, map, last } from 'rxjs/operators';
 import { Store, State as StoreState } from '@ngrx/store';
 import {
   UpsertDocuments,
@@ -173,6 +182,31 @@ export class StoreCache implements ICache {
       .search(query)
       .pipe(tap(searchResult => this.store.dispatch(new SetSearchResultAction({ searchResult }))));
 
-    return merge(fromStoreCache$, fromNextCache$);
+    let lastResult: SearchResult;
+
+    return merge(fromStoreCache$, fromNextCache$).pipe(
+      map(searchResult => {
+        if (!lastResult) {
+          lastResult = [];
+          searchResult.forEach(item => {
+            lastResult.push(item);
+          });
+          return lastResult;
+        }
+        lastResult = [...lastResult];
+        searchResult.forEach(item => {
+          const index = lastResult.findIndex(it => it.id === item.id);
+
+          if (index !== -1) {
+            if (item.source !== SearchResultSource.store) {
+              lastResult[index] = item;
+            }
+          } else {
+            lastResult.push(item);
+          }
+        });
+        return lastResult;
+      })
+    );
   }
 }
