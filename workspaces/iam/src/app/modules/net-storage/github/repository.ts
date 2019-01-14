@@ -120,6 +120,16 @@ export class Repository extends Requestable {
       .pipe(tap(x => console.log(x), e => console.log(e)));
   }
 
+  searchIssue(query: string) {
+    return this._http.get(`githubapi/search/issues`, {
+      headers: { Accept: 'application/vnd.github.v3.text-match+json' },
+      params: {
+        q: `${query.replace(' ', '+')}+repo:${this.fullName}`
+      },
+      observe: 'response'
+    });
+  }
+
   searchCode(query: string, folder = 'documents', extension = 'md') {
     return this._http.get(`githubapi/search/code`, {
       headers: { Accept: 'application/vnd.github.v3.text-match+json' },

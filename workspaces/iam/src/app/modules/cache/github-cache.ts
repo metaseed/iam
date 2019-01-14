@@ -1,5 +1,5 @@
 import { ICache, DocMeta, DocContent, DocFormat, SearchResult } from 'core';
-import { Observable, throwError, concat, asyncScheduler, of } from 'rxjs';
+import { Observable, throwError, concat, asyncScheduler, of, merge } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { GithubStorage } from '../net-storage/github/github';
 import { switchMap, map, startWith, tap, catchError, take } from 'rxjs/operators';
@@ -370,11 +370,25 @@ export class GithubCache implements ICache {
   search(query: string): Observable<SearchResult> {
     return this.githubStorage.init().pipe(
       switchMap(repo => {
-        return repo.searchCode(query).pipe(
-          map(reps =>
-            (reps.body as any).items.map(item => {
-              const { id, title, ext } = DocMeta.parseDocumentName(item.name);
-              return { id, score: item.score, title, text_matches: item.text_matches };
+        return merge(
+          repo.searchIssue(query).pipe(
+            map(reps =>
+              (reps.body as any).items.map(item => {
+                return {
+                  id: <string>item.number,
+                  score: item.score,
+                  title: <string>item.title,
+                  text_matches: item.text_matches
+                };
+              })
+            )
+          ),
+          repo.searchCode(query).pipe(
+            map(rep => {
+              return (rep.body as any).items.map(item => {
+                const { id, title, ext } = DocMeta.parseDocumentName(item.name);
+                return { id, score: item.score, title, text_matches: item.text_matches };
+              });
             })
           )
         );
