@@ -137,6 +137,8 @@ export class DocumentEffects {
           let searchResult = selectSearchResultState(this.state.value);
           if (searchResult.length === 0) {
             this.snackbar.open('Find Nothing!', null, { duration: 2000 });
+          } else {
+            this.snackbar.open(`Find ${searchResult.length} items!`, null, { duration: 2000 });
           }
         })
       )
