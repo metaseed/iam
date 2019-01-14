@@ -28,7 +28,7 @@ export class DocMeta {
 
   static parseDocumentName(name: string) {
     const r = /(.*)_(\d+)\.(\w*)/.exec(name);
-    return { title: r[1], id: r[2], ext: r[3] };
+    return { title: r[1], id: +r[2], ext: r[3] };
   }
 
   static serialize(meta: DocMeta, contentUrl: string) {

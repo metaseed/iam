@@ -20,7 +20,7 @@ export class DocSearchListComponent implements OnInit {
   ngOnInit() {
     this.docSearchComponent.search
       .pipe(
-        debounceTime(500),
+        debounceTime(300),
         distinctUntilChanged(),
         tap(keyword => {
           if (keyword.trim() === '') {

@@ -1,5 +1,5 @@
 import { ICache, DocMeta, DocContent, DocFormat, SearchResult } from 'core';
-import { Observable, throwError, concat, asyncScheduler, of, merge } from 'rxjs';
+import { Observable, throwError, concat, asyncScheduler, of, merge, BehaviorSubject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { GithubStorage } from '../net-storage/github/github';
 import { switchMap, map, startWith, tap, catchError, take } from 'rxjs/operators';
@@ -368,6 +368,7 @@ export class GithubCache implements ICache {
   }
 
   search(query: string): Observable<SearchResult> {
+    let lastSearchResult: SearchResult = null;
     return this.githubStorage.init().pipe(
       switchMap(repo => {
         return merge(
@@ -375,10 +376,11 @@ export class GithubCache implements ICache {
             map(reps =>
               (reps.body as any).items.map(item => {
                 return {
-                  id: <string>item.number,
+                  id: +item.number,
                   score: item.score,
                   title: <string>item.title,
-                  text_matches: item.text_matches
+                  text_matches: item.text_matches,
+                  fromIssue: true
                 };
               })
             )
@@ -392,6 +394,29 @@ export class GithubCache implements ICache {
             })
           )
         );
+      }),
+      map(searchR => {
+        if (!lastSearchResult) {
+          lastSearchResult = searchR;
+          return searchR;
+        }
+        searchR.forEach(item => {
+          let index = -1;
+          if (
+            lastSearchResult.some((v, i) => {
+              index = i;
+              return v.id === item.id;
+            })
+          ) {
+            if (!item.fromIssue) {
+              lastSearchResult = [...lastSearchResult];
+              lastSearchResult[index] = item;
+            }
+          } else {
+            lastSearchResult = [...lastSearchResult, item];
+          }
+        });
+        return lastSearchResult;
       })
     );
   }
