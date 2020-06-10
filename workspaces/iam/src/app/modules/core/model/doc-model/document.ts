@@ -1,6 +1,7 @@
 import { DocMeta } from './doc-meta';
 import { Issue, Content } from 'net-storage';
 import { DocContent } from './doc-content';
+import { DocumentStatus } from './doc-status';
 
 export interface IDocument {
   id: number;
@@ -21,6 +22,7 @@ export class Document implements IDocument, IDocmentTempState {
     public id: number,
     public metaData: DocMeta,
     public content: DocContent,
-    public isUpdateMeta = false
+    public isUpdateMeta = false,
+    public documentStatus = new DocumentStatus(id)
   ) {}
 }

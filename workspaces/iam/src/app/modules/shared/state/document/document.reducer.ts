@@ -1,6 +1,8 @@
-import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
+import { EntityState, EntityAdapter, createEntityAdapter, Update } from '@ngrx/entity';
 import { Document, SearchResult } from 'core';
-import { DocumentActions, DocumentActionType } from './actions';
+import { DocumentActions, DocumentActionType } from './document.actions';
+import { selectCurrentDocumentIdState } from './document.selectors';
+import { State } from '@ngrx/store';
 
 export interface DocumentState extends EntityState<Document> {
   // additional entities state properties
@@ -23,7 +25,10 @@ export const initialState: DocumentState = adapter.getInitialState({
   currentDocumentId: undefined,
   idRangeHigh: undefined
 });
-export function documentReducer(state = initialState, action: DocumentActions): DocumentState {
+export function documentReducer(
+  state: DocumentState = initialState,
+  action: DocumentActions
+): DocumentState {
   switch (action.type) {
     case DocumentActionType.AddDocument: {
       return adapter.addOne(action.payload.collectionDocument, state);
@@ -43,6 +48,15 @@ export function documentReducer(state = initialState, action: DocumentActions): 
 
     case DocumentActionType.UpdateDocument: {
       return adapter.updateOne(action.payload.collectionDocument, state);
+    }
+
+    case DocumentActionType.UpdateCurrentDocumentStatus: {
+      let collectionDocument: Update<Document> = {
+        id: state.currentDocumentId,
+        changes: { documentStatus: action.payload }
+      };
+
+      return adapter.updateOne(collectionDocument, state);
     }
 
     case DocumentActionType.UpdateDocuments: {

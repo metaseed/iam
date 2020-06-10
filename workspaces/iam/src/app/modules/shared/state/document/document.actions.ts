@@ -2,6 +2,8 @@ import { Update } from '@ngrx/entity';
 import { Document, SearchResult } from 'core';
 import { IPayloadAction } from '../payload-action';
 import { Action } from '@ngrx/store';
+import { DocumentStatus } from 'app/modules/core/model/doc-model/doc-status';
+import { selectCurrentDocumentIdState } from './document.selectors';
 
 export enum DocumentActionType {
   LoadDocuments = '[Document] Load Documents',
@@ -17,7 +19,8 @@ export enum DocumentActionType {
   SetCurrentDocumentId = '[Document] Set Current CollectoinDocument Id',
   SetIdRangeHigh = '[Document] Set Key Range High',
   SetIdRangeLow = '[Document] Set Key Range Low',
-  SetSearchResult = '[Document] Set Search Result'
+  SetSearchResult = '[Document] Set Search Result',
+  UpdateCurrentDocumentStatus = '[Document] Set Current Document Status'
 }
 
 export class LoadDocuments implements IPayloadAction {
@@ -54,6 +57,11 @@ export class UpdateDocument implements IPayloadAction {
   readonly type = DocumentActionType.UpdateDocument;
 
   constructor(public payload: { collectionDocument: Update<Document> }) {}
+}
+
+export class UpdateCurrentDocumentStatus implements IPayloadAction {
+  readonly type = DocumentActionType.UpdateCurrentDocumentStatus;
+  constructor(public payload: DocumentStatus) {}
 }
 
 export class UpdateDocuments implements IPayloadAction {
@@ -111,4 +119,5 @@ export type DocumentActions =
   | SetCurrentDocumentId
   | SetIdRangeHigh
   | SetIdRangeLow
+  | UpdateCurrentDocumentStatus
   | SetSearchResultAction;

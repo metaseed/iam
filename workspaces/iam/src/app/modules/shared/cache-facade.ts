@@ -2,7 +2,7 @@ import { ICache, Logger, NET_CACHE_TOKEN, DB_CACHE_TOKEN } from 'core';
 import { Injectable, Inject } from '@angular/core';
 import { Store, State } from '@ngrx/store';
 import { SharedState } from './state/state';
-import { SetIdRangeLow, SetIdRangeHigh } from './state/document/actions';
+import { SetIdRangeLow, SetIdRangeHigh } from './state/document/document.actions';
 import { StoreCache, StoreSearchService } from '../cache';
 @Injectable()
 export class CacheFacade extends StoreCache {

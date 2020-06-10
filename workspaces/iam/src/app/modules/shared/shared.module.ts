@@ -9,9 +9,9 @@ import { FormsModule } from '@angular/forms';
 import { ScrollHideDirective } from './scroll-hide/scroll-hide.directive';
 import { CoreModule, CACHE_FACADE_TOKEN } from 'core';
 import { StoreModule } from '@ngrx/store';
-import { SharedState, reducers, moduleStateName } from './state';
+import { SharedState, reducers, moduleStateName, DocumentStateFacade } from './state';
 import { EffectsModule } from '@ngrx/effects';
-import { DocEffectsUtil } from './state/document/effects.util';
+import { DocEffectsUtil } from './state/document/document.effects.util';
 import { DatabaseModule } from 'database';
 import { NetStorageModule } from '../net-storage/storage.module';
 import { effects } from './state/effects';
@@ -50,7 +50,11 @@ export class SharedModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: SharedModule,
-      providers: [DocEffectsUtil, { provide: CACHE_FACADE_TOKEN, useClass: CacheFacade }]
+      providers: [
+        DocEffectsUtil,
+        { provide: CACHE_FACADE_TOKEN, useClass: CacheFacade },
+        DocumentStateFacade
+      ]
     };
   }
 }

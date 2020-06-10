@@ -13,11 +13,17 @@ import * as edit from '../../state/actions/edit';
 import * as CodeMirror from 'codemirror';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, tap } from 'rxjs/operators';
 import { Utilities } from '../../../core/utils';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Location } from '@angular/common';
-import { DocumentEffectsSave, DocumentEffectsCreate } from 'shared';
+import {
+  DocumentEffectsSave,
+  DocumentEffectsCreate,
+  selectCurrentDocStatus_IsMemDirty,
+  selectCurrentDocStatus_IsDbDirty,
+  selectCurrentDocStatus_IsSyncing
+} from 'shared';
 
 @Component({
   selector: 'editor-toolbar',
@@ -54,6 +60,15 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   private _destroy$ = new Subject();
 
   isScreenWide$ = this.utils.isScreenWide$;
+  isMemDirty$ = this.store
+    .select(selectCurrentDocStatus_IsMemDirty)
+    .pipe(tap(a => console.log('++++++++++++memDirty: ' + a)));
+  isDbDirty$ = this.store
+    .select(selectCurrentDocStatus_IsDbDirty)
+    .pipe(tap(a => console.log('++++++++++++dbDirty: ' + a)));
+  isSyncing$ = this.store
+    .select(selectCurrentDocStatus_IsSyncing)
+    .pipe(tap(a => console.log('++++++++++++syncing: ' + a)));
 
   showPreview$ = this.store.select(fromMarkdown.selectDocumentShowPreviewState);
 
@@ -108,7 +123,9 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   save = () => {
     const content = this.editor.getValue();
     this.store.dispatch(new edit.Save(content));
-    this.store.dispatch(new DocumentEffectsSave({ content, format: DocFormat.md }));
+    this.store.dispatch(
+      new DocumentEffectsSave({ content, format: DocFormat.md, forceUpdate: true })
+    );
   };
 
   undo = () => {

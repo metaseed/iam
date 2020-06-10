@@ -1,7 +1,6 @@
 import { Observable, Observer, Subject, from, of } from 'rxjs';
 import { mergeMap, tap, share, shareReplay, filter } from 'rxjs/operators';
 import { InjectionToken, Inject, Injectable, NgModule, ModuleWithProviders } from '@angular/core';
-// ngrx/db 2.2.0-beta.0 modified to support rxjs 6
 
 const IDB_SUCCESS = 'success';
 const IDB_COMPLETE = 'complete';
@@ -199,13 +198,13 @@ export class Database {
     );
   }
 
-  delete(storeName: string, id): Observable<any> {
+  delete<T>(storeName: string, id): Observable<T> {
     return this.request(storeName, IDB_TXN_READWRITE, store => {
       return store.delete(id);
     });
   }
 
-  add<T>(storeName: string, record:T): Observable<T> {
+  add<T>(storeName: string, record: T): Observable<T> {
     return this.request<T>(storeName, IDB_TXN_READWRITE, store => {
       return store.add(record);
     });
@@ -214,6 +213,17 @@ export class Database {
   get<T>(storeName: string, id: any): Observable<T> {
     return this.request(storeName, IDB_TXN_READ, store => {
       return store.get(id);
+    });
+  }
+
+  getAllKeys<T>(storeName: string): Observable<T> {
+    return this.request(storeName, IDB_TXN_READ, store => {
+      return store.getAllKeys();
+    });
+  }
+  getAll<T>(storeName: string): Observable<T> {
+    return this.request(storeName, IDB_TXN_READ, store => {
+      return store.getAll();
     });
   }
 
@@ -333,7 +343,7 @@ export class Database {
           const txn = db.transaction([storeName], IDB_TXN_READWRITE);
           const objectStore = txn.objectStore(storeName);
 
-          const onTxnError = (err) => txnObserver.error(err);
+          const onTxnError = err => txnObserver.error(err);
           const onTxnComplete = () => txnObserver.complete();
 
           txn.addEventListener(IDB_COMPLETE, onTxnComplete);
@@ -354,7 +364,7 @@ export class Database {
                 let $key = req.result;
                 reqObserver.next(mapper({ $key, record }));
               });
-              req.addEventListener(IDB_ERROR, (err) => {
+              req.addEventListener(IDB_ERROR, err => {
                 reqObserver.error(err);
               });
             });
@@ -412,7 +422,7 @@ export class Database {
               }
               let req = objectStore.get(key);
 
-              req.addEventListener(IDB_ERROR, (err) => {
+              req.addEventListener(IDB_ERROR, err => {
                 reqObserver.error(err);
               });
               req.addEventListener(IDB_SUCCESS, _ => {
@@ -429,7 +439,7 @@ export class Database {
                       let $key = record['$key'];
                       let $record = Object.assign({}, record);
                       delete $record['$key'];
-                      request = (objectStore[action])($record, $key);
+                      request = objectStore[action]($record, $key);
                     }
 
                     request.addEventListener(IDB_SUCCESS, () => {
@@ -437,7 +447,7 @@ export class Database {
                       reqObserver.next(mapper({ $key, record }));
                       reqObserver.complete();
                     });
-                    request.addEventListener(IDB_ERROR, (err) => {
+                    request.addEventListener(IDB_ERROR, err => {
                       reqObserver.error(err);
                     });
                     break;
@@ -466,7 +476,7 @@ export class Database {
 
           let requestSubscriber = from(records)
             .pipe(
-              mergeMap(makeRequest),
+              mergeMap(makeRequest)
               // tap(a => console.log(a), err => console.error(err), () => console.warn('aaaabbbb'))
             )
             .subscribe(txnObserver);

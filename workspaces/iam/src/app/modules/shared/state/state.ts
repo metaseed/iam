@@ -1,6 +1,6 @@
 import { ActionReducerMap, createFeatureSelector, createSelector } from '@ngrx/store';
 import { actionMonitorReducer, ActionMonitorState } from './action-stauts/reducer';
-import { documentReducer, DocumentState } from './document/reducer';
+import { documentReducer, DocumentState } from './document/document.reducer';
 import * as fromRoot from '../../../state';
 
 export const moduleStateName = 'shared';

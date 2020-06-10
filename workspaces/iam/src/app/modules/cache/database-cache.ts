@@ -10,20 +10,26 @@ import {
   count,
   filter,
   subscribeOn,
-  catchError
+  catchError,
+  merge
 } from 'rxjs/operators';
 import { ICache, DataTables } from 'core';
+import { DocumentStateFacade } from 'shared';
+import { DatabaseCacheSaver } from './database-cache-saver';
+import { Store, State } from '@ngrx/store';
 
 const DB_PAGE_SIZE = 50;
 export interface IterableDocuments extends IterableIterator<Observable<Document>> {}
 @Injectable()
 export class DatabaseCache implements ICache {
   public nextLevelCache: ICache;
+  private dbSaver: DatabaseCacheSaver;
 
-  constructor(private db: Database) {}
+  constructor(private db: Database, private store: Store<any>, private state: State<any>) {}
 
   init(nextLevelCache: ICache) {
     this.nextLevelCache = nextLevelCache;
+    this.dbSaver = new DatabaseCacheSaver(this.db, this.nextLevelCache, this.store, this.state);
     return this;
   }
 
@@ -201,30 +207,8 @@ export class DatabaseCache implements ICache {
     );
   }
 
-  UpdateDocument(oldDocMeta: DocMeta, content: string) {
-    return this.nextLevelCache.UpdateDocument(oldDocMeta, content).pipe(
-      tap(doc => {
-        this.db
-          .put<DocContent>(DataTables.DocContent, doc.content)
-          .pipe(
-            subscribeOn(asyncScheduler),
-            catchError(err => {
-              throw err;
-            })
-          )
-          .subscribe();
-
-        this.db
-          .put<DocMeta>(DataTables.DocMeta, doc.metaData)
-          .pipe(
-            subscribeOn(asyncScheduler),
-            catchError(err => {
-              throw err;
-            })
-          )
-          .subscribe();
-      })
-    );
+  UpdateDocument(oldDocMeta: DocMeta, content: string, forceUpdate: boolean) {
+    return this.dbSaver.saveToDb(oldDocMeta, content, forceUpdate) as Observable<Document>;
   }
 
   deleteDoc(id: number) {

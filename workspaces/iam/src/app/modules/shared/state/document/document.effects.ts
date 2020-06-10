@@ -8,21 +8,25 @@ import {
   DocumentEffectsActionType,
   DocumentEffectsDelete,
   DocumentEffectsSearch
-} from './effects-actions';
+} from './document.effects-actions';
 import { switchMap, tap } from 'rxjs/operators';
-import { DocumentEffectsRead, DocumentEffectsCreate, DocumentEffectsSave } from './effects-actions';
+import {
+  DocumentEffectsRead,
+  DocumentEffectsCreate,
+  DocumentEffectsSave
+} from './document.effects-actions';
 import { MatSnackBar } from '@angular/material';
-import { DocumentState } from './reducer';
+import { DocumentState } from './document.reducer';
 import { ActionMoniter } from '../action-stauts';
-import { DocEffectsUtil } from './effects.util';
-import { SetCurrentDocumentId } from './actions';
+import { DocEffectsUtil } from './document.effects.util';
+import { SetCurrentDocumentId } from './document.actions';
 import { DocMeta, CACHE_FACADE_TOKEN, ICache } from 'core';
 import {
   selectIdRangeHighState,
   selectIdRangeLowState,
   selectCurrentDocumentState,
   selectSearchResultState
-} from './selectors';
+} from './document.selectors';
 import { NEW_DOC_ID } from './const';
 
 @Injectable()
@@ -108,12 +112,15 @@ export class DocumentEffects {
             }, this.actionMonitor.complete(action))
           );
         } else {
-          return this.cacheFacade.UpdateDocument(doc.metaData, content).pipe(
-            tap(d => {
-              this.util.modifyUrlAfterSaved(d.id, newTitle, format);
-              this.snackbar.open('Saved!', 'OK');
-            }, this.actionMonitor.complete(action))
-          );
+          return this.cacheFacade
+            .UpdateDocument(doc.metaData, content, action.payload.forceUpdate)
+            .pipe(
+              tap(d => {
+                this.util.modifyUrlAfterSaved(d.id, newTitle, format);
+                // this.snackbar.open('Saved!', 'OK');
+                console.log('Saved!');
+              }, this.actionMonitor.complete(action))
+            );
         }
       })
     )

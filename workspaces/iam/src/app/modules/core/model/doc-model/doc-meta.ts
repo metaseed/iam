@@ -22,7 +22,7 @@ export class DocMeta {
     public summary: string,
     public imageData: string,
     public contentSha: string, // sha of file
-    public format = 'md', // sufix
+    public format = 'md', // suffix
     public isDeleted = false
   ) {}
 

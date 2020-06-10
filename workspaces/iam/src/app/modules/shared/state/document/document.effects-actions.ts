@@ -36,7 +36,7 @@ export class DocumentEffectsRead extends CorrelationAction {
 }
 export class DocumentEffectsSave extends CorrelationAction {
   readonly type = DocumentEffectsActionType.Save;
-  constructor(public payload: { content: string; format?: DocFormat }) {
+  constructor(public payload: { content: string; format?: DocFormat; forceUpdate?: boolean }) {
     super();
   }
 }

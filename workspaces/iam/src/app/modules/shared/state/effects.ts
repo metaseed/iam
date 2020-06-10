@@ -1,3 +1,3 @@
-import { DocumentEffects } from './document/effects';
+import { DocumentEffects } from './document/document.effects';
 
 export const effects = [DocumentEffects];

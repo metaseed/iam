@@ -1,5 +1,5 @@
 import { createSelector } from '@ngrx/store';
-import * as fromDocument from './reducer';
+import * as fromDocument from './document.reducer';
 import { selectDocumentState } from '../state';
 
 export const selectDocumentsState = createSelector(
@@ -18,6 +18,26 @@ export const selectCurrentDocumentState = createSelector(
   selectDocumentEntitiesState,
   selectCurrentDocumentIdState,
   (entities, id) => entities[id]
+);
+
+export const selectCurrentDocStatus = createSelector(
+  selectCurrentDocumentState,
+  state => state && state.documentStatus
+);
+
+export const selectCurrentDocStatus_IsMemDirty = createSelector(
+  selectCurrentDocStatus,
+  status => status && status.isMemDirty
+);
+
+export const selectCurrentDocStatus_IsDbDirty = createSelector(
+  selectCurrentDocStatus,
+  status => status && status.isDbDirty
+);
+
+export const selectCurrentDocStatus_IsSyncing = createSelector(
+  selectCurrentDocStatus,
+  status => status && status.isSyncing
 );
 
 export const selectIdRangeHighState = createSelector(

@@ -283,7 +283,7 @@ export class GithubCache implements ICache {
     );
   }
 
-  UpdateDocument(oldDocMeta: DocMeta, content: string) {
+  UpdateDocument(oldDocMeta: DocMeta, content: string, forceUpdate: boolean) {
     const newTitle = DocMeta.getTitle(content);
 
     return this.githubStorage.init().pipe(

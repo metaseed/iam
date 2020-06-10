@@ -2,26 +2,34 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { MarkdownEditorService } from './markdown.editor.service';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { auditTime, takeUntil, combineLatest } from 'rxjs/operators';
-import { Store } from '@ngrx/store';
+import { Store, State } from '@ngrx/store';
 import {
   ActionState,
   DocumentEffectsSave,
   actionStatusState$,
-  DocumentEffectsActionType
+  DocumentEffectsActionType,
+  selectCurrentDocStatus_IsMemDirty,
+  UpdateCurrentDocumentStatus,
+  selectCurrentDocStatus
 } from 'shared';
 
 @Injectable()
 export class DocSaveCoordinateService implements OnDestroy {
-  static autoSaveDelayAfterEdit = 5 * 60 * 1000; // 5min
+  static autoSaveDelayAfterEdit = 10 * 1000; // 20s
 
-  isDirty$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  private isDirty$ = this.store.select(selectCurrentDocStatus_IsMemDirty);
+  isSyncing$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   isSaving: boolean;
 
   private editor$ = this.editorService.docEditorLoaded$;
   private contentGeneration: number;
   private destroy$ = new Subject();
 
-  constructor(private editorService: MarkdownEditorService, private store: Store<any>) {
+  constructor(
+    private editorService: MarkdownEditorService,
+    private store: Store<any>,
+    private state: State<any>
+  ) {
     this.isDirty$
       .pipe(
         takeUntil(this.destroy$),
@@ -73,12 +81,13 @@ export class DocSaveCoordinateService implements OnDestroy {
   }
 
   private checkDirty(editor) {
-    const oldValue = this.isDirty$.value;
+    const oldStatus = selectCurrentDocStatus(this.state.value);
+    const oldValue = oldStatus.isMemDirty;
     if (!this.contentGeneration) return; // initial content load
 
     const isDirty = !editor.getDoc().isClean(this.contentGeneration);
     if (oldValue !== isDirty) {
-      this.isDirty$.next(isDirty);
+      this.store.dispatch(new UpdateCurrentDocumentStatus({ ...oldStatus, isMemDirty: isDirty }));
     }
   }
 

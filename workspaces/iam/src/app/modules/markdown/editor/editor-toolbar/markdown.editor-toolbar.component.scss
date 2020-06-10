@@ -6,16 +6,24 @@ a:hover {
   text-decoration: none;
 }
 
-.save-button:after {
+.mem-dirty:before {
   content: ' \25CF';
   font-size: 1.34rem;
   color: red;
-  margin-top: -0.6rem;
+  margin-top: 0.6rem;
+  margin-left: 0.9rem;
+  position: absolute;
+}
+.db-dirty:after {
+  content: ' \25CF';
+  font-size: 1.34rem;
+  color: blue;
+  margin-top: 0.5rem;
   margin-left: -0.9rem;
   position: absolute;
 }
 
-.saving:after {
+.net-syncing:after {
   margin-top: -1em;
   margin-left: 0.4em;
   content: '';

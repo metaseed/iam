@@ -4,7 +4,8 @@ import { SearchResult } from '../doc-model';
 
 export enum DataTables {
   DocMeta = 'doc_meta',
-  DocContent = 'document'
+  DocContent = 'document',
+  DirtyDocs = 'dirty_docs'
 }
 
 export interface ICache {
@@ -27,7 +28,7 @@ export interface ICache {
 
   readDocContent(id: number, title: string, format: string): Observable<DocContent>;
 
-  UpdateDocument(oldDocMeta: DocMeta, content: string): Observable<Document>;
+  UpdateDocument(oldDocMeta: DocMeta, content: string, forceUpdate: boolean): Observable<Document>;
 
   // retrun the id;  fault would be processed by observable error hanlder
   deleteDoc(id: number): Observable<number>;

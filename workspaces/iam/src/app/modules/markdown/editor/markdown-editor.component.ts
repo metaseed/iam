@@ -22,7 +22,8 @@ import {
   selectCurrentDocumentIdState,
   DocumentEffectsDelete,
   selectCurrentDocumentState,
-  NEW_DOC_ID
+  NEW_DOC_ID,
+  selectCurrentDocStatus
 } from 'shared';
 import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../model/markdown.model';
 import { IContainer, ContainerRef, ICanComponentDeactivate } from 'core';
@@ -124,7 +125,8 @@ export class MarkdownEditorComponent implements ICanComponentDeactivate {
       }
     };
 
-    if (this.docSaveCoordinatorService.isDirty$.value) {
+    const status = selectCurrentDocStatus(this.state.value);
+    if (status.isMemDirty) {
       return this.dialog
         .open(DocDirtyNotifyDialog)
         .afterClosed()
@@ -132,7 +134,10 @@ export class MarkdownEditorComponent implements ICanComponentDeactivate {
           map(value => {
             if (value === 'Yes') {
               this.store.dispatch(
-                new DocumentEffectsSave({ content: this.codeMirrorComponent.value })
+                new DocumentEffectsSave({
+                  content: this.codeMirrorComponent.value,
+                  forceUpdate: true
+                })
               );
               return false;
             } else {

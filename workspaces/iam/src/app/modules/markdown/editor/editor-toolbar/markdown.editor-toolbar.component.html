@@ -11,8 +11,9 @@
     <button
       mat-icon-button
       (click)="save()"
-      [class.save-button]="(docSaver.isDirty$ | async) && !docSaver.isSaving"
-      [class.saving]="docSaver.isSaving"
+      [class.mem-dirty]="isMemDirty$ | async"
+      [class.db-dirty]="isDbDirty$ | async"
+      [class.net-syncing]="isSyncing$ | async"
     >
       <mat-icon>save</mat-icon>
     </button>

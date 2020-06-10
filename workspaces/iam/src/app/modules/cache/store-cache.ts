@@ -130,13 +130,16 @@ export class StoreCache implements ICache {
                 );
                 meta.contentSha = docContent.sha;
               }
-              const doc = new Document(id, meta, docContent);
               if (!document) {
+                const doc = new Document(id, meta, docContent);
                 this.store.dispatch(new AddDocument({ collectionDocument: doc }));
               } else {
                 this.store.dispatch(
                   new UpdateDocument({
-                    collectionDocument: { id: document.id, changes: doc }
+                    collectionDocument: {
+                      id: document.id,
+                      changes: { metaData: meta, content: docContent }
+                    }
                   })
                 );
               }
@@ -150,12 +153,19 @@ export class StoreCache implements ICache {
     );
   }
 
-  UpdateDocument(oldDocMeta: DocMeta, content: string) {
-    return this.nextLevelCache.UpdateDocument(oldDocMeta, content).pipe(
+  UpdateDocument(oldDocMeta: DocMeta, content: string, forceUpdate: boolean) {
+    return this.nextLevelCache.UpdateDocument(oldDocMeta, content, forceUpdate).pipe(
       tap(doc =>
         this.store.dispatch(
           new UpdateDocument({
-            collectionDocument: { id: oldDocMeta.id, changes: doc }
+            collectionDocument: {
+              id: oldDocMeta.id,
+              changes: {
+                content: doc.content,
+                metaData: doc.metaData,
+                documentStatus: doc.documentStatus
+              }
+            }
           })
         )
       )
