@@ -15,7 +15,6 @@ import {
   DocumentEffectsCreate,
   DocumentEffectsSave
 } from './document.effects-actions';
-import { MatSnackBar } from '@angular/material';
 import { DocumentState } from './document.reducer';
 import { ActionMoniter } from '../action-stauts';
 import { DocEffectsUtil } from './document.effects.util';
@@ -28,6 +27,7 @@ import {
   selectSearchResultState
 } from './document.selectors';
 import { NEW_DOC_ID } from './const';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable()
 export class DocumentEffects {

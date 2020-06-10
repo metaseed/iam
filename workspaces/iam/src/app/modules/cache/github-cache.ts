@@ -244,7 +244,7 @@ export class GithubCache implements ICache {
       format: string,
       state = 0,
       isDeleted = false
-    ) => {
+    ): Observable<DocContent> => {
       if (!title) throw new Error('title is empty!');
       let uri = `${DOCUMENTS_FOLDER_NAME}/${title}_${id}`;
       if (format) uri = `${uri}.${format}`;

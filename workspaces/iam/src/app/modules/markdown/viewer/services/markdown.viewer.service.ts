@@ -228,7 +228,7 @@ export class MarkdownViewerService {
           irender.render(md.parse(raw, this.env), md['options'], this.env)
         );
 
-        return r;
+        return r.textContent;
       } catch (e) {
         console.error(e);
         return e;

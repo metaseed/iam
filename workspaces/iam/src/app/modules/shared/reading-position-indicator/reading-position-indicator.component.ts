@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { DocumentRef, WindowRef, ContainerRef } from 'core';
-import { AfterViewInit, ViewChild } from '@angular/core';
-import { MatProgressBar } from '@angular/material';
+import { AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'ms-reading-position-indicator',

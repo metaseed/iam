@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as Fuse from 'fuse.js';
+import Fuse from 'fuse.js';
 import { Document, ISearchItem, SearchResultSource } from 'core';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
