@@ -17,7 +17,7 @@ import { DocumentMode } from '../state/reducers/document';
 import * as fromMarkdown from '../state';
 
 import { takeUntil, map, observeOn, switchMap } from 'rxjs/operators';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../model/markdown.model';
 import { PlatformLocation } from '@angular/common';
 import { EditItAction, selectViewState } from '../state';

@@ -5,7 +5,7 @@ import { StoreSearchService } from '../cache/services/store-search.service';
 import { Store, select } from '@ngrx/store';
 import { Observable, from, Subject } from 'rxjs';
 import { map, debounceTime, distinctUntilChanged, combineLatest, tap } from 'rxjs/operators';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { switchIfEmit } from '../core/operators/switchIfEmit';
 import { MSG_DISPLAY_TIMEOUT, Document } from 'core';
 

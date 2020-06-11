@@ -60,5 +60,6 @@ export function sourceLine(
           // code
         }
       });
+      return null;// null is ok for core ruler
   });
 }

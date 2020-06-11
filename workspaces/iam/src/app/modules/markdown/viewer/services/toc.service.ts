@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
-import { DOCUMENT, DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ReplaySubject } from 'rxjs';
 import { ScrollSpyToken, ScrollSpyService } from 'core';
+import { DOCUMENT } from '@angular/common';
 
 export interface TocItem {
   content: SafeHtml;

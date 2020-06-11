@@ -15,7 +15,7 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { Store, select, State as StoreState } from '@ngrx/store';
 import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import {
   DocumentEffectsSave,

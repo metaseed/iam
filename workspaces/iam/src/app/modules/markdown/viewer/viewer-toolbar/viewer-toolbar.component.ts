@@ -2,7 +2,7 @@ import { Component, ViewChild, Inject, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as document from '../../state/actions/document';
 import * as fromMarkdown from '../../state';
-import { MatToolbar } from '@angular/material';
+import { MatToolbar } from '@angular/material/toolbar';
 import { Location } from '@angular/common';
 
 @Component({

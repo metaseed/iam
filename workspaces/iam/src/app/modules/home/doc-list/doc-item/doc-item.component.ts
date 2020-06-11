@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { Document, NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT } from 'core';
 import { Store } from '@ngrx/store';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { monitorActionStatus$, DocumentEffectsActionType, ActionStatus, ActionState } from 'shared';
 import { takeUntil, map } from 'rxjs/operators';
 import { Subject } from 'rxjs';

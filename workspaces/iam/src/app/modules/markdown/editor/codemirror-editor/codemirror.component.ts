@@ -71,7 +71,7 @@ export class CodemirrorComponent implements ControlValueAccessor {
       .pipe(takeUntil(this.destroy$))
       .subscribe(wide => (this.showLineNumber = wide));
   }
-  ngOnInit() {
+  ngInit() {
     this.config = this.config || {
       mode: {
         name: 'gfm',

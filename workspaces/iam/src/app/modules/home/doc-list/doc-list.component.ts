@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ElementRef } from '@angular/core';
 import { Document, NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT, IContainer, ContainerRef } from 'core';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store, select } from '@ngrx/store';
 import {
   State,

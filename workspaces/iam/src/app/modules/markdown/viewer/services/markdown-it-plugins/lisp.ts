@@ -33,6 +33,7 @@ export class LispPlugin {
 
     md.core.ruler.push('grab_state', function(state) {
       this.gState = state;
+      return null;//null is ok for core ruler
     });
 
     md.inline.ruler.before('emphasis', 'lisp', this.parse);

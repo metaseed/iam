@@ -1,6 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { PlatformLocation } from '@angular/common';
-import { DOCUMENT } from '@angular/platform-browser';
+import { DOCUMENT, PlatformLocation } from '@angular/common';
 
 @Injectable()
 export class ScrollService {

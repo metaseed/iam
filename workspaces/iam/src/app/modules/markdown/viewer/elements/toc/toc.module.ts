@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TocComponent } from './toc.component';
-import { MatSnackBarModule, MatIconModule, MatButtonModule } from '@angular/material';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { WithCustomElementComponent } from '../element-registry';
 import { Type } from '@angular/core';
 
