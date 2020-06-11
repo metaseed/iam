@@ -71,7 +71,7 @@ export class CodemirrorComponent implements ControlValueAccessor {
       .pipe(takeUntil(this.destroy$))
       .subscribe(wide => (this.showLineNumber = wide));
   }
-  ngInit() {
+  ngOnInit() {
     this.config = this.config || {
       mode: {
         name: 'gfm',
@@ -102,7 +102,6 @@ export class CodemirrorComponent implements ControlValueAccessor {
         // "Ctrl-F": "findPersistent"
       }
     };
-    this.codemirrorInit(this.config);
   }
 
   get value() {
@@ -118,6 +117,8 @@ export class CodemirrorComponent implements ControlValueAccessor {
   }
 
   ngAfterViewInit() {
+    this.codemirrorInit(this.config);
+
     this.editorService.docEditorLoaded$.next(this.codemirror);
     // this.service.markdownService.viewer$
     //   .pipe(switchMap(v => v.activeElement$))
