@@ -13,7 +13,7 @@ import { AuthInterceptor } from './auth-interceptor';
     GithubStorage,
     {
       provide: GITHUB_AUTHENTICATION,
-      useValue: new UserInfo('metasong', 'metaseed@gmail.com', '540b0121f85685de4667799f53ab6fda9fe6e796')
+      useValue: new UserInfo('metasong', 'metaseed@gmail.com', '4d6eda62c93f8bb36f63f91c548343cf0af4eea0')
     },
     AuthService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
