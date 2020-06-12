@@ -1,5 +1,6 @@
 https://developer.github.com/v3/guides/basics-of-authentication/
 https://github.com/prose/gatekeeper
+https://github.com/atulmy/oauth
 
 https://github.com/login/oauth/authorize?scope=user:email&client_id=584a5ba8c6d54eee0873&state=https://metasong.github.io/iam
 http://52.175.247.124:3000/authenticate?code=081a4cf33d8fbc45aed0
@@ -11,3 +12,12 @@ OAUTH_CLIENT_SECRET=
 PORT=3000
 
  pscp M:\Workspace\i'm\server\*.* echosong@52.175.247.124:iam
+
+Read official flow: https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps
+Create a new OAuth application: https://github.com/settings/applications/new and fill in following:
+Application name enter your application name, eg: Example
+Homepage URL enter your website url, eg: https://example.com
+Authorization callback URL:
+For development, enter http://localhost:3000/authorize/
+For production, enter https://example.com/authorize/
+Copy Client ID and Client Secret
