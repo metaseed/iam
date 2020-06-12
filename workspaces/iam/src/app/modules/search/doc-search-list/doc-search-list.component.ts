@@ -11,13 +11,13 @@ import { Observable } from 'rxjs';
   templateUrl: './doc-search-list.component.html',
   styleUrls: ['./doc-search-list.component.scss']
 })
-export class DocSearchListComponent implements OnInit {
+export class DocSearchListComponent  {
   @ViewChild(DocSearchBarComponent)
   docSearchComponent: DocSearchBarComponent;
 
   constructor(private _store: Store<any>) {}
 
-  ngOnInit() {
+  ngAfterViewInit() {
     this.docSearchComponent.search
       .pipe(
         debounceTime(300),
