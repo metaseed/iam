@@ -58,20 +58,18 @@ export class VerticalSplitPaneComponent extends SplitPaneComponent {
   outerContainer: ElementRef;
 
   getTotalSize(): number {
-    return this.outerContainer?.nativeElement.offsetWidth;
+    return this.outerContainer.nativeElement.offsetWidth;
   }
 
   getPrimarySize(): number {
-    return this.primaryComponent?.nativeElement.offsetWidth;
+    return this.primaryComponent.nativeElement.offsetWidth;
   }
 
   getSecondarySize(): number {
-    return this.secondaryComponent?.nativeElement.offsetWidth;
+    return this.secondaryComponent.nativeElement.offsetWidth;
   }
 
   dividerPosition(size: number) {
-    if(!this.primaryComponent || !this.secondaryComponent) return;
-    
     const sizePct = (size / this.getTotalSize()) * 100;
     if (!this.primaryToggledOff) {
       this.primaryComponent.nativeElement.style.width = sizePct + '%';

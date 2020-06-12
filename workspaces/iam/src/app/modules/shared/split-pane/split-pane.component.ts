@@ -22,7 +22,7 @@ export class SplitPaneComponent implements OnChanges {
   secondaryComponent: ElementRef;
 
   @Input('primary-component-initialratio')
-  initialRatio: number = 0.5;
+  ratio: number = 0.5;
   @Input('primary-component-minsize')
   primaryMinSize: number = 0;
   @Input('secondary-component-minsize')
@@ -42,56 +42,47 @@ export class SplitPaneComponent implements OnChanges {
   @Output('on-ended-resizing')
   notifyEndedResizing: EventEmitter<any> = new EventEmitter<any>();
 
-  primarySizeBeforeTogglingOff: number;
-  secondarySizeBeforTogglingOff: number;
   dividerSize: number = 8.0;
   isResizing: boolean = false;
 
   ngAfterViewInit() {
     this.checkBothToggledOff();
-
-    if (!this.primaryToggledOff && !this.secondaryToggledOff) {
-      let ratio: number = this.initialRatio;
-      if (this.localStorageKey != null) {
-        let ratioStr = localStorage.getItem(this.localStorageKey);
-        if (ratioStr != null) {
-          ratio = JSON.parse(ratioStr);
-        }
+    let ratio: number = this.ratio;
+    if (this.localStorageKey != null) {
+      let ratioStr = localStorage.getItem(this.localStorageKey);
+      if (ratioStr != null) {
+        ratio = JSON.parse(ratioStr);
       }
-
+    }
+    if (!this.primaryToggledOff && !this.secondaryToggledOff) {
       let size = ratio * this.getTotalSize();
       this.applySizeChange(size);
+    } else if(this.primaryToggledOff){
+      this.applySizeChange(this.getTotalSize());
+    } else {
+      this.applySizeChange(0);
     }
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    if(!this.primaryComponent || !this.secondaryComponent) return;
+    
     this.checkBothToggledOff();
-
-    if (changes['primaryToggledOff']) {
-      if (changes['primaryToggledOff'].currentValue === true) {
-        this.primarySizeBeforeTogglingOff = this.getPrimarySize();
-        this.secondarySizeBeforTogglingOff = this.getSecondarySize();
-        this.applySizeChange(0);
-      } else {
-        const size =
-          (this.getAvailableSize() * this.primarySizeBeforeTogglingOff) /
-          (this.primarySizeBeforeTogglingOff + this.secondarySizeBeforTogglingOff);
-        this.applySizeChange(size);
-      }
-    } else if (changes['secondaryToggledOff']) {
-      if (changes['secondaryToggledOff'].currentValue === true) {
-        this.primarySizeBeforeTogglingOff = this.getPrimarySize();
-        this.secondarySizeBeforTogglingOff = this.getSecondarySize();
-        this.applySizeChange(this.getTotalSize());
-      } else {
-        const size =
-          (this.getAvailableSize() * this.primarySizeBeforeTogglingOff) /
-          (this.primarySizeBeforeTogglingOff + this.secondarySizeBeforTogglingOff);
-        this.applySizeChange(size);
-      }
-    }
+    if (changes['primaryToggledOff'] || changes['secondaryToggledOff']){
+      this.apply();
+    } 
+    
   }
-
+ private apply() {
+  if(this.primaryToggledOff) { // show 2nd
+    this.applySizeChange(0);
+  } else if(this.secondaryToggledOff){// show 1st
+    this.applySizeChange(this.getTotalSize());
+  }else{// show 1st and 2nd
+    const size =this.ratio * this.getTotalSize();
+    this.applySizeChange(size);
+  }
+ }
   getTotalSize(): number {
     throw "SplitPaneComponent shouldn't be instantiated. Override this method.";
   }
@@ -167,8 +158,8 @@ export class SplitPaneComponent implements OnChanges {
     this.secondaryComponent.nativeElement.style.cursor = 'auto';
 
     if (this.localStorageKey != null) {
-      const ratio = this.getPrimarySize() / this.getTotalSize();
-      localStorage.setItem(this.localStorageKey, JSON.stringify(ratio));
+      this.ratio= this.getPrimarySize() / this.getTotalSize();
+      localStorage.setItem(this.localStorageKey, JSON.stringify(this.ratio));
     }
 
     this.notifyEndedResizing.emit();
