@@ -1,4 +1,5 @@
 https://developer.github.com/v3/guides/basics-of-authentication/
+https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/
 https://github.com/prose/gatekeeper
 https://github.com/atulmy/oauth
 
