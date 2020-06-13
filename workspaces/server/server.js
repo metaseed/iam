@@ -6,6 +6,8 @@ var url     = require('url'),
     express = require('express'),
     app     = express();
 
+    require('dotenv').config();
+    
 var TRUNCATE_THRESHOLD = 10,
     REVEALED_CHARS = 3,
     REPLACEMENT = '***';
