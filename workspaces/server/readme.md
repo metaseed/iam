@@ -2,6 +2,7 @@ https://developer.github.com/v3/guides/basics-of-authentication/
 https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/
 https://github.com/prose/gatekeeper
 https://github.com/atulmy/oauth
+http://timmyreilly.azurewebsites.net/running-node-and-express-on-ubuntu-vm/
 
 https://github.com/login/oauth/authorize?scope=user:email&client_id=96f0dcdcc027796e4aa7&state=http://localhost:4200
 https://github.com/login/oauth/authorize?scope=user:email&client_id=96f0dcdcc027796e4aa7&state=https://metasong.github.io/iam
