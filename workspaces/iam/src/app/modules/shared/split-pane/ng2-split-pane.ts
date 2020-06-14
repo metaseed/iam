@@ -8,13 +8,6 @@ import { VerticalSplitPaneComponent } from './vertical-split-pane.component';
 import { SplitSeparatorComponent } from "./split-pane-separator.component";
 import { SplitPaneComponent } from "./split-pane.component";
 
-export function delayedInit(): ModuleWithProviders {
-  return {
-    ngModule: SplitPaneModule,
-    providers: []
-  }
-}
-
 @NgModule({
   imports: [CommonModule],
   declarations: [
@@ -28,5 +21,10 @@ export function delayedInit(): ModuleWithProviders {
   exports: [HorizontalSplitPaneComponent, VerticalSplitPaneComponent]
 })
 export class SplitPaneModule {
-  static forRoot = delayedInit();
+  static forRoot(): ModuleWithProviders {
+    return {
+      ngModule: SplitPaneModule,
+      providers: []
+    }
+  }
 }

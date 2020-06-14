@@ -141,7 +141,7 @@ export class DocListComponent implements OnInit {
     this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: false }));
   }
 
-  private getMore() {
+  public getMore() {
     this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: true }));
   }
 

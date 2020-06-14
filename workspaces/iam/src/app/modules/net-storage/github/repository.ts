@@ -9,7 +9,7 @@ import { Issue } from './issues/issue';
 import { from, Observable } from 'rxjs';
 import { base64Encode, base64Decode } from 'core';
 import { map, flatMap, tap, catchError, observeOn } from 'rxjs/operators';
-@Injectable()
+// @Injectable()
 export class Repository extends Requestable {
   // remoteRepo: any;
   public fullName: string;

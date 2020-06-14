@@ -67,7 +67,7 @@ import { selectCurrentDocumentState, UpsertDocument, UpdateDocument } from 'shar
 
 const enableIDOM = true;
 
-@Injectable()
+// @Injectable()
 export class MarkdownViewerService {
   private defaultConfig: MarkdownConfig = {
     markdownIt: {

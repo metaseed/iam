@@ -37,7 +37,7 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('tocItem')
   private items: QueryList<ElementRef>;
   private onDestroy = new Subject();
-  private primaryMax = 4;
+  public primaryMax = 4;
   tocList: TocItem[];
 
   static prepareTitleAndToc(
