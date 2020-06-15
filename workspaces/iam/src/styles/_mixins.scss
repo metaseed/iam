@@ -1,16 +1,3 @@
-/************************************
-
-             Media queries
-
- To use these, put this snippet in the appropriate selector:
-
-     @include bp(tiny) {
-         background-color: purple;
-     }
-
-     Replace "tiny" with "medium" or "big" as necessary.
-*************************************/
-
 @mixin bp($point) {
 
   $bp-xsmall: "(min-width: 320px)";

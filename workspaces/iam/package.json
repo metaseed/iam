@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
+    "preinstall": "node ./check-npm.js",
     "start": "ng serve --source-map --host=0.0.0.0",
     "hmr": "ng serve --hmr --source-map --host=0.0.0.0",
     "build_raw": "ng build --prod --named-chunks --optimization=false",

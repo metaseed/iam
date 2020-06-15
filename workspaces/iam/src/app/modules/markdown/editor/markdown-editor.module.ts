@@ -14,6 +14,7 @@ import { CanDeactivateGuard } from '../../core/services/can-deactive-guard.servi
 import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
 import { SharedModule } from 'shared';
 import { KeyMapService } from './services/keymap.service';
+import { FileUploadComponent } from './codemirror-editor/file-upload/file-upload.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { KeyMapService } from './services/keymap.service';
     CodemirrorComponent,
     MarkdownEditorComponent,
     CodemirrorToolbarComponent,
-    DocDirtyNotifyDialog
+    DocDirtyNotifyDialog,
+    FileUploadComponent
   ],
   imports: [
     SharedModule,

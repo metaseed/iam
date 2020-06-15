@@ -1,6 +1,6 @@
 @import "./constants";
 @import './variables';
 @import "./mixins";
-@import "./0-base/_base-dir";
-@import "./1-layout/_base-dir";
-@import "./2-modules/modules-dir";
+@import "./0-base/base";
+@import "./1-layout/layout";
+@import "./2-modules/modules";

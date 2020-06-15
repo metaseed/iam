@@ -1,0 +1,8 @@
+<input
+style="display: none"
+type="file" (change)="onFileChanged($event)"
+#imageUpload>
+<span>{{data.message}}</span>
+<div class="mat-simple-snackbar-action">
+  <button mat-button (click)="action()">{{data.action}}</button>
+</div>
