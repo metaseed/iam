@@ -22,7 +22,7 @@ export class FileUploadService {
   fileUploaded: (path: string) => void
 
   upload(type: string) {
-    let timer: NodeJS.Timeout = null;
+    let timer = null;
     const snackBar = this._snackBar.openFromComponent(FileUploadComponent, {
       data: {
         message: `pick ${type} to upload?`,
@@ -39,7 +39,6 @@ export class FileUploadService {
               const path = `${DOCUMENTS_FOLDER_NAME}/${id}/${type}/${file.name}`;
               return repo.newFileReportProgress(path, base64, true)
             })).subscribe((event: HttpEvent<any>) => {
-              console.log('---------：：：：', event)
               switch (event.type) {
                 case HttpEventType.UploadProgress:
                   const progress = Math.round(100 * event.loaded / event.total);
