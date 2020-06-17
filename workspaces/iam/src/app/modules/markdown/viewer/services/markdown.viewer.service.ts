@@ -265,12 +265,12 @@ export class MarkdownViewerService {
 <div class="markdown-code__lang">${lang}</div>
 <div class="code-buttons">
 
-<button class="material-icons code-button"
+<button class="material-icons code-button" title="edit code"
 onclick="md_edit_event(event.target.parentElement.parentElement.parentElement)">
 edit
 </button>
 
-<button class="material-icons code-button"
+<button class="material-icons code-button" title="line wrap"
 onclick="md_code_wrapText()">
 wrap_text
 </button>

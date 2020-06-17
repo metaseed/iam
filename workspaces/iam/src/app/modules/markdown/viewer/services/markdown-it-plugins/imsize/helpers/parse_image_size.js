@@ -52,6 +52,7 @@ module.exports = function parseImageSize(str, pos, max) {
   // (1) =300x200
   // (2) =300x
   // (3) =x200
+  // (4) =200 width and height are the same 
   code = str.charCodeAt(pos);
   if (
     code !== 0x78 /* x */ &&
@@ -65,9 +66,9 @@ module.exports = function parseImageSize(str, pos, max) {
   var resultW = parseNextNumber(str, pos, max);
   pos = resultW.pos;
 
-  // next charactor must be 'x'
+  // next character must be 'x'
   code = str.charCodeAt(pos);
-  if (code !== 0x78 /* x */ && code !== 0x2a /* * */) {
+  if (code !== 0x78 /* x */ && code !== 0x2a /* * */&& !resultW.value) {
     return result;
   }
 
