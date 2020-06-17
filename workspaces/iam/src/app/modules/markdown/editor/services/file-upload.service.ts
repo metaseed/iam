@@ -22,11 +22,13 @@ export class FileUploadService {
   fileUploaded: (path: string) => void
 
   upload(type: string) {
+    let timer: NodeJS.Timeout = null;
     const snackBar = this._snackBar.openFromComponent(FileUploadComponent, {
       data: {
         message: `pick ${type} to upload?`,
         action: 'Ok',
         takeAction: (file: File, notifyProgress: (percent: number) => void) => {
+          clearTimeout(timer);
           // console.log(file);
           const reader = new FileReader();
           reader.onloadend = _ => {
@@ -50,7 +52,13 @@ export class FileUploadService {
                 default:
                   return `Unhandled event: ${event.type}`;
               }
-            }, err => console.error(err));
+            }, err => {
+              snackBar.dismiss();
+              this._snackBar.open(err.error.message, 'ok', {
+                duration: 2000,
+              });
+              console.error(err)
+            });
           };
           reader.readAsDataURL(file);
           snackBar.dismiss();
@@ -58,7 +66,6 @@ export class FileUploadService {
       },
       duration: 0 // close by code
     });
-    const timer = setTimeout(_ => snackBar.dismiss(), 5000);
-    snackBar.afterOpened().subscribe(_ => clearTimeout(timer));
+    timer = setTimeout(_ => snackBar.dismiss(), 6000);
   }
 }
