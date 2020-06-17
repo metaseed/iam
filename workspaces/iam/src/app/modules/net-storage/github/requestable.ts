@@ -30,21 +30,13 @@ export class Requestable {
     }
   }
 
-  request<T>(method: string, path: string, data: any = null, media?: string) {
+  request<T>(method: string, path: string, data: any = null, media?: string, reportProgress = false) {
     method = method.toUpperCase();
     const url = this.getURL(path);
     const headers = this.getRequestHeader(media);
     const shouldUseDataAsParams = data && typeof data === 'object' && this.methodHasNoBody(method);
     const respType = media && media.toLowerCase().includes('raw') ? 'text' : 'json';
-    const request = new HttpRequest(method, url, {
-      headers: headers,
-      reportProgress: false,
-      observe: 'body',
-      // withCredentials: true,
-      body: shouldUseDataAsParams ? undefined : data,
-      params: shouldUseDataAsParams ? new HttpParams(data) : undefined,
-      responseType: respType
-    });
+
     if (method === 'PUT') {
       return this._http.put<Object>(url, data, { headers: headers, responseType: 'json' });
     } else if (method === 'POST') {
@@ -60,6 +52,16 @@ export class Requestable {
         responseType: 'json'
       });
     }
+
+    const request = new HttpRequest(method, url, {
+      headers: headers,
+      reportProgress: false,
+      observe: 'body',
+      // withCredentials: true,
+      body: shouldUseDataAsParams ? undefined : data,
+      params: shouldUseDataAsParams ? new HttpParams(data) : undefined,
+      responseType: respType
+    });
     return <Observable<HttpResponse<T>>>this._http
       .request(request)
       .pipe(filter(r => r instanceof HttpResponseBase));

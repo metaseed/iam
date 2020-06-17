@@ -13,7 +13,7 @@ import { gitHubCacheUtil } from './github-cache.util';
 const GITHUB_PAGE_SIZE = 50;
 const FIRST_PAGE_READY_TO_REFRESH = 5 * 60 * 1000;
 
-@Injectable()
+@Injectable({ providedIn: 'platform' })
 export class GithubCache implements ICache {
   // used to caculate the which page the key is in.
   private highestId: number;
@@ -63,7 +63,7 @@ export class GithubCache implements ICache {
             const id = issue.number;
             // save docContent;
             return repo.newFile(`${DOCUMENTS_FOLDER_NAME}/${title}_${id}.${format}`, content).pipe(
-              switchMap(file => {
+              switchMap((file: Document) => {
                 const url = this.util.getContentUrl(id, title);
 
                 const { meta, metaStr } = DocMeta.serializeContent(
@@ -296,7 +296,7 @@ export class GithubCache implements ICache {
             oldDocMeta.contentSha
           )
           .pipe(
-            switchMap(file => {
+            switchMap((file: Document) => {
               const url = this.util.getContentUrl(oldDocMeta.id, newTitle);
               const { meta, metaStr } = DocMeta.serializeContent(
                 oldDocMeta.id,
@@ -320,7 +320,7 @@ export class GithubCache implements ICache {
                     repo
                       .delFileViaSha(
                         `${DOCUMENTS_FOLDER_NAME}/${oldDocMeta.title}_${oldDocMeta.id}.${
-                          oldDocMeta.format
+                        oldDocMeta.format
                         }`,
                         oldDocMeta.contentSha
                       )
@@ -401,7 +401,7 @@ export class GithubCache implements ICache {
           return searchR;
         }
         searchR.forEach(item => {
-          let index = lastSearchResult.findIndex(v => v.id === item.id);
+          const index = lastSearchResult.findIndex(v => v.id === item.id);
           if (index !== -1) {
             if (item.source !== SearchResultSource.netIssue) {
               lastSearchResult = [...lastSearchResult];

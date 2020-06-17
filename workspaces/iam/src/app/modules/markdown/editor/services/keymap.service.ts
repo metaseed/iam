@@ -8,6 +8,9 @@ import { CommandService, Command } from 'core';
 import { MarkdownEditorService } from './markdown.editor.service';
 import { Store } from '@ngrx/store';
 import { DEFAULT_NEW_DOC_CONTENT, DEFAULT_DOC_META } from 'shared';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { FileUploadComponent } from '../codemirror-editor/file-upload/file-upload.component';
+import { FileUploadService } from './file-upload.service';
 
 interface ICommandConfig {
   [key: string]: {
@@ -27,7 +30,8 @@ export class KeyMapService {
   constructor(
     private _editorService: MarkdownEditorService,
     private _commandService: CommandService,
-    private _store: Store<MarkdownState>
+    private _store: Store<MarkdownState>,
+    private _uploadService: FileUploadService
   ) {
     // cm.setOption('keyMap', 'vim');
     // cm.setOption('keyMap', 'sublime');
@@ -118,7 +122,7 @@ export class KeyMapService {
         if (configs.hasOwnProperty(key)) {
           const config = configs[key];
           const me = this;
-          option[config.hotKey] = function() {
+          option[config.hotKey] = function () {
             me.insertContent(key);
           };
         }
@@ -128,7 +132,7 @@ export class KeyMapService {
   }
 
   codeMirrorMaps(option) {
-    option['Ctrl-M Q'] = function(editor) {
+    option['Ctrl-M Q'] = function (editor) {
       editor.display.input.textarea.blur();
     };
     option['Ctrl-Alt-Up'] = () => {
@@ -236,7 +240,10 @@ Alt-G Jump to line*/
 
       // for (let i = 0; i < config.endSize; i++) this.editor.execCommand('goCharLeft');
     }
-
+    if (config.command === 'Image') {
+      this._uploadService.fileUploaded = path => this.editor.replaceSelection(path);
+      this._uploadService.upload('image');
+    }
     // if (config.command === 'Ul') {
     //   this._hideIcons.Ul = true;
     //   this._hideIcons.Ol = false;

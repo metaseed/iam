@@ -24,15 +24,11 @@ export class Repository extends Requestable {
     return new Issue(this._http, this._name, this._userInfo);
   }
 
-  // renameFile(oldName: string, newName: string) {
-  //   return from(this.remoteRepo.move('master', oldName, newName));
-  // }
-
   // https://developer.github.com/v3/repos/contents/
   file(path: string, contents: string, branch: string = 'master') {
     let getShaSuccess = false;
     return this.getSha(path, branch).pipe(
-      tap(x => console.log('getSha' + x), e => console.log('getSha' + e)),
+      tap(x => console.log('getSha' + x), e => console.error('getSha' + e)),
       flatMap(resp => {
         getShaSuccess = true;
         return this.updateFile(path, contents, resp['sha']);
@@ -59,28 +55,21 @@ export class Repository extends Requestable {
       sha: sha,
       branch
     }).pipe(
-      tap(x => console.log(x), e => console.log(e)),
-      map(x => {
-        return <File>x;
-      })
+      tap(x => console.log(x), e => console.log(e))
     );
   }
 
   // https://developer.github.com/v3/repos/contents/#create-a-file
-  newFile(path: string, content: string) {
+  newFile(path: string, content: string, isBase64 = false, reportProgress: (percent: number) => void = null) {
     return this.request('PUT', `/repos/${this.fullName}/contents/${path}`, {
       message: 'create file',
       committer: {
         name: this._userInfo.name,
         email: this._userInfo.email
       },
-      content: base64Encode(content)
-    }).pipe(
-      tap(x => console.log('newFile', x), e => console.log('newFile', e)),
-      map(x => {
-        console.log(x);
-        return <File>x;
-      })
+      content: isBase64 ? content : base64Encode(content)
+    }, undefined, true).pipe(
+      tap(x => console.log('newFile', x), e => console.log('newFile', e))
     );
   }
 
@@ -136,7 +125,7 @@ export class Repository extends Requestable {
       params: {
         q: `${query.replace(' ', '+')}+in:file+extension:${extension}+path:${folder}+repo:${
           this.fullName
-        }`
+          }`
       },
       observe: 'response'
     });

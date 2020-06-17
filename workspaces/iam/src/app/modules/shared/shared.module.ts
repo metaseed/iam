@@ -13,7 +13,7 @@ import { SharedState, reducers, moduleStateName, DocumentStateFacade } from './s
 import { EffectsModule } from '@ngrx/effects';
 import { DocEffectsUtil } from './state/document/document.effects.util';
 import { DatabaseModule } from 'database';
-import { NetStorageModule } from '../net-storage/storage.module';
+import { NetStorageModule } from 'net-storage';
 import { effects } from './state/effects';
 import { CacheModule } from '../cache';
 import { CacheFacade } from './cache-facade';

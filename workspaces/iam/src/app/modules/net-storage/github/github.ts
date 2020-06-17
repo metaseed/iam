@@ -19,7 +19,9 @@ import { Requestable } from './requestable';
 import { GITHUB_AUTHENTICATION } from './tokens';
 import { ConfigService, ConfigModel, backoff } from 'core';
 
-@Injectable()
+@Injectable({
+  providedIn: 'platform'
+})
 export class GithubStorage extends Requestable {
   // gh: GitHub;
   private _repo: Observable<Repository>;
@@ -43,8 +45,7 @@ export class GithubStorage extends Requestable {
 
     return (this._repo = this.configService.config$
       .lift(
-        (_ => {
-          // IIFE
+        (_ => {// IIFE
           const me = this;
           let replayObservable: ReplaySubject<Repository>;
           let hasError = false;
@@ -82,7 +83,7 @@ export class GithubStorage extends Requestable {
           };
         })()
       )
-      .pipe(take<Repository>(1) /*solve never complet problem of replay subject*/));
+      .pipe(take<Repository>(1) /*solve never complete problem of replay subject*/));
   }
 
   private getRepos(user: string, name: string): Observable<Repository> {

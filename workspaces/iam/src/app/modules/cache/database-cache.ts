@@ -20,7 +20,9 @@ import { Store, State } from '@ngrx/store';
 
 const DB_PAGE_SIZE = 50;
 export interface IterableDocuments extends IterableIterator<Observable<Document>> {}
-@Injectable()
+@Injectable({
+  providedIn: 'platform'
+})
 export class DatabaseCache implements ICache {
   public nextLevelCache: ICache;
   private dbSaver: DatabaseCacheSaver;

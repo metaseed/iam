@@ -29,7 +29,9 @@ import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../shared/state/document/co
 import { SharedState } from '../shared/state/state';
 import { StoreSearchService } from './services/store-search.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'platform'
+})
 export class StoreCache implements ICache {
   docMetaData: { hightKey: number; lowKey: number };
 
@@ -39,7 +41,7 @@ export class StoreCache implements ICache {
     private state: StoreState<SharedState>,
     private _logger: Logger,
     private _storeSearchService: StoreSearchService
-  ) {}
+  ) { }
 
   init(nextLevelCache: ICache): ICache {
     this.nextLevelCache = nextLevelCache;
@@ -125,7 +127,7 @@ export class StoreCache implements ICache {
               if (meta.contentSha !== docContent.sha) {
                 this._logger.warn(
                   `metaData.contentSha:${meta.contentSha} is different with document sha: ${
-                    docContent.sha
+                  docContent.sha
                   }, force using document sha`
                 );
                 meta.contentSha = docContent.sha;

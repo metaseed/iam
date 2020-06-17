@@ -19,7 +19,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { SharedModule } from 'shared';
 import { EffectsModule } from '@ngrx/effects';
 import { AppEffects } from './state/app.effects';
-import { NetStorageModule } from './modules/net-storage/storage.module';
+import { NetStorageModule } from 'net-storage';
 import { DatabaseModule, schema } from 'database';
 import { RouteReuseStrategy } from '@angular/router';
 import { CustomRouteReuseStrategy } from './routeReuseStrategy';
@@ -62,7 +62,12 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
       cheatSheetDescription: 'shortcuts'
     }),
 
-    // !environment.production ? StoreDevtoolsModule.instrument() : [],
+    !environment.production ? StoreDevtoolsModule.instrument(
+      {
+        maxAge: 25, // Retains last 25 states
+        logOnly: environment.production, // Restrict extension to log-only mode
+      }
+    ) : [],
 
     EffectsModule.forRoot([AppEffects])
   ],
@@ -76,4 +81,4 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }
