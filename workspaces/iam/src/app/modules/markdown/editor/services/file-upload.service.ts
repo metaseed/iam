@@ -6,7 +6,7 @@ import { switchMap, tap } from 'rxjs/operators';
 import { State } from '@ngrx/store';
 import { SharedState, selectCurrentDocumentIdState } from 'shared';
 import { DOCUMENTS_FOLDER_NAME } from 'app/modules/home/const';
-import { HttpEvent } from '@angular/common/http';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -35,11 +35,21 @@ export class FileUploadService {
             this._github.init().pipe(switchMap(repo => {
               const id = selectCurrentDocumentIdState(this.state.value);
               const path = `${DOCUMENTS_FOLDER_NAME}/${id}/${type}/${file.name}`;
-              return repo.newFile(path, base64, true, notifyProgress)
-            })).subscribe((event:HttpEvent<any>) => {
-              if(event.type)
-              //this.fileUploaded(file.content.download_url);
+              return repo.newFileReportProgress(path, base64, true)
+            })).subscribe((event: HttpEvent<any>) => {
               console.log('---------：：：：', event)
+              switch (event.type) {
+                case HttpEventType.UploadProgress:
+                  const progress = Math.round(100 * event.loaded / event.total);
+                  notifyProgress(progress);
+                  return { status: 'progress', message: progress };
+
+                case HttpEventType.Response:
+                  this.fileUploaded(event.body.content.download_url);
+                  return event.body;
+                default:
+                  return `Unhandled event: ${event.type}`;
+              }
             }, err => console.error(err));
           };
           reader.readAsDataURL(file);
@@ -51,9 +61,4 @@ export class FileUploadService {
     const timer = setTimeout(_ => snackBar.dismiss(), 5000);
     snackBar.afterOpened().subscribe(_ => clearTimeout(timer));
   }
-
-  // this.http.post('my-backend.com/file-upload', this.selectedFile)
-  //.subscribe(event => {
-  // console.log(event); // progress 
-  //});
 }

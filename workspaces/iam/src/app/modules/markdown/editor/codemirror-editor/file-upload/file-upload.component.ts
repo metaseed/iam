@@ -27,7 +27,7 @@ export class FileUploadComponent implements OnInit {
   private selectedFile: string;
   onFileChanged(event) {
     this.selectedFile = event.target.files[0];
-    this.data.takeAction(this.selectedFile, this.data.path, percent => {
+    this.data.takeAction(this.selectedFile, percent => {
       this.progress = percent;
       this.ref.markForCheck();
     });

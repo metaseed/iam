@@ -4,7 +4,8 @@ import {
   HttpRequest,
   HttpResponse,
   HttpResponseBase,
-  HttpParams
+  HttpParams,
+  HttpEvent
 } from '@angular/common/http';
 import { UserInfo } from '.';
 import { Const } from './model/const';
@@ -30,7 +31,44 @@ export class Requestable {
     }
   }
 
-  request<T>(method: string, path: string, data: any = null, media?: string, reportProgress = false) {
+  requestWithProgress<T>(method: string, path: string, data: any = null, media?: string): Observable<HttpEvent<T>> {
+    method = method.toUpperCase();
+    const url = this.getURL(path);
+    const headers = this.getRequestHeader(media);
+    const shouldUseDataAsParams = data && typeof data === 'object' && this.methodHasNoBody(method);
+    const respType = media && media.toLowerCase().includes('raw') ? 'text' : 'json';
+
+    if (method === 'PUT') {
+      return this._http.put(url, data,
+        { headers: headers, responseType: 'json', observe: 'events', reportProgress: true }) as Observable<HttpEvent<T>>;
+    } else if (method === 'POST') {
+      return this._http.post<T>(url, data, { headers: headers, responseType: 'json', observe: 'events', reportProgress: true });
+    } else if (method === 'GET') {
+      return this._http.get<T>(url, { headers: headers, responseType: 'json', observe: 'events', reportProgress: true });
+    } else if (method === 'PATCH') {
+      return this._http.patch<T>(url, data, { headers: headers, responseType: 'json', observe: 'events', reportProgress: true });
+    } else if (method === 'DELETE') {
+      return this._http.delete<T>(url, {
+        headers: headers,
+        params: data,
+        responseType: 'json',
+        observe: 'events', reportProgress: true
+      });
+    }
+
+    const request = new HttpRequest(method, url, {
+      headers: headers,
+      reportProgress: true,
+      observe: 'events',
+      // withCredentials: true,
+      body: shouldUseDataAsParams ? undefined : data,
+      params: shouldUseDataAsParams ? new HttpParams(data) : undefined,
+      responseType: respType
+    });
+    return this._http.request(request)
+  }
+
+  request<T>(method: string, path: string, data: any = null, media?: string) {
     method = method.toUpperCase();
     const url = this.getURL(path);
     const headers = this.getRequestHeader(media);

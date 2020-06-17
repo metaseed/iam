@@ -60,7 +60,7 @@ export class Repository extends Requestable {
   }
 
   // https://developer.github.com/v3/repos/contents/#create-a-file
-  newFile(path: string, content: string, isBase64 = false, reportProgress: (percent: number) => void = null) {
+  newFile(path: string, content: string, isBase64 = false) {
     return this.request('PUT', `/repos/${this.fullName}/contents/${path}`, {
       message: 'create file',
       committer: {
@@ -68,7 +68,20 @@ export class Repository extends Requestable {
         email: this._userInfo.email
       },
       content: isBase64 ? content : base64Encode(content)
-    }, undefined, true).pipe(
+    }, undefined).pipe(
+      tap(x => console.log('newFile', x), e => console.log('newFile', e))
+    );
+  }
+
+  newFileReportProgress(path: string, content: string, isBase64 = false) {
+    return this.requestWithProgress('PUT', `/repos/${this.fullName}/contents/${path}`, {
+      message: 'create file',
+      committer: {
+        name: this._userInfo.name,
+        email: this._userInfo.email
+      },
+      content: isBase64 ? content : base64Encode(content)
+    }, undefined).pipe(
       tap(x => console.log('newFile', x), e => console.log('newFile', e))
     );
   }
