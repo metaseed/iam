@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, ViewChild, ElementRef, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
+import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
 import { MatProgressBar } from '@angular/material/progress-bar';
 
 @Component({
@@ -7,12 +7,15 @@ import { MatProgressBar } from '@angular/material/progress-bar';
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FileUploadComponent implements OnInit {
 
-  progress = 0;
-  constructor(private ref: ChangeDetectorRef, @Inject(MAT_SNACK_BAR_DATA) public data: any) {
+  progressPercent = 0;
+  showMessage = true;
+  accept = 'image/*';
+  constructor( @Inject(MAT_SNACK_BAR_DATA) public data: any,
+   private snackBarRef: MatSnackBarRef<FileUploadComponent>) {
+    this.accept = data.accept;
   }
 
   @ViewChild('imageUpload')
@@ -27,13 +30,17 @@ export class FileUploadComponent implements OnInit {
   private selectedFile: string;
   onFileChanged(event) {
     this.selectedFile = event.target.files[0];
+    this.showMessage = false;
     this.data.takeAction(this.selectedFile, percent => {
-      this.progress = percent;
-      this.ref.markForCheck();
+      this.progressPercent = percent;
     });
   }
-
+  get hasAction(): boolean {
+    return !!this.data.action;
+  }
   action() {
+    this.data.selectFile();
+    // this.snackBarRef.dismissWithAction();
     this.imageUpload.nativeElement.click(); // show file selection dialog;
   }
 }

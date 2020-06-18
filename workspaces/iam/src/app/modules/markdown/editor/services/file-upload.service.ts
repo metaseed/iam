@@ -25,11 +25,11 @@ export class FileUploadService {
     let timer = null;
     const snackBar = this._snackBar.openFromComponent(FileUploadComponent, {
       data: {
+        accept: 'image/*',
         message: `pick ${type} to upload?`,
         action: 'Ok',
+        selectFile: () => clearTimeout(timer),
         takeAction: (file: File, notifyProgress: (percent: number) => void) => {
-          clearTimeout(timer);
-          // console.log(file);
           const reader = new FileReader();
           reader.onloadend = _ => {
             const res = reader.result as String;
@@ -43,13 +43,14 @@ export class FileUploadService {
                 case HttpEventType.UploadProgress:
                   const progress = Math.round(100 * event.loaded / event.total);
                   notifyProgress(progress);
-                  return { status: 'progress', message: progress };
-
+                  break;
                 case HttpEventType.Response:
                   this.fileUploaded(event.body.content.download_url);
-                  return event.body;
+                  setTimeout(_ => snackBar.dismiss(), 800);
+                  break;
                 default:
-                  return `Unhandled event: ${event.type}`;
+                  // console.log(`Unhandled event: ${event.type}`)
+                  break;
               }
             }, err => {
               snackBar.dismiss();
@@ -60,7 +61,6 @@ export class FileUploadService {
             });
           };
           reader.readAsDataURL(file);
-          snackBar.dismiss();
         }
       },
       duration: 0 // close by code
