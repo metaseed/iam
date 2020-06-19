@@ -13,7 +13,7 @@ export interface IScrollElement {
 export interface ScrollSpyToken {
   activeScrollElement$: Observable<IScrollElement | null>;
   isScrollDown$: Observable<any>;
-  unspy: () => void;
+  unSpy: () => void;
 }
 
 export class ScrollSpiedElement implements IScrollElement {
@@ -105,11 +105,11 @@ export class ScrollSpyService {
     return {
       activeScrollElement$: spiedGroup.activeScrollElement$,
       isScrollDown$: spiedGroup.scrollDown$,
-      unspy: () => this.unspy(spiedGroup)
+      unSpy: () => this.unSpy(spiedGroup)
     };
   }
 
-  private unspy(spiedGroup: ScrollSpiedElementGroup) {
+  private unSpy(spiedGroup: ScrollSpiedElementGroup) {
     spiedGroup.unSpy();
     this.spiedElementGroups = this.spiedElementGroups.filter(group => group !== spiedGroup);
   }

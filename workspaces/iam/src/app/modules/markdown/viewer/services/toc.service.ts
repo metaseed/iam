@@ -97,7 +97,7 @@ export class TocService {
 
   private resetScrollSpyInfo() {
     if (this.scrollSpyToken) {
-      this.scrollSpyToken.unspy();
+      this.scrollSpyToken.unSpy();
       this.scrollSpyToken = null;
     }
 

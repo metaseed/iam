@@ -3,7 +3,7 @@ import { fromEvent, Observable, ReplaySubject } from 'rxjs';
 import { NgZone } from '@angular/core';
 
 export class ScrollEvent {
-  constructor(public event: Event, public isDown: boolean, public scrollTop: number) {}
+  constructor(public event: Event, public isDown: boolean, public scrollTop: number) { }
 }
 
 export interface IContainer {
@@ -37,32 +37,24 @@ export class ContainerRef implements IContainer {
     private ngZone?: NgZone
   ) {
     if (this.ngZone) {
-      this.ngZone.runOutsideAngular(_ => {
-        this.scrollEvent$ = fromEvent(this.nativeElement, 'scroll').pipe(
-          auditTime(this._scrollAuditTime)
-        );
-        this.resizeEvent$ = fromEvent(this.nativeElement, 'resize').pipe(
-          auditTime(this._resizeAuditTime)
-        );
-        this.touchStart$ = fromEvent<TouchEvent>(this.nativeElement, 'touchstart', {
-          passive: true
-        });
-        this.touchMove$ = fromEvent<TouchEvent>(this.nativeElement, 'touchmove', { passive: true });
-        this.touchEnd$ = fromEvent<TouchEvent>(this.nativeElement, 'touchend', { passive: true });
-      });
+      this.ngZone.runOutsideAngular(_ => this.init());
     } else {
-      this.scrollEvent$ = fromEvent(this.nativeElement, 'scroll').pipe(
-        auditTime(this._scrollAuditTime)
-      );
-      this.resizeEvent$ = fromEvent(this.nativeElement, 'resize').pipe(
-        auditTime(this._resizeAuditTime)
-      );
-      this.touchStart$ = fromEvent<TouchEvent>(this.nativeElement, 'touchstart', {
-        passive: true
-      });
-      this.touchMove$ = fromEvent<TouchEvent>(this.nativeElement, 'touchmove', { passive: true });
-      this.touchEnd$ = fromEvent<TouchEvent>(this.nativeElement, 'touchend', { passive: true });
+      this.init();
     }
+  }
+
+  private init() {
+    this.scrollEvent$ = fromEvent(this.nativeElement, 'scroll').pipe(
+      auditTime(this._scrollAuditTime)
+    );
+    this.resizeEvent$ = fromEvent(this.nativeElement, 'resize').pipe(
+      auditTime(this._resizeAuditTime)
+    );
+    this.touchStart$ = fromEvent<TouchEvent>(this.nativeElement, 'touchstart', {
+      passive: true
+    });
+    this.touchMove$ = fromEvent<TouchEvent>(this.nativeElement, 'touchmove', { passive: true });
+    this.touchEnd$ = fromEvent<TouchEvent>(this.nativeElement, 'touchend', { passive: true });
   }
 
   get contentHeight() {
@@ -92,6 +84,7 @@ export class ContainerRef implements IContainer {
     }
     return (window && window.pageYOffset) || 0;
   }
+
   set scrollTop(v) {
     if (this.nativeElement instanceof HTMLElement) {
       this.nativeElement.scrollTop = v;
