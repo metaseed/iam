@@ -7,6 +7,9 @@ import { State } from '@ngrx/store';
 import { SharedState, selectCurrentDocumentIdState } from 'shared';
 import { DOCUMENTS_FOLDER_NAME } from 'app/modules/home/const';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
+import { Subscription } from 'rxjs';
+import { IFileUploadData } from './file-upload-data';
+import { Console } from 'console';
 
 @Injectable({
   providedIn: 'root'
@@ -23,20 +26,28 @@ export class FileUploadService {
 
   upload(type: string) {
     let timer = null;
+    let subscription: Subscription = null;
     const snackBar = this._snackBar.openFromComponent(FileUploadComponent, {
-      data: {
-        accept: 'image/*',
+      data: <IFileUploadData>{
+        accept: `${type}/*`,
         message: `pick ${type} to upload?`,
         action: 'Ok',
         selectFile: () => clearTimeout(timer),
+        cancelAction: () => {
+          if (subscription)
+            subscription.unsubscribe();
+            console.log(`${type} uploading canceled`);
+            setTimeout(_ => snackBar.dismiss(), 1000);
+        },
         takeAction: (file: File, notifyProgress: (percent: number) => void) => {
           const reader = new FileReader();
           reader.onloadend = _ => {
             const res = reader.result as String;
             const base64 = res.substr(res.indexOf(',') + 1);
-            this._github.init().pipe(switchMap(repo => {
+            subscription = this._github.init().pipe(switchMap(repo => {
               const id = selectCurrentDocumentIdState(this.state.value);
-              const path = `${DOCUMENTS_FOLDER_NAME}/${id}/${type}/${file.name}`;
+              const date = new Date().toISOString().replace(/[-:.]/g, '');
+              const path = `${DOCUMENTS_FOLDER_NAME}/${id}/${type}/${date}-${file.name}`;
               return repo.newFileReportProgress(path, base64, true)
             })).subscribe((event: HttpEvent<any>) => {
               switch (event.type) {
@@ -46,7 +57,7 @@ export class FileUploadService {
                   break;
                 case HttpEventType.Response:
                   this.fileUploaded(event.body.content.download_url);
-                  setTimeout(_ => snackBar.dismiss(), 800);
+                  snackBar.dismiss();
                   break;
                 default:
                   // console.log(`Unhandled event: ${event.type}`)

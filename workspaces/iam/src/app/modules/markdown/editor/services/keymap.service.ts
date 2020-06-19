@@ -242,7 +242,7 @@ Alt-G Jump to line*/
     }
     if (config.command === 'Image') {
       this._uploadService.fileUploaded = path => this.editor.replaceSelection(path);
-      this._uploadService.upload('image');
+      this._uploadService.upload('image'); // image/*
     }
     // if (config.command === 'Ul') {
     //   this._hideIcons.Ul = true;
