@@ -128,7 +128,7 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
         .pipe(takeUntil(this.onDestroy))
         .subscribe(([index, items]) => {
           this.activeIndex = index;
-          if (index === null || index >= items.length) {
+          if (index === null|| index === undefined || index >= items.length) {
             return;
           }
 

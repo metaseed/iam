@@ -18,10 +18,10 @@ export class DocSaveCoordinateService implements OnDestroy {
   static autoSaveDelayAfterEdit = 10 * 1000; // 20s
 
   private isDirty$ = this.store.select(selectCurrentDocStatus_IsMemDirty);
-  isSyncing$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  isSyncing$ = new BehaviorSubject(false);
   isSaving: boolean;
 
-  private editor$ = this.editorService.docEditorLoaded$;
+  private editorLoaded$ = this.editorService.docEditorLoaded$;
   private contentGeneration: number;
   private destroy$ = new Subject();
 
@@ -34,7 +34,7 @@ export class DocSaveCoordinateService implements OnDestroy {
       .pipe(
         takeUntil(this.destroy$),
         auditTime(DocSaveCoordinateService.autoSaveDelayAfterEdit),
-        combineLatest(this.editor$)
+        combineLatest(this.editorLoaded$)
       )
       .subscribe(([isDirty, editor]) => {
         if (isDirty) this.store.dispatch(new DocumentEffectsSave({ content: editor.getValue() }));
@@ -47,14 +47,14 @@ export class DocSaveCoordinateService implements OnDestroy {
     this.editorService.docContentModified$
       .pipe(
         takeUntil(this.destroy$),
-        combineLatest(this.editor$)
+        combineLatest(this.editorLoaded$)
       )
       .subscribe(([content, editor]) => this.checkDirty(editor));
 
     actionStatusState$(this.store, DocumentEffectsActionType.Save)
       .pipe(
         takeUntil(this.destroy$),
-        combineLatest(this.editor$)
+        combineLatest(this.editorLoaded$)
       )
       .subscribe(([as, editor]) => {
         if (as.state === ActionState.Start) {
@@ -80,7 +80,7 @@ export class DocSaveCoordinateService implements OnDestroy {
     }
   }
 
-  private checkDirty(editor) {
+  private checkDirty(editor: CodeMirror.Editor) {
     const oldStatus = selectCurrentDocStatus(this.state.value);
     const oldValue = oldStatus.isMemDirty;
     if (!this.contentGeneration) return; // initial content load
