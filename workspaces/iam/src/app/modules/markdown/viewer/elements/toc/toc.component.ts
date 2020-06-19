@@ -126,9 +126,9 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
         this.items.changes.pipe(startWith(this.items))
       )
         .pipe(takeUntil(this.onDestroy))
-        .subscribe(([index, items]) => {
+        .subscribe(([index, items]: [number,  QueryList<ElementRef<any>>]) => {
           this.activeIndex = index;
-          if (index === null|| index === undefined || index >= items.length) {
+          if (index === null || index === undefined || index >= items.length) {
             return;
           }
 
@@ -141,7 +141,7 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
           const isInViewport = eRect.top >= pRect.top && eRect.bottom <= pRect.bottom;
 
           if (!isInViewport) {
-            p.scrollTop += eRect.top - pRect.top - p.clientHeight / 2;
+            p.scrollTop += eRect.top - (pRect.top + p.clientHeight / 2);
           }
         });
     }
