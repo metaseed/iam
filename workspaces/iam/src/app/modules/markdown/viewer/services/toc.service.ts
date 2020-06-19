@@ -15,13 +15,13 @@ export interface TocItem {
 @Injectable()
 export class TocService {
   tocList = new ReplaySubject<TocItem[]>(1);
-  activeItemIndex = new ReplaySubject<number | null>(1);
+  activeItemIndex$ = new ReplaySubject<number | null>(1);
   activeElement$ = new ReplaySubject<Element | null>(1);
   private scrollSpyToken: ScrollSpyToken | null = null;
   isScrollUp = false;
 
   constructor(
-    @Inject(DOCUMENT) private document: any,
+    @Inject(DOCUMENT) private document: Document,
     private domSanitizer: DomSanitizer,
     private scrollSpyService: ScrollSpyService
   ) {}
@@ -47,8 +47,8 @@ export class TocService {
 
     this.scrollSpyToken = this.scrollSpyService.spyOn(headings, <HTMLElement>docElement, 60);
     this.scrollSpyToken.activeScrollElement$.subscribe(item => {
-      this.activeItemIndex.next(item && item.index);
-      this.activeElement$.next(item && item.element);
+      this.activeItemIndex$.next(item?.index);
+      this.activeElement$.next(item?.element);
     });
 
     this.scrollSpyToken.isScrollDown$.subscribe(i => {
@@ -101,7 +101,7 @@ export class TocService {
       this.scrollSpyToken = null;
     }
 
-    this.activeItemIndex.next(null);
+    this.activeItemIndex$.next(null);
     this.activeElement$.next(null);
   }
 
