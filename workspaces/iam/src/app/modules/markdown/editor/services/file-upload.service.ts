@@ -9,7 +9,6 @@ import { DOCUMENTS_FOLDER_NAME } from 'app/modules/home/const';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { IFileUploadData } from './file-upload-data';
-import { Console } from 'console';
 
 @Injectable({
   providedIn: 'root'
