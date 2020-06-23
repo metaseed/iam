@@ -1,7 +1,6 @@
 'use strict';
 // reference this to implement popup toc: https://codepad.co/snippet/J4F52QsF
 // var string = require("string");
-var assign = require('lodash.assign');
 var defaults = {
   includeLevel: [1, 2],
   containerClass: 'table-of-contents',
@@ -18,7 +17,7 @@ var defaults = {
 };
 
 module.exports = function(md, options) {
-  var options = assign({}, defaults, options);
+  var options = {...defaults, ...options};
   var tocRegexp = options.markerPattern;
   var gstate;
 
