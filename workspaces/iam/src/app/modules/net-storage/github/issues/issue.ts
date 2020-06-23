@@ -71,7 +71,7 @@ export class Issue extends Requestable {
     return <Observable<Issue[]>>this.http.get(
       `githubapi/repos/${this._userInfo.name}/${this.repository}/issues`,
       {
-        params: { state: state, page: pageNumber.toString(), per_page: pageSize.toString() }
+        params: { state: state, page: pageNumber.toString(), per_page: pageSize.toString(), sort: 'updated' }
       }
     );
   }
