@@ -3,6 +3,10 @@
     .mat-tab-nav-bar {
       justify-content: space-around;
       display: flex;
+      ::ng-deep div.mat-tab-list {
+        display: flex;
+        justify-content: center;
+      }
       .mat-tab-link {
         padding: 0 .8rem;
         flex-direction: column;
