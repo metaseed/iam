@@ -32,7 +32,7 @@ export class DocListComponent implements OnInit {
     this.snackBar.open(action + 'time out.', 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
-  isLoaded$ = merge(
+  isLoadDone$ = merge(
     this.store.pipe(select(selectDocumentsState)),
     monitorActionStatus$(
       this.store,
@@ -53,7 +53,7 @@ export class DocListComponent implements OnInit {
     )
   ).pipe(observeOn(asyncScheduler));
 
-  public showGetMore$ = this.isLoaded$.pipe(
+  public showGetMore$ = this.isLoadDone$.pipe(
     map(
       _ => this.elementRef.nativeElement.scrollHeight === this.elementRef.nativeElement.clientHeight
     )
