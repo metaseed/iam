@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, HammerModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
@@ -23,6 +23,7 @@ import { NetStorageModule } from 'net-storage';
 import { DatabaseModule, schema } from 'database';
 import { RouteReuseStrategy } from '@angular/router';
 import { CustomRouteReuseStrategy } from './routeReuseStrategy';
+import { MyHammerConfig } from './hammer.config';
 /**
  * This function is used internal to get a string instance of the `<base href="" />` value from `index.html`.
  * This is an exported function, instead of a private function or inline lambda, to prevent this error:
@@ -51,6 +52,7 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
     SharedModule.forRoot(),
     DatabaseModule,
     MaterialModule,
+    HammerModule,
     ServiceWorkerModule.register(`./ngsw-worker.js`, {
       enabled: environment.production
     }),
@@ -62,16 +64,20 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
       cheatSheetDescription: 'shortcuts'
     }),
 
-    !environment.production ? StoreDevtoolsModule.instrument(
-      {
-        maxAge: 25, // Retains last 25 states
-        logOnly: environment.production, // Restrict extension to log-only mode
-      }
-    ) : [],
+    // !environment.production ? StoreDevtoolsModule.instrument(
+    //   {
+    //     maxAge: 25, // Retains last 25 states
+    //     logOnly: environment.production, // Restrict extension to log-only mode
+    //   }
+    // ) : [],
 
     EffectsModule.forRoot([AppEffects])
   ],
   providers: [
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: MyHammerConfig
+    },
     {
       provide: APP_BASE_HREF,
       useFactory: getBaseHref,

@@ -84,7 +84,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
     private ngZone: NgZone,
     private _docRef: DocumentRef,
     private _location: PlatformLocation
-  ) {}
+  ) { }
 
   container: IContainer;
   scrollDown$: Observable<ScrollEvent>;
@@ -150,5 +150,25 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
 
   ngOnDestroy() {
     this.destroy$.next();
+  }
+
+  private swipe(e) {
+    let element = e.target as HTMLElement;
+    let lines = '';
+    let i = 0;
+    do {
+      lines = element.getAttribute('data-source-lines');
+      element = element.parentElement;
+    } while (!lines && !!element && i++ < 4);
+    this.store.dispatch(new EditItAction({ sourceLine: JSON.parse(lines) }
+    ));
+  }
+
+  swipeLeft(e) {
+    this.swipe(e);
+  }
+
+  swipeRight(e) {
+    this.swipe(e);
   }
 }

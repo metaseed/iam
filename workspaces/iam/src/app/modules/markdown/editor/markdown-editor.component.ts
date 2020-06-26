@@ -11,7 +11,7 @@ import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
 import * as fromMarkdown from '../state';
 import { DocumentMode } from '../state/reducers/document';
 import { DocSaveCoordinateService } from './services/doc-save-coordinate-service';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription, fromEvent } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { Store, select, State as StoreState } from '@ngrx/store';
 import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
@@ -27,8 +27,9 @@ import {
 } from 'shared';
 import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../model/markdown.model';
 import { IContainer, ContainerRef, ICanComponentDeactivate } from 'core';
-import { selectDocumentEditItState, EditMode } from '../state';
+import { selectDocumentEditItState, EditMode, ViewMode } from '../state';
 import { KeyMapService } from './services';
+import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 
 @Component({
   selector: 'ms-markdown-editor',
@@ -64,6 +65,7 @@ export class MarkdownEditorComponent implements ICanComponentDeactivate {
     private state: StoreState<fromMarkdown.MarkdownState>,
     private dialog: MatDialog,
     @Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService,
+    @Inject(HAMMER_GESTURE_CONFIG) private gestureConfig: HammerGestureConfig,
     private editorService: MarkdownEditorService,
     private docSaveCoordinatorService: DocSaveCoordinateService,
     private store: Store<fromMarkdown.MarkdownState>,
@@ -109,8 +111,24 @@ export class MarkdownEditorComponent implements ICanComponentDeactivate {
         this.ngZone
       )
     );
+    const hammer = this.gestureConfig.buildHammer((this._elementRef.nativeElement as HTMLElement).getElementsByClassName(
+      'CodeMirror-scroll'
+    )[0] as HTMLElement); 
+
+    fromEvent(hammer, 'swiperight').pipe(takeUntil(this.destroy$))
+      .subscribe((res: any) => {
+        this.toViewMode(res);
+      })
+    fromEvent(hammer, 'swipeleft').pipe(takeUntil(this.destroy$))
+      .subscribe((res: any) => {
+        this.toViewMode(res);
+      })
   }
 
+  private toViewMode = event => {
+    this.store.dispatch(new ViewMode());
+  };
+  
   ngOnDestroy() {
     this.contentChangeSubscription.unsubscribe();
     this.destroy$.next();
