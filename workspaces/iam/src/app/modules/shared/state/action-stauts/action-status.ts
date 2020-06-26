@@ -26,13 +26,13 @@ export function actionStatusState$(
 export function monitorActionStatus$(
   store: Store<any>,
   actionType: string,
-  due: number, // time out time in ms
-  timeOutHander: (start: ActionStatus) => void,
+  timeoutMs: number,
+  timeOutHandler: (start: ActionStatus) => void,
   sameActionTypeDiff?: (action: ActionStatus) => boolean
 ): Observable<ActionStatus> {
   return actionStatusState$(store, actionType).pipe(
     timeOutMonitor<ActionStatus, ActionStatus>(
-      due,
+      timeoutMs,
       actionStatus =>
         actionStatus.state === ActionState.Start &&
         (!sameActionTypeDiff ? true : sameActionTypeDiff(actionStatus)),
@@ -44,7 +44,7 @@ export function monitorActionStatus$(
           actionStatus.state === ActionState.Fail ||
           actionStatus.state === ActionState.Complete),
       start => {
-        if (timeOutHander) timeOutHander(start);
+        if (timeOutHandler) timeOutHandler(start);
         return new ActionStatus(
           ActionState.Timeout,
           start.action,

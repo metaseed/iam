@@ -1,4 +1,4 @@
-<sk-wave [isRunning]="!(isLoadDone$ | async)"></sk-wave>
+<sk-wave [isRunning]="!(isLoaded$ | async)"></sk-wave>
 <div class="doc-card-container">
   <ng-container *ngFor="let doc of documents; let i = index; trackBy:trackByFunc">
     <doc-item [doc]="doc" (delete)="onDelete(doc)" (show)="onShow(doc)"></doc-item>

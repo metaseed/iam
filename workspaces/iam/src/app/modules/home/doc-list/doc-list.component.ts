@@ -16,7 +16,7 @@ import { Subject, merge, asyncScheduler } from 'rxjs';
 import { takeUntil, filter, map, observeOn, auditTime, startWith } from 'rxjs/operators';
 import { Router, NavigationExtras } from '@angular/router';
 
-const REFRESH_AUDITE_TIME = 3000;
+const REFRESH_AUDIT_TIME = 3000;
 
 @Component({
   selector: 'doc-list',
@@ -32,7 +32,7 @@ export class DocListComponent implements OnInit {
     this.snackBar.open(action + 'time out.', 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
-  isLoadDone$ = merge(
+  isLoaded$ = merge(
     this.store.pipe(select(selectDocumentsState)),
     monitorActionStatus$(
       this.store,
@@ -53,7 +53,7 @@ export class DocListComponent implements OnInit {
     )
   ).pipe(observeOn(asyncScheduler));
 
-  public showGetMore$ = this.isLoadDone$.pipe(
+  public showGetMore$ = this.isLoaded$.pipe(
     map(
       _ => this.elementRef.nativeElement.scrollHeight === this.elementRef.nativeElement.clientHeight
     )
@@ -108,7 +108,7 @@ export class DocListComponent implements OnInit {
             return true;
           }
         }),
-        auditTime(REFRESH_AUDITE_TIME)
+        auditTime(REFRESH_AUDIT_TIME)
       )
       .subscribe(this.onGetMore);
     this.panToRefresh();
@@ -155,7 +155,7 @@ export class DocListComponent implements OnInit {
     this.container.touchMove$
       .pipe(
         takeUntil(this.destroy$),
-        auditTime(REFRESH_AUDITE_TIME)
+        auditTime(REFRESH_AUDIT_TIME)
       )
       .subscribe(e => {
         const y = e.touches[0].pageY;
