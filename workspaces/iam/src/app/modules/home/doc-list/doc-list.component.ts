@@ -110,9 +110,7 @@ export class DocListComponent implements OnInit {
         }),
         auditTime(REFRESH_AUDITE_TIME)
       )
-      .subscribe(() => {
-        this.getMore();
-      });
+      .subscribe(this.onGetMore);
     this.panToRefresh();
   }
 
@@ -141,7 +139,7 @@ export class DocListComponent implements OnInit {
     this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: false }));
   }
 
-  public getMore() {
+  public onGetMore() {
     this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: true }));
   }
 
@@ -172,7 +170,7 @@ export class DocListComponent implements OnInit {
           !refreshStarted &&
           startY - y > PAN_TO_GET_MORE_MARGIN
         ) {
-          this.getMore();
+          this.onGetMore();
           refreshStarted = true;
         }
       });

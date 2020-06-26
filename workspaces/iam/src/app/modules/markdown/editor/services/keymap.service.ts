@@ -7,9 +7,7 @@ import { MarkdownState, ViewScrollAction } from '../../state';
 import { CommandService, Command } from 'core';
 import { MarkdownEditorService } from './markdown.editor.service';
 import { Store } from '@ngrx/store';
-import { DEFAULT_NEW_DOC_CONTENT, DEFAULT_DOC_META } from 'shared';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { FileUploadComponent } from '../codemirror-editor/file-upload/file-upload.component';
+import { DEFAULT_DOC_META } from 'shared';
 import { FileUploadService } from './file-upload.service';
 
 interface ICommandConfig {
