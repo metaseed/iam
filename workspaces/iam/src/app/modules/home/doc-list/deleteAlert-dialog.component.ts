@@ -17,6 +17,6 @@ import { MatDialogRef } from '@angular/material/dialog';
 </div>
     `
 })
-export class DeleteAlertDialog {
-  constructor(public dialogRef: MatDialogRef<DeleteAlertDialog>) {}
+export class DeleteAlertDialogComponent {
+  constructor(public dialogRef: MatDialogRef<DeleteAlertDialogComponent>) {}
 }
