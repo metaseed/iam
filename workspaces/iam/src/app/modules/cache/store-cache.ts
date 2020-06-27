@@ -76,7 +76,7 @@ export class StoreCache implements ICache {
   readBulkDocMeta(key: number, isBelowTheKey = true) {
     return this.nextLevelCache.readBulkDocMeta(key, isBelowTheKey).pipe(
       tap(metaArray => {
-        if (metaArray.length && metaArray[0] && metaArray[0].isDeleted) {
+        if (metaArray[0]?.isDeleted) {// grouped in next cache
           this.store.dispatch(new DeleteDocuments({ ids: metaArray.map(m => m.id) }));
         } else {
           const array = new Array<Document>();
