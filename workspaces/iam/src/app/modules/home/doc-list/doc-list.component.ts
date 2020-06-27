@@ -54,9 +54,7 @@ export class DocListComponent implements OnInit {
   ).pipe(observeOn(asyncScheduler));
 
   public showGetMore$ = this.isLoadDone$.pipe(
-    map(
-      _ => this.elementRef.nativeElement.scrollHeight === this.elementRef.nativeElement.clientHeight
-    )
+    map(_ => this.elementRef.nativeElement.scrollHeight === this.elementRef.nativeElement.clientHeight)
   );
 
   isLoadMoreDone$ = monitorActionStatus$(
@@ -107,6 +105,7 @@ export class DocListComponent implements OnInit {
           if (e.isDown && margin < PAN_TO_GET_MORE_MARGIN) {
             return true;
           }
+          return false;
         }),
         auditTime(REFRESH_AUDIT_TIME)
       )
@@ -165,11 +164,7 @@ export class DocListComponent implements OnInit {
           refreshStarted = true;
           this.refresh();
         }
-        if (
-          scrollTop === this.container.maxScrollTop &&
-          !refreshStarted &&
-          startY - y > PAN_TO_GET_MORE_MARGIN
-        ) {
+        if (scrollTop === this.container.maxScrollTop && !refreshStarted && startY - y > PAN_TO_GET_MORE_MARGIN) {
           this.onGetMore();
           refreshStarted = true;
         }

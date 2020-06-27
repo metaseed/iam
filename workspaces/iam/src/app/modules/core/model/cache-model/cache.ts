@@ -13,12 +13,12 @@ export interface ICache {
 
   init(nextLevelCache: ICache, ...args): ICache;
 
-  CreateDocument(conternt: string, format: DocFormat): Observable<Document>;
+  CreateDocument(content: string, format: DocFormat): Observable<Document>;
 
   /**
    * @param id   undefined: initial fetch
    *              Number.MAX_VALUE: refresh
-   * @param isBelowTheId
+   * @param isBelowTheId (..., id] (id,...]
    *  true:  the result include the record at id.
    *  false: the result not include the record at id.
    */
@@ -30,7 +30,7 @@ export interface ICache {
 
   UpdateDocument(oldDocMeta: DocMeta, content: string, forceUpdate: boolean): Observable<Document>;
 
-  // retrun the id;  fault would be processed by observable error hanlder
+  // return the id;  fault would be processed by observable error handler
   deleteDoc(id: number): Observable<number>;
 
   search(query: string): Observable<SearchResult>;
