@@ -66,12 +66,13 @@ export class Issue extends Requestable {
   list(
     state: 'open' | 'closed' | 'all' = 'open',
     pageNumber: number = 1,
-    pageSize: number = 30
+    pageSize: number = 30,
+    sortByUpdated = false;
   ): Observable<Issue[]> {
     return <Observable<Issue[]>>this.http.get(
       `githubapi/repos/${this._userInfo.name}/${this.repository}/issues`,
       {
-        params: { state: state, page: pageNumber.toString(), per_page: pageSize.toString(), sort: 'updated' }
+        params: { state: state, page: pageNumber.toString(), per_page: pageSize.toString(), sort: sortByUpdated ? 'updated' : 'created' }
       }
     );
   }

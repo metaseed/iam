@@ -135,7 +135,7 @@ export class GithubCache implements ICache {
         return concat(d, getPageData(page + 1));
       }
       if (!isBelowTheKey && isNearPageFloor) {
-        return concat(d, getPageData(page - 1));
+        return concat(getPageData(page - 1), d);
       }
       return d;
     };
