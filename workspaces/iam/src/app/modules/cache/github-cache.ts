@@ -15,7 +15,7 @@ const FIRST_PAGE_READY_TO_REFRESH = 5 * 60 * 1000;
 
 @Injectable({ providedIn: 'platform' })
 export class GithubCache implements ICache {
-  // used to caculate the which page the key is in.
+  // used to calculate the which page the key is in.
   private highestId: number;
 
   constructor(private githubStorage: GithubStorage, private util: gitHubCacheUtil) {
@@ -96,6 +96,9 @@ export class GithubCache implements ICache {
   }
 
   /// (...,id] (id,...]
+  /// this method have a assumption: the webapi's response gives a array that with id sorted by des.(sort by doc created time)
+  /// but we want to get a list sorted by updating time, whose id is not sorted by des. so we need to create another function.
+  /// todo: retire this function.
   readBulkDocMeta(id: number, isBulkBelowTheId: boolean): Observable<DocMeta[]> {
     if (id === undefined || id === Number.MAX_VALUE) {
       this.highestId = undefined; // to get the 1st page to know the hightestId.
