@@ -109,7 +109,7 @@ export class DocListComponent implements OnInit {
         }),
         auditTime(REFRESH_AUDIT_TIME)
       )
-      .subscribe(this.onGetMore);
+      .subscribe(_ => this.onGetMore());
     this.panToRefresh();
   }
 
