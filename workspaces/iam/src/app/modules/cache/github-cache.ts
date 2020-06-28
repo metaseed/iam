@@ -112,11 +112,7 @@ export class GithubCache implements ICache {
         if (issues.length > 0 && page === 1) {
           this.highestId = issues[0].number;
         }
-        const docMetaArray = issues.map(issue => {
-          const meta = this._issueToDocMeta(issue);
-          return meta;
-        });
-        return docMetaArray;
+        return issues.map(this._issueToDocMeta)
       };
 
       const getPageData = page =>
@@ -140,21 +136,18 @@ export class GithubCache implements ICache {
       return d;
     };
 
-    const getPageNum = (id, highestId) => Math.floor((highestId - id) / GITHUB_PAGE_SIZE) + 1;
+    const getPageNum = (id, highestId) => Math.ceil((highestId - id + 1) / GITHUB_PAGE_SIZE);
     // page index start from 1, issue.num start from 1 too.
 
-    const isNearPageFloor = (id, page, highestId) =>
-      (highestId - id) / GITHUB_PAGE_SIZE + 1 - page < 0.5;
+    const isNearPageFloor = (id, highestId) => ((highestId - id + 1) / GITHUB_PAGE_SIZE) % 1 < 0.5;
 
-    const isLastPage = (page, highestId) => page === Math.floor(highestId / GITHUB_PAGE_SIZE);
+    const isLastPage = (page, highestId) => page === Math.ceil(highestId / GITHUB_PAGE_SIZE);
     const isFirstPage = page => page === 1;
 
     const getHighestId = () => {
       if (!this.highestId) {
         return getMetaDataList(1, isBulkBelowTheId).pipe(
-          map(a => {
-            return { highestId: this.highestId, metaArray: a };
-          })
+          map(a => ({ highestId: this.highestId /*updated in getMetaDataList*/, metaArray: a }))
         );
       }
       return of({ highestId: this.highestId, metaArray: null as DocMeta[] });
@@ -164,7 +157,7 @@ export class GithubCache implements ICache {
       switchMap(({ highestId, metaArray }) => {
         if (id === undefined || id === Number.MAX_VALUE) id = this.highestId;
         page = getPageNum(id, highestId);
-        keyNearPageFloor = isNearPageFloor(id, page, highestId);
+        keyNearPageFloor = isNearPageFloor(id, highestId);
         const isInFirstPage = isFirstPage(page);
         const isInLastPage = isLastPage(page, highestId);
 
