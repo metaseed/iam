@@ -1,7 +1,7 @@
 'use strict';
-// reference this to implement popup toc: https://codepad.co/snippet/J4F52QsF
+// reference this to implement popup toc: https://codepad.co/snippet/
 // var string = require("string");
-var defaults = {
+var defaultOptions = {
   includeLevel: [1, 2],
   containerClass: 'table-of-contents',
   slugify: s => s,
@@ -17,7 +17,7 @@ var defaults = {
 };
 
 module.exports = function(md, options) {
-  var options = {...defaults, ...options};
+  var options = {...defaultOptions, ...options};
   var tocRegexp = options.markerPattern;
   var gstate;
 
