@@ -7,11 +7,10 @@ import {
   ELEMENT_MODULE_LOAD_CALLBACKS_TOKEN
 } from './element-registry';
 import { LazyCustomElementComponent } from './lazy-custom-element.component';
-import { SubPageComponent } from './sub-page/sub-page.component';
 
 @NgModule({
   exports: [LazyCustomElementComponent],
-  declarations: [LazyCustomElementComponent, SubPageComponent],
+  declarations: [LazyCustomElementComponent],
   providers: [
     ElementsLoader,
     { provide: ELEMENT_MODULE_LOAD_CALLBACKS_TOKEN, useValue: ELEMENT_MODULE_LOAD_CALLBACKS },

@@ -11,6 +11,11 @@ export const ELEMENT_MODULE_LOAD_CALLBACKS_AS_ROUTES = [
     loadChildren: () => import('./toc/toc.module').then(m => m.TocModule)
   },
   {
+    selector: 'i-subpage',
+    path: '',
+    loadChildren: () => import('./sub-page/sub-page.module').then(m => m.SubPageModule)
+  },
+  {
     selector: 'i-code',
     path: '',
     loadChildren: () => import('./code/code-example.module').then(m => m.CodeExampleModule)
