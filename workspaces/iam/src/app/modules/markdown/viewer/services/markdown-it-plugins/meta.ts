@@ -2,9 +2,21 @@
 
 import * as MarkdownIt from 'markdown-it';
 import YAML from 'js-yaml';
+import * as StateBlock from 'markdown-it/lib/rules_block/state_block';
+
+export class DocYamlMeta {
+  author: string; // name <email>
+  version: string;
+  updateDate: Date;
+  createDate: Date;
+  tag: Array<string>;
+  tags: Array<string>; // tag list
+  enable: Array<string>; // feature list
+  subPage: Array<string>; // sub pages list
+}
 
 export class MetaPlugin {
-  constructor(private markdownIt: MarkdownIt, private updateMeta: (object) => void) {
+  constructor(private markdownIt: MarkdownIt, private updateMeta: (object) => DocYamlMeta) {
     this.markdownIt.use(this.metaPlugin);
   }
 
@@ -14,24 +26,25 @@ export class MetaPlugin {
     md.renderer.rules.meta_close = (tokens, index) => '</articleinfo>';
     md.renderer.rules.meta_body = (tokens, index) => {
       try {
-        const meta = (tokens[index] as any).docmeta;
+        const meta = tokens[index].content as unknown as DocYamlMeta;
         let content = '';
         if (meta.author) {
           let link;
-          meta.author.replace(/<(.*)>/, (match, p1, offset, string) => {
-            content += '<author class="meta-author">';
+          content += meta.author.replace(/<(.*)>/, (match, p1, offset, string) => {
+            let cont = '<author class="meta-author">';
             const author = string.substr(0, offset);
             link = p1;
             if (link) {
               if (link.includes('@')) {
                 link = 'mailto:' + link;
               }
-              content += `<a href="${link}">${author}</a>`;
+              cont += `<a href="${link}">${author}</a>`;
             } else {
-              content += author;
+              cont += author;
             }
 
-            content += '</author>';
+            cont += '</author>';
+            return cont;
           });
         }
         if (meta.version || meta.updateDate) {
@@ -72,7 +85,7 @@ export class MetaPlugin {
     return state.src.substr(pos, max - pos);
   };
 
-  metaParser = (state, startLine?, endLine?, silent?) => {
+  metaParser = (state: StateBlock, startLine: number, endLine: number, silent: boolean) => {
     if (startLine > 5 || state.blkIndent !== 0) {
       return false;
     }
@@ -108,8 +121,9 @@ export class MetaPlugin {
         let token = state.push('meta_open', 'meta', 1);
         token.markup = '---';
         token = state.push('meta_body', 'meta-body', 0);
-        token.docmeta = this.updateMeta(d);
-        if (token.docmeta && token.docmeta.enable.includes('toc')) {
+        const meta = this.updateMeta(d);
+        token.content = <any>meta;
+        if (meta?.enable.includes('toc')) {
           // put web component in html block; should not render it directly.
           token = state.push('html_block', '', 0);
           token.content = '<i-toc>/n</i-toc>';
