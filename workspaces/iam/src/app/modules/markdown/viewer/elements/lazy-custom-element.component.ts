@@ -18,7 +18,7 @@ export class LazyCustomElementComponent implements OnInit {
 
   ngOnInit() {
     if (!this.selector || /[^\w-]/.test(this.selector)) {
-      this.logger.error(new Error(`Invalid selector for 'i-lazy-ce': ${this.selector}`));
+      this.logger.error(new Error(`Invalid selector for 'i-l': ${this.selector}`));
       return;
     }
 

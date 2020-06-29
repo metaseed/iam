@@ -128,6 +128,13 @@ export class MetaPlugin {
           token = state.push('html_block', '', 0);
           token.content = '<i-toc>/n</i-toc>';
         }
+
+        if (meta?.subPage.length) {
+          token = state.push('html_block', '', 0);
+          const pages = meta.subPage.join(' ');
+          token.content = `<i-subpage pages="${pages}">/n</i-subpage>`
+        }
+
         token = state.push('meta_close', 'meta', -1);
         token.markup = '---';
       }
