@@ -1,13 +1,14 @@
 import { Injectable, Inject } from '@angular/core';
 import { Effect } from '@ngrx/effects';
-import { throwError, pipe } from 'rxjs';
+import { throwError, pipe, merge, from } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State as StoreState } from '@ngrx/store';
 import {
   DocumentEffectsReadBulkDocMeta,
   DocumentEffectsActionType,
   DocumentEffectsDelete,
-  DocumentEffectsSearch
+  DocumentEffectsSearch,
+  DocumentEffectsReadDocMetas
 } from './document.effects-actions';
 import { switchMap, tap } from 'rxjs/operators';
 import {
@@ -18,7 +19,7 @@ import {
 import { DocumentState } from './document.reducer';
 import { ActionMoniter } from '../action-stauts';
 import { DocEffectsUtil } from './document.effects.util';
-import { SetCurrentDocumentId } from './document.actions';
+import { SetCurrentDocumentId, DocumentActionType } from './document.actions';
 import { DocMeta, CACHE_FACADE_TOKEN, ICache } from 'core';
 import {
   selectIdRangeHighState,
@@ -39,7 +40,7 @@ export class DocumentEffects {
     private state: StoreState<DocumentState>,
     private snackbar: MatSnackBar,
     private store: Store<DocumentState>
-  ) {}
+  ) { }
 
   @Effect()
   CreateDocument = this.actionMonitor.do$<DocumentEffectsCreate>(
@@ -72,6 +73,19 @@ export class DocumentEffects {
         })
       );
     })()
+  );
+
+  @Effect()
+  ReadDocMetas = this.actionMonitor.do$<DocumentEffectsReadDocMetas>(DocumentEffectsActionType.ReadDocMetas,
+    pipe(
+      switchMap(action =>
+        merge(
+          ...action.payload.ids.map(id =>
+            this.cacheFacade.readDocMeta(id, true)
+              .pipe(this.actionMonitor.complete(action)))
+        )
+      )
+    )
   );
 
   @Effect()

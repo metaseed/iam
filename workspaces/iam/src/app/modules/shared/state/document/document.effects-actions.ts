@@ -3,6 +3,7 @@ import { CorrelationAction } from '../action-stauts/actions';
 
 export enum DocumentEffectsActionType {
   ReadBulkDocMeta = '[DocumentEffects] Load',
+  ReadDocMetas = '[DocumentEffects] ReadMetas',
   Delete = '[DocumentEffects] Delete',
   ReadDocument = '[DocumentEffects] Show',
   Create = '[DocumentEffects] New',
@@ -13,6 +14,12 @@ export enum DocumentEffectsActionType {
 export class DocumentEffectsReadBulkDocMeta extends CorrelationAction {
   readonly type = DocumentEffectsActionType.ReadBulkDocMeta;
   constructor(public payload = { isBelowRange: true }) {
+    super();
+  }
+}
+export class DocumentEffectsReadDocMetas extends CorrelationAction {
+  readonly type = DocumentEffectsActionType.ReadDocMetas;
+  constructor(public payload = { ids: new Array<number>() }) {
     super();
   }
 }

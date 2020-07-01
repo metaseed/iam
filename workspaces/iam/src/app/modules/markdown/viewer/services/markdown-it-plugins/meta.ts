@@ -69,7 +69,15 @@ export class MetaPlugin {
           });
           content += '</ul>';
         }
+
+
         if (meta.enable && meta.enable.length > 0) {
+        }
+
+        if (meta?.subPage?.length) {
+          // token = state.push('html_block', '', 0);
+          const pages = meta.subPage.join(' ');
+          content += `<i-subpage pages="${pages}"></i-subpage>`
         }
         return content;
       } catch (e) {
@@ -129,12 +137,7 @@ export class MetaPlugin {
           token.content = '<i-toc>/n</i-toc>';
         }
 
-        if (meta?.subPage.length) {
-          token = state.push('html_block', '', 0);
-          const pages = meta.subPage.join(' ');
-          token.content = `<i-subpage pages="${pages}">/n</i-subpage>`
-        }
-
+        
         token = state.push('meta_close', 'meta', -1);
         token.markup = '---';
       }

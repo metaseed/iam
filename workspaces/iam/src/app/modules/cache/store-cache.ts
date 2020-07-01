@@ -23,11 +23,13 @@ import {
   selectCurrentDocumentIdState,
   DocumentEffectsDelete,
   SetSearchResultAction,
-  selectDocumentsState
+  selectDocumentsState,
+  UpsertDocument
 } from '../shared/state/document';
 import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../shared/state/document/const';
 import { SharedState } from '../shared/state/state';
 import { StoreSearchService } from './services/store-search.service';
+import { ThrowStmt } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'platform'
@@ -102,7 +104,17 @@ export class StoreCache implements ICache {
   }
 
   readDocMeta(key: number, checkNextCache?: boolean): Observable<DocMeta> {
-    return this.nextLevelCache.readDocMeta(key, checkNextCache);
+    return this.nextLevelCache.readDocMeta(key, checkNextCache).pipe(tap(meta => {
+      if (meta.isDeleted) this.store.dispatch(new DeleteDocument({ id: meta.id }));
+      else {
+        const docDic = selectDocumentEntitiesState(this.state.value);
+        const doc = docDic[meta.id];
+        if (!doc || doc.metaData.updateDate.getTime() < meta.updateDate.getTime()) {
+          const content = doc && doc.content;
+          this.store.dispatch(new UpsertDocument({ collectionDocument: new Document(meta.id, meta, content) }));
+        }
+      }
+    }));
   }
 
   readDocContent(id: number, title: string, format: string): Observable<DocContent> {

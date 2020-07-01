@@ -142,7 +142,7 @@ export class DatabaseCache implements ICache {
     table: DataTables,
     cache$: Observable<T>,
     nextCache$: Observable<T>,
-    shouldUpeate: (inCache: T, fromNext: T) => boolean,
+    shouldUpdate: (inCache: T, fromNext: T) => boolean,
     shouldDelete: (inCache: T, fromNext: T) => boolean
   ) {
     let inCache: T;
@@ -161,7 +161,7 @@ export class DatabaseCache implements ICache {
             .subscribe();
 
           return true;
-        } else if (shouldUpeate(inCache, fromNext)) {
+        } else if (shouldUpdate(inCache, fromNext)) {
           this.db
             .put(table, fromNext)
             .pipe(

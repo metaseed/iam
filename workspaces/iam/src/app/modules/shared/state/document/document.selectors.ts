@@ -50,13 +50,19 @@ export const selectIdRangeLowState = createSelector(
   fromDocument.getDocumentIdsRangeLow
 );
 
-export const getDocumentByIdSeletor = (id: number) => {
+export const getDocumentByIdSelector = (id: number) => {
   return createSelector(
     selectDocumentEntitiesState,
     entities => entities[id]
   );
 };
 
+export const getDocumentsByIdsSelector = (ids: Array<number>) => {
+  return createSelector(
+    selectDocumentEntitiesState,
+    entities => ids.map(id => entities[id])
+  );
+};
 export const selectSearchResultState = createSelector(
   selectDocumentState,
   document => document.searchResult

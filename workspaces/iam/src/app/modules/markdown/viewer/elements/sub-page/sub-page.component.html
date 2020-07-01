@@ -1,7 +1,11 @@
 <div class="card-container">
-    <a href="guide/setup-local" class="docs-card" title="Angular Local Environment Setup">
-        <section>Get Started</section>
-        <p>Set up your local environment for development with the Angular CLI.</p>
-        <p class="card-footer">Local setup</p>
-    </a>
+    <div *ngFor="let meta of pageList$|async" (click)="onShow(meta)" class="docs-card">
+        <section>{{meta.title}}</section>
+        <p>{{meta.summary}}</p>
+        <p class="meta-version-date card-footer">
+            <span class="meta-version"> v{{meta.version}} </span>
+            <span style="margin-left:10px" class="meta-date">{{meta.createDate?.toLocaleDateString()}} - </span>
+            <span class="meta-date"> {{meta.updateDate.toLocaleDateString()}}</span>
+        </p>
+    </div>
 </div>

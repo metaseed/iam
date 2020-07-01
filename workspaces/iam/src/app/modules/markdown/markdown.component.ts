@@ -79,9 +79,12 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     private router: Router,
     private store: Store<fromMarkdown.MarkdownState>,
     private utils: Utilities
-  ) {}
+  ) { }
 
   ngOnInit() {
+    this.router.routerState.root.firstChild.queryParams.subscribe(e=>{
+      console.log(e)
+    })
     this.markdown$ = merge(
       this.store.select<Document>(selectCurrentDocumentState).pipe(
         filter(d => d && !d.isUpdateMeta),
@@ -104,21 +107,20 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.route.queryParamMap
+    this.router.routerState.root.firstChild.queryParams
       .pipe(
         tap(params => {
           if (this.router.url.startsWith('/doc/new')) {
-            const format = params.get('f') as DocFormat;
+            const format = params['f'] as DocFormat;
             this.store.dispatch(new DocumentEffectsCreate({ format }));
             this.store.dispatch(new document.EditMode());
           } else {
-            const title = params.get('title');
-            const num = +params.get('id');
-            const format = params.get('f');
+            const title = params['title'];
+            const num = +params['id']
+            const format = params['f'];
             this.store.dispatch(new DocumentEffectsRead({ id: num, title, format }));
           }
-        }),
-        take(1)
+        })
       )
       .subscribe();
     // setTimeout(_ => (this.viewerDiv.nativeElement as HTMLElement).focus(), 1000);
@@ -127,6 +129,6 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   showDemo() {
     this._http
       .get(`${this.baseHref}assets/markdown.md`, { responseType: 'text' })
-      .subscribe(() => {});
+      .subscribe(() => { });
   }
 }

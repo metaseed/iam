@@ -13,7 +13,7 @@ export class DocMeta {
   static width: 400;
 
   public _context: any; // issue obj;
-
+  public version: string;
   private constructor(
     public id: number,
     public title: string,
