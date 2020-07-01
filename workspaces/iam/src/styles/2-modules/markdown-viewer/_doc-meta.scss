@@ -22,7 +22,10 @@
   text-decoration: none;
   transition: color 0.2s;
 }
-
+.doc-meta {
+  display: block;
+  border-bottom: 1.5px solid #DBDB;
+}
 .meta-tag::before {
   background: #fff;
   border-radius: 100%;
