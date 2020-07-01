@@ -13,11 +13,12 @@ import { Observable } from 'rxjs';
 })
 export class SubPageComponent implements OnInit {
 
+  public panelOpenState = false;
   constructor(private router: Router, private store: Store<any>) {
 
   }
 
-  private ids = new Array<number>();
+  public ids = new Array<number>();
   @Input()
   public set pages(value: string) {
     const ids = value.split(' ').map(id => +id);

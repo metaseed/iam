@@ -1,11 +1,22 @@
-<div class="card-container">
-    <div *ngFor="let meta of pageList$|async" (click)="onShow(meta)" class="docs-card">
-        <section>{{meta.title}}</section>
-        <p>{{meta.summary}}</p>
-        <p class="meta-version-date card-footer">
-            <span class="meta-version"> v{{meta.version}} </span>
-            <span style="margin-left:10px" class="meta-date">{{meta.createDate?.toLocaleDateString()}} - </span>
-            <span class="meta-date"> {{meta.updateDate.toLocaleDateString()}}</span>
-        </p>
+<mat-expansion-panel (opened)="panelOpenState = true" style="background-color:transparent;"
+                       (closed)="panelOpenState = false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Subpages({{ids.length}})
+      </mat-panel-title>
+      <mat-panel-description>
+        Subpages of this document
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div class="card-container">
+        <div *ngFor="let meta of pageList$|async" (click)="onShow(meta)" class="docs-card">
+            <section>{{meta.title}}</section>
+            <p>{{meta.summary}}</p>
+            <p class="meta-version-date card-footer">
+                <span class="meta-version"> v{{meta.version}} </span>
+                <span style="margin-left:10px" class="meta-date">{{meta.createDate?.toLocaleDateString()}} - </span>
+                <span class="meta-date"> {{meta.updateDate.toLocaleDateString()}}</span>
+            </p>
+        </div>
     </div>
-</div>
+  </mat-expansion-panel>
