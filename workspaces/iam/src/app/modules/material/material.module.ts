@@ -9,6 +9,7 @@ import {MatSnackBarModule, MAT_SNACK_BAR_DEFAULT_OPTIONS} from '@angular/materia
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatTreeModule} from '@angular/material/tree';
 
 export const MatModules = [
   MatIconModule,
@@ -21,7 +22,8 @@ export const MatModules = [
   MatProgressBarModule,
   MatToolbarModule,
   MatDialogModule,
-  MatIconModule
+  MatIconModule,
+  MatTreeModule
 ];
 
 @NgModule({
