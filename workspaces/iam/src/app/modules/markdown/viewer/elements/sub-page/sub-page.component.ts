@@ -18,12 +18,10 @@ export class SubPageComponent implements OnInit {
 
   }
 
-  public ids = new Array<number>();
-  @Input()
-  public set pages(value: string) {
-    const ids = value.split(' ').map(id => +id);
-    this.ids = ids;
-
+  private hasOpened = false;
+  public onPanelOpen = (e) => {
+    if (this.hasOpened) return;
+    this.hasOpened = true;
     this.pageList$ = this.store.pipe(
       select(getDocumentsByIdsSelector(this.ids)),
       map(docs => [...(docs
@@ -31,7 +29,14 @@ export class SubPageComponent implements OnInit {
         .filter(m => !!m))]
       ),
       tap(ms => console.log(ms)));
+    const ids = this.ids;
     this.store.dispatch(new DocumentEffectsReadDocMetas({ ids }));
+  }
+  public ids = new Array<number>();
+  @Input()
+  public set pages(value: string) {
+    const ids = value.split(' ').map(id => +id);
+    this.ids = ids;
   }
 
   public pageList$: Observable<DocMeta[]>
