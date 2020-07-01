@@ -20,6 +20,7 @@
 
       &:hover {
         text-decoration: none;
+        background-color: rgba($blue, 0.01);
 
         section {
           color: $blue;
@@ -33,7 +34,6 @@
         .card-footer {
           @include line-height(32);
           padding: 8px 16px;
-          background-color: rgba($blue, 0.1);
           color: $blue;
         }
       }
