@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { DynamicDataSource } from './doc-tree.dataSource';
 import { DocTreeDataService, DocNode } from './doc-tree.data.service';
+import { NavigationExtras, Router } from '@angular/router';
 
 
 @Component({
@@ -12,13 +13,24 @@ import { DocTreeDataService, DocNode } from './doc-tree.data.service';
 export class DocTreeComponent implements OnInit {
   treeControl = new NestedTreeControl<DocNode>((node: DocNode) => node.subPages);
   dataSource: DynamicDataSource;
-  constructor(dataService: DocTreeDataService) {
+  constructor(dataService: DocTreeDataService, private router: Router) {
     this.dataSource = new DynamicDataSource(this.treeControl, dataService);
     dataService.initialData$.subscribe(data =>
-       this.dataSource.data = data, e => console.error(e))
+      this.dataSource.data = data, e => console.error(e))
   }
 
   ngOnInit(): void {
+  }
+
+  onShowDoc(doc: DocNode) {
+    const navigationExtras: NavigationExtras = {
+      queryParams: {
+        id: doc.id,
+        title: doc.title,
+        f: doc.format || 'md'
+      }
+    };
+    this.router.navigate(['/doc'], navigationExtras);
   }
 
   hasChild = (_: number, node: DocNode) => !!node.subPageIds?.length;

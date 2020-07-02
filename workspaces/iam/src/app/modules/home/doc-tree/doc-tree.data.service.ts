@@ -14,11 +14,13 @@ export class DocNode {
     parent: DocNode;
     subPages: DocNode[];
     subPageIds: Array<string>;
+    format: string
     constructor(meta: DocMeta) {
         this.id = meta.id;
         this.title = meta.title;
         this.summary = meta.summary;
         this.subPageIds = meta.subPage;
+        this.format = meta.format;
     }
 
 }
