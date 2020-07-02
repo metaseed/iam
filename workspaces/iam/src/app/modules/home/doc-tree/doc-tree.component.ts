@@ -12,7 +12,7 @@ import { DocTreeDataService, DocNode } from './doc-tree.data.service';
 export class DocTreeComponent implements OnInit {
   treeControl = new NestedTreeControl<DocNode>((node: DocNode) => node.subPages);
   dataSource: DynamicDataSource;
-  constructor(private dataService: DocTreeDataService) {
+  constructor(dataService: DocTreeDataService) {
     this.dataSource = new DynamicDataSource(this.treeControl, dataService);
     dataService.initialData$.subscribe(data =>
        this.dataSource.data = data, e => console.error(e))
