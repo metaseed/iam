@@ -23,6 +23,11 @@ export class DocumentEffectsReadDocMetas extends CorrelationAction {
     super();
   }
 }
+export class DocumentEffectsReadDocMeta extends DocumentEffectsReadDocMetas {
+  constructor(payload = { id: 0 }) {
+    super({ ids: [payload.id] })
+  }
+}
 export class DocumentEffectsDelete extends CorrelationAction {
   readonly type = DocumentEffectsActionType.Delete;
   constructor(public payload: { id: number }) {

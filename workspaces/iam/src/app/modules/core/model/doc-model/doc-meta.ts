@@ -14,6 +14,8 @@ export class DocMeta {
 
   public _context: any; // issue obj;
   public version: string;
+  public subPage: Array<string>;
+
   private constructor(
     public id: number,
     public title: string,

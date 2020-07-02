@@ -1,55 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { NestedTreeControl } from '@angular/cdk/tree';
-import { MatTreeNestedDataSource } from '@angular/material/tree';
+import { DynamicDataSource } from './doc-tree.dataSource';
+import { DocTreeDataService, DocNode } from './doc-tree.data.service';
 
-interface DocNode {
-  name: string;
-  children?: DocNode[];
-}
-
-const TREE_DATA: DocNode[] = [
-  {
-    name: 'Fruit',
-    children: [
-      { name: 'Apple' },
-      { name: 'Banana' },
-      { name: 'Fruit loops' },
-    ]
-  }, {
-    name: 'Vegetables',
-    children: [
-      {
-        name: 'Green',
-        children: [
-          { name: 'Broccoli' },
-          { name: 'Brussels sprouts' },
-        ]
-      }, {
-        name: 'Orange',
-        children: [
-          { name: 'Pumpkins' },
-          { name: 'Carrots' },
-        ]
-      },
-    ]
-  },
-];
 
 @Component({
   selector: 'ms-doc-tree',
   templateUrl: './doc-tree.component.html',
-  styleUrls: ['./doc-tree.component.scss']
+  styleUrls: ['./doc-tree.component.scss'],
 })
 export class DocTreeComponent implements OnInit {
-  treeControl = new NestedTreeControl<DocNode>(node => node.children);
-  dataSource = new MatTreeNestedDataSource<DocNode>();
-
-  constructor() {
-    this.dataSource.data = TREE_DATA;
+  treeControl = new NestedTreeControl<DocNode>((node: DocNode) => node.subPages);
+  dataSource: DynamicDataSource;
+  constructor(private dataService: DocTreeDataService) {
+    this.dataSource = new DynamicDataSource(this.treeControl, dataService);
+    dataService.initialData$.subscribe(data =>
+       this.dataSource.data = data, e => console.error(e))
   }
 
   ngOnInit(): void {
   }
 
-  hasChild = (_: number, node: DocNode) => !!node.children?.length;
+  hasChild = (_: number, node: DocNode) => !!node.subPageIds?.length;
 }

@@ -4,7 +4,7 @@ import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { StoreSearchService } from '../cache/services/store-search.service';
 import { Store, select } from '@ngrx/store';
 import { Observable, from, Subject } from 'rxjs';
-import { map, debounceTime, distinctUntilChanged, combineLatest, tap } from 'rxjs/operators';
+import { map, debounceTime, distinctUntilChanged, combineLatest, tap, filter } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { switchIfEmit } from '../core/operators/switchIfEmit';
 import { MSG_DISPLAY_TIMEOUT, Document } from 'core';
@@ -32,8 +32,7 @@ export class HomeComponent {
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
-  private initDocs$ = this.store.select(selectDocumentsState);
-  docs$: Observable<Document[]>;
+  docs$ = this.store.select(selectDocumentsState).pipe(map(docs => docs.filter(d => d.id !== 1)));
   ActionStatus = ActionState;
 
   constructor(
@@ -42,7 +41,7 @@ export class HomeComponent {
     private docSearchService: StoreSearchService,
     private router: Router,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   private _scrollTop;
   private _rememberScrollPosition() {
@@ -62,7 +61,6 @@ export class HomeComponent {
   ngOnInit() {
     this._rememberScrollPosition();
 
-    this.docs$ = this.initDocs$;
     this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: false }));
     //   from([this.initDocs$, filteredDocs$]).pipe(
 

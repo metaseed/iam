@@ -24,11 +24,10 @@ export class SubPageComponent implements OnInit {
     this.hasOpened = true;
     this.pageList$ = this.store.pipe(
       select(getDocumentsByIdsSelector(this.ids)),
-      map(docs => [...(docs
+      map(docs => [...docs
         .map(doc => doc?.metaData)
-        .filter(m => !!m))]
-      ),
-      tap(ms => console.log(ms)));
+        .filter(m => !!m)]
+      ));
     const ids = this.ids;
     this.store.dispatch(new DocumentEffectsReadDocMetas({ ids }));
   }
