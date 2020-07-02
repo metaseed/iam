@@ -3,7 +3,7 @@ import { DocMeta } from 'core';
 import { Router, NavigationExtras } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { getDocumentsByIdsSelector, DocumentEffectsReadDocMetas } from 'shared';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, filter } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -27,7 +27,8 @@ export class SubPageComponent implements OnInit {
       map(docs => [...docs
         .map(doc => doc?.metaData)
         .filter(m => !!m)]
-      ));
+      ),
+      filter(docs => !!docs?.length));
     const ids = this.ids;
     this.store.dispatch(new DocumentEffectsReadDocMetas({ ids }));
   }

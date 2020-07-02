@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { SharedState, getDocumentByIdSelector, DocumentEffectsReadDocMeta, getDocumentsByIdsSelector, DocumentEffectsReadDocMetas } from 'shared';
-import { map, switchMap, filter } from 'rxjs/operators';
+import { map, switchMap, filter, tap } from 'rxjs/operators';
 import { DocMeta } from 'core';
 import { Observable, of } from 'rxjs';
 import { ThrowStmt } from '@angular/compiler';
@@ -11,7 +11,8 @@ export class DocNode {
     title: string;
     summary: string;
     isLoading: boolean;
-    subPages?: DocNode[];
+    parent: DocNode;
+    subPages: DocNode[];
     subPageIds: Array<string>;
     constructor(meta: DocMeta) {
         this.id = meta.id;
@@ -19,7 +20,7 @@ export class DocNode {
         this.summary = meta.summary;
         this.subPageIds = meta.subPage;
     }
-    get isExpandable() { return !!this.subPageIds?.length }
+
 }
 
 @Injectable({ providedIn: 'root' })
@@ -30,7 +31,10 @@ export class DocTreeDataService {
 
     get initialData$() {
         const data$ = this.store.select(getDocumentByIdSelector(1))
-        .pipe(filter(doc => !!doc), map(d => new DocNode(d.metaData)), switchMap(node => this.getChildren$(node)));
+            .pipe(filter(doc => !!doc),
+                map(d => new DocNode(d.metaData)),
+                switchMap(node => this.getChildren$(node).pipe(tap(ns => node.subPages = ns))),
+            );
         this.store.dispatch(new DocumentEffectsReadDocMeta({ id: 1 }));
         return data$;
     }
@@ -40,14 +44,16 @@ export class DocTreeDataService {
             return of(undefined);
         }
         const ids = node.subPageIds.map(p => +p);
-        this.store.dispatch(new DocumentEffectsReadDocMetas({ ids }));
         const pageList$ = this.store.pipe(
             select(getDocumentsByIdsSelector(ids)),
             map(docs => [...docs
                 .map(doc => doc?.metaData)
                 .filter(m => !!m)
-                .map(d => new DocNode(d))]
-            ));
+                .map(d => { const r = new DocNode(d); r.parent = node; return r; })
+            ]
+            ),
+            filter(docs => !!docs?.length));
+        this.store.dispatch(new DocumentEffectsReadDocMetas({ ids }));
         return pageList$;
     }
 

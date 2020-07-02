@@ -42,7 +42,7 @@ export class DynamicDataSource implements DataSource<DocNode> {
 
     toggleNode(node: DocNode, expand: boolean) {
         const index = this.data.indexOf(node);
-        if (!node.isExpandable || index < 0) { // If no children, or cannot find the node, no op
+        if (!node.subPageIds?.length || index < 0) { // If no children, or cannot find the node, no op
             return;
         }
         if (expand && !node.subPages) {
@@ -50,10 +50,27 @@ export class DynamicDataSource implements DataSource<DocNode> {
             this._dataService.getChildren$(node)
                 .subscribe(nodes => {
                     node.subPages = nodes;
+                    // workaround for the ui is not update when expand: https://github.com/angular/components/issues/11381
+                    // to improve performance need to update the references all the way up to root.
+                    // const data = this.data;
+                    // this.data = null;
+                    // this.data = data;
+
+                    // just update the parent refer
+                    const i = node.parent.subPages.indexOf(node);
+                    const updateNode = { ...node };
+                    this.moveExpansionState(node, updateNode);
+                    node.parent.subPages[i] = updateNode;
+                    updateNode.isLoading = false;
                     this.dataChange.next(this.data);
-                    node.isLoading = false;
                 })
         }
 
+    }
+    moveExpansionState(from: DocNode, to: DocNode) {
+        if (this._treeControl.isExpanded(from)) {
+            this._treeControl.collapse(from);
+            this._treeControl.expand(to);
+        }
     }
 }
