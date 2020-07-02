@@ -13,10 +13,13 @@ import { NavigationExtras, Router } from '@angular/router';
 export class DocTreeComponent implements OnInit {
   treeControl = new NestedTreeControl<DocNode>((node: DocNode) => node.subPages);
   dataSource: DynamicDataSource;
+  root: DocNode;
   constructor(dataService: DocTreeDataService, private router: Router) {
     this.dataSource = new DynamicDataSource(this.treeControl, dataService);
-    dataService.initialData$.subscribe(data =>
-      this.dataSource.data = data, e => console.error(e))
+    dataService.initialData$.subscribe(data => {
+      this.dataSource.data = data.subPages;
+      this.root = data;
+    }, e => console.error(e))
   }
 
   ngOnInit(): void {

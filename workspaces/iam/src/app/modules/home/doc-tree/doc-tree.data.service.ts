@@ -35,7 +35,7 @@ export class DocTreeDataService {
         const data$ = this.store.select(getDocumentByIdSelector(1))
             .pipe(filter(doc => !!doc),
                 map(d => new DocNode(d.metaData)),
-                switchMap(node => this.getChildren$(node).pipe(tap(ns => node.subPages = ns))),
+                switchMap(node => this.getChildren$(node).pipe(map(ns => {node.subPages = ns; return node}))),
             );
         this.store.dispatch(new DocumentEffectsReadDocMeta({ id: 1 }));
         return data$;
