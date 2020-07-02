@@ -1,3 +1,9 @@
-<home-top-bar [scrollHide]="[{ container: docList.container }]"></home-top-bar>
-<ms-doc-tree></ms-doc-tree>
-<doc-list #docList [documents]="docs$ | async"></doc-list>
+<home-top-bar [scrollHide]="[{ container: docList.container }]" (showTree)="drawer.toggle()"></home-top-bar>
+<mat-drawer-container class="example-container" autosize>
+    <mat-drawer #drawer mode="over">
+        <ms-doc-tree style="display: block;margin-top: 64px; margin-right: 10px;"></ms-doc-tree>
+    </mat-drawer>
+
+    <doc-list #docList [documents]="docs$ | async"></doc-list>
+
+</mat-drawer-container>

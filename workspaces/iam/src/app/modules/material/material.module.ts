@@ -10,7 +10,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatTreeModule} from '@angular/material/tree';
-
+import {MatSidenavModule} from '@angular/material/sidenav';
 export const MatModules = [
   MatIconModule,
   MatMenuModule,
@@ -23,7 +23,8 @@ export const MatModules = [
   MatToolbarModule,
   MatDialogModule,
   MatIconModule,
-  MatTreeModule
+  MatTreeModule,
+  MatSidenavModule
 ];
 
 @NgModule({

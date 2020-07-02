@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -7,11 +7,17 @@ import { Router } from '@angular/router';
   styleUrls: ['./home-top-bar.component.scss']
 })
 export class HomeTopBarComponent implements OnInit {
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   onClick(e) {
     this.router.navigate(['/search']);
   }
+
+  onShowTree() {
+    this.showTree.next(true);
+  }
+  @Output()
+  showTree = new EventEmitter<boolean>();
 }
