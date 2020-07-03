@@ -32,10 +32,10 @@ import { moduleStateName } from './state';
   exports: [MarkdownViewerModule, MarkdownComponent]
 })
 export class MarkdownModule {
-  static forChild(config?: MarkdownConfig) {
+  static forChild(config?: MarkdownConfig): ModuleWithProviders<MarkdownModule> {
     return {
-      ngModule: MarkdownModule,
-      providers: MarkdownViewerModule.forChild(config).providers
+        ngModule: MarkdownModule,
+        providers: MarkdownViewerModule.forChild(config).providers
     };
-  }
+}
 }

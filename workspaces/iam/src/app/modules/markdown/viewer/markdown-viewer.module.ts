@@ -31,7 +31,7 @@ import { Store, State } from '@ngrx/store';
   providers: [TocService, ActiveElementService]
 })
 export class MarkdownViewerModule {
-  static forChild(config?: MarkdownConfig): ModuleWithProviders {
+  static forChild(config?: MarkdownConfig): ModuleWithProviders<MarkdownViewerModule> {
     return {
       ngModule: MarkdownViewerModule,
       providers: [

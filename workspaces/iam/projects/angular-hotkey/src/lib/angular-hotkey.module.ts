@@ -11,7 +11,7 @@ import { HotkeysService } from './hotkeys.service';
   declarations: [HotkeysDirective, CheatSheetComponent]
 })
 export class HotkeyModule {
-  static forRoot(options: IHotkeyOptions = {}): ModuleWithProviders {
+  static forRoot(options: IHotkeyOptions = {}): ModuleWithProviders<HotkeyModule> {
     return {
       ngModule: HotkeyModule,
       providers: [HotkeysService, { provide: HotkeyOptions, useValue: options }]

@@ -21,7 +21,7 @@ import { SplitPaneComponent } from "./split-pane.component";
   exports: [HorizontalSplitPaneComponent, VerticalSplitPaneComponent]
 })
 export class SplitPaneModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<SplitPaneModule> {
     return {
       ngModule: SplitPaneModule,
       providers: []
