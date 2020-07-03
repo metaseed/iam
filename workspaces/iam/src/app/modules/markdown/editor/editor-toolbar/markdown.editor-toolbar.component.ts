@@ -24,6 +24,7 @@ import {
   selectCurrentDocStatus_IsDbDirty,
   selectCurrentDocStatus_IsSyncing
 } from 'shared';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'editor-toolbar',
@@ -73,7 +74,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   showPreview$ = this.store.select(fromMarkdown.selectDocumentShowPreviewState);
 
   constructor(
-    private location: Location,
+    private router: Router,
     private utils: Utilities,
     public markdown: MarkdownComponent,
     private _editorService: MarkdownEditorService,
@@ -117,7 +118,8 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   }
 
   back(e) {
-    this.location.back();
+    // this.location.back();
+    this.router.navigateByUrl('/home');
   }
 
   save = () => {

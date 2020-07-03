@@ -4,6 +4,7 @@ import * as document from '../../state/actions/document';
 import * as fromMarkdown from '../../state';
 import { MatToolbar } from '@angular/material/toolbar';
 import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'ms-viewer-toolbar',
@@ -12,14 +13,15 @@ import { Location } from '@angular/common';
 })
 export class ViewerToolbarComponent {
   @ViewChild('toolbar') toolbar: MatToolbar;
-  constructor(private location: Location, private store: Store<fromMarkdown.MarkdownState>) {}
+  constructor(private router: Router, private store: Store<fromMarkdown.MarkdownState>) {}
 
   onRefresh(e) {
     this.store.dispatch(new document.RefreshAction());
   }
 
   back(e) {
-    this.location.back();
+    this.router.navigateByUrl('/home');
+    // this.location.back();
   }
 
   toEditMode(e) {
