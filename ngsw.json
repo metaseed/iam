@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1593187826026,
+  "timestamp": 1593745077951,
   "appData": {
     "name": "i'm",
     "description": "i'm writing your professional life"
@@ -12,33 +12,24 @@
       "installMode": "prefetch",
       "updateMode": "prefetch",
       "urls": [
-        "/iam/app-modules-markdown-editor-markdown-editor-module-es2015.2b047fdd3b0a2e1ebd82.js",
-        "/iam/app-modules-markdown-editor-markdown-editor-module-es5.2b047fdd3b0a2e1ebd82.js",
-        "/iam/app-modules-markdown-markdown-module-es2015.b18b97e638bb42661367.js",
-        "/iam/app-modules-markdown-markdown-module-es5.b18b97e638bb42661367.js",
-        "/iam/app-modules-me-me-module-es2015.c6715e176f8e424d4286.js",
-        "/iam/app-modules-me-me-module-es5.c6715e176f8e424d4286.js",
-        "/iam/app-modules-search-doc-search-module-es2015.3f728b4e6704abef878d.js",
-        "/iam/app-modules-search-doc-search-module-es5.3f728b4e6704abef878d.js",
+        "/iam/app-modules-markdown-editor-markdown-editor-module-es2015.2f34b2dc0b5d6a4bace6.js",
+        "/iam/app-modules-markdown-markdown-module-es2015.eed727a8949da13477da.js",
+        "/iam/app-modules-me-me-module-es2015.cbaefcbe1d655c30dcc4.js",
+        "/iam/app-modules-search-doc-search-module-es2015.2ee0195e70eabd08edf1.js",
         "/iam/assets-js-prettify-js-es2015.aa0dfe0209199d61e263.js",
-        "/iam/assets-js-prettify-js-es5.aa0dfe0209199d61e263.js",
-        "/iam/code-code-example-module-es2015.02ce56586a4231ea8fbb.js",
-        "/iam/code-code-example-module-es5.02ce56586a4231ea8fbb.js",
-        "/iam/common-es2015.ea0d1d92382b9545f834.js",
-        "/iam/common-es5.ea0d1d92382b9545f834.js",
+        "/iam/assets/js/global-script.js",
+        "/iam/assets/js/prettify.js",
+        "/iam/code-code-example-module-es2015.68b30c16b191d5e56020.js",
+        "/iam/common-es2015.9227c6890920ea30aeb1.js",
         "/iam/favicon.ico",
         "/iam/index.html",
-        "/iam/main-es2015.02d8133ba272b6a05674.js",
-        "/iam/main-es5.02d8133ba272b6a05674.js",
+        "/iam/main-es2015.7f48fdb2f2aa584d3424.js",
         "/iam/mermaid-es2015.32e6bb07510686e5acd0.js",
-        "/iam/mermaid-es5.32e6bb07510686e5acd0.js",
         "/iam/polyfills-es2015.5e9f4f4f9d6f5f6fd3f0.js",
-        "/iam/polyfills-es5.fe7991c2af029a14605b.js",
-        "/iam/runtime-es2015.d6f52d68bcc79e4a3a88.js",
-        "/iam/runtime-es5.d6f52d68bcc79e4a3a88.js",
-        "/iam/styles.873611b363b6a113be24.css",
-        "/iam/toc-toc-module-es2015.0c1af3c90849e13f217c.js",
-        "/iam/toc-toc-module-es5.0c1af3c90849e13f217c.js"
+        "/iam/runtime-es2015.52a17194d54de354c8c7.js",
+        "/iam/styles.65fc61a18dfdf94047da.css",
+        "/iam/sub-page-sub-page-module-es2015.318318b43498ec8f7ded.js",
+        "/iam/toc-toc-module-es2015.1f2d8c34bd9a44649143.js"
       ],
       "patterns": []
     },
@@ -54,8 +45,6 @@
         "/iam/assets/icons/favicon-32x32.png",
         "/iam/assets/icons/favicon-96x96.png",
         "/iam/assets/icons/ms-icon-310x310.png",
-        "/iam/assets/js/global-script.js",
-        "/iam/assets/js/prettify.js",
         "/iam/assets/markdown.md"
       ],
       "patterns": []
@@ -66,7 +55,8 @@
       "updateMode": "prefetch",
       "urls": [],
       "patterns": [
-        "https:\\/\\/fonts\\.googleapis\\.com\\/.*"
+        "https:\\/\\/fonts\\.googleapis\\.com\\/.*",
+        "https:\\/\\/fonts\\.gstatic\\.com\\/s\\/.*"
       ]
     }
   ],
@@ -95,16 +85,11 @@
     }
   ],
   "hashTable": {
-    "/iam/app-modules-markdown-editor-markdown-editor-module-es2015.2b047fdd3b0a2e1ebd82.js": "6e638db165e940ab46cc93618c7637d1de018697",
-    "/iam/app-modules-markdown-editor-markdown-editor-module-es5.2b047fdd3b0a2e1ebd82.js": "dc32bcd9ac9c116e93b6a48b2f0774790cee2dbf",
-    "/iam/app-modules-markdown-markdown-module-es2015.b18b97e638bb42661367.js": "814db38b4f8f9633844c697c465cad728ad9dde0",
-    "/iam/app-modules-markdown-markdown-module-es5.b18b97e638bb42661367.js": "41113876a1586797f6d16008d6229fd6f870a027",
-    "/iam/app-modules-me-me-module-es2015.c6715e176f8e424d4286.js": "234d287727fae40e3080394afc5366e99da8ba30",
-    "/iam/app-modules-me-me-module-es5.c6715e176f8e424d4286.js": "e410a3dd57b37f04864b112f5083d5c436304b4d",
-    "/iam/app-modules-search-doc-search-module-es2015.3f728b4e6704abef878d.js": "61e69387c0f6e0308a79949b40dd051ad06e1d92",
-    "/iam/app-modules-search-doc-search-module-es5.3f728b4e6704abef878d.js": "976d9308d2c053449e8ecb849a37a66cd0a38cfa",
+    "/iam/app-modules-markdown-editor-markdown-editor-module-es2015.2f34b2dc0b5d6a4bace6.js": "000f5776b51a4ccd04e0e4dddc7f95dd9acaa76e",
+    "/iam/app-modules-markdown-markdown-module-es2015.eed727a8949da13477da.js": "968842852952763bec8867e5a8e552a812325fd6",
+    "/iam/app-modules-me-me-module-es2015.cbaefcbe1d655c30dcc4.js": "9ac6c4f8d516e99e0804ed3d293f36e41d588b8f",
+    "/iam/app-modules-search-doc-search-module-es2015.2ee0195e70eabd08edf1.js": "3887cbe8e278099bbe65c41329f7793640e11811",
     "/iam/assets-js-prettify-js-es2015.aa0dfe0209199d61e263.js": "31ae581db1905cf980395c88e310ec4cb30f6c29",
-    "/iam/assets-js-prettify-js-es5.aa0dfe0209199d61e263.js": "31ae581db1905cf980395c88e310ec4cb30f6c29",
     "/iam/assets/config.json": "dd46a48767a12c2bab282c41ea00ce3129d58719",
     "/iam/assets/icons/android-icon-192x192.png": "2a4f79ce3e023275f8463130c6fdfbcb4d90eb85",
     "/iam/assets/icons/apple-icon-180x180.png": "95c3f6f7e84edf4e4eaae457ca7281ee09e96da9",
@@ -115,23 +100,17 @@
     "/iam/assets/js/global-script.js": "800778d4657aa793a77a5c17babb77de05c5bcd9",
     "/iam/assets/js/prettify.js": "4bd1e40c55b5514ebb1772bbb288c19d9ead6ca8",
     "/iam/assets/markdown.md": "faeca483f797afd32badf4969dfc9f77704fb95e",
-    "/iam/code-code-example-module-es2015.02ce56586a4231ea8fbb.js": "becade993d881f21616c686c00b67f7065a8f903",
-    "/iam/code-code-example-module-es5.02ce56586a4231ea8fbb.js": "b9965845c035ad6fb3c3de07d61be92c4d3f09e5",
-    "/iam/common-es2015.ea0d1d92382b9545f834.js": "457048e932852b83eee9add98128e96548ea0415",
-    "/iam/common-es5.ea0d1d92382b9545f834.js": "9a952b17b780de11af3b30ef8b1687326a7d04b5",
+    "/iam/code-code-example-module-es2015.68b30c16b191d5e56020.js": "f3aa59ceabf572494014b1d5250c33cc9116cc76",
+    "/iam/common-es2015.9227c6890920ea30aeb1.js": "3caf3482338de042ee6ea804eb51ee35318e23d5",
     "/iam/favicon.ico": "7fa29ec2415f03fba638317f83a61265d5050d9f",
-    "/iam/index.html": "b779853965355d9f41913c4a57bb80559a92d0c7",
-    "/iam/main-es2015.02d8133ba272b6a05674.js": "51af909b13b01607411b869981d857938bf62bd5",
-    "/iam/main-es5.02d8133ba272b6a05674.js": "5855b3cb49006786815b655c5649c1c2865bcecb",
+    "/iam/index.html": "059aea32980a981f947ef50a5e4952e9eb4c80c9",
+    "/iam/main-es2015.7f48fdb2f2aa584d3424.js": "e80603d02bee8650ec1ed09ed9b702bdbe77970a",
     "/iam/mermaid-es2015.32e6bb07510686e5acd0.js": "f73484c299a85108d04879fa8afc2eb2aacd77df",
-    "/iam/mermaid-es5.32e6bb07510686e5acd0.js": "16c7a5d985ed9ef5f35daad736bf04812a6ba473",
     "/iam/polyfills-es2015.5e9f4f4f9d6f5f6fd3f0.js": "416fc4d83cdf6754393fb2089dd42060233c7bd5",
-    "/iam/polyfills-es5.fe7991c2af029a14605b.js": "e0358324366737b29fe2aed7abb61d0f7d816e96",
-    "/iam/runtime-es2015.d6f52d68bcc79e4a3a88.js": "3415cc2aaff89d1b5d7d9092ebc94b92b4e812db",
-    "/iam/runtime-es5.d6f52d68bcc79e4a3a88.js": "95a06df2f1ac100df61429cb626e9e8590e5d622",
-    "/iam/styles.873611b363b6a113be24.css": "8f098e024f1bb57a3a1aa6cbec632eeaeabaa02c",
-    "/iam/toc-toc-module-es2015.0c1af3c90849e13f217c.js": "4d700898f248cda3e2554716bcaf7e04e1797c63",
-    "/iam/toc-toc-module-es5.0c1af3c90849e13f217c.js": "5e13dc7c1c8df98107062ca5ac846ce3164320d7"
+    "/iam/runtime-es2015.52a17194d54de354c8c7.js": "0fd9a3f066e2afbd400660bd86f9e96614c7c2a8",
+    "/iam/styles.65fc61a18dfdf94047da.css": "7ab3f1b9a4e42ee48f956e913cdcd432a5d7fc20",
+    "/iam/sub-page-sub-page-module-es2015.318318b43498ec8f7ded.js": "d70689e9fdef3e004d9e476a0d57b5b4162ccb88",
+    "/iam/toc-toc-module-es2015.1f2d8c34bd9a44649143.js": "3bf74b39cc1203420d982785822957d8d85b884a"
   },
   "navigationUrls": [
     {
