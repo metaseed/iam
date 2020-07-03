@@ -1,27 +1,27 @@
-  .mat-toolbar-row {
-    padding: 0 .5rem;
-    .mat-tab-nav-bar {
-      justify-content: space-around;
+.mat-toolbar-row {
+  padding: 0 0.5rem;
+  .mat-tab-nav-bar {
+    justify-content: space-around;
+    display: flex;
+    ::ng-deep div.mat-tab-list {
       display: flex;
-      ::ng-deep div.mat-tab-list {
-        display: flex;
-        justify-content: center;
+      justify-content: center;
+    }
+    .mat-tab-link {
+      padding: 0 0.8rem;
+      flex-direction: column;
+      line-height: 1.6rem;
+      font-size: 1.2rem;
+      min-width: inherit; // override style
+      width: 6rem;
+      height: auto;
+      &:hover {
+        text-decoration: none;
       }
-      .mat-tab-link {
-        padding: 0 .8rem;
-        flex-direction: column;
-        line-height: 1.6rem;
-        font-size: 1.2rem;
-        min-width: inherit;// override style
-        width: 6rem;
-        height: auto;
-        &:hover {
-          text-decoration: none;
-        }
-        .mat-icon {
-          width: 2.8rem;
-          height: 2.8rem;
-        }
+      .mat-icon {
+        width: 2.8rem;
+        height: 2.8rem;
       }
     }
   }
+}
