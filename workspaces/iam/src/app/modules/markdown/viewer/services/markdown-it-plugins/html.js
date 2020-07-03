@@ -38,7 +38,7 @@ module.exports = (incrementalDom, enableIDOM) => md => {
         // return function to bypass
         if (tag) {
           return () => {
-            elementOpen(tag,'',attr);
+            elementOpen(tag,'',undefined,...attr);
             skip();
             elementClose(tag);
           };

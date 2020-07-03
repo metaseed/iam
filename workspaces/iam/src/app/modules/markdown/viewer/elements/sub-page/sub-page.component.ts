@@ -19,7 +19,8 @@ export class SubPageComponent implements OnInit {
   }
 
   private hasOpened = false;
-  public onPanelOpen = (e) => {
+  public onPanelOpen = e => {
+    this.panelOpenState = true;
     if (this.hasOpened) return;
     this.hasOpened = true;
     this.pageList$ = this.store.pipe(
@@ -37,6 +38,10 @@ export class SubPageComponent implements OnInit {
   public set pages(value: string) {
     const ids = value.split(' ').map(id => +id);
     this.ids = ids;
+    if (this.panelOpenState) {
+      this.hasOpened = false;
+      this.onPanelOpen(undefined);
+    }
   }
 
   public pageList$: Observable<DocMeta[]>
