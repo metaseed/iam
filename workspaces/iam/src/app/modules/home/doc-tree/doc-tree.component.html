@@ -1,5 +1,5 @@
 <button mat-button (click)="onShowDoc(root)">
-    {{root.title}}
+    {{root?.title}}
 </button>
 <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="doc-tree">
     <!-- template for leaf nodes -->
