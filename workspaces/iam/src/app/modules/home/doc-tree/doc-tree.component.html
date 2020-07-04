@@ -24,8 +24,8 @@
                 <button mat-button (click)="onShowDoc(node)">
                     {{node.title}}
                 </button>
-                <mat-progress-bar *ngIf="node.isLoading" mode="indeterminate" class="doc-tree-progress-bar">
-                </mat-progress-bar>
+                <mat-spinner *ngIf="node.isLoading" [diameter]="20">
+                </mat-spinner>
             </div>
             <ul [class.doc-tree-invisible]="!treeControl.isExpanded(node)">
                 <ng-container matTreeNodeOutlet></ng-container>

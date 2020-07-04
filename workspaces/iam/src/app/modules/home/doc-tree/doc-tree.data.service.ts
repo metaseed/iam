@@ -31,13 +31,13 @@ export class DocTreeDataService {
     constructor(private store: Store<SharedState>) {
     }
 
-    get initialData$() {
-        const data$ = this.store.select(getDocumentByIdSelector(1))
+    initialData$(rootId: number) {
+        const data$ = this.store.select(getDocumentByIdSelector(rootId))
             .pipe(filter(doc => !!doc),
                 map(d => new DocNode(d.metaData)),
-                switchMap(node => this.getChildren$(node).pipe(map(ns => {node.subPages = ns; return node}))),
+                switchMap(node => this.getChildren$(node).pipe(map(ns => { node.subPages = ns; return node }))),
             );
-        this.store.dispatch(new DocumentEffectsReadDocMeta({ id: 1 }));
+        this.store.dispatch(new DocumentEffectsReadDocMeta({ id: rootId }));
         return data$;
     }
 

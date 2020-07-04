@@ -61,7 +61,7 @@ export class DynamicDataSource implements DataSource<DocNode> {
                     const updateNode = { ...node };
                     this.moveExpansionState(node, updateNode);
                     node.parent.subPages[i] = updateNode;
-                    updateNode.isLoading = false;
+                    updateNode.isLoading = true;
                     this.dataChange.next(this.data);
                 })
         }

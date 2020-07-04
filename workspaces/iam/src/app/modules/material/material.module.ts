@@ -11,7 +11,9 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatTreeModule} from '@angular/material/tree';
 import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 export const MatModules = [
+  MatProgressSpinnerModule,
   MatIconModule,
   MatMenuModule,
   MatTabsModule,

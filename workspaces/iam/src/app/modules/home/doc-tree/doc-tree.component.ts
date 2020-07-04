@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { DynamicDataSource } from './doc-tree.dataSource';
 import { DocTreeDataService, DocNode } from './doc-tree.data.service';
@@ -14,16 +14,19 @@ export class DocTreeComponent implements OnInit {
   treeControl = new NestedTreeControl<DocNode>((node: DocNode) => node.subPages);
   dataSource: DynamicDataSource;
   root: DocNode;
-  constructor(dataService: DocTreeDataService, private router: Router) {
+
+  constructor(public dataService: DocTreeDataService, private router: Router) {
     this.dataSource = new DynamicDataSource(this.treeControl, dataService);
-    dataService.initialData$.subscribe(data => {
+  }
+
+  ngOnInit(): void {
+    this.dataService.initialData$(this.rootId).subscribe(data => {
       this.dataSource.data = data.subPages;
       this.root = data;
     }, e => console.error(e))
   }
-
-  ngOnInit(): void {
-  }
+  @Input()
+  rootId: number;
 
   onShowDoc(doc: DocNode) {
     const navigationExtras: NavigationExtras = {
