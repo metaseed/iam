@@ -30,27 +30,28 @@ export class MetaPlugin {
         let content = '';
         if (meta.author) {
           let link;
-          content += meta.author.replace(/<(.*)>/, (match, p1, offset, string) => {
-            let cont = '<author class="meta-author">';
-            const author = string.substr(0, offset);
-            link = p1;
-            if (link) {
-              if (link.includes('@')) {
-                link = 'mailto:' + link;
-              }
-              cont += `<a href="${link}">${author}</a>`;
-            } else {
-              cont += author;
+          const r = meta.author.match(/<(.*)>/);
+          let cont = '<author class="meta-author">';
+          const author = meta.author.substr(0, r.index);
+          link = r[1];
+          if (link) {
+            if (link.includes('@')) {
+              link = 'mailto:' + link;
             }
+            cont += `<a href="${link}">${author}</a>`;
+          } else {
+            cont += author;
+          }
 
-            cont += '</author>';
-            return cont;
-          });
+          cont += '</author>';
+          content += cont;
         }
+
         if (meta.version || meta.updateDate) {
           content += `<div class="meta-version-date">`;
+
           if (meta.version) {
-            content += `<span class="meta-version"> v${meta.version} </span>`;
+            content += `<span class="meta-version">&nbsp; v${meta.version} </span>`;
           }
           if (meta.updateDate) {
             if (meta.createDate) {
@@ -59,6 +60,12 @@ export class MetaPlugin {
             }
             content += `<span class="meta-date">  ${meta.updateDate.toLocaleDateString()}</span>`;
           }
+
+          const idMatch = document.URL.match(/id=(\d+)/);
+          if (idMatch) {
+            content += `<span class="meta-version">&nbsp; (id:${idMatch[1]})</span>`;
+          }
+
           content += `</div>`;
         }
         const tag = meta.tags || meta.tag;
