@@ -1,10 +1,44 @@
 .doc-tree-invisible {
     display: none;
 }
-
 .doc-tree ul,
 .doc-tree li {
     margin-top: 0;
     margin-bottom: 0;
+    min-height: 3.6rem;
     list-style-type: none;
+}
+.doc-tree ul {
+    padding-inline-start: 1rem;
+}
+.expand-button {
+    position: absolute;
+    right: 0;
+}
+.tree-node {
+    flex-grow: 1;
+    font-size: 1.4rem;
+    white-space: normal; // wrap text in button
+    line-height: 2.2rem;
+    text-align: left;
+}
+
+.my-tree-node {
+    min-height: 3.6rem;
+}
+.mat-tree-node {
+    align-items: stretch;
+}
+.root-node {
+    display: flex;
+    align-items: stretch;
+    background-color: #ece9ef;
+    .tree-node {
+        font-weight: bold;
+        text-align: center;
+    }
+}
+:host {
+    display: block;
+    width: 300px;
 }
