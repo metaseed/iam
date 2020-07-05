@@ -23,7 +23,7 @@
                 </button>
                 <mat-spinner *ngIf="node.isLoading" [diameter]="20">
                 </mat-spinner>
-                <button class="expand-button" mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.title">
+                <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.title">
                     <mat-icon class="mat-icon-rtl-mirror">
                         {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                     </mat-icon>
