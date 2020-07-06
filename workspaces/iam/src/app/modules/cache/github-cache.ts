@@ -264,7 +264,7 @@ export class GithubCache implements ICache {
               );
             } else if (format && state === 1) {
               state = 2; // stop
-              return getContent(repo, id, title, '', state); // try to geting DocContent saved without format sufix;
+              return getContent(repo, id, title, '', state); // try to getting DocContent saved without format suffix;
             } else {
               return throwError('getContents should stop!');
             }

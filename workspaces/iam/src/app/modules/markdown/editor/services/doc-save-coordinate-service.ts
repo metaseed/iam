@@ -82,7 +82,7 @@ export class DocSaveCoordinateService implements OnDestroy {
 
   private checkDirty(editor: CodeMirror.Editor) {
     const oldStatus = selectCurrentDocStatus(this.state.value);
-    if (!this.contentGeneration) return; // initial content load
+    if (!oldStatus || !this.contentGeneration) return; // initial content load
     const oldValue = oldStatus.isMemDirty;
 
     const isDirty = !editor.getDoc().isClean(this.contentGeneration);
