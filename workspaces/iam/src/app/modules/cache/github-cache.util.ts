@@ -6,7 +6,7 @@ import { Injectable } from "@angular/core";
 export class gitHubCacheUtil {
   constructor() {}
 
-  getContentUrl(issueNum, title) {
-    return `https://metaseed.github.io/iam/doc?id=${issueNum}&title=${encodeURIComponent(title)}`;
+  getContentUrl(issueNum, sanitizedTitle) {
+    return `https://metaseed.github.io/iam/doc?id=${issueNum}&title=${encodeURIComponent(sanitizedTitle)}`;
   }
 }

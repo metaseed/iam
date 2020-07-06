@@ -26,11 +26,11 @@ export class DocMeta {
     public contentSha: string, // sha of file
     public format = 'md', // suffix
     public isDeleted = false
-  ) {}
+  ) { }
 
   static parseDocumentName(name: string) {
     const r = /(.*)_(\d+)\.(\w*)/.exec(name);
-    return { title: r[1], id: +r[2], ext: r[3] };
+    return { sanitizedTitle: r[1], id: +r[2], ext: r[3] };
   }
 
   static serialize(meta: DocMeta, contentUrl: string) {
@@ -56,6 +56,9 @@ export class DocMeta {
     if (r) return r[1];
     return '';
   }
+
+  static sanitizeTitle = (title: string) => title.replace(/[<>:"/\\|?*]/g, '~'); // on windows these chars is invalid for file name.;
+
   static getSummary(content: string) {
     const re = /\s*\*(.*?)\*\s*/g;
     const r = re.exec(content);
@@ -126,7 +129,7 @@ export class DocMeta {
     const img = document.createElement('img');
     img.setAttribute('crossOrigin', 'anonymous');
     img.src = url;
-    img.onload = function() {
+    img.onload = function () {
       let canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       // document.body.appendChild(canvas);
@@ -153,9 +156,9 @@ export class DocMeta {
 
   static convertFileToDataUrlViaFileReader(url, callback) {
     const xhr = new XMLHttpRequest();
-    xhr.onload = function() {
+    xhr.onload = function () {
       const reader = new FileReader();
-      reader.onloadend = function() {
+      reader.onloadend = function () {
         callback(reader.result);
       };
       reader.readAsDataURL(xhr.response);

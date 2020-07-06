@@ -36,7 +36,7 @@ export class GithubCache implements ICache {
     // meta.tags = issue.labels;
     meta.updateDate = meta.updateDate || new Date(issue.updated_at);
     meta.createDate = meta.createDate || new Date(issue.created_at);
-    // meta.format = meta.format || 'md';
+    meta.format = meta.format || 'md';
     meta.isDeleted = !!issue.closed_at;
     meta._context = issue;
     return meta;
@@ -62,7 +62,8 @@ export class GithubCache implements ICache {
           switchMap(issue => {
             const id = issue.number;
             // save docContent;
-            return repo.newFile(`${DOCUMENTS_FOLDER_NAME}/${title}_${id}.${format}`, content).pipe(
+            const sanitizedTitle = DocMeta.sanitizeTitle(title);
+            return repo.newFile(`${DOCUMENTS_FOLDER_NAME}/${sanitizedTitle}_${id}.${format}`, content).pipe(
               switchMap((file: Document) => {
                 const url = this.util.getContentUrl(id, title);
 
@@ -242,7 +243,8 @@ export class GithubCache implements ICache {
       isDeleted = false
     ): Observable<DocContent> => {
       if (!title) throw new Error('title is empty!');
-      let uri = `${DOCUMENTS_FOLDER_NAME}/${title}_${id}`;
+      const sanitizedTitle = DocMeta.sanitizeTitle(title);
+      let uri = `${DOCUMENTS_FOLDER_NAME}/${sanitizedTitle}_${id}`;
       if (format) uri = `${uri}.${format}`;
 
       if (isDeleted) return of(new DocContent(id, undefined, undefined, isDeleted));
@@ -279,46 +281,46 @@ export class GithubCache implements ICache {
     );
   }
 
-  UpdateDocument(oldDocMeta: DocMeta, content: string, forceUpdate: boolean) {
-    const newTitle = DocMeta.getTitle(content);
+  UpdateDocument(docMeta: DocMeta, content: string, forceUpdate: boolean) {
+    const title = DocMeta.getTitle(content);
+    const sanitizedTitle = DocMeta.sanitizeTitle(title);
 
     return this.githubStorage.init().pipe(
       switchMap(repo =>
         repo
           // save docContent
           .updateFile(
-            `${DOCUMENTS_FOLDER_NAME}/${newTitle}_${oldDocMeta.id}.${oldDocMeta.format}`,
+            `${DOCUMENTS_FOLDER_NAME}/${sanitizedTitle}_${docMeta.id}.${docMeta.format}`,
             content,
-            oldDocMeta.contentSha
+            docMeta.contentSha
           )
           .pipe(
             switchMap((file: Document) => {
-              const url = this.util.getContentUrl(oldDocMeta.id, newTitle);
+              const url = this.util.getContentUrl(docMeta.id, sanitizedTitle);
               const { meta, metaStr } = DocMeta.serializeContent(
-                oldDocMeta.id,
+                docMeta.id,
                 content,
                 file.content.sha,
                 url,
-                oldDocMeta.format,
-                oldDocMeta.createDate,
-                oldDocMeta
+                docMeta.format,
+                docMeta.createDate,
+                docMeta
               );
               const data: EditIssueParams = {
-                title: newTitle,
+                title,
                 body: metaStr
               };
 
               // save docMeta
               return repo.issue.edit(meta.id, data).pipe(
                 tap(() => {
-                  if (newTitle !== oldDocMeta.title) {
+                  const sanitizedTitleOld = DocMeta.sanitizeTitle(docMeta.title)
+                  if (sanitizedTitle !== sanitizedTitleOld) {
                     // delete old docContent, if title changed.
                     repo
                       .delFileViaSha(
-                        `${DOCUMENTS_FOLDER_NAME}/${oldDocMeta.title}_${oldDocMeta.id}.${
-                        oldDocMeta.format
-                        }`,
-                        oldDocMeta.contentSha
+                        `${DOCUMENTS_FOLDER_NAME}/${sanitizedTitleOld}_${docMeta.id}.${docMeta.format}`,
+                        docMeta.contentSha
                       )
                       .pipe(take(1))
                       .subscribe();
@@ -344,8 +346,9 @@ export class GithubCache implements ICache {
       switchMap(repo => {
         return repo.issue.edit(id, { state: 'closed' }).pipe(
           switchMap(issue => {
-            const title = issue.title;
-            return repo.delFile(`${DOCUMENTS_FOLDER_NAME}/${title}_${id}.md`).pipe(
+            const sanitizedTitle = DocMeta.sanitizeTitle(issue.title);
+            const docMeta = this._issueToDocMeta(issue);
+            return repo.delFile(`${DOCUMENTS_FOLDER_NAME}/${sanitizedTitle}_${id}.${docMeta.format}`).pipe(
               catchError(err => {
                 if (err.status === 404) {
                   // already deleted on other computer.
@@ -384,8 +387,8 @@ export class GithubCache implements ICache {
           repo.searchCode(query).pipe(
             map(rep => {
               return (rep.body as any).items.map(item => {
-                const { id, title, ext } = DocMeta.parseDocumentName(item.name);
-                return { id, score: item.score, title, text_matches: item.text_matches };
+                const { id, sanitizedTitle, ext } = DocMeta.parseDocumentName(item.name);
+                return { id, score: item.score, title: sanitizedTitle, text_matches: item.text_matches };
               });
             })
           )
