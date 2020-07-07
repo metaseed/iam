@@ -194,7 +194,6 @@ export class DatabaseCache implements ICache {
 
   readDocContent(id: number, title: string, format: string): Observable<DocContent> {
     const cache$ = this.db.get<DocContent>(DataTables.DocContent, id);
-
     const nextCache$ = this.nextLevelCache.readDocContent(id, title, format);
 
     return this.cacheRead<DocContent>(
@@ -202,8 +201,8 @@ export class DatabaseCache implements ICache {
       cache$,
       nextCache$,
       (inCache, fromNext) => {
-        const toUpeate = !inCache || inCache.sha !== fromNext.sha;
-        return toUpeate;
+        const toUpdate = !inCache || inCache.sha !== fromNext.sha;
+        return toUpdate;
       },
       (inCache, fromNext) => fromNext.isDeleted
     );
