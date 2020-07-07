@@ -12,6 +12,7 @@ import {
   UpdateCurrentDocumentStatus,
   selectCurrentDocStatus
 } from 'shared';
+import { DocFormat } from 'core';
 
 @Injectable()
 export class DocSaveCoordinateService implements OnDestroy {
@@ -37,7 +38,8 @@ export class DocSaveCoordinateService implements OnDestroy {
         combineLatest(this.editorLoaded$)
       )
       .subscribe(([isDirty, editor]) => {
-        if (isDirty) this.store.dispatch(new DocumentEffectsSave({ content: editor.getValue() }));
+        if (isDirty)
+          this.store.dispatch(new DocumentEffectsSave({ content: editor.getValue(), format: DocFormat.md }));
       });
 
     this.editorService.docContentSet$.subscribe((editor: CodeMirror.Editor) => {
