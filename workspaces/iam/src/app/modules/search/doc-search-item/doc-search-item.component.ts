@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ISearchItem, ITextMatche } from 'core';
+import { ISearchItem, ITextMatch } from 'core';
 import { Router, NavigationExtras } from '@angular/router';
 
 @Component({
@@ -22,11 +22,11 @@ export class DocSearchItemComponent implements OnInit {
     };
     this.router.navigate(['/doc'], navigationExtras);
   }
-  getMatches(textMatche: ITextMatche) {
-    const fragment = textMatche.fragment;
+  getMatches(textMatch: ITextMatch) {
+    const fragment = textMatch.fragment;
     let r = '';
     let lastIndex = 0;
-    textMatche.matches.forEach(match => {
+    textMatch.matches.forEach(match => {
       const pair = match.indices;
       r += fragment.substr(lastIndex, pair[0] - lastIndex);
       r += `<em>${match.text}</em>`;

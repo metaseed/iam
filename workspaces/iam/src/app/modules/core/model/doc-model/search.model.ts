@@ -1,4 +1,4 @@
-export interface ITextMatche {
+export interface ITextMatch {
   fragment: string;
   matches: [{ text: string; indices: [number, number] }];
 }
@@ -14,7 +14,7 @@ export interface ISearchItem {
   // 0-1;
   score: number;
   title: string;
-  text_matches: ITextMatche[];
+  text_matches: ITextMatch[];
   source?: SearchResultSource;
 }
 
