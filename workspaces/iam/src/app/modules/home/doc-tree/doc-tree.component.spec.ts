@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { DocTreeComponent } from './doc-tree.component';
 
@@ -6,7 +6,7 @@ describe('DocTreeComponent', () => {
   let component: DocTreeComponent;
   let fixture: ComponentFixture<DocTreeComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ DocTreeComponent ]
     })

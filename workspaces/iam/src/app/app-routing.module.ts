@@ -15,24 +15,24 @@ const appRoutes: Routes = [
   //   },
   {
     path: 'doc',
-    loadChildren: 'app/modules/markdown/markdown.module#MarkdownModule',
+    loadChildren: () => import('app/modules/markdown/markdown.module').then(m => m.MarkdownModule),
     data: { preload: true }
   },
   {
     path: 'explore',
-    loadChildren: 'app/modules/me/me.module#MeModule'
+    loadChildren: () => import('app/modules/me/me.module').then(m => m.MeModule)
   },
   {
     path: 'message',
-    loadChildren: 'app/modules/me/me.module#MeModule'
+    loadChildren: () => import('app/modules/me/me.module').then(m => m.MeModule)
   },
   {
     path: 'search',
-    loadChildren: 'app/modules/search/doc-search.module#DocSearchModule'
+    loadChildren: () => import('app/modules/search/doc-search.module').then(m => m.DocSearchModule)
   },
   {
     path: 'me',
-    loadChildren: 'app/modules/me/me.module#MeModule'
+    loadChildren: () => import('app/modules/me/me.module').then(m => m.MeModule)
   },
 
   { path: 'home', component: HomeComponent, data: { key: 'home' } /*for routeReuse*/ },
@@ -43,9 +43,10 @@ const appRoutes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(appRoutes, {
-      enableTracing: false,
-      preloadingStrategy: SelectivePreloadingStrategy
-    })
+    enableTracing: false,
+    preloadingStrategy: SelectivePreloadingStrategy,
+    relativeLinkResolution: 'legacy'
+})
   ],
   exports: [RouterModule],
   providers: [CanDeactivateGuard, SelectivePreloadingStrategy]

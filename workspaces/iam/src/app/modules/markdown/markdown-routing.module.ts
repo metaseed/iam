@@ -11,7 +11,7 @@ const documentRoutes: Routes = [
     children: [
       {
         path: '',
-        loadChildren: 'app/modules/markdown/editor/markdown-editor.module#MarkdownEditorModule'
+        loadChildren: () => import('app/modules/markdown/editor/markdown-editor.module').then(m => m.MarkdownEditorModule)
       }
     ]
   },
@@ -21,7 +21,7 @@ const documentRoutes: Routes = [
     children: [
       {
         path: '',
-        loadChildren: 'app/modules/markdown/editor/markdown-editor.module#MarkdownEditorModule'
+        loadChildren: () => import('app/modules/markdown/editor/markdown-editor.module').then(m => m.MarkdownEditorModule)
       }
     ]
   }

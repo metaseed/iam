@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { SubPageComponent } from './sub-page.component';
 
@@ -6,7 +6,7 @@ describe('SubPageComponent', () => {
   let component: SubPageComponent;
   let fixture: ComponentFixture<SubPageComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ SubPageComponent ]
     })
