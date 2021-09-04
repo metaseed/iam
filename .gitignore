@@ -44,3 +44,5 @@ Thumbs.db
 **/dist.tgz
 **/yarn-error.log
 **/.env
+.vs/i'm/v16/.suo
+.vs/slnx.sqlite

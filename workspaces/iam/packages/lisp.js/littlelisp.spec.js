@@ -5,14 +5,14 @@ var is = function(input, type) {
 };
 
 // takes an AST and replaces type annotated nodes with raw values
-var unannotate = function(input) {
+var unannotated = function(input) {
   if (is(input, 'Array')) {
     if (input[0] === undefined) {
       return [];
     } else if (is(input[0], 'Array')) {
-      return [unannotate(input[0])].concat(unannotate(input.slice(1)));
+      return [unannotated(input[0])].concat(unannotated(input.slice(1)));
     } else {
-      return unannotate(input[0]).concat(unannotate(input.slice(1)));
+      return unannotated(input[0]).concat(unannotated(input.slice(1)));
     }
   } else {
     return [input.value];
@@ -26,36 +26,36 @@ describe('littleLisp', function() {
     });
 
     it('should lex an atom in a list', function() {
-      expect(unannotate(t.parse('()'))).toEqual([]);
+      expect(unannotated(t.parse('()'))).toEqual([]);
     });
 
     it('should lex multi atom list', function() {
-      expect(unannotate(t.parse('(hi you)'))).toEqual(['hi', 'you']);
+      expect(unannotated(t.parse('(hi you)'))).toEqual(['hi', 'you']);
     });
 
     it('should lex list containing list', function() {
-      expect(unannotate(t.parse('((x))'))).toEqual([['x']]);
+      expect(unannotated(t.parse('((x))'))).toEqual([['x']]);
     });
 
     it('should lex list containing list', function() {
-      expect(unannotate(t.parse('(x (x))'))).toEqual(['x', ['x']]);
+      expect(unannotated(t.parse('(x (x))'))).toEqual(['x', ['x']]);
     });
 
     it('should lex list containing list', function() {
-      expect(unannotate(t.parse('(x y)'))).toEqual(['x', 'y']);
+      expect(unannotated(t.parse('(x y)'))).toEqual(['x', 'y']);
     });
 
     it('should lex list containing list', function() {
-      expect(unannotate(t.parse('(x (y) z)'))).toEqual(['x', ['y'], 'z']);
+      expect(unannotated(t.parse('(x (y) z)'))).toEqual(['x', ['y'], 'z']);
     });
 
     it('should lex list containing list', function() {
-      expect(unannotate(t.parse('(x (y) (a b c))'))).toEqual(['x', ['y'], ['a', 'b', 'c']]);
+      expect(unannotated(t.parse('(x (y) (a b c))'))).toEqual(['x', ['y'], ['a', 'b', 'c']]);
     });
 
     describe('atoms', function() {
       it('should parse out numbers', function() {
-        expect(unannotate(t.parse('(1 (a 2))'))).toEqual([1, ['a', 2]]);
+        expect(unannotated(t.parse('(1 (a 2))'))).toEqual([1, ['a', 2]]);
       });
     });
   });

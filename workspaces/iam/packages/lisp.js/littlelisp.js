@@ -20,9 +20,11 @@
       console.log(x);
       return x;
     },
+
     printArgs: function() {
       console.log(JSON.stringify(arguments));
     },
+
     toHtml: function(tag, attributes) {
       let attr = '';
       let content = '';
@@ -32,7 +34,7 @@
         delete attributes['.'];
         if (Array.isArray(content)) {
           let c = '';
-          content.forEach(v => (c += v));
+          content.forEach(v => c += v);
           content = c;
         }
         Object.keys(attributes).forEach(key => {
