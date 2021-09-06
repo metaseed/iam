@@ -5,11 +5,11 @@
     "sourceMap": true,
     "declaration": false,
     "downlevelIteration": true,
-    "module": "esnext",
+    "module": "es2020",
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
+    "target": "es2017",
     "baseUrl": "./src",
     "paths": {
       "packages/*": ["../packages/*"],

@@ -3,8 +3,6 @@
   "compilerOptions": {
     "outDir": "../../out-tsc/lib",
     "declarationMap": true,
-    "target": "es2015",
-    "module": "esnext",
     "moduleResolution": "node",
     "declaration": true,
     "sourceMap": true,
@@ -12,10 +10,6 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "types": [],
-    "lib": [
-      "dom",
-      "es2018"
-    ]
   },
   "angularCompilerOptions": {
     "annotateForClosureCompiler": true,
