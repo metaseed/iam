@@ -149,7 +149,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
   }
 
   ngOnDestroy() {
-    this.destroy$.next();
+    this.destroy$.next(null);
   }
 
   private swipe(e) {

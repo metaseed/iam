@@ -131,7 +131,7 @@ export class MarkdownEditorComponent implements ICanComponentDeactivate {
   
   ngOnDestroy() {
     this.contentChangeSubscription.unsubscribe();
-    this.destroy$.next();
+    this.destroy$.next(null);
   }
 
   // implements ICanComponentDeactivate

@@ -114,7 +114,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
   ngOnInit() {}
 
   ngDestroy() {
-    this._destroy$.next();
+    this._destroy$.next(null);
   }
 
   back(e) {

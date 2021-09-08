@@ -50,6 +50,6 @@ export class CodemirrorToolbarComponent implements OnInit {
   }
   ngOnInit() {}
   ngOnDestroy() {
-    this._destroy$.next();
+    this._destroy$.next(null);
   }
 }

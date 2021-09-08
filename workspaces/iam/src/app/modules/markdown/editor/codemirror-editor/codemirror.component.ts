@@ -135,7 +135,7 @@ export class CodemirrorComponent implements ControlValueAccessor {
   destroy$ = new Subject();
 
   ngOnDestroy() {
-    this.destroy$.next();
+    this.destroy$.next(null);
   }
 
   /**

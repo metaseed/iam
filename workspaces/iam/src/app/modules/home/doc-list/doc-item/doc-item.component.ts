@@ -28,7 +28,7 @@ export class DocItemComponent implements OnInit {
   onShow = doc => this.show.next(doc);
 
   ngOnDestroy() {
-    this.destroy$.next();
+    this.destroy$.next(null);
   }
   private defaultTimeoutHandler = (action: string, info?: string) => (start: ActionStatus) => {
     console.warn('action timeout:' + action + (info ? `--${info}` : ''));

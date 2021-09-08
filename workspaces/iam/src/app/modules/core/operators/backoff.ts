@@ -1,5 +1,5 @@
 import { pipe, range, timer } from 'rxjs';
-import { retryWhen, zip, map, mergeMap } from 'rxjs/operators';
+import { retryWhen, map, mergeMap, zipWith } from 'rxjs/operators';
 /*
 ajax('/api/endpoint')
   .pipe(backoff(3, 250))
@@ -9,8 +9,8 @@ export function backoff<T>(maxTries, ms) {
   return pipe(
     retryWhen<T>(attempts =>
       range(1, maxTries).pipe(
-        zip(attempts, i => i), // attach number sequence to the errors observable
-        map(i => i * i), // every error correspond to a squared result of number
+        zipWith(attempts), // attach number sequence to the errors observable
+        map(([i, _]) => i * i), // every error correspond to a squared result of number
         mergeMap(i => timer(i * ms))
       )
     )

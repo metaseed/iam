@@ -99,7 +99,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.store.dispatch(new SetCurrentDocumentId({ id: undefined }));
-    this.destroy$.next();
+    this.destroy$.next(null);
   }
 
   ngAfterViewChecked() {

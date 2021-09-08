@@ -77,6 +77,6 @@ export class HomeComponent {
   }
 
   ngOnDestroy() {
-    this.destroy$.next();
+    this.destroy$.next(null);
   }
 }

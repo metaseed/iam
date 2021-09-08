@@ -94,6 +94,6 @@ export class DocSaveCoordinateService implements OnDestroy {
   }
 
   ngOnDestroy() {
-    this.destroy$.next();
+    this.destroy$.next(null);
   }
 }

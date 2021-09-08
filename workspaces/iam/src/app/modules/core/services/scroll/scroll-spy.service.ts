@@ -53,7 +53,7 @@ export class ScrollSpiedElementGroup extends ContainerRef {
 
   unSpy() {
     this.activeScrollElement.complete();
-    this.onStopListening$.next();
+    this.onStopListening$.next(null);
   }
 
   calibrate() {

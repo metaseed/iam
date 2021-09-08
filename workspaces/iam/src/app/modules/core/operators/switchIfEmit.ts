@@ -22,17 +22,17 @@ import { Observable, Subscription } from 'rxjs';
  * Semantics:
  * 1. it will wait all the inner observables, any one that emit a value will be switched to
  *    the outer observable output.
- * 2. if another inner observable emmit a value, then the outer would switch to it. the
+ * 2. if another inner observable emit a value, then the outer would switch to it. the
  *    original inner observable would be unsubscribed.
- * 3. if the source observable(emmit observable items) completes/has error, it will continue waiting
- *    for the inner observables that already emited by the source.
- * 4. if the outer complete, all the active(emiting or waiting to emit) inner observables
+ * 3. if the source observable(emit observable items) completes/has error, it will continue waiting
+ *    for the inner observables that already emitted by the source.
+ * 4. if the outer complete, all the active(emitting or waiting to emit) inner observables
  *    would be unsubscribed.
  * 5. if one inner observable completes, it will continue waiting for other inner observables.
- * 6. any inner observable error would be tramsmit to the ourter observable.
+ * 6. any inner observable error would be transmit to the outer observable.
  * 7. if the outer observable is unsubscribed, the inner active observables and the upper
  *    source observable would be unsubscribed.
- * 8. the switchTester function used to add further condition logic to switch while item emmiting.
+ * 8. the switchTester function used to add further condition logic to switch while item emitting.
  *     if omitted: switch with the first item.
  *     if defined: switch when it returns true.
  */
@@ -42,8 +42,8 @@ export const switchIfEmit = (switchTester: (T) => boolean = undefined) => <T>(
   new Observable<T>(observer => {
     const subscription = new Subscription();
     let lastInnerObservable: Observable<T>;
-    const sourceSubscription = source.subscribe(
-      innerObservable => {
+    const sourceSubscription = source.subscribe({
+      next(innerObservable) {
         const innerSubscription = innerObservable.subscribe(item => {
           if (lastInnerObservable && lastInnerObservable !== innerObservable) {
             if (!switchTester || (switchTester && switchTester(item))) {
@@ -59,8 +59,8 @@ export const switchIfEmit = (switchTester: (T) => boolean = undefined) => <T>(
         (<any>innerObservable).subscription = innerSubscription;
         subscription.add(innerSubscription);
       },
-      err => observer.error(err)
-    );
+      error(err){ return  observer.error(err)}
+    });
     subscription.add(sourceSubscription);
     return subscription;
   });

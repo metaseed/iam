@@ -72,7 +72,7 @@ export function documentReducer(
     }
 
     case DocumentActionType.LoadDocuments: {
-      return adapter.addAll(action.payload.collectionDocuments, state);
+      return adapter.addMany(action.payload.collectionDocuments, state);
     }
 
     case DocumentActionType.ClearDocuments: {

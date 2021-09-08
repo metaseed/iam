@@ -114,7 +114,7 @@ export class DocListComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.destroy$.next();
+    this.destroy$.next(null);
   }
 
   trackByFunc = (i, doc) => doc.id;
