@@ -3,3 +3,5 @@
 
 ## start
 1. run `yarn` at root folder.
+1. run `npm start`
+1. http://localhost:4200
