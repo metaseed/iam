@@ -293,7 +293,7 @@ describe("CodeComponent", () => {
 });
 
 //// Test helpers ////
-// tslint:disable:member-ordering
+/* eslint-disable @typescript-eslint/member-ordering */
 @Component({
   selector: "i-host-comp",
   template: `
