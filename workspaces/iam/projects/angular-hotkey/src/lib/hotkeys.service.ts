@@ -2,7 +2,8 @@ import { HotkeyOptions, IHotkeyOptions } from './hotkey.options';
 import { Subject } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
 import { Hotkey } from './hotkey.model';
-import 'mousetrap';
+import { MousetrapInstance } from 'mousetrap';
+import * as Mousetrap from 'mousetrap';
 
 @Injectable()
 export class HotkeysService {
@@ -14,6 +15,7 @@ export class HotkeysService {
   private _preventIn = ['INPUT', 'SELECT', 'TEXTAREA'];
 
   constructor(@Inject(HotkeyOptions) private options: IHotkeyOptions) {
+
     Mousetrap.prototype.stopCallback = (
       event: KeyboardEvent,
       element: HTMLElement,

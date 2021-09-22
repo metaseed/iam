@@ -1,7 +1,7 @@
 {
   "name": "@metaseed/angular-hotkey",
   "description": "hotkeys for angular - https://github.com/metaseed/iam/tree/master/workspaces/iam/projects/angular-hotkey",
-  "version": "2.2.3",
+  "version": "2.3.0",
   "scripts": {
     "build": "ng build angular-hotkey",
     "build-prod": "ng build angular-hotkey --prod",
@@ -10,10 +10,11 @@
   },
   "main": "./src/public_api.ts",
   "dependencies": {
-    "mousetrap": "^1.6.1"
+    "tslib": "^2.3.0",
+    "mousetrap": "^1.6.5"
   },
   "peerDependencies": {
-    "@angular/common": "^6.0.0",
-    "@angular/core": "^6.0.0"
+    "@angular/common": "^12.2.6",
+    "@angular/core": "^12.2.6"
   }
 }

@@ -175,7 +175,7 @@ export class DatabaseCache implements ICache {
         } else return false;
       })
     );
-    return concat<T>(_cache$, _nextCache$).pipe(filter(t => !!t));
+    return concat(_cache$, _nextCache$).pipe(filter(t => !!t));
   }
 
   readDocMeta(id: number, checkNextCache?: boolean): Observable<DocMeta> {
