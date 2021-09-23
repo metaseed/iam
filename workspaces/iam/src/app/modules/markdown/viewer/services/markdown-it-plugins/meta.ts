@@ -98,7 +98,7 @@ export class MetaPlugin {
     if (startLine > 5 || state.blkIndent !== 0) {
       return false;
     }
-    if (state.tShift[startLine] < 0) {
+    if (state.tShift[startLine] !== 0) {
       return false;
     }
     if (!this.getLine(state, startLine).match(/^---$/)) {
