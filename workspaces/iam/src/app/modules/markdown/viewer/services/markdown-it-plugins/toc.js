@@ -16,8 +16,8 @@ var defaultOptions = {
   format: undefined
 };
 
-module.exports = function(md, options) {
-  var options = {...defaultOptions, ...options};
+module.exports = function (md, options) {
+  var options = { ...defaultOptions, ...options };
   var tocRegexp = options.markerPattern;
   var gstate;
 
@@ -38,9 +38,9 @@ module.exports = function(md, options) {
     match = tocRegexp.exec(state.src);
     match = !match
       ? []
-      : match.filter(function(m) {
-          return m;
-        });
+      : match.filter(function (m) {
+        return m;
+      });
     if (match.length < 1) {
       return false;
     }
@@ -62,15 +62,15 @@ module.exports = function(md, options) {
     return true;
   }
 
-  md.renderer.rules.toc_open = function(tokens, index) {
+  md.renderer.rules.toc_open = function (tokens, index) {
     return '<div class="' + options.containerClass + '">';
   };
 
-  md.renderer.rules.toc_close = function(tokens, index) {
+  md.renderer.rules.toc_close = function (tokens, index) {
     return '</div>';
   };
 
-  md.renderer.rules.toc_body = function(tokens, index) {
+  md.renderer.rules.toc_body = function (tokens, index) {
     return renderChildsTokens(0, gstate.tokens)[1];
   };
 
@@ -131,7 +131,7 @@ module.exports = function(md, options) {
   }
 
   // Catch all the tokens for iteration later
-  md.core.ruler.push('grab_state', function(state) {
+  md.core.ruler.push('grab_state', function (state) {
     gstate = state;
   });
 

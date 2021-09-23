@@ -3,7 +3,7 @@
 module.exports = (updateTitle, level = 1) => md => {
   const originalHeadingOpen = md.renderer.rules.heading_open;
 
-  md.renderer.rules.heading_open = function(...args) {
+  md.renderer.rules.heading_open = function (...args) {
     const [tokens, idx, , env, self] = args;
 
     if (!env.title && (level < 1 || tokens[idx].tag === `h${level}`)) {
