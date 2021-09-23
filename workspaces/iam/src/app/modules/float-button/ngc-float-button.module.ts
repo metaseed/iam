@@ -5,8 +5,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { NgcFloatButtonComponent } from './ngc-float-button.component';
 import { NgcFloatItemButtonComponent } from './ngc-float-item-button.component';
 
-
-
 @NgModule({
   imports: [
     CommonModule,

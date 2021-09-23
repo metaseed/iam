@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { environment } from 'environments/environment';
+import { Injectable } from "@angular/core";
+import { environment } from "environments/environment";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class Logger {
   log(value: any, ...rest: any[]) {
     if (!environment.production) {
