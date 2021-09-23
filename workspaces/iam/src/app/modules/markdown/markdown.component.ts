@@ -50,7 +50,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
     })
   );
 
-  isScreenWide$ = this.utils.isScreenWide$;
+  isScreenWide$ = this.utils.isWideScreen$;
   showView$ = merge(
     this.showEdit$.pipe(
       combineLatest(this.isScreenWide$),

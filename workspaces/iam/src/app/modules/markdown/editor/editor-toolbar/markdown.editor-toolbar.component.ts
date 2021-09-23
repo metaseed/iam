@@ -60,7 +60,7 @@ export class EditorToolbarComponent implements OnInit, AfterViewInit {
 
   private _destroy$ = new Subject();
 
-  isScreenWide$ = this.utils.isScreenWide$;
+  isScreenWide$ = this.utils.isWideScreen$;
   isMemDirty$ = this.store
     .select(selectCurrentDocStatus_IsMemDirty)
     .pipe(tap(a => console.log('++++++++++++memDirty: ' + a)));

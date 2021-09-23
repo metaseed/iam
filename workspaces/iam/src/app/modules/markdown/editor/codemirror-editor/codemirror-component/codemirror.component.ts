@@ -75,7 +75,7 @@ export class CodemirrorComponent
     private editorService: MarkdownEditorService,
     private utils: Utilities
   ) {
-    this.utils.isScreenWide$
+    this.utils.isWideScreen$
       .pipe(takeUntil(this.destroy$))
       .subscribe(wide => this.showLineNumber = wide);
   }

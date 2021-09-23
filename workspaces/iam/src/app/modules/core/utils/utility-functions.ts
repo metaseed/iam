@@ -1,14 +1,15 @@
 import { fromByteArray } from "base64-js";
+
 declare var TextDecoder;
 declare var TextEncoder;
 
-export const base64Encode = (str, encoding = "utf-8") => {
+export function base64Encode(str, encoding = "utf-8") {
   let bytes = new TextEncoder(encoding).encode(str);
   return fromByteArray(bytes);
-};
+}
 
 // https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding
-export const base64Decode = (str, encoding = "utf-8") => {
+export function base64Decode(str, encoding = "utf-8") {
   // Going backwards: from bytestream, to percent-encoding, to original string.
   return decodeURIComponent(
     atob(str)
@@ -18,8 +19,9 @@ export const base64Decode = (str, encoding = "utf-8") => {
       })
       .join("")
   );
-};
-export const mergeConf = (config, fromConfig: Object): Object => {
+}
+
+export function mergeConf(config: object, fromConfig: object) {
   if (!fromConfig) {
     return config;
   }
@@ -32,14 +34,14 @@ export const mergeConf = (config, fromConfig: Object): Object => {
     }
   }
   return Object.assign({}, config, fromConfig);
-};
+}
 
-export const mergeConfig = (toConfig, fromConfig: Object) => {
+export function mergeConfig(toConfig, fromConfig: object) {
   const t = mergeConf(toConfig, fromConfig);
   Object.assign(toConfig, t);
-};
+}
 
-export const urlBase64ToUint8Array = (base64String) => {
+export function urlBase64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding)
     .replace(/\-/g, "+")
@@ -50,7 +52,7 @@ export const urlBase64ToUint8Array = (base64String) => {
     outputArray[i] = rawData.charCodeAt(i);
   }
   return outputArray;
-};
+}
 
 export function uid() {
   const uidLength = 16;

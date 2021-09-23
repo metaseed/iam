@@ -13,7 +13,7 @@ import { KeyMapService } from '../../services';
 export class CodemirrorToolbarComponent implements OnDestroy {
   _destroy$ = new Subject();
   _options: any;
-  isScreenWide$ = this._utils.isScreenWide$;
+  isScreenWide$ = this._utils.isWideScreen$;
 
   @HostBinding('style.width')
   width;

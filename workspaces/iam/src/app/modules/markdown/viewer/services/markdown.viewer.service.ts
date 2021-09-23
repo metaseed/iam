@@ -96,7 +96,7 @@ export class MarkdownViewerService {
     private store: Store<any>,
     @Optional() config?: MarkdownConfig
   ) {
-    this.utils.isScreenWide$.subscribe(wide => (this.showCodeLineNumber = wide));
+    this.utils.isWideScreen$.subscribe(wide => (this.showCodeLineNumber = wide));
     config = config || mergeConf(this.defaultConfig, config);
 
     if (!config.markdownIt.highlight) {
