@@ -1,8 +1,8 @@
-import { AfterViewInit, Component } from "@angular/core";
-import { SplitSeparatorComponent } from "./split-pane-separator.component";
+import { AfterViewInit, Component } from '@angular/core';
+import { SplitSeparatorComponent } from './split-pane-separator.component';
 
 @Component({
-  selector: "horizontal-split-separator",
+  selector: 'horizontal-split-separator',
   styles: [
     `
       :host {
@@ -42,7 +42,7 @@ import { SplitSeparatorComponent } from "./split-pane-separator.component";
     <div class="handle"></div>
   `,
   host: {
-    "[style.height.px]": "thickness",
+    '[style.height.px]': 'thickness',
   },
 })
 export class HorizontalSplitSeparatorComponent
@@ -51,6 +51,6 @@ export class HorizontalSplitSeparatorComponent
 {
   ngAfterViewInit() {
     this.invisibleExtension.nativeElement.style.top =
-      -(7 - this.thickness) / 2 + "px";
+      -(7 - this.thickness) / 2 + 'px';
   }
 }
