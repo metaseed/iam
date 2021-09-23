@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, HostBinding } from '@angular/core';
+import { Component, Input, HostBinding, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Utilities } from 'core';
@@ -10,7 +10,7 @@ import { KeyMapService } from '../../services';
   templateUrl: './codemirror-toolbar.component.html',
   styleUrls: ['./codemirror-toolbar.component.scss']
 })
-export class CodemirrorToolbarComponent implements OnInit {
+export class CodemirrorToolbarComponent implements OnDestroy {
   _destroy$ = new Subject();
   _options: any;
   isScreenWide$ = this._utils.isScreenWide$;
@@ -48,7 +48,7 @@ export class CodemirrorToolbarComponent implements OnInit {
       this._hideIcons[v] = true;
     });
   }
-  ngOnInit() {}
+
   ngOnDestroy() {
     this._destroy$.next(null);
   }

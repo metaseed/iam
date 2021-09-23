@@ -1,4 +1,4 @@
-<mat-toolbar class="tool-bar" [ngClass]="{'tool-bar--bottom':!(isScreenWide$|async)}" style="height: 3.8rem;">
+<mat-toolbar class="tool-bar" [ngClass]="{'tool-bar--bottom':(isScreenWide$|async) === false}" style="height: 3.8rem;">
   <button mat-icon-button title="Bold" (click)="insertContent('Bold')" *ngIf="!_hideIcons.Bold">
     <mat-icon>format_bold</mat-icon>
   </button>
@@ -9,7 +9,7 @@
   <button mat-icon-button title="Heading" (click)="insertContent('Heading')" *ngIf="!_hideIcons.Heading">
     <mat-icon>title</mat-icon>
   </button>
-  <button mat-icon-button title="Refrence" (click)="insertContent('Reference')" *ngIf="!_hideIcons.Refrence">
+  <button mat-icon-button title="Reference" (click)="insertContent('Reference')" *ngIf="!_hideIcons.Refrence">
     <mat-icon>format_quote</mat-icon>
   </button>
 

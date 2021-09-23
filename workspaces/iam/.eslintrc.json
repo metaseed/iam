@@ -10,8 +10,8 @@
       ],
       "parserOptions": {
         "project": [
-          "tsconfig.json",
-          "e2e/tsconfig.json"
+          "workspaces/iam/src/tsconfig.app.json",
+          "workspaces/iam/src/tsconfig.spec.json"
         ],
         "createDefaultProgram": true
       },
