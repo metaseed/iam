@@ -1,27 +1,26 @@
-import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { FileUploadComponent } from '../codemirror-editor/file-upload/file-upload.component';
-import { GithubStorage } from 'net-storage';
-import { switchMap, tap } from 'rxjs/operators';
-import { State } from '@ngrx/store';
-import { SharedState, selectCurrentDocumentIdState } from 'shared';
-import { DOCUMENTS_FOLDER_NAME } from 'app/modules/home/const';
-import { HttpEvent, HttpEventType } from '@angular/common/http';
-import { Subscription } from 'rxjs';
-import { IFileUploadData } from './file-upload-data';
+import { Injectable } from "@angular/core";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { FileUploadComponent } from "../codemirror-editor/file-upload/file-upload.component";
+import { GithubStorage } from "net-storage";
+import { switchMap, tap } from "rxjs/operators";
+import { State } from "@ngrx/store";
+import { SharedState, selectCurrentDocumentIdState } from "shared";
+import { DOCUMENTS_FOLDER_NAME } from "app/modules/home/const";
+import { HttpEvent, HttpEventType } from "@angular/common/http";
+import { Subscription } from "rxjs";
+import { IFileUploadData } from "./file-upload-data";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class FileUploadService {
-
   constructor(
     private _snackBar: MatSnackBar,
     private _github: GithubStorage,
-    private state: State<SharedState>
-  ) { }
+    private _state: State<SharedState>
+  ) {}
 
-  fileUploaded: (path: string) => void
+  fileUploaded: (path: string) => void;
 
   upload(type: string) {
     let timer = null;
@@ -30,51 +29,60 @@ export class FileUploadService {
       data: <IFileUploadData>{
         accept: `${type}/*`,
         message: `pick ${type} to upload?`,
-        action: 'Ok',
+        action: "Ok",
         selectFile: () => clearTimeout(timer),
         cancelAction: () => {
-          if (subscription)
-            subscription.unsubscribe();
-            console.log(`${type} uploading canceled`);
-            setTimeout(_ => snackBar.dismiss(), 1000);
+          if (subscription) subscription.unsubscribe();
+          console.log(`${type} uploading canceled`);
+          setTimeout((_) => snackBar.dismiss(), 1000);
         },
         takeAction: (file: File, notifyProgress: (percent: number) => void) => {
           const reader = new FileReader();
-          reader.onloadend = _ => {
+          reader.onloadend = (_) => {
             const res = reader.result as String;
-            const base64 = res.substr(res.indexOf(',') + 1);
-            subscription = this._github.init().pipe(switchMap(repo => {
-              const id = selectCurrentDocumentIdState(this.state.value);
-              const date = new Date().toISOString().replace(/[-:.]/g, '');
-              const path = `${DOCUMENTS_FOLDER_NAME}/${id}/${type}/${date}-${file.name}`;
-              return repo.newFileReportProgress(path, base64, true)
-            })).subscribe((event: HttpEvent<any>) => {
-              switch (event.type) {
-                case HttpEventType.UploadProgress:
-                  const progress = Math.round(100 * event.loaded / event.total);
-                  notifyProgress(progress);
-                  break;
-                case HttpEventType.Response:
-                  this.fileUploaded(event.body.content.download_url);
+            const base64 = res.substr(res.indexOf(",") + 1);
+            subscription = this._github
+              .init()
+              .pipe(
+                switchMap((repo) => {
+                  const id = selectCurrentDocumentIdState(this._state.value);
+                  const date = new Date().toISOString().replace(/[-:.]/g, "");
+                  const path = `${DOCUMENTS_FOLDER_NAME}/${id}/${type}/${date}-${file.name}`;
+                  return repo.newFileReportProgress(path, base64, true);
+                })
+              )
+              .subscribe({
+                next(event: HttpEvent<any>) {
+                  switch (event.type) {
+                    case HttpEventType.UploadProgress:
+                      const progress = Math.round(
+                        (100 * event.loaded) / event.total
+                      );
+                      notifyProgress(progress);
+                      break;
+                    case HttpEventType.Response:
+                      this.fileUploaded(event.body.content.download_url);
+                      snackBar.dismiss();
+                      break;
+                    default:
+                      // console.log(`Unhandled event: ${event.type}`)
+                      break;
+                  }
+                },
+                error(err) {
                   snackBar.dismiss();
-                  break;
-                default:
-                  // console.log(`Unhandled event: ${event.type}`)
-                  break;
-              }
-            }, err => {
-              snackBar.dismiss();
-              this._snackBar.open(err.error.message, 'ok', {
-                duration: 2000,
+                  this._snackBar.open(err.error.message, "ok", {
+                    duration: 2000,
+                  });
+                  console.error(err);
+                },
               });
-              console.error(err)
-            });
           };
           reader.readAsDataURL(file);
-        }
+        },
       },
-      duration: 0 // close by code
+      duration: 0, // close by code
     });
-    timer = setTimeout(_ => snackBar.dismiss(), 6000);
+    timer = setTimeout((_) => snackBar.dismiss(), 6000);
   }
 }
