@@ -18,7 +18,7 @@ export interface ConfigModel {
   };
 }
 
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class ConfigService {
   public config$: Observable<ConfigModel>;
 
