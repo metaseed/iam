@@ -1,9 +1,13 @@
-import { map, auditTime, share } from 'rxjs/operators';
-import { fromEvent, Observable, ReplaySubject } from 'rxjs';
-import { NgZone } from '@angular/core';
+import { map, auditTime, share } from "rxjs/operators";
+import { fromEvent, Observable, ReplaySubject } from "rxjs";
+import { NgZone } from "@angular/core";
 
 export class ScrollEvent {
-  constructor(public event: Event, public isDown: boolean, public scrollTop: number) { }
+  constructor(
+    public event: Event,
+    public isDown: boolean,
+    public scrollTop: number
+  ) {}
 }
 
 export interface IContainer {
@@ -37,24 +41,28 @@ export class ContainerRef implements IContainer {
     private ngZone?: NgZone
   ) {
     if (this.ngZone) {
-      this.ngZone.runOutsideAngular(_ => this.init());
+      this.ngZone.runOutsideAngular((_) => this.init());
     } else {
       this.init();
     }
   }
 
   private init() {
-    this.scrollEvent$ = fromEvent(this.nativeElement, 'scroll').pipe(
+    this.scrollEvent$ = fromEvent(this.nativeElement, "scroll").pipe(
       auditTime(this._scrollAuditTime)
     );
-    this.resizeEvent$ = fromEvent(this.nativeElement, 'resize').pipe(
+    this.resizeEvent$ = fromEvent(this.nativeElement, "resize").pipe(
       auditTime(this._resizeAuditTime)
     );
-    this.touchStart$ = fromEvent<TouchEvent>(this.nativeElement, 'touchstart', {
-      passive: true
+    this.touchStart$ = fromEvent<TouchEvent>(this.nativeElement, "touchstart", {
+      passive: true,
     });
-    this.touchMove$ = fromEvent<TouchEvent>(this.nativeElement, 'touchmove', { passive: true });
-    this.touchEnd$ = fromEvent<TouchEvent>(this.nativeElement, 'touchend', { passive: true });
+    this.touchMove$ = fromEvent<TouchEvent>(this.nativeElement, "touchmove", {
+      passive: true,
+    });
+    this.touchEnd$ = fromEvent<TouchEvent>(this.nativeElement, "touchend", {
+      passive: true,
+    });
   }
 
   get contentHeight() {
@@ -68,14 +76,20 @@ export class ContainerRef implements IContainer {
     if (this.nativeElement instanceof HTMLElement) {
       return this.nativeElement.clientHeight;
     }
-    return Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    return Math.max(
+      document.documentElement.clientHeight,
+      window.innerHeight || 0
+    );
   }
 
   get viewportWidth() {
     if (this.nativeElement instanceof HTMLElement) {
       return this.nativeElement.clientWidth;
     }
-    return Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    return Math.max(
+      document.documentElement.clientWidth,
+      window.innerWidth || 0
+    );
   }
 
   get scrollTop() {
@@ -99,7 +113,7 @@ export class ContainerRef implements IContainer {
   get scrollDown$() {
     let lastValue = this.scrollTop;
     return this.scrollEvent$.pipe(
-      map(event => {
+      map((event) => {
         const scrollTop = this.scrollTop;
         if (scrollTop - lastValue > 0) {
           lastValue = scrollTop;

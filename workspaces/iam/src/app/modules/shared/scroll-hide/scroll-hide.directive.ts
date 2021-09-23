@@ -1,4 +1,4 @@
-import { Directive, HostBinding, ElementRef, Input, OnDestroy } from '@angular/core';
+import { Directive, HostBinding, ElementRef, Input, OnDestroy, AfterViewInit } from '@angular/core';
 import { WindowRef, IContainer, ContainerRef } from 'core';
 import { Subject, Observable, ReplaySubject, asyncScheduler } from 'rxjs';
 import { takeUntil, switchMap, subscribeOn } from 'rxjs/operators';
@@ -15,7 +15,7 @@ export interface ContainerItem {
 @Directive({
   selector: '[scrollHide]'
 })
-export class ScrollHideDirective implements OnDestroy {
+export class ScrollHideDirective implements OnDestroy, AfterViewInit {
   private _destroy$ = new Subject();
 
   @HostBinding('style.width')
@@ -35,10 +35,13 @@ export class ScrollHideDirective implements OnDestroy {
 
   @HostBinding('style.transition-duration')
   transitionDuration = TRANSITION_DURATION;
+
   @HostBinding('style.transition-delay')
   t_d = '0s';
+
   @HostBinding('style.transition-property')
   transitionProperty = 'top';
+
   @HostBinding('style.transition-timing-function')
   t_f = 'ease-in-out';
 
@@ -51,7 +54,7 @@ export class ScrollHideDirective implements OnDestroy {
     } else {
       this.visibility = 'visible';
       asyncScheduler.schedule(_ => {
-        this.caculateHeight();
+        this.calculateHeight();
         this.setMargins('Set');
       });
     }
@@ -66,6 +69,7 @@ export class ScrollHideDirective implements OnDestroy {
     this._hideHeight_minus = -v;
     this._hideHeight_half_minus = -v / 2;
   }
+
   private _hideHeight_minus: number;
   private _hideHeight_half_minus: number;
   get hideHeightMinus() {
@@ -78,14 +82,15 @@ export class ScrollHideDirective implements OnDestroy {
 
   private get height() {
     if (this._height === 0) {
-      this.caculateHeight();
+      this.calculateHeight();
     }
     return this._height;
   }
+
   private _height: number;
   private _height_minus: number;
   private _height_half_minus: number;
-  caculateHeight() {
+  calculateHeight() {
     const v = (this._elementRef.nativeElement as HTMLElement).offsetHeight;
     this._height_minus = -v;
     this._height_half_minus = -v / 2;
@@ -123,12 +128,12 @@ export class ScrollHideDirective implements OnDestroy {
     });
   }
 
-  setMargin = (contariner: ContainerItem, o: 'Set' | 'Clear') => {
+  setMargin = (container: ContainerItem, o: 'Set' | 'Clear') => {
     const v = o === 'Set' ? this.height : 0;
-    const marginElement = contariner.elementWithMarginTop;
+    const marginElement = container.elementWithMarginTop;
     if (!marginElement || marginElement._margin === v) return;
 
-    const scrollTop = contariner.container.scrollTop;
+    const scrollTop = container.container.scrollTop;
     // set margin, but scrollTop is big
     if (scrollTop > this._height && v !== 0) {
       return;
@@ -165,7 +170,7 @@ export class ScrollHideDirective implements OnDestroy {
 
   constructor(private _elementRef: ElementRef, private _windowRef: WindowRef) {
     _windowRef.resizeEvent$.pipe(takeUntil(this._destroy$)).subscribe(e => {
-      this.caculateHeight();
+      this.calculateHeight();
     });
   }
 
@@ -178,7 +183,7 @@ export class ScrollHideDirective implements OnDestroy {
     const containerItems = this._containerItems;
     if (containerItems.length === 0) return;
 
-    this.caculateHeight();
+    this.calculateHeight();
 
     containerItems.forEach(item => {
       const configContainer = (container: IContainer) => {
