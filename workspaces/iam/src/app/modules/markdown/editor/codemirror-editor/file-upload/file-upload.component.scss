@@ -1,3 +1,4 @@
+@use 'sass:math';
 @import '~@angular/material/core/style/variables';
 @import '~@angular/material/core/style/button-common';
 @import '~@angular/material/core/style/list-common';
@@ -8,7 +9,7 @@ $mat-snack-bar-line-height: 20px !default;
 // Button vertical margin is used to ensure that a button height of 36px, when the containing
 // space falls below 36px.
 $mat-snack-bar-button-vertical-margin:
-  -(($mat-snack-bar-button-height - $mat-snack-bar-line-height) / 2);
+  - math.div($mat-snack-bar-button-height - $mat-snack-bar-line-height, 2);
 
 .mat-simple-snackbar {
   display: flex;
