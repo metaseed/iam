@@ -4,7 +4,9 @@ import {
   Inject,
   ElementRef,
   NgZone,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  AfterViewInit,
+  OnDestroy
 } from '@angular/core';
 import { MarkdownEditorService } from '.';
 import { CodemirrorComponent } from './codemirror-editor/codemirror-component/codemirror.component';
@@ -36,7 +38,7 @@ import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-br
   templateUrl: './markdown-editor.component.html',
   styleUrls: ['./markdown-editor.component.scss']
 })
-export class MarkdownEditorComponent implements ICanComponentDeactivate {
+export class MarkdownEditorComponent implements ICanComponentDeactivate, AfterViewInit, OnDestroy {
   editorLoaded = false;
   destroy$ = new Subject();
   DocumentMode = DocumentMode;
