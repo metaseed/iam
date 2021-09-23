@@ -123,7 +123,7 @@ export class MetaPlugin {
     if (!findEnd) return;
 
     try {
-      const d = YAML.safeLoad(data.join('\n'), { json: true });
+      const d = YAML.load(data.join('\n'), { json: true });
 
       state.line = line + 1;
       if (d) {
