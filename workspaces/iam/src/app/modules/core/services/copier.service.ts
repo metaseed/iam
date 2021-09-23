@@ -1,4 +1,4 @@
-import { base64Decode } from '../utils';
+import { base64Decode } from "../utils";
 
 export class CopierService {
   private fakeElem: HTMLTextAreaElement | null;
@@ -8,24 +8,24 @@ export class CopierService {
    * and makes a selection on it.
    */
   private createFake(text: string) {
-    const isRTL = document.documentElement.getAttribute('dir') === 'rtl';
-    this.fakeElem = document.createElement('textarea');
+    const isRTL = document.documentElement.getAttribute("dir") === "rtl";
+    this.fakeElem = document.createElement("textarea");
     // Prevent zooming on iOS
-    this.fakeElem.style.fontSize = '12pt';
-    // Reset box model
-    this.fakeElem.style.border = '0';
-    this.fakeElem.style.padding = '0';
-    this.fakeElem.style.margin = '0';
+    this.fakeElem.style.fontSize = "12pt";
+    // Reset box model`````
+    this.fakeElem.style.border = "0";
+    this.fakeElem.style.padding = "0";
+    this.fakeElem.style.margin = "0";
 
     // Move element out of screen horizontally
-    this.fakeElem.style.position = 'absolute';
-    this.fakeElem.style[isRTL ? 'right' : 'left'] = '-9999px';
+    this.fakeElem.style.position = "absolute";
+    this.fakeElem.style[isRTL ? "right" : "left"] = "-9999px";
 
     // Move element to the same position vertically
     const yPosition = window.pageYOffset || document.documentElement.scrollTop;
-    this.fakeElem.style.top = yPosition + 'px';
+    this.fakeElem.style.top = yPosition + "px";
 
-    this.fakeElem.setAttribute('readonly', '');
+    this.fakeElem.setAttribute("readonly", "");
     this.fakeElem.value = text;
 
     document.body.appendChild(this.fakeElem);
@@ -44,7 +44,7 @@ export class CopierService {
   copyText(text: string, base64: boolean) {
     try {
       this.createFake(base64 ? base64Decode(text) : text);
-      return document.execCommand('copy');
+      return document.execCommand("copy");
     } catch (err) {
       return false;
     } finally {
