@@ -1,21 +1,25 @@
-import { Component, OnInit, HostListener, EventEmitter, Input, Output, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  HostListener,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+  ElementRef,
+} from "@angular/core";
 
 @Component({
-  template: ''
+  template: "",
 })
-export class SplitSeparatorComponent implements OnInit {
-
+export class SplitSeparatorComponent {
   @Input() thickness: number;
-  @Output() notifyWillChangeSize: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() notifyWillChangeSize: EventEmitter<boolean> =
+    new EventEmitter<boolean>();
 
-  @ViewChild('invisibleExtension') invisibleExtension: ElementRef;
+  @ViewChild("invisibleExtension") invisibleExtension: ElementRef;
 
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-  @HostListener('mousedown', ['$event'])
+  @HostListener("mousedown", ["$event"])
   onMousedown(event) {
     this.notifyWillChangeSize.emit(true);
     return false;

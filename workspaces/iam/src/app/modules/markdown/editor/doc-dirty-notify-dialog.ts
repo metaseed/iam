@@ -7,7 +7,7 @@ import { MatDialogRef } from "@angular/material/dialog";
   <h1 mat-dialog-title>Save?</h1>
 <div mat-dialog-content>
   <p>
-  Docuemnt modified, are you want to save?
+  Document modified, are you want to save?
   </p>
 </div>
 <div mat-dialog-actions>

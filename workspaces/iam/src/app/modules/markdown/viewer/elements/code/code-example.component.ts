@@ -6,8 +6,8 @@ import {
   ViewChild,
   Input,
   AfterViewInit
-} from "@angular/core";
-import { CodeComponent } from "./code.component";
+} from '@angular/core';
+import { CodeComponent } from './code.component';
 
 /**
  * An embeddable code block that displays nicely formatted code.
@@ -21,7 +21,7 @@ import { CodeComponent } from "./code.component";
   ```
  */
 @Component({
-  selector: "i-code",
+  selector: 'i-code',
   template: `
     <!-- Content projection is used to get the content HTML provided to this component -->
     <div #content style="display: none"><ng-content></ng-content></div>
@@ -51,8 +51,8 @@ export class CodeExampleComponent implements AfterViewInit {
   set title(title: string) {
     this._title = title;
     this.classes = {
-      "headed-code": !!this.title,
-      "simple-code": !this.title
+      'headed-code': !!this.title,
+      'simple-code': !this.title
     };
   }
   get title(): string {
@@ -63,36 +63,36 @@ export class CodeExampleComponent implements AfterViewInit {
   @Input()
   set path(path: string) {
     this._path = path;
-    this.isAvoid = this.path.indexOf(".avoid.") !== -1;
+    this.isAvoid = this.path.indexOf('.avoid.') !== -1;
   }
   get path(): string {
     return this._path;
   }
-  private _path = "";
+  private _path = '';
 
   @Input()
   set hidecopy(hidecopy: boolean) {
     // Coerce the boolean value.
-    this._hidecopy = hidecopy != null && `${hidecopy}` !== "false";
+    this._hidecopy = hidecopy != null && `${hidecopy}` !== 'false';
   }
   get hidecopy(): boolean {
     return this._hidecopy;
   }
   private _hidecopy: boolean;
 
-  @Input("hide-copy")
+  @Input('hide-copy')
   set hyphenatedHideCopy(hidecopy: boolean) {
     this.hidecopy = hidecopy;
   }
 
-  @Input("hideCopy")
+  @Input('hideCopy')
   set capitalizedHideCopy(hidecopy: boolean) {
     this.hidecopy = hidecopy;
   }
 
-  @HostBinding("class.avoidFile") isAvoid = false;
+  @HostBinding('class.avoidFile') isAvoid = false;
 
-  @ViewChild("content") content: ElementRef;
+  @ViewChild('content') content: ElementRef;
 
   @ViewChild(CodeComponent) icode: CodeComponent;
 

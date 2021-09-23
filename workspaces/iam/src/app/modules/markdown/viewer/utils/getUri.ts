@@ -1,5 +1,5 @@
 export const getAddr = href => {
-  const indexofHash = href.indexOf('#');
-  const addr = indexofHash !== -1 ? href.substr(0, indexofHash) : href;
+  const hashIndex = href.indexOf("#");
+  const addr = hashIndex !== -1 ? href.substr(0, hashIndex) : href;
   return addr;
 };
