@@ -1,4 +1,4 @@
-import { Component, Input, Output, ViewChild, EventEmitter, forwardRef } from '@angular/core';
+import { Component, Input, Output, ViewChild, EventEmitter, forwardRef, OnInit } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 
 import * as CodeMirror from 'codemirror';
@@ -15,22 +15,20 @@ import 'codemirror/addon/search/jump-to-line';
 // import 'codemirror/addon/edit/closetag';
 import 'codemirror/addon/edit/matchbrackets';
 // import 'codemirror/addon/edit/closebrackets';
-import './codemirror-plugins/closebrackets';
+import '../codemirror-addon/closebrackets';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/brace-fold';
 import 'codemirror/addon/edit/matchtags';
 import 'codemirror/addon/comment/comment';
-import { MarkdownEditorService } from '../services/markdown.editor.service';
+import { MarkdownEditorService } from '../../services/markdown.editor.service';
 import { Subject } from 'rxjs';
 import { Utilities } from 'core';
 import { takeUntil } from 'rxjs/operators';
 /**
- * Usage : <codemirror [(ngModel)]="markdown" [config]="{...}"></codemirror>
+ * Usage : <ms-codemirror [(ngModel)]="markdown" [config]="{...}"></ms-codemirror>
  */
 @Component({
-  selector: 'codemirror',
-  styleUrls: ['./codemirror.component.scss'],
-
+  selector: 'ms-codemirror',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -42,7 +40,7 @@ import { takeUntil } from 'rxjs/operators';
     <textarea #host></textarea>
     `
 })
-export class CodemirrorComponent implements ControlValueAccessor {
+export class CodemirrorComponent implements ControlValueAccessor, OnInit {
   //    var map = {"Alt-Space": function(cm){...}}
   //    editor.addKeyMap(map);
   @Input()

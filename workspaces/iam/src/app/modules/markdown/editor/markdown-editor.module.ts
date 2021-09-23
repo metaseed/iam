@@ -7,7 +7,7 @@ import { MarkdownEditorComponent } from './markdown-editor.component';
 import { FormsModule } from '@angular/forms';
 import { SpinnerModule } from '@metaseed/spinner';
 import { MaterialModule } from '../../material/material.module';
-import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
+import { CodemirrorComponent } from './codemirror-editor/codemirror-component/codemirror.component';
 import { CodemirrorToolbarComponent } from './codemirror-editor/codemirror-toolbar/codemirror-toolbar.component';
 import { DocSaveCoordinateService } from './services/doc-save-coordinate-service';
 import { CanDeactivateGuard } from '../../core/services/can-deactive-guard.service';

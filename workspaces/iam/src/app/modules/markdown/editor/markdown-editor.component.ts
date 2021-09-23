@@ -7,7 +7,7 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core';
 import { MarkdownEditorService } from '.';
-import { CodemirrorComponent } from './codemirror-editor/codemirror.component';
+import { CodemirrorComponent } from './codemirror-editor/codemirror-component/codemirror.component';
 import * as fromMarkdown from '../state';
 import { DocumentMode } from '../state/reducers/document';
 import { DocSaveCoordinateService } from './services/doc-save-coordinate-service';
@@ -113,7 +113,7 @@ export class MarkdownEditorComponent implements ICanComponentDeactivate {
     );
     const hammer = this.gestureConfig.buildHammer((this._elementRef.nativeElement as HTMLElement).getElementsByClassName(
       'CodeMirror-scroll'
-    )[0] as HTMLElement); 
+    )[0] as HTMLElement);
 
     fromEvent(hammer, 'swiperight').pipe(takeUntil(this.destroy$))
       .subscribe((res: any) => {
@@ -128,7 +128,7 @@ export class MarkdownEditorComponent implements ICanComponentDeactivate {
   private toViewMode = event => {
     this.store.dispatch(new ViewMode());
   };
-  
+
   ngOnDestroy() {
     this.contentChangeSubscription.unsubscribe();
     this.destroy$.next(null);
