@@ -1,39 +1,48 @@
-import { Component, OnInit, Inject, ViewChild, ElementRef, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
-import { MatProgressBar } from '@angular/material/progress-bar';
-import { IFileUploadData } from '../../services/file-upload-data';
+import {
+  Component,
+  Inject,
+  ViewChild,
+  ElementRef,
+  ViewEncapsulation,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from "@angular/core";
+import {
+  MAT_SNACK_BAR_DATA,
+  MatSnackBarRef,
+} from "@angular/material/snack-bar";
+import { MatProgressBar } from "@angular/material/progress-bar";
+import { IFileUploadData } from "../../services/file-upload-data";
 
 @Component({
-  selector: 'ms-file-upload',
-  templateUrl: './file-upload.component.html',
-  styleUrls: ['./file-upload.component.scss'],
+  selector: "ms-file-upload",
+  templateUrl: "./file-upload.component.html",
+  styleUrls: ["./file-upload.component.scss"],
   encapsulation: ViewEncapsulation.None,
 })
-export class FileUploadComponent implements OnInit {
-
+export class FileUploadComponent {
   progressPercent = 0;
   showMessage = true;
-  accept = 'image/*';
-  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: IFileUploadData,
-    private snackBarRef: MatSnackBarRef<FileUploadComponent>) {
+  accept = "image/*";
+  constructor(
+    @Inject(MAT_SNACK_BAR_DATA) public data: IFileUploadData,
+    private snackBarRef: MatSnackBarRef<FileUploadComponent>
+  ) {
     this.accept = data.accept;
   }
 
-  @ViewChild('imageUpload')
+  @ViewChild("imageUpload")
   imageUpload: ElementRef;
 
-  @ViewChild('progress')
+  @ViewChild("progress")
   progressBar: MatProgressBar;
-
-  ngOnInit(): void {
-  }
 
   private selectedFile: File;
   onFileChanged(event) {
     this.selectedFile = event.target.files[0];
     this.showMessage = false;
-    this.data.action = 'cancel';
-    this.data.takeAction(this.selectedFile, percent => {
+    this.data.action = "cancel";
+    this.data.takeAction(this.selectedFile, (percent) => {
       this.progressPercent = percent;
     });
   }
@@ -41,7 +50,7 @@ export class FileUploadComponent implements OnInit {
     return !!this.data.action;
   }
   action() {
-    if (this.data.action === 'cancel') {
+    if (this.data.action === "cancel") {
       this.data.cancelAction();
       return;
     }
@@ -50,4 +59,3 @@ export class FileUploadComponent implements OnInit {
     this.imageUpload.nativeElement.click(); // show file selection dialog;
   }
 }
-
