@@ -27,8 +27,10 @@ import { SplitSeparatorComponent } from './split-pane-separator.component';
         height: 36px;
         background-color: #ddd;
         position: absolute;
-        top: calc(50% - 17px);
-        padding: 8px 0;
+        display: flex;
+        align-items: center;
+        top: calc(50% - 18px);
+        padding: 12px 0;
       }
       .handle-bar {
         border: 1px solid #aaa;
@@ -36,7 +38,6 @@ import { SplitSeparatorComponent } from './split-pane-separator.component';
         border-top-width: 0;
         width: 3px;
         height: 20px;
-        margin: auto;
       }
     `,
   ],
