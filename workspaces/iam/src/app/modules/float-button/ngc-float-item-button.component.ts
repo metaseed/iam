@@ -74,9 +74,10 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NgcFloatItemButtonComponent {
+  timeout: any;
   @Input() icon;
   @Input() content;
   @Output() clicked: EventEmitter<any> = new EventEmitter();
-  @ViewChild("elementref") elementref;
-  @ViewChild("contentref") contentref;
+  @ViewChild("elementref") elementRef;
+  @ViewChild("contentref") contentRef;
 }

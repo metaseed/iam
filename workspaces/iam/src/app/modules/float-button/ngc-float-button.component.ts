@@ -14,6 +14,7 @@ import {
   OnDestroy,
   Output,
   OnChanges,
+  QueryList,
 } from "@angular/core";
 
 @Component({
@@ -97,7 +98,7 @@ import {
 export class NgcFloatButtonComponent
   implements AfterContentInit, OnDestroy, OnChanges
 {
-  private elementref: HTMLElement;
+  private element: HTMLElement;
   private subs: Subscription[] = [];
 
   public state: BehaviorSubject<any> = new BehaviorSubject({
@@ -112,10 +113,10 @@ export class NgcFloatButtonComponent
   @Input() spaceBetweenButtons;
   @Input() open: Subject<boolean>;
   @Output() events: Subject<any> = new Subject();
-  @ContentChildren(NgcFloatItemButtonComponent) buttons;
+  @ContentChildren(NgcFloatItemButtonComponent) buttons: QueryList<NgcFloatItemButtonComponent>;
 
-  constructor(private element: ElementRef, private cd: ChangeDetectorRef) {
-    this.elementref = element.nativeElement;
+  constructor(private elementRef: ElementRef, private changeDetectorRef: ChangeDetectorRef) {
+    this.element = elementRef.nativeElement;
   }
 
   public toggle() {
@@ -135,17 +136,17 @@ export class NgcFloatButtonComponent
         display = "none";
       }
 
-      this.buttons.toArray().forEach((element) => {
-        element.contentref.nativeElement.style.display = display;
+      this.buttons.forEach((element) => {
+        element.contentRef.nativeElement.style.display = display;
       });
     }
   }
 
   // transition
   private animateButtons(eventType) {
-    this.buttons.toArray().forEach((btn, i) => {
+    this.buttons.forEach((btn, i) => {
       i += 1;
-      let style = btn.elementref.nativeElement.style;
+      let style = btn.elementRef.nativeElement.style;
 
       if (eventType !== "directionChanged" && this.state.getValue().display) {
         style["transform"] = "scale(1)";
@@ -176,27 +177,19 @@ export class NgcFloatButtonComponent
   // get transition direction
   private getTranslate(i) {
     let animation;
-
+    const space = this.state.getValue().spaceBetweenButtons * i;
     switch (this.direction) {
       case "right":
-        animation = `translate3d(${
-          this.state.getValue().spaceBetweenButtons * i
-        }px,0,0)`;
+        animation = `translate3d(${space}px,0,0)`;
         break;
       case "bottom":
-        animation = `translate3d(0,${
-          this.state.getValue().spaceBetweenButtons * i
-        }px,0)`;
+        animation = `translate3d(0,${space}px,0)`;
         break;
       case "left":
-        animation = `translate3d(-${
-          this.state.getValue().spaceBetweenButtons * i
-        }px,0,0)`;
+        animation = `translate3d(-${space}px,0,0)`;
         break;
       default:
-        animation = `translate3d(0,-${
-          this.state.getValue().spaceBetweenButtons * i
-        }px,0)`;
+        animation = `translate3d(0,-${space}px,0)`;
         break;
     }
 
@@ -205,7 +198,7 @@ export class NgcFloatButtonComponent
 
   /* some problems here */
   // @HostListener('document:click', ['$event.target']) private clickOutside(target) {
-  //   if (this.state.getValue().display && !this.elementref.contains(target)) {
+  //   if (this.state.getValue().display && !this.elementRef.contains(target)) {
   //     this.state.next({
   //       ...this.state.getValue(),
   //       display: false,
@@ -266,7 +259,7 @@ export class NgcFloatButtonComponent
           });
 
           // make angular happy
-          this.cd.markForCheck();
+          this.changeDetectorRef.markForCheck();
         }
       });
 
