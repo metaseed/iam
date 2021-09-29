@@ -1,13 +1,11 @@
 import { EntityState, EntityAdapter, createEntityAdapter, Update } from '@ngrx/entity';
 import { Document, SearchResult } from 'core';
 import { DocumentActions, DocumentActionType } from './document.actions';
-import { selectCurrentDocumentIdState } from './document.selectors';
-import { State } from '@ngrx/store';
 
 export interface DocumentState extends EntityState<Document> {
   // additional entities state properties
   currentDocumentId: number;
-  idRangeHigh: number; // undefined:initial, Number.MAX_VALUE highest number, no newest
+  idRangeHigh: number; // undefined:initial; Number.MAX_VALUE highest number: no newest
   idRangeLow?: number; // undefined: lowest number, no oldest
   searchResult?: SearchResult;
 }
