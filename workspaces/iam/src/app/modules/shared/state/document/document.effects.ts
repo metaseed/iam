@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { createEffect, Effect } from '@ngrx/effects';
+import { createEffect } from '@ngrx/effects';
 import { throwError, pipe, merge, from } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State as StoreState } from '@ngrx/store';

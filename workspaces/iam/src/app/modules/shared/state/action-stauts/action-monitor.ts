@@ -14,7 +14,7 @@ export class ActionMonitor {
   complete = (action: CorrelationAction) => {
     return tap({
       error(err) { console.error(err) },
-      complete: () => { // to use this, we have to use lambda
+      complete: () => { // to use 'this', we have to use lambda
         const coId = action.coId;
         const msg = `${action.type}-${coId}->complete`;
         console.groupCollapsed(msg, 'background-color:#4285f4');
