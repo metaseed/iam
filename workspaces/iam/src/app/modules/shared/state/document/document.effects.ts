@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { Effect } from '@ngrx/effects';
+import { createEffect, Effect } from '@ngrx/effects';
 import { throwError, pipe, merge, from } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State as StoreState } from '@ngrx/store';
@@ -42,16 +42,14 @@ export class DocumentEffects {
     private store: Store<DocumentState>
   ) { }
 
-  @Effect()
-  CreateDocument = this.actionMonitor.do$<DocumentEffectsCreate>(
+  CreateDocument = createEffect(() => this.actionMonitor.do$<DocumentEffectsCreate>(
     DocumentEffectsActionType.Create,
     tap<DocumentEffectsCreate>(a => {
       (this.cacheFacade as any).createDoc(a.payload.format);
     })
-  );
+  ));
 
-  @Effect()
-  ReadBulkDocMeta = this.actionMonitor.do$<DocumentEffectsReadBulkDocMeta>(
+  ReadBulkDocMeta = createEffect(() => this.actionMonitor.do$<DocumentEffectsReadBulkDocMeta>(
     DocumentEffectsActionType.ReadBulkDocMeta,
     (() => {
       let keyRangeHigh: number;
@@ -73,10 +71,9 @@ export class DocumentEffects {
         })
       );
     })()
-  );
+  ));
 
-  @Effect()
-  ReadDocMetas = this.actionMonitor.do$<DocumentEffectsReadDocMetas>(DocumentEffectsActionType.ReadDocMetas,
+  ReadDocMetas = createEffect(() => this.actionMonitor.do$<DocumentEffectsReadDocMetas>(DocumentEffectsActionType.ReadDocMetas,
     pipe(
       switchMap(action =>
         merge(
@@ -86,10 +83,9 @@ export class DocumentEffects {
         )
       )
     )
-  );
+  ));
 
-  @Effect()
-  ReadDocument = this.actionMonitor.do$<DocumentEffectsRead>(
+  ReadDocument = createEffect(() => this.actionMonitor.do$<DocumentEffectsRead>(
     DocumentEffectsActionType.ReadDocument,
     pipe(
       tap(action => this.store.dispatch(new SetCurrentDocumentId({ id: action.payload.id }))),
@@ -100,10 +96,9 @@ export class DocumentEffects {
           .pipe(this.actionMonitor.complete(action));
       })
     )
-  );
+  ));
 
-  @Effect()
-  SaveDocument = this.actionMonitor.do$<DocumentEffectsSave>(
+  SaveDocument = createEffect(() => this.actionMonitor.do$<DocumentEffectsSave>(
     DocumentEffectsActionType.Save,
     pipe(
       switchMap(action => {
@@ -138,18 +133,16 @@ export class DocumentEffects {
         }
       })
     )
-  );
+  ));
 
-  @Effect()
-  DeleteDocument = this.actionMonitor.do$<DocumentEffectsDelete>(
+  DeleteDocument = createEffect(() => this.actionMonitor.do$<DocumentEffectsDelete>(
     DocumentEffectsActionType.Delete,
     switchMap(action =>
       this.cacheFacade.deleteDoc(action.payload.id).pipe(this.actionMonitor.complete(action))
     )
-  );
+  ));
 
-  @Effect()
-  SearchDocument = this.actionMonitor.do$<DocumentEffectsSearch>(
+  SearchDocument = createEffect(() => this.actionMonitor.do$<DocumentEffectsSearch>(
     DocumentEffectsActionType.Search,
     switchMap(action =>
       this.cacheFacade.search(action.payload.query).pipe(
@@ -164,5 +157,5 @@ export class DocumentEffects {
         })
       )
     )
-  );
+  ));
 }
