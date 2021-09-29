@@ -4,7 +4,6 @@ import { SharedState, getDocumentByIdSelector, DocumentEffectsReadDocMeta, getDo
 import { map, switchMap, filter, tap } from 'rxjs/operators';
 import { DocMeta } from 'core';
 import { Observable, of } from 'rxjs';
-import { ThrowStmt } from '@angular/compiler';
 
 export class DocNode {
     id: number;
