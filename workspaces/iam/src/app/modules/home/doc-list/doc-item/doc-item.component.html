@@ -1,6 +1,6 @@
 <mat-card class="doc-card">
   <mat-card-content style="cursor:pointer;">
-    <div (click)="onShow(doc)">
+    <div (click)="show.next(doc)">
       <span class="doc-id">{{doc.metaData.id}}</span>
       <a style="text-decoration:none">
         <div class="doc-card__row">
@@ -8,7 +8,9 @@
             <h1 class="title-truncate">{{doc.metaData?.title}}</h1>
             <h2 mat-card-subtitle class="summary-truncate">{{doc.metaData?.summary}}</h2>
           </div>
-          <div *ngIf="doc.metaData?.imageData" style="background-position:50% 50%; width:168px;height:158px;margin-top:16px" [style.background-image]="'url('+doc.metaData?.imageData+')'"></div>
+          <div *ngIf="doc.metaData?.imageData"
+            style="background-position:50% 50%; width:168px;height:158px;margin-top:16px"
+            [style.background-image]="'url('+doc.metaData?.imageData+')'"></div>
         </div>
       </a>
     </div>
@@ -18,5 +20,6 @@
       <mat-icon>delete_forever</mat-icon>
     </button>
   </mat-card-actions>
-  <doc-delete *ngIf="showDelete" (cancel)="showDelete=false" (delete)="onDelete(doc)" [isDone]="isDeleteDone$|async"></doc-delete>
+  <doc-delete *ngIf="showDelete" (cancel)="showDelete=false" (delete)="delete.emit(doc)" [isDone]="isDeleteDone$|async">
+  </doc-delete>
 </mat-card>

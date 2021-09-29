@@ -17,7 +17,7 @@ import {
   DocumentEffectsSave
 } from './document.effects-actions';
 import { DocumentState } from './document.reducer';
-import { ActionMoniter } from '../action-stauts';
+import { ActionMonitor } from '../action-stauts';
 import { DocEffectsUtil } from './document.effects.util';
 import { SetCurrentDocumentId, DocumentActionType } from './document.actions';
 import { DocMeta, CACHE_FACADE_TOKEN, ICache } from 'core';
@@ -33,7 +33,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Injectable()
 export class DocumentEffects {
   constructor(
-    private actionMonitor: ActionMoniter,
+    private actionMonitor: ActionMonitor,
     @Inject(CACHE_FACADE_TOKEN)
     private cacheFacade: ICache,
     private util: DocEffectsUtil,

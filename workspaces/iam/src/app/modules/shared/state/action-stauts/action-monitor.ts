@@ -1,30 +1,30 @@
 import { Injectable } from '@angular/core';
 import { OperatorFunction } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
-import { Store, Action } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { Actions, ofType } from '@ngrx/effects';
 import { ActionMonitorState } from './reducer';
 import { CorrelationAction, SetActionStatusAction, ActionStatus, ActionState } from './actions';
 
 @Injectable({ providedIn: 'root' })
-export class ActionMoniter {
-  constructor(private store: Store<ActionMonitorState>, private actions$: Actions) {}
+export class ActionMonitor {
+  constructor(private store: Store<ActionMonitorState>, private actions$: Actions) { }
 
   // call this function when inner observable complete to monitor the completion of the action
   complete(action: CorrelationAction) {
-    return tap(
-      undefined,
-      err => console.error(err),
-      () => {
+    return tap({
+      error(err) { console.error(err) },
+      complete() {
         const coId = action.coId;
-        console.groupCollapsed(`%c${action.type}-${coId}->complete`, 'background-color:#4285f4');
-        console.count(`${action.type}-${coId}->complete`);
+        const msg = `${action.type}-${coId}->complete`;
+        console.groupCollapsed(msg, 'background-color:#4285f4');
+        console.count(msg);
         console.groupEnd();
         this.store.dispatch(
           new SetActionStatusAction(new ActionStatus(ActionState.Complete, action))
         );
       }
-    );
+    });
   }
 
   do$ = <T extends CorrelationAction>(actionType: string, pipe: OperatorFunction<T, any>) => {

@@ -5,20 +5,15 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
   templateUrl: './doc-delete.component.html',
   styleUrls: ['./doc-delete.component.scss']
 })
-export class DocDeleteComponent implements OnInit {
+export class DocDeleteComponent {
   showWaiting = false;
   @Output() cancel = new EventEmitter();
   @Output() delete = new EventEmitter();
 
   @Input() isDone = false;
 
-  constructor() {}
-
-  ngOnInit() {}
-
   onDelete = () => {
     this.showWaiting = true;
     this.delete.emit();
   };
-  onCancel = () => this.cancel.emit();
 }

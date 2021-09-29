@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { Store, MemoizedSelector, select } from '@ngrx/store';
-
+import { Store, select } from '@ngrx/store';
 import { getActionStatusState } from './selectors';
 import { ActionStatus, ActionState } from './actions';
 import { ActionMonitorState } from './reducer';

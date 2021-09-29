@@ -1,5 +1,5 @@
 <div class="doc-del">
-  <button *ngIf="!showWaiting" mat-raised-button (click)="onCancel()">Cancel</button>
+  <button *ngIf="!showWaiting" mat-raised-button (click)="cancel.emit()">Cancel</button>
   <button *ngIf="!showWaiting" mat-raised-button color="warn" (click)="onDelete()">Delete</button>
   <sk-wave *ngIf="showWaiting" [isRunning]="!isDone"></sk-wave>
 </div>

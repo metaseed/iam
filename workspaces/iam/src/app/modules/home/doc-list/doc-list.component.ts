@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ElementRef } from '@angular/core';
-import { Document, NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT, IContainer, ContainerRef } from 'core';
+import { Document, NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT, IContainer, ContainerRef, SubscriptionManager } from 'core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store, select } from '@ngrx/store';
 import {
@@ -12,7 +12,7 @@ import {
   ActionState
 } from 'shared';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
-import { Subject, merge, asyncScheduler } from 'rxjs';
+import { Subject, merge, asyncScheduler, tap } from 'rxjs';
 import { takeUntil, filter, map, observeOn, auditTime, startWith } from 'rxjs/operators';
 import { Router, NavigationExtras } from '@angular/router';
 
@@ -23,9 +23,8 @@ const REFRESH_AUDIT_TIME = 3000;
   templateUrl: './doc-list.component.html',
   styleUrls: ['./doc-list.component.scss']
 })
-export class DocListComponent implements OnInit {
+export class DocListComponent extends SubscriptionManager implements OnInit {
   private docs;
-  private destroy$ = new Subject();
 
   private defaultTimeoutHandler = (action: string, info?: string) => () => {
     console.warn('action timeout:' + action + (info ? `--${info}` : ''));
@@ -40,7 +39,6 @@ export class DocListComponent implements OnInit {
       NET_COMMU_TIMEOUT,
       this.defaultTimeoutHandler(DocumentEffectsActionType.ReadBulkDocMeta)
     ).pipe(
-      takeUntil(this.destroy$),
       filter(a => a.action.payload.isBelowRange === false),
       map(v => {
         return (
@@ -63,7 +61,6 @@ export class DocListComponent implements OnInit {
     NET_COMMU_TIMEOUT,
     this.defaultTimeoutHandler(DocumentEffectsActionType.ReadBulkDocMeta, 'load-more')
   ).pipe(
-    takeUntil(this.destroy$),
     filter(a => a.action.payload.isBelowRange === true),
     observeOn(asyncScheduler),
     map(v => {
@@ -74,9 +71,9 @@ export class DocListComponent implements OnInit {
         v.state === ActionState.Timeout
       );
     }),
-
     startWith(true)
   );
+
   public container: IContainer;
   constructor(
     public elementRef: ElementRef,
@@ -84,6 +81,7 @@ export class DocListComponent implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar
   ) {
+    super();
     this.container = new ContainerRef(elementRef.nativeElement);
   }
 
@@ -96,26 +94,23 @@ export class DocListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.container.scrollDown$
-      .pipe(
-        takeUntil(this.destroy$),
-        filter(e => {
-          if (!this.router.url.startsWith('/home')) return false;
-          const margin = this.container.maxScrollTop - e.scrollTop;
-          if (e.isDown && margin < PAN_TO_GET_MORE_MARGIN) {
-            return true;
-          }
-          return false;
-        }),
-        auditTime(REFRESH_AUDIT_TIME)
-      )
-      .subscribe(_ => this.onGetMore());
+    super.addSub(
+      this.container.scrollDown$
+        .pipe(
+          filter(e => {
+            if (!this.router.url.startsWith('/home')) return false;
+            const margin = this.container.maxScrollTop - e.scrollTop;
+            if (e.isDown && margin < PAN_TO_GET_MORE_MARGIN) {
+              return true;
+            }
+            return false;
+          }),
+          auditTime(REFRESH_AUDIT_TIME),
+          tap(_ => this.onGetMore())
+        ));
     this.panToRefresh();
   }
 
-  ngOnDestroy() {
-    this.destroy$.next(null);
-  }
 
   trackByFunc = (i, doc) => doc.id;
 
@@ -146,28 +141,26 @@ export class DocListComponent implements OnInit {
     let startY: number;
     let refreshStarted: boolean;
 
-    this.container.touchStart$.pipe(takeUntil(this.destroy$)).subscribe(e => {
+    super.addSub(this.container.touchStart$.pipe(tap(e => {
       startY = e.touches[0].pageY;
       refreshStarted = false;
-    });
+    })));
 
-    this.container.touchMove$
+    super.addSub(this.container.touchMove$
       .pipe(
-        takeUntil(this.destroy$),
-        auditTime(REFRESH_AUDIT_TIME)
-      )
-      .subscribe(e => {
-        const y = e.touches[0].pageY;
-        const scrollTop = this.container.scrollTop;
+        auditTime(REFRESH_AUDIT_TIME),
+        tap(e => {
+          const y = e.touches[0].pageY;
+          const scrollTop = this.container.scrollTop;
 
-        if (scrollTop === 0 && !refreshStarted && y - startY > PAN_TO_REFRESH_MARGIN) {
-          refreshStarted = true;
-          this.refresh();
-        }
-        if (scrollTop === this.container.maxScrollTop && !refreshStarted && startY - y > PAN_TO_GET_MORE_MARGIN) {
-          this.onGetMore();
-          refreshStarted = true;
-        }
-      });
+          if (scrollTop === 0 && !refreshStarted && y - startY > PAN_TO_REFRESH_MARGIN) {
+            refreshStarted = true;
+            this.refresh();
+          }
+          if (scrollTop === this.container.maxScrollTop && !refreshStarted && startY - y > PAN_TO_GET_MORE_MARGIN) {
+            this.onGetMore();
+            refreshStarted = true;
+          }
+        })));
   }
 }
