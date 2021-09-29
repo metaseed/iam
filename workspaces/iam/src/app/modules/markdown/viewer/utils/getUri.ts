@@ -1,4 +1,4 @@
-export const getAddr = href => {
+export function getAddr(href) {
   const hashIndex = href.indexOf("#");
   const addr = hashIndex !== -1 ? href.substr(0, hashIndex) : href;
   return addr;

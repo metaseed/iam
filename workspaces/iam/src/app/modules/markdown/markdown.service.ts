@@ -5,7 +5,7 @@ import { ReplaySubject, Subject } from 'rxjs';
 import { IContainer } from 'core';
 import { IMarkdownService } from './model/markdown.model';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class MarkdownService implements IMarkdownService {
   constructor(private store: Store<MarkdownState>) {}
 

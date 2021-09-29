@@ -1,8 +1,6 @@
 import { Route, Routes, RouterModule } from '@angular/router';
 import { MarkdownComponent } from './markdown.component';
 import { NgModule } from '@angular/core';
-import { CanDeactivateGuard } from '../core/services/can-deactive-guard.service';
-import { MarkdownEditorComponent } from './editor/markdown-editor.component';
 
 const documentRoutes: Routes = [
   {
@@ -31,4 +29,4 @@ const documentRoutes: Routes = [
   imports: [RouterModule.forChild(documentRoutes)],
   exports: [RouterModule]
 })
-export class MarkdownRoutingModule {}
+export class MarkdownRoutingModule { }
