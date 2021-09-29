@@ -11,10 +11,10 @@ export class ActionMonitor {
   constructor(private store: Store<ActionMonitorState>, private actions$: Actions) { }
 
   // call this function when inner observable complete to monitor the completion of the action
-  complete(action: CorrelationAction) {
+  complete = (action: CorrelationAction) => {
     return tap({
       error(err) { console.error(err) },
-      complete() {
+      complete: () => { // to use this, we have to use lambda
         const coId = action.coId;
         const msg = `${action.type}-${coId}->complete`;
         console.groupCollapsed(msg, 'background-color:#4285f4');
@@ -50,7 +50,7 @@ export class ActionMonitor {
         return msg;
       }),
       catchError((err, caught) => {
-        console.log(`%c${actionType}-${coId}->error`, 'background-color:#4285f4');
+        console.log(`%c${actionType}-${coId}->error`, 'background-color:#F00');
         console.error(err);
         this.store.dispatch(
           new SetActionStatusAction(new ActionStatus(ActionState.Fail, action, err))
