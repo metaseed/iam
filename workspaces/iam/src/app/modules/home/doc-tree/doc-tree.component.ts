@@ -4,7 +4,7 @@ import { DynamicDataSource } from './doc-tree.dataSource';
 import { DocTreeDataService, DocNode } from './doc-tree.data.service';
 import { NavigationExtras, Router } from '@angular/router';
 import { SubscriptionManager } from 'core';
-import { tap } from 'rxjs';
+import { catchError, EMPTY, tap } from 'rxjs';
 
 @Component({
   selector: 'ms-doc-tree',
@@ -26,11 +26,16 @@ export class DocTreeComponent extends SubscriptionManager implements OnInit {
 
   ngOnInit() {
     super.addSub(
-      this.dataService.initialData$(this.rootId).pipe(
-        tap(data => {
-          this.dataSource.data = data.subPages;
-          this.root = data;
-        })).subscribe({ error: e => console.error(e) })
+      this.dataService.initialData$(this.rootId)
+        .pipe(
+          tap(data => {
+            this.dataSource.data = data.subPages;
+            this.root = data;
+          }),
+          catchError(err => {
+            console.error(err); return EMPTY;
+          })
+        )
     );
   }
 

@@ -30,7 +30,7 @@ export class DynamicDataSource implements DataSource<DocNode> {
 
     disconnect(collectionViewer: CollectionViewer): void { }
 
-    expandCollapseHandler(change: SelectionChange<DocNode>) {
+    private expandCollapseHandler(change: SelectionChange<DocNode>) {
         if (change.added) {
             change.added.forEach(node => this.toggleNode(node, true));
         }
@@ -39,7 +39,7 @@ export class DynamicDataSource implements DataSource<DocNode> {
         }
     }
 
-    toggleNode(node: DocNode, expand: boolean) {
+    private toggleNode(node: DocNode, expand: boolean) {
         const index = this.data.indexOf(node);
         if (!node.subPageIds?.length || index < 0) { // If no children, or cannot find the node, no op
             return;
@@ -66,7 +66,7 @@ export class DynamicDataSource implements DataSource<DocNode> {
         }
 
     }
-    moveExpansionState(from: DocNode, to: DocNode) {
+    private moveExpansionState(from: DocNode, to: DocNode) {
         if (this._treeControl.isExpanded(from)) {
             this._treeControl.collapse(from);
             this._treeControl.expand(to);

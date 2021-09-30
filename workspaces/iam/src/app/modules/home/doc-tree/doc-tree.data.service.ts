@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { SharedState, getDocumentByIdSelector, DocumentEffectsReadDocMeta, getDocumentsByIdsSelector, DocumentEffectsReadDocMetas } from 'shared';
-import { map, switchMap, filter, tap } from 'rxjs/operators';
+import { map, switchMap, filter } from 'rxjs/operators';
 import { DocMeta } from 'core';
-import { Observable, of } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 
 export class DocNode {
     id: number;
@@ -40,9 +40,9 @@ export class DocTreeDataService {
         return data$;
     }
 
-    getChildren$(node: DocNode): Observable<DocNode[] | undefined> {
+    getChildren$(node: DocNode): Observable<DocNode[]> {
         if (!node.subPageIds?.length) {
-            return of(undefined);
+            return EMPTY;
         }
         const ids = node.subPageIds.map(p => +p);
         const pageList$ = this.store.pipe(
