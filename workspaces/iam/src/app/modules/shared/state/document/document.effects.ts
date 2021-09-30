@@ -115,20 +115,25 @@ export class DocumentEffects {
 
         if (doc.id === NEW_DOC_ID) {
           return this.cacheFacade.CreateDocument(content, format).pipe(
-            tap(d => {
-              this.util.modifyUrlAfterSaved(d.id, newTitle, format);
-              this.snackbar.open('New document saved!', 'OK');
-            }, this.actionMonitor.complete(action))
+            tap({
+              next: d => {
+                this.util.modifyUrlAfterSaved(d.id, newTitle, format);
+                this.snackbar.open('New document saved!', 'OK');
+              },
+              error: this.actionMonitor.complete(action)
+            })
           );
         } else {
           return this.cacheFacade
             .UpdateDocument(doc.metaData, content, action.payload.forceUpdate)
             .pipe(
-              tap(d => {
-                this.util.modifyUrlAfterSaved(d.id, newTitle, format);
-                // this.snackbar.open('Saved!', 'OK');
-                console.log('Saved!');
-              }, this.actionMonitor.complete(action))
+              tap({
+                next: d => {
+                  this.util.modifyUrlAfterSaved(d.id, newTitle, format);
+                  console.log('Saved!');
+                },
+                error: this.actionMonitor.complete(action)
+              })
             );
         }
       })
