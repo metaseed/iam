@@ -110,7 +110,7 @@ export class DocumentEffects {
         if (!newTitle) {
           const msg = 'Must define a title!';
           this.snackbar.open(msg, 'OK');
-          return throwError(new Error(msg));
+          return throwError(() => new Error(msg));
         }
 
         if (doc.id === NEW_DOC_ID) {

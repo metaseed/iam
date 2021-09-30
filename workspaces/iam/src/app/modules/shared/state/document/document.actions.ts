@@ -3,7 +3,6 @@ import { Document, SearchResult } from 'core';
 import { IPayloadAction } from '../payload-action';
 import { Action } from '@ngrx/store';
 import { DocumentStatus } from 'app/modules/core/model/doc-model/doc-status';
-import { selectCurrentDocumentIdState } from './document.selectors';
 
 export enum DocumentActionType {
   LoadDocuments = '[Document] Load Documents',
