@@ -29,7 +29,6 @@ import {
 import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../shared/state/document/const';
 import { SharedState } from '../shared/state/state';
 import { StoreSearchService } from './services/store-search.service';
-import { ThrowStmt } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'platform'
@@ -138,8 +137,7 @@ export class StoreCache implements ICache {
             tap(meta => {
               if (meta.contentSha !== docContent.sha) {
                 this._logger.warn(
-                  `metaData.contentSha:${meta.contentSha} is different with document sha: ${
-                  docContent.sha
+                  `metaData.contentSha:${meta.contentSha} is different with document sha: ${docContent.sha
                   }, force using document sha`
                 );
                 meta.contentSha = docContent.sha;

@@ -13,7 +13,7 @@ export class ActionMonitor {
   // call this function when inner observable complete to monitor the completion of the action
   complete = (action: CorrelationAction) => {
     return tap({
-      error(err) { console.error(err) },
+      error: err => { console.error(err) },
       complete: () => { // to use 'this', we have to use lambda
         const coId = action.coId;
         const msg = `${action.type}-${coId}->complete`;
@@ -42,7 +42,6 @@ export class ActionMonitor {
       pipe,
       map(r => {
         const msg = new SetActionStatusAction(new ActionStatus(ActionState.Succession, action));
-
         console.groupCollapsed(`%c${actionType}-${coId}->succession`, 'background-color:#4285f4');
         console.count(`${actionType}-${coId}->succession`);
         console.log('result:', r);
