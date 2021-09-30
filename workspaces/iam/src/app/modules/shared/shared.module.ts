@@ -17,6 +17,7 @@ import { NetStorageModule } from 'net-storage';
 import { effects } from './state/effects';
 import { CacheModule } from '../cache';
 import { CacheFacade } from './cache-facade';
+import { MatInputAutofocusDirective } from './directives/matinput-autofocus.directive';
 
 @NgModule({
   imports: [
@@ -31,9 +32,10 @@ import { CacheFacade } from './cache-facade';
     StoreModule.forFeature<SharedState>(moduleStateName, reducers),
     EffectsModule.forFeature(effects)
   ],
-  declarations: [ReadingPositionIndicatorComponent, BottomNavigationComponent, ScrollHideDirective],
+  declarations: [ReadingPositionIndicatorComponent, BottomNavigationComponent, ScrollHideDirective, MatInputAutofocusDirective],
   exports: [
     ScrollHideDirective,
+    MatInputAutofocusDirective,
     ReadingPositionIndicatorComponent,
     BottomNavigationComponent,
     SplitPaneModule,
