@@ -14,7 +14,7 @@ export const adapter: EntityAdapter<Document> = createEntityAdapter<Document>({
   selectId: e => e.id,
   sortComparer: (a: Document, b: Document) =>
     a.metaData && b.metaData && a.metaData.updateDate.getTime() < b.metaData.updateDate.getTime()
-      ? 1
+      ? 1 // switch
       : -1
 });
 
@@ -23,6 +23,7 @@ export const initialState: DocumentState = adapter.getInitialState({
   currentDocumentId: undefined,
   idRangeHigh: undefined
 });
+
 export function documentReducer(
   state: DocumentState = initialState,
   action: DocumentActions
@@ -70,7 +71,7 @@ export function documentReducer(
     }
 
     case DocumentActionType.LoadDocuments: {
-      return adapter.addMany(action.payload.collectionDocuments, state);
+      return adapter.setAll(action.payload.collectionDocuments, state);
     }
 
     case DocumentActionType.ClearDocuments: {

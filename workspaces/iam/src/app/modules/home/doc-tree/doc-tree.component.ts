@@ -6,7 +6,6 @@ import { NavigationExtras, Router } from '@angular/router';
 import { SubscriptionManager } from 'core';
 import { tap } from 'rxjs';
 
-
 @Component({
   selector: 'ms-doc-tree',
   templateUrl: './doc-tree.component.html',

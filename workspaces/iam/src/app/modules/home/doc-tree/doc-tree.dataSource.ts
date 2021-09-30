@@ -30,7 +30,6 @@ export class DynamicDataSource implements DataSource<DocNode> {
 
     disconnect(collectionViewer: CollectionViewer): void { }
 
-    /** Handle expand/collapse behaviors */
     expandCollapseHandler(change: SelectionChange<DocNode>) {
         if (change.added) {
             change.added.forEach(node => this.toggleNode(node, true));
