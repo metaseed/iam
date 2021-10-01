@@ -38,7 +38,7 @@ export class MetaPlugin {
             if (link.includes('@')) {
               link = 'mailto:' + link;
             }
-            cont += `<a href="${link}">${author}</a>`;
+            cont += `<a title="${link}" href="${link}">${author}</a>`;
           } else {
             cont += author;
           }
