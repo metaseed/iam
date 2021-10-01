@@ -1,6 +1,6 @@
 @import 'theme-variables';
 
-@mixin well-provision-search-theme($theme) {
+@mixin doc-search-theme($theme) {
   $foreground: map-get($theme, foreground);
   $focused-color: mat-color($foreground, text);
   $hint: mat-color($foreground, hint-text);

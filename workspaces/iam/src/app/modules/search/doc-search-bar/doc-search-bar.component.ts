@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { MatInput } from '@angular/material/input';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'iam-doc-search-bar',
@@ -10,6 +10,6 @@ export class DocSearchBarComponent {
   @Output() search = new EventEmitter<string>();
 
   onSearch(e) {
-    this.search.emit(e.trim());
+    this.search.next(e.trim());
   }
 }

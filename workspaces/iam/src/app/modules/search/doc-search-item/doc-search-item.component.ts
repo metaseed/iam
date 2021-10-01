@@ -7,7 +7,7 @@ import { Router, NavigationExtras } from '@angular/router';
   templateUrl: './doc-search-item.component.html',
   styleUrls: ['./doc-search-item.component.scss']
 })
-export class DocSearchItemComponent implements OnInit {
+export class DocSearchItemComponent {
   @Input()
   item: ISearchItem;
   constructor(private router: Router) {}
@@ -22,6 +22,7 @@ export class DocSearchItemComponent implements OnInit {
     };
     this.router.navigate(['/doc'], navigationExtras);
   }
+
   getMatches(textMatch: ITextMatch) {
     const fragment = textMatch.fragment;
     let r = '';
@@ -33,8 +34,6 @@ export class DocSearchItemComponent implements OnInit {
       lastIndex = pair[1];
     });
     r += fragment.substr(lastIndex);
-
     return r;
   }
-  ngOnInit() {}
 }
