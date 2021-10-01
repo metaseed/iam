@@ -15,7 +15,7 @@
     "deploy_doc": "ng build --configuration production --output-path ../../docs  --base-href /iam/ && cd ../.. && git add . && git commit -am \"deploy\" && git push && start http://metaseed.github.io/iam",
     "test": "ng test",
     "lint": "ng lint",
-    "wba": "npx webpack-bundle-analyzer dist/iam/stats-es2015.json",
+    "wba": "npx webpack-bundle-analyzer dist/iam/stats.json",
     "ba": "ng build --configuration production --named-chunks --stats-json & npm run wba",
     "e2e": "ng e2e",
     "update": "ncu -u"
