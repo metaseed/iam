@@ -28,6 +28,15 @@
     top: 1rem;
     color: gray;
   }
+  &:hover {
+    .delete-button {
+      visibility: visible;
+    }
+  }
+  .delete-button {
+    color: lightblue;
+    visibility: hidden;
+  }
 }
 
 // .doc-card:hover {
