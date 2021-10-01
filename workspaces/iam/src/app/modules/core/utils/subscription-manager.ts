@@ -4,12 +4,12 @@ import { Observable, Subscription } from "rxjs";
 type Constructor<T> = new (...args: any[]) => T;
 
 /**
- * mixin function of subscription management to Angular Component:
- * automatically unsubscribe the added subs when component destroyed
+ * mixin function of subscription management to Angular Destroyable(Component, Pipe, Directive, Service):
+ * automatically unsubscribe the added subs when destroyable destroyed
  *
- * this function is used when component has extended another base class.
+ * this function is used when the Destroyable has extended another base class.
  *
- * @param Base the base class of the component
+ * @param Base the base class of the Destroyable
  *
  * @example
  * class MyComponent extends ManageSubscription(Base)
@@ -55,10 +55,10 @@ export function ManageSubscription<T extends Constructor<{ ngOnDestroy?() }>>(Ba
 }
 
 /**
- * base class of Angular Component that has observable subscription management function:
- * automatically unsubscribe the added subs when component destroyed
+ * base class of Angular Destroyable(Component, Pipe, Directive, Service) that has observable subscription management function:
+ * automatically unsubscribe the added subs when Destroyable destroyed
  *
- * if the component has another base class to extend, use: ManageSubscription(Base)
+ * if the Destroyable has another base class to extend, use: ManageSubscription(Base)
  *
  * @example
  * class DriverConfigComponent extends SubscriptionManager

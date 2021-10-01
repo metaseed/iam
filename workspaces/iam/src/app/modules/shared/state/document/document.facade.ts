@@ -11,9 +11,9 @@ import {
 export class DocumentStateFacade {
   constructor(private store: Store<any>, private state: State<any>) {}
 
-  clearCurrentDocumentMemDirtyStatus() {
+  updateCurrentDocumentMemDirtyStatus(memDirty: boolean) {
     const status = selectCurrentDocStatus(this.state.value);
-    this.store.dispatch(new UpdateCurrentDocumentStatus({ ...status, isMemDirty: false }));
+    this.store.dispatch(new UpdateCurrentDocumentStatus({ ...status, isMemDirty: memDirty }));
   }
 
   setCurrentDocumentDbDirtyStatus() {
