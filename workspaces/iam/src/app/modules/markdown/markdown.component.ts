@@ -1,8 +1,8 @@
 import * as doc from './state/actions/document';
-import { Component, OnInit, ViewChild, Inject, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, ElementRef, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { APP_BASE_HREF } from '@angular/common';
-import { take, map, tap, takeUntil, combineLatest, filter } from 'rxjs/operators';
+import { map, tap, takeUntil, combineLatest, filter, combineLatestWith } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocFormat, backOffAfter } from 'core';
 import { Store, select } from '@ngrx/store';
@@ -28,7 +28,7 @@ import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from './model/markdown.model
   templateUrl: './markdown.component.html',
   styleUrls: ['./markdown.component.scss']
 })
-export class MarkdownComponent implements OnInit, OnDestroy {
+export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
   isFullScreen: boolean;
   fixEditButton = false;
   @ViewChild(MarkdownViewerContainerComponent)
@@ -53,7 +53,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
   isScreenWide$ = this.utils.isWideScreen$;
   showView$ = merge(
     this.showEdit$.pipe(
-      combineLatest(this.isScreenWide$),
+      combineLatestWith(this.isScreenWide$),
       map(([isShowEdit, wide]) => {
         if (isShowEdit) {
           if (!wide) {
