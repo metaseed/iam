@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { APP_BASE_HREF } from '@angular/common';
 import { take, map, tap, takeUntil, combineLatest, filter } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DocFormat, backoff } from 'core';
+import { DocFormat, backOffAfter } from 'core';
 import { Store, select } from '@ngrx/store';
 import * as fromMarkdown from './state';
 import { DocumentMode } from './state/reducers/document';
@@ -94,7 +94,7 @@ export class MarkdownComponent implements OnInit, OnDestroy {
         })
       ),
       this.markdownService.editorContentChanged$
-    ).pipe(backoff<string>(80, 1000));
+    ).pipe(backOffAfter<string>(80, 1000));
   }
 
   ngOnDestroy() {

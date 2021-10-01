@@ -1,7 +1,7 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { MarkdownEditorService } from './markdown.editor.service';
-import { Subject, BehaviorSubject } from 'rxjs';
-import { auditTime, takeUntil, combineLatestWith } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
+import { combineLatestWith, tap, debounceTime } from 'rxjs/operators';
 import { Store, State } from '@ngrx/store';
 import {
   ActionState,
@@ -12,12 +12,11 @@ import {
   UpdateCurrentDocumentStatus,
   selectCurrentDocStatus,
 } from 'shared';
-import { DocFormat, SubscriptionManager } from 'core';
+import { backOffAfter, DocFormat, SubscriptionManager } from 'core';
 
 @Injectable()
 export class DocSaveCoordinateService extends SubscriptionManager {
-  static autoSaveDelayAfterEdit = 10 * 1000; // 10s
-
+  static readonly AUTO_SAVE_DELAY_AFTER_LAST_EDIT_MS = 8 * 1000;
   private isDirty$ = this.store.select(selectCurrentDocStatus_IsMemDirty);
   isSyncing$ = new BehaviorSubject(false);
   isSaving: boolean;
@@ -35,13 +34,14 @@ export class DocSaveCoordinateService extends SubscriptionManager {
       .addSub(
         this.isDirty$
           .pipe(
-            auditTime(DocSaveCoordinateService.autoSaveDelayAfterEdit),
-            combineLatestWith(this.editorLoaded$)
-          )
-          .subscribe(([isDirty, editor]) => {
-            if (isDirty)
-              this.store.dispatch(new DocumentEffectsSave({ content: editor.getValue(), format: DocFormat.md }));
-          }))
+            combineLatestWith(this.editorLoaded$),
+            debounceTime(DocSaveCoordinateService.AUTO_SAVE_DELAY_AFTER_LAST_EDIT_MS), // e  e e          |
+            tap(([isDirty, editor]) => {
+              if (isDirty)
+                this.store.dispatch(new DocumentEffectsSave({ content: editor.getValue(), format: DocFormat.md }));
+            }),
+            backOffAfter(5, 1000)
+          ))
       .addSub(
         this.editorService.docContentSet$.subscribe((editor: CodeMirror.Editor) => {
           this.docLoadedHandler(editor);

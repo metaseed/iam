@@ -1,23 +1,17 @@
-import { IStorage } from '../storage';
-import { Observable, combineLatest, Subscriber, ReplaySubject, throwError } from 'rxjs';
+import { Observable, Subscriber, ReplaySubject, throwError } from 'rxjs';
 import {
   catchError,
   map,
-  mergeMap,
-  tap,
-  shareReplay,
-  withLatestFrom,
   switchMap,
   take
 } from 'rxjs/operators';
 import { Injectable, Inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Const } from './model/const';
+import { HttpClient } from '@angular/common/http';
 import { UserInfo } from './user-info';
 import { Repository } from './repository';
 import { Requestable } from './requestable';
 import { GITHUB_AUTHENTICATION } from './tokens';
-import { ConfigService, ConfigModel, backoff } from 'core';
+import { ConfigService, ConfigModel } from 'core';
 
 @Injectable({
   providedIn: 'platform'

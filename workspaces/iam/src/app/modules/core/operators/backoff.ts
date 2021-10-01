@@ -5,7 +5,7 @@ ajax('/api/endpoint')
   .pipe(backoff(3, 250))
   .subscribe(data => handleData(data));
 */
-export function backoff<T>(maxTries, ms) {
+export function backOffAfter<T>(maxTries, ms) {
   return pipe(
     retryWhen<T>(attempts =>
       range(1, maxTries).pipe(
