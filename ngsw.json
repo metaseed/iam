@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1593985661303,
+  "timestamp": 1633059519073,
   "appData": {
     "name": "i'm",
     "description": "i'm writing your professional life"
@@ -15,24 +15,23 @@
         "ignoreVary": true
       },
       "urls": [
-        "/iam/app-modules-markdown-editor-markdown-editor-module-es2015.89ac844ea1e7b374abae.js",
-        "/iam/app-modules-markdown-markdown-module-es2015.374cd5938e0786613861.js",
-        "/iam/app-modules-me-me-module-es2015.9186bc04136492860e9f.js",
-        "/iam/app-modules-search-doc-search-module-es2015.463ac5ed69deeafc33e8.js",
-        "/iam/assets-js-prettify-js-es2015.68dcc62cd6652a827212.js",
         "/iam/assets/js/global-script.js",
         "/iam/assets/js/prettify.js",
-        "/iam/code-code-example-module-es2015.2f4879b8c55d86cff49a.js",
-        "/iam/common-es2015.1bbfd5c074e37675e858.js",
         "/iam/favicon.ico",
         "/iam/index.html",
-        "/iam/main-es2015.21e4ea7eab1c3efe0f14.js",
-        "/iam/mermaid-es2015.1b8d4342cdd09b9c8f1f.js",
-        "/iam/polyfills-es2015.2aa758b7c2139ae4222b.js",
-        "/iam/runtime-es2015.79499bf732ed5c9f8286.js",
-        "/iam/styles.523808eddf5e7ce2550d.css",
-        "/iam/sub-page-sub-page-module-es2015.85352eb49a3a0fb36c02.js",
-        "/iam/toc-toc-module-es2015.e13d384fe425cf92ab18.js"
+        "/iam/main-es2017.f7586d3276cb2c26ece4.js",
+        "/iam/node_modules_mermaid_dist_mermaid_core_js-es2017.e7349bc84bea6cfa19da.js",
+        "/iam/polyfills-es2017.fb73eca77ed378f3b28a.js",
+        "/iam/runtime-es2017.dcdcf20870248d2813d8.js",
+        "/iam/src_app_modules_markdown_editor_markdown-editor_module_ts-es2017.1438673b7e8c35a4a057.js",
+        "/iam/src_app_modules_markdown_markdown_module_ts-es2017.f13e6918b432b59fad9b.js",
+        "/iam/src_app_modules_markdown_viewer_elements_code_code-example_module_ts-es2017.587d69c8b31f010107d1.js",
+        "/iam/src_app_modules_markdown_viewer_elements_sub-page_sub-page_module_ts-es2017.17fb676e522d129ed239.js",
+        "/iam/src_app_modules_markdown_viewer_elements_toc_toc_module_ts-es2017.2346c12bf18c7cfdf797.js",
+        "/iam/src_app_modules_me_me_module_ts-es2017.5958d7dcabefad7552ed.js",
+        "/iam/src_app_modules_search_doc-search_module_ts-es2017.d25ec24f49e9823aa12a.js",
+        "/iam/src_assets_js_prettify_js-es2017.20ee9b62d5769c66b6ba.js",
+        "/iam/styles.57c5d71b03d6b631ef23.css"
       ],
       "patterns": []
     },
@@ -100,11 +99,6 @@
     }
   ],
   "hashTable": {
-    "/iam/app-modules-markdown-editor-markdown-editor-module-es2015.89ac844ea1e7b374abae.js": "8242fbdaf9bcbac57f14ec9d6beda7314752eafb",
-    "/iam/app-modules-markdown-markdown-module-es2015.374cd5938e0786613861.js": "661d26fd56e70d01aabd214717974c31fb664392",
-    "/iam/app-modules-me-me-module-es2015.9186bc04136492860e9f.js": "97894fbcaa871f884acc00223300f696ebf01f7c",
-    "/iam/app-modules-search-doc-search-module-es2015.463ac5ed69deeafc33e8.js": "486b26c61eda1ae5141756d308a6fc16155e1986",
-    "/iam/assets-js-prettify-js-es2015.68dcc62cd6652a827212.js": "31ae581db1905cf980395c88e310ec4cb30f6c29",
     "/iam/assets/config.json": "dd46a48767a12c2bab282c41ea00ce3129d58719",
     "/iam/assets/icons/android-icon-192x192.png": "2a4f79ce3e023275f8463130c6fdfbcb4d90eb85",
     "/iam/assets/icons/apple-icon-180x180.png": "95c3f6f7e84edf4e4eaae457ca7281ee09e96da9",
@@ -115,17 +109,21 @@
     "/iam/assets/js/global-script.js": "800778d4657aa793a77a5c17babb77de05c5bcd9",
     "/iam/assets/js/prettify.js": "4bd1e40c55b5514ebb1772bbb288c19d9ead6ca8",
     "/iam/assets/markdown.md": "faeca483f797afd32badf4969dfc9f77704fb95e",
-    "/iam/code-code-example-module-es2015.2f4879b8c55d86cff49a.js": "db53d84e7d54020831d2fdb58e73cf1629790698",
-    "/iam/common-es2015.1bbfd5c074e37675e858.js": "027c4d082cfa991ebfa2cc46b0803d5c4829cb5e",
     "/iam/favicon.ico": "7fa29ec2415f03fba638317f83a61265d5050d9f",
-    "/iam/index.html": "f8caf759c7e98ccba9a0374c63d3059cf88c7694",
-    "/iam/main-es2015.21e4ea7eab1c3efe0f14.js": "d55d365902cb08930e02bd50648a733775154f12",
-    "/iam/mermaid-es2015.1b8d4342cdd09b9c8f1f.js": "4cf0c5805f5cb433f35586edb0d89e10befb17be",
-    "/iam/polyfills-es2015.2aa758b7c2139ae4222b.js": "b5590f8baebd9dcf262ce31b5be3b3dd75f25c4b",
-    "/iam/runtime-es2015.79499bf732ed5c9f8286.js": "a093e4023f03f6b2451a24382999231df3b030ec",
-    "/iam/styles.523808eddf5e7ce2550d.css": "6fee5050e4211cd775bcd3629f27597a0a1b541e",
-    "/iam/sub-page-sub-page-module-es2015.85352eb49a3a0fb36c02.js": "5799d6cb02414f29a4f65c358a973f434a2a8c27",
-    "/iam/toc-toc-module-es2015.e13d384fe425cf92ab18.js": "5c775411798f6559d728bcd2bfd27b3e28a097a1"
+    "/iam/index.html": "4cd5b070f44e32fb1f670f6935acadae644c39bb",
+    "/iam/main-es2017.f7586d3276cb2c26ece4.js": "439075e7c3c230eaa79ef5b1ea1f082abacf3466",
+    "/iam/node_modules_mermaid_dist_mermaid_core_js-es2017.e7349bc84bea6cfa19da.js": "ffc8c1a0d6efe0a971e0346ccca3b99b0ce5e299",
+    "/iam/polyfills-es2017.fb73eca77ed378f3b28a.js": "824d79ff7dce973de398e6f3e6464bd3cc89493b",
+    "/iam/runtime-es2017.dcdcf20870248d2813d8.js": "570b37024d07801fb13c7c929f9225d9ae339168",
+    "/iam/src_app_modules_markdown_editor_markdown-editor_module_ts-es2017.1438673b7e8c35a4a057.js": "fe201866a40d1e2cb3e3c6bda430a6e22bf63811",
+    "/iam/src_app_modules_markdown_markdown_module_ts-es2017.f13e6918b432b59fad9b.js": "dd28e58790e687d6c5f658c64f9f62184bc58a07",
+    "/iam/src_app_modules_markdown_viewer_elements_code_code-example_module_ts-es2017.587d69c8b31f010107d1.js": "05656588c9091884b91af445ec04e8234728225b",
+    "/iam/src_app_modules_markdown_viewer_elements_sub-page_sub-page_module_ts-es2017.17fb676e522d129ed239.js": "b7477f55e5de2f111448fc8c5044c657122288f5",
+    "/iam/src_app_modules_markdown_viewer_elements_toc_toc_module_ts-es2017.2346c12bf18c7cfdf797.js": "362bf4be66affefccf19094f1f3a1bd614efbbb6",
+    "/iam/src_app_modules_me_me_module_ts-es2017.5958d7dcabefad7552ed.js": "e0e2d6be864c980ed335ffa964a6f2915bebe11e",
+    "/iam/src_app_modules_search_doc-search_module_ts-es2017.d25ec24f49e9823aa12a.js": "90d5258cac64788878a9500e2062948d71ab7987",
+    "/iam/src_assets_js_prettify_js-es2017.20ee9b62d5769c66b6ba.js": "5bc03064f37c1c835d35593355cb5288396c2e7c",
+    "/iam/styles.57c5d71b03d6b631ef23.css": "27f6ac87fdcd5238c29de28d403bb1f9e5a2a86a"
   },
   "navigationUrls": [
     {
@@ -144,5 +142,6 @@
       "positive": false,
       "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
     }
-  ]
+  ],
+  "navigationRequestStrategy": "performance"
 }
