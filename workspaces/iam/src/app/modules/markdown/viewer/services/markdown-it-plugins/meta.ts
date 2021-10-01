@@ -68,6 +68,8 @@ export class MetaPlugin {
 
           content += `</div>`;
         }
+
+        // tags
         const tag = meta.tags || meta.tag;
         if (tag) {
           content += '<ul class="meta-tags">';
