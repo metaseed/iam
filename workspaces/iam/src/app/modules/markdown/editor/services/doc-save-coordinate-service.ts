@@ -16,7 +16,7 @@ import { backOffAfter, DocFormat, SubscriptionManager } from 'core';
 
 @Injectable()
 export class DocSaveCoordinateService extends SubscriptionManager {
-  static readonly AUTO_SAVE_DELAY_AFTER_LAST_EDIT_MS = 8 * 1000;
+  static readonly AUTO_SAVE_DELAY_AFTER_LAST_EDIT_MS = 10 * 1000;
   private isDirty$ = this.store.select(selectCurrentDocStatus_IsMemDirty);
   isSyncing$ = new BehaviorSubject(false);
   isSaving: boolean;
