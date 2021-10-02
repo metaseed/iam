@@ -1,7 +1,6 @@
 import 'codemirror/keymap/vim';
 import 'codemirror/keymap/sublime';
 import 'codemirror/keymap/emacs';
-import * as CodeMirror from 'codemirror';
 import { Injectable } from '@angular/core';
 import { MarkdownState, ViewScrollAction } from '../../state';
 import { CommandService, Command } from 'core';
@@ -10,6 +9,7 @@ import { Store } from '@ngrx/store';
 import { DEFAULT_DOC_META } from 'shared';
 import { FileUploadService } from './file-upload.service';
 import { ICodeMirrorEditor } from './markdown.editor.service';
+import * as CodeMirror from 'codemirror';
 
 interface ICommandConfig {
   [key: string]: {
@@ -168,7 +168,7 @@ export class KeyMapService {
     option['Shift-Tab'] = cm => {
       cm.indentSelection('subtract');
     };
-    const commands = (CodeMirror as any).commands;
+    const commands = this._commandService.commands;
     // const keyMap = (CodeMirror as any).keyMap;
     // option['Ctrl-a'] = keyMap['default']['Alt-G'];
 
