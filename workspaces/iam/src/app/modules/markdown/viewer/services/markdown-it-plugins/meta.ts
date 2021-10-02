@@ -103,7 +103,7 @@ export class MetaPlugin {
     if (state.tShift[startLine] !== 0) {
       return false;
     }
-    if (!this.getLine(state, startLine).match(/^---$/)) {
+    if (!this.getLine(state, startLine).match(/^---\s*$/)) {
       return false;
     }
     const data = [];
@@ -112,7 +112,7 @@ export class MetaPlugin {
     while (line < endLine) {
       line++;
       const str = this.getLine(state, line);
-      if (str.match(/^---$/)) {
+      if (str.match(/^---\s*$/)) {
         findEnd = true;
         break;
       }
