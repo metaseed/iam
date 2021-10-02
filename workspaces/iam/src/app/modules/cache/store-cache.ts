@@ -15,15 +15,15 @@ import { Store, State as StoreState } from '@ngrx/store';
 import {
   UpsertDocuments,
   DeleteDocuments,
-  selectDocumentEntitiesState,
+  selectDocumentEntities,
   AddDocument,
   UpdateDocument,
   DeleteDocument,
   SetCurrentDocumentId,
-  selectCurrentDocumentIdState,
+  selectCurrentDocumentId,
   DocumentEffectsDelete,
   SetSearchResultAction,
-  selectDocumentsState,
+  selectDocuments,
   UpsertDocument
 } from '../shared/state/document';
 import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../shared/state/document/const';
@@ -59,7 +59,7 @@ export class StoreCache implements ICache {
   CreateDocument(content: string, format: DocFormat) {
     return this.nextLevelCache.CreateDocument(content, format).pipe(
       tap(doc => {
-        const id = selectCurrentDocumentIdState(this.state.value);
+        const id = selectCurrentDocumentId(this.state.value);
         if (id === NEW_DOC_ID) {
           this.store.dispatch(new DocumentEffectsDelete({ id }));
         }
@@ -82,7 +82,7 @@ export class StoreCache implements ICache {
         } else {
           const array = new Array<Document>();
           metaArray.forEach(meta => {
-            const docDic = selectDocumentEntitiesState(this.state.value);
+            const docDic = selectDocumentEntities(this.state.value);
             const doc = docDic[meta.id];
 
             if (doc && doc.metaData.updateDate.getTime() === meta.updateDate.getTime()) return;
@@ -106,7 +106,7 @@ export class StoreCache implements ICache {
     return this.nextLevelCache.readDocMeta(key, checkNextCache).pipe(tap(meta => {
       if (meta.isDeleted) this.store.dispatch(new DeleteDocument({ id: meta.id }));
       else {
-        const docDic = selectDocumentEntitiesState(this.state.value);
+        const docDic = selectDocumentEntities(this.state.value);
         const doc = docDic[meta.id];
         if (!doc || doc.metaData.updateDate.getTime() < meta.updateDate.getTime()) {
           const content = doc && doc.content;
@@ -126,7 +126,7 @@ export class StoreCache implements ICache {
           this.store.dispatch(new DeleteDocument({ id: docContent.id }));
         }
 
-        const documents = selectDocumentEntitiesState(this.state.value);
+        const documents = selectDocumentEntities(this.state.value);
         const document = documents[id];
 
         if (document && document.content && document.content.sha === docContent.sha) return; // nothing changed.
@@ -197,7 +197,7 @@ export class StoreCache implements ICache {
   }
 
   search(query: string) {
-    const docs = selectDocumentsState(this.state.value);
+    const docs = selectDocuments(this.state.value);
     const fromStoreCache$ = this._storeSearchService.search(docs, query);
 
     const fromNextCache$ = this.nextLevelCache

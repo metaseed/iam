@@ -22,9 +22,9 @@ import { DocEffectsUtil } from './document.effects.util';
 import { SetCurrentDocumentId, DocumentActionType } from './document.actions';
 import { DocMeta, CACHE_FACADE_TOKEN, ICache } from 'core';
 import {
-  selectIdRangeHighState,
-  selectIdRangeLowState,
-  selectCurrentDocumentState,
+  selectIdRangeHigh,
+  selectIdRangeLow,
+  selectCurrentDocument,
   selectSearchResultState
 } from './document.selectors';
 import { NEW_DOC_ID } from './const';
@@ -58,8 +58,8 @@ export class DocumentEffects {
 
       return pipe(
         tap<DocumentEffectsReadBulkDocMeta>(action => {
-          keyRangeHigh = selectIdRangeHighState(this.state.value);
-          keyRangeLow = selectIdRangeLowState(this.state.value);
+          keyRangeHigh = selectIdRangeHigh(this.state.value);
+          keyRangeLow = selectIdRangeLow(this.state.value);
           isBelowRange = action.payload.isBelowRange;
         }),
         switchMap(action => {
@@ -102,7 +102,7 @@ export class DocumentEffects {
     DocumentEffectsActionType.Save,
     pipe(
       switchMap(action => {
-        const doc = selectCurrentDocumentState(this.state.value);
+        const doc = selectCurrentDocument(this.state.value);
         const content = action.payload.content;
         const format = action.payload.format;
         const newTitle = DocMeta.getTitle(action.payload.content);

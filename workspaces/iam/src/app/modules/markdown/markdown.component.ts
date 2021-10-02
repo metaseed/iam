@@ -14,7 +14,7 @@ import { OnDestroy } from '@angular/core';
 import { MarkdownViewerContainerComponent } from './viewer/markdown-viewer-container.component';
 import { Observable, Subject, merge } from 'rxjs';
 import {
-  selectCurrentDocumentState,
+  selectCurrentDocument,
   DocumentEffectsCreate,
   SetCurrentDocumentId,
   DocumentEffectsRead
@@ -79,7 +79,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       console.log(e)
     })
     this.markdown$ = merge(
-      this.store.select<Document>(selectCurrentDocumentState).pipe(
+      this.store.select<Document>(selectCurrentDocument).pipe(
         filter(d => d && !d.isUpdateMeta),
         map(d => {
           if (!d || !d.content) return '';

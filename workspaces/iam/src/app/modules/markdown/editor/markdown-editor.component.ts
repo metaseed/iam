@@ -21,9 +21,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import {
   DocumentEffectsSave,
-  selectCurrentDocumentIdState,
+  selectCurrentDocumentId,
   DocumentEffectsDelete,
-  selectCurrentDocumentState,
+  selectCurrentDocument,
   NEW_DOC_ID,
   selectCurrentDocStatus
 } from 'shared';
@@ -48,7 +48,7 @@ export class MarkdownEditorComponent implements ICanComponentDeactivate, AfterVi
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
 
-  markdown$ = this.store.select(selectCurrentDocumentState).pipe(
+  markdown$ = this.store.select(selectCurrentDocument).pipe(
     map(doc => {
       if (doc && doc.content) {
         return doc.content.content;
@@ -139,7 +139,7 @@ export class MarkdownEditorComponent implements ICanComponentDeactivate, AfterVi
   // implements ICanComponentDeactivate
   canDeactivate(): Observable<boolean> {
     const deleteNewDoc = () => {
-      const id = selectCurrentDocumentIdState(this.state.value);
+      const id = selectCurrentDocumentId(this.state.value);
       if (id === NEW_DOC_ID) {
         this.store.dispatch(new DocumentEffectsDelete({ id }));
       }

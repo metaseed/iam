@@ -63,7 +63,7 @@ import * as IncrementalDom from "incremental-dom";
 import { MetaPlugin } from "./markdown-it-plugins/meta";
 import { State, Store } from "@ngrx/store";
 import {
-  selectCurrentDocumentState,
+  selectCurrentDocument,
   UpdateDocument,
 } from "shared";
 
@@ -179,7 +179,7 @@ export class MarkdownViewerService {
     }
 
     if (!meta) return meta;
-    const doc = selectCurrentDocumentState(this.state.value);
+    const doc = selectCurrentDocument(this.state.value);
     if (!doc || !doc.metaData) return meta;
     if (!isDiff(meta, doc.metaData)) return doc.metaData;
     const newMeta = {

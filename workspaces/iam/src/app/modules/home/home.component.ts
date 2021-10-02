@@ -10,7 +10,7 @@ import { switchIfEmit } from '../core/operators/switchIfEmit';
 import { MSG_DISPLAY_TIMEOUT, Document } from 'core';
 
 import {
-  selectDocumentsState,
+  selectDocuments,
   ActionState,
   SharedState,
   DocumentEffectsReadBulkDocMeta
@@ -32,7 +32,7 @@ export class HomeComponent {
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
-  docs$ = this.store.select(selectDocumentsState).pipe(map(docs => docs.filter(d => d.id !== 1)));
+  docs$ = this.store.select(selectDocuments).pipe(map(docs => docs.filter(d => d.id !== 1)));
   ActionStatus = ActionState;
 
   constructor(

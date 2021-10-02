@@ -2,26 +2,26 @@ import { createSelector } from '@ngrx/store';
 import * as fromDocument from './document.reducer';
 import { selectDocumentState } from '../state';
 
-export const selectDocumentsState = createSelector(
+export const selectDocuments = createSelector(
   selectDocumentState,
   fromDocument.selectAll
 );
-export const selectDocumentEntitiesState = createSelector(
+export const selectDocumentEntities = createSelector(
   selectDocumentState,
   fromDocument.selectEntities
 );
-export const selectCurrentDocumentIdState = createSelector(
+export const selectCurrentDocumentId = createSelector(
   selectDocumentState,
   fromDocument.getCurrentDocumentId
 );
-export const selectCurrentDocumentState = createSelector(
-  selectDocumentEntitiesState,
-  selectCurrentDocumentIdState,
+export const selectCurrentDocument = createSelector(
+  selectDocumentEntities,
+  selectCurrentDocumentId,
   (entities, id) => entities[id]
 );
 
 export const selectCurrentDocStatus = createSelector(
-  selectCurrentDocumentState,
+  selectCurrentDocument,
   state => state && state.documentStatus
 );
 
@@ -40,26 +40,26 @@ export const selectCurrentDocStatus_IsSyncing = createSelector(
   status => status && status.isSyncing
 );
 
-export const selectIdRangeHighState = createSelector(
+export const selectIdRangeHigh = createSelector(
   selectDocumentState,
   fromDocument.getDocumentIdsRangeHigh
 );
 
-export const selectIdRangeLowState = createSelector(
+export const selectIdRangeLow = createSelector(
   selectDocumentState,
   fromDocument.getDocumentIdsRangeLow
 );
 
 export const getDocumentByIdSelector = (id: number) => {
   return createSelector(
-    selectDocumentEntitiesState,
+    selectDocumentEntities,
     entities => entities[id]
   );
 };
 
 export const getDocumentsByIdsSelector = (ids: Array<number>) => {
   return createSelector(
-    selectDocumentEntitiesState,
+    selectDocumentEntities,
     entities => ids.map(id => entities[id])
   );
 };

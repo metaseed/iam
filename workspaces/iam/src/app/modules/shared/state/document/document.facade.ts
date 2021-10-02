@@ -3,8 +3,8 @@ import { Store, State } from '@ngrx/store';
 import { UpdateCurrentDocumentStatus } from './document.actions';
 import {
   selectCurrentDocStatus,
-  selectCurrentDocumentState,
-  selectCurrentDocumentIdState
+  selectCurrentDocument,
+  selectCurrentDocumentId
 } from './document.selectors';
 
 @Injectable()
@@ -45,9 +45,9 @@ export class DocumentStateFacade {
     return selectCurrentDocStatus(this.state.value);
   }
   getCurrentDocumentState() {
-    return selectCurrentDocumentState(this.state.value);
+    return selectCurrentDocument(this.state.value);
   }
   getCurrentDocumentIdState() {
-    return selectCurrentDocumentIdState(this.state.value);
+    return selectCurrentDocumentId(this.state.value);
   }
 }

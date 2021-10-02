@@ -4,7 +4,7 @@ import { FileUploadComponent } from "../codemirror-editor/file-upload/file-uploa
 import { GithubStorage } from "net-storage";
 import { switchMap, tap } from "rxjs/operators";
 import { State } from "@ngrx/store";
-import { SharedState, selectCurrentDocumentIdState } from "shared";
+import { SharedState, selectCurrentDocumentId } from "shared";
 import { DOCUMENTS_FOLDER_NAME } from "app/modules/home/const";
 import { HttpEvent, HttpEventType } from "@angular/common/http";
 import { Subscription } from "rxjs";
@@ -45,7 +45,7 @@ export class FileUploadService {
               .init()
               .pipe(
                 switchMap((repo) => {
-                  const id = selectCurrentDocumentIdState(this._state.value);
+                  const id = selectCurrentDocumentId(this._state.value);
                   const date = new Date().toISOString().replace(/[-:.]/g, "");
                   const path = `${DOCUMENTS_FOLDER_NAME}/${id}/${type}/${date}-${file.name}`;
                   return repo.newFileReportProgress(path, base64, true);

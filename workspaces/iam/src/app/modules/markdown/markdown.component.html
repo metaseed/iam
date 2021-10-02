@@ -1,6 +1,6 @@
 <div class="markdown-container" [class.fullscreen]="isFullScreen">
-  <vertical-split-pane primary-component-minsize="100" secondary-component-minsize="100" [primary-component-toggled-off]="!(showEdit$ | async)"
-    [secondary-component-toggled-off]="!(showView$ | async)" local-storage-key="iam-md-split-pane" primary-component-initialratio="0.5">
+  <vertical-split-pane primary-component-minsize="100" secondary-component-minsize="100" [primary-component-toggled-off]="(showEdit$ | async) ===false"
+    [secondary-component-toggled-off]="(showView$ | async) === false" local-storage-key="iam-md-split-pane" primary-component-initialratio="0.5">
     <div #editorDiv class="split-pane-content-primary">
       <router-outlet></router-outlet>
     </div>

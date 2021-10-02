@@ -8,7 +8,7 @@ import {
   DocumentEffectsDelete,
   monitorActionStatus$,
   DocumentEffectsActionType,
-  selectDocumentsState,
+  selectDocuments,
   ActionState
 } from 'shared';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
@@ -32,7 +32,7 @@ export class DocListComponent extends SubscriptionManager implements OnInit {
   };
 
   isLoadDone$ = merge(
-    this.store.pipe(select(selectDocumentsState)),
+    this.store.pipe(select(selectDocuments)),
     monitorActionStatus$(
       this.store,
       DocumentEffectsActionType.ReadBulkDocMeta,

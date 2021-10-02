@@ -17,7 +17,7 @@ import { DocumentEffectsActionType, monitorActionStatus$, actionStatusState$ } f
 import { DocumentMode } from '../state/reducers/document';
 import * as fromMarkdown from '../state';
 
-import { takeUntil, map, observeOn, switchMap, tap } from 'rxjs/operators';
+import { map, observeOn, switchMap, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../model/markdown.model';
 import { PlatformLocation } from '@angular/common';
