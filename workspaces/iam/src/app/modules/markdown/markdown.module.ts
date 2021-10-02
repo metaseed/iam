@@ -4,7 +4,6 @@ import { MarkdownComponent } from './markdown.component';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../material/material.module';
 import { MarkdownViewerModule } from './viewer';
-import { MarkdownConfig } from './viewer/markdown.config';
 import { MarkdownRoutingModule } from './markdown-routing.module';
 import { SpinnerModule } from '@metaseed/spinner';
 import { StoreModule } from '@ngrx/store';
