@@ -24,18 +24,14 @@ import { moduleStateName } from './state';
     MarkdownRoutingModule,
     StoreModule.forFeature(moduleStateName, fromState.markdownReducers),
     SharedModule,
-    MarkdownViewerModule.forChild(),
+    MarkdownViewerModule.forFeature(),
     EffectsModule.forFeature([MarkdownEffects])
   ],
   declarations: [MarkdownComponent],
-  providers: [MarkdownService, { provide: MARKDOWN_SERVICE_TOKEN, useExisting: MarkdownService }],
+  providers: [
+    MarkdownService,
+    { provide: MARKDOWN_SERVICE_TOKEN, useExisting: MarkdownService }
+  ],
   exports: [MarkdownViewerModule, MarkdownComponent]
 })
-export class MarkdownModule {
-  static forChild(config?: MarkdownConfig): ModuleWithProviders<MarkdownModule> {
-    return {
-        ngModule: MarkdownModule,
-        providers: MarkdownViewerModule.forChild(config).providers
-    };
-}
-}
+export class MarkdownModule { }

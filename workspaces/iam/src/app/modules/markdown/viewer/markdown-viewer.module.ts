@@ -18,7 +18,6 @@ import { ViewerActiveElementService } from './services/active-element.service';
 import { Store, State } from '@ngrx/store';
 
 @NgModule({
-  declarations: [MarkdownViewerComponent, ViewerToolbarComponent, MarkdownViewerContainerComponent],
   imports: [
     CommonModule,
     SpinnerModule,
@@ -27,11 +26,12 @@ import { Store, State } from '@ngrx/store';
     RouterModule,
     ElementsModule
   ],
+  declarations: [MarkdownViewerComponent, ViewerToolbarComponent, MarkdownViewerContainerComponent],
   exports: [MarkdownViewerComponent, ViewerToolbarComponent, MarkdownViewerContainerComponent],
   providers: [TocService, ViewerActiveElementService]
 })
 export class MarkdownViewerModule {
-  static forChild(config?: MarkdownConfig): ModuleWithProviders<MarkdownViewerModule> {
+  static forFeature(config?: MarkdownConfig): ModuleWithProviders<MarkdownViewerModule> {
     return {
       ngModule: MarkdownViewerModule,
       providers: [
