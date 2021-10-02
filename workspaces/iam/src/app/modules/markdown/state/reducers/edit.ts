@@ -1,5 +1,4 @@
 import { EditActions, EditActionTypes } from '../actions/edit';
-import { ScrollEvent } from 'core';
 
 export interface State {
   save: string;

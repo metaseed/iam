@@ -2,8 +2,7 @@ import { Subject } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../../model/markdown.model';
 import * as CodeMirror from 'codemirror';
-
-export type ICodeMirrorEditor = CodeMirror.Editor;
+import { ICodeMirrorEditor } from '../model';
 
 @Injectable()
 export class MarkdownEditorService {

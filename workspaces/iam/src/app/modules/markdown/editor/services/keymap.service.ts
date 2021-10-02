@@ -8,8 +8,8 @@ import { MarkdownEditorService } from './markdown.editor.service';
 import { Store } from '@ngrx/store';
 import { DEFAULT_DOC_META } from 'shared';
 import { FileUploadService } from './file-upload.service';
-import { ICodeMirrorEditor } from './markdown.editor.service';
 import * as CodeMirror from 'codemirror';
+import { ICodeMirrorEditor } from '../model';
 
 interface ICommandConfig {
   [key: string]: {

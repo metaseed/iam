@@ -1,5 +1,4 @@
 import { DocumentActions, DocumentActionTypes } from '../actions/document';
-import { sourceLine } from '../../viewer/services/markdown-it-plugins/source-line';
 
 export enum DocumentMode {
   View,

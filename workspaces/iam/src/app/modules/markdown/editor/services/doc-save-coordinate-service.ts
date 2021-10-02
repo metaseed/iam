@@ -13,7 +13,7 @@ import {
   selectCurrentDocStatus,
 } from 'shared';
 import { backOffAfter, DocFormat, SubscriptionManager } from 'core';
-import { ICodeMirrorEditor } from '.';
+import { ICodeMirrorEditor } from '../model';
 
 @Injectable()
 export class DocSaveCoordinateService extends SubscriptionManager {
