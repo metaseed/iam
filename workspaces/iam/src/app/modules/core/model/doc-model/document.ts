@@ -9,7 +9,7 @@ export interface IDocument {
   content?: DocContent;
 }
 
-export interface IDocmentTempState {
+export interface IDocumentTempState {
   isUpdateMeta: boolean;
 }
 
@@ -17,7 +17,7 @@ export enum DocFormat {
   md = 'md'
 }
 
-export class Document implements IDocument, IDocmentTempState {
+export class Document implements IDocument, IDocumentTempState {
   constructor(
     public id: number,
     public metaData: DocMeta,
