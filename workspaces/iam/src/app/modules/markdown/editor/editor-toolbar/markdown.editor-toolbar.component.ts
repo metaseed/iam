@@ -3,7 +3,7 @@ import { MarkdownComponent } from '../../markdown.component';
 
 import { combineLatest } from 'rxjs';
 import { DocService } from 'home';
-import { MarkdownEditorService } from '..';
+import { ICodeMirrorEditor, MarkdownEditorService } from '..';
 import { DocFormat } from 'core';
 import * as fromMarkdown from '../../state';
 import { DocumentMode } from '../../state/reducers/document';
@@ -52,7 +52,7 @@ import { Router } from '@angular/router';
 })
 export class EditorToolbarComponent extends SubscriptionManager implements AfterViewInit {
   DocumentMode = DocumentMode;
-  editor: any;
+  editor: ICodeMirrorEditor;
   @ViewChild('toolbar', { read: ElementRef })
   toolbar: ElementRef;
   isScreenWide$ = this.utils.isWideScreen$;

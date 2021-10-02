@@ -3,7 +3,7 @@ import { Injectable, Inject } from '@angular/core';
 import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../../model/markdown.model';
 import * as CodeMirror from 'codemirror';
 
-export type ICodeMirrorEditor = CodeMirror.Doc & CodeMirror.Editor;
+export type ICodeMirrorEditor = CodeMirror.Editor;
 
 @Injectable()
 export class MarkdownEditorService {
