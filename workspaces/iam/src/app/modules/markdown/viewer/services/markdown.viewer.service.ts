@@ -51,7 +51,6 @@ import { ContainerPlugin } from "./markdown-it-plugins/container";
 import { MarkdownConfig } from "../markdown.config";
 import latex from "markdown-it-latex";
 import { mergeConf, DocumentRef, base64Encode } from "core";
-import { Router } from "@angular/router";
 import { MermaidPlugin } from "./markdown-it-plugins/mermaid.plugin";
 import { CopierService } from "core";
 import { Subscription, asyncScheduler } from "rxjs";
@@ -91,7 +90,6 @@ export class MarkdownViewerService {
 
   private showCodeLineNumber: boolean;
   constructor(
-    private router: Router,
     private docRef: DocumentRef,
     private utils: Utilities,
     private state: State<any>,

@@ -50,12 +50,11 @@ export class MarkdownViewerModule {
 }
 
 export function configureMarkdownService(
-  router: Router,
   document: DocumentRef,
   utils: Utilities,
   state: State<any>,
   store: Store<any>,
   config: MarkdownConfig
 ) {
-  return new MarkdownViewerService(router, document, utils, state, store, config);
+  return new MarkdownViewerService( document, utils, state, store, config);
 }

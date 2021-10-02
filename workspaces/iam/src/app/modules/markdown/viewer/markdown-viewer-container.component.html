@@ -11,7 +11,7 @@
 
 <div style="position:relative;height:100%;">
   <div class="viewer-container" #viewContainerDiv >
-    <markdown-viewer (swipeleft)="swipeLeft($event)"
-    (swiperight)="swipeRight($event)" class="markdown-viewer" [model]="markdown$ | async"></markdown-viewer>
+    <markdown-viewer (swipeleft)="swipe($event)"
+    (swiperight)="swipe($event)" class="markdown-viewer" [model]="markdown$ | async"></markdown-viewer>
   </div>
 </div>

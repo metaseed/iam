@@ -5,7 +5,8 @@ import {
   ContainerRef,
   ScrollEvent,
   IContainer,
-  DocumentRef
+  DocumentRef,
+  SubscriptionManager
 } from 'core';
 import { ViewChild } from '@angular/core';
 import * as markdown from '../state';
@@ -16,7 +17,7 @@ import { DocumentEffectsActionType, monitorActionStatus$, actionStatusState$ } f
 import { DocumentMode } from '../state/reducers/document';
 import * as fromMarkdown from '../state';
 
-import { takeUntil, map, observeOn, switchMap } from 'rxjs/operators';
+import { takeUntil, map, observeOn, switchMap, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../model/markdown.model';
 import { PlatformLocation } from '@angular/common';
@@ -27,8 +28,7 @@ import { EditItAction, selectViewState } from '../state';
   templateUrl: './markdown-viewer-container.component.html',
   styleUrls: ['./markdown-viewer-container.component.scss']
 })
-export class MarkdownViewerContainerComponent implements AfterViewInit {
-  destroy$ = new Subject();
+export class MarkdownViewerContainerComponent extends SubscriptionManager implements AfterViewInit {
   DocumentMode = DocumentMode;
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
   editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState));
@@ -46,7 +46,6 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
 
   isScrollDown$ = this.store
     .select(selectViewState)
-    .pipe(takeUntil(this.destroy$))
     .subscribe(viewState => {
       // default value is null
       const v = viewState.isScrollDown;
@@ -73,7 +72,6 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
       map(v => v.isNotStartStatus())
     )
   ).pipe(
-    takeUntil(this.destroy$),
     observeOn(asyncScheduler)
   );
 
@@ -84,7 +82,7 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
     private ngZone: NgZone,
     private _docRef: DocumentRef,
     private _location: PlatformLocation
-  ) { }
+  ) { super() }
 
   container: IContainer;
   scrollDown$: Observable<ScrollEvent>;
@@ -107,26 +105,26 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
     this.isLockScrollWithView$ = this.store.pipe(
       select(markdown.selectEditLockScrollWithViewState)
     );
-    this.isLockScrollWithView$.pipe(takeUntil(this.destroy$)).subscribe(isLock => {
-      this.isLockScrollWithView = isLock;
-    });
 
-    this.markdownService.editor$
-      .pipe(
-        takeUntil(this.destroy$),
-        switchMap(c => c.scrollDown$)
-      )
-      .subscribe(value => {
-        if (this.isLockScrollWithView && value.event) {
-          const edit_div = value.event.target as HTMLElement;
-          const v_per = edit_div.scrollTop / (edit_div.scrollHeight - edit_div.clientHeight);
-          const delta_per = v_per - v_per_last;
-          v_per_last = v_per;
-          const view_div = me.viewerContainerDiv.nativeElement;
-          const delta_v_view = (view_div.scrollHeight - view_div.clientHeight) * delta_per;
-          me.viewerContainerDiv.nativeElement.scrollTop += delta_v_view;
-        }
-      });
+    super.addSub(this.isLockScrollWithView$.pipe(tap(isLock => {
+      this.isLockScrollWithView = isLock;
+    }))).addSub(
+      this.markdownService.editor$
+        .pipe(
+          switchMap(c => c.scrollDown$),
+          tap(value => {
+            if (this.isLockScrollWithView && value.event) {
+              const edit_div = value.event.target as HTMLElement;
+              const v_per = edit_div.scrollTop / (edit_div.scrollHeight - edit_div.clientHeight);
+              const delta_per = v_per - v_per_last;
+              v_per_last = v_per;
+              const view_div = me.viewerContainerDiv.nativeElement;
+              const delta_v_view = (view_div.scrollHeight - view_div.clientHeight) * delta_per;
+              me.viewerContainerDiv.nativeElement.scrollTop += delta_v_view;
+            }
+          })
+        )
+    );
 
     (this.viewerContainerDiv.nativeElement as HTMLElement).addEventListener(
       'edit-it',
@@ -148,11 +146,8 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
     return decodeURIComponent(this._location.hash.replace(/^#/, ''));
   }
 
-  ngOnDestroy() {
-    this.destroy$.next(null);
-  }
 
-  private swipe(e) {
+  public swipe(e) {
     let element = e.target as HTMLElement;
     let lines = '';
     let i = 0;
@@ -164,11 +159,4 @@ export class MarkdownViewerContainerComponent implements AfterViewInit {
     ));
   }
 
-  swipeLeft(e) {
-    this.swipe(e);
-  }
-
-  swipeRight(e) {
-    this.swipe(e);
-  }
 }
