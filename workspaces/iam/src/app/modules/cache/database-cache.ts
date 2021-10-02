@@ -1,6 +1,6 @@
 import { Database, ModifyAction } from '../database/database-engine';
 import { Injectable } from '@angular/core';
-import { Document, DocMeta, DocContent, DocFormat } from 'core';
+import { Document, DocMeta, DocContent, DocFormat, SubscriptionManager } from 'core';
 import { Observable, from, concat, asyncScheduler } from 'rxjs';
 import {
   toArray,
@@ -11,10 +11,8 @@ import {
   filter,
   subscribeOn,
   catchError,
-  merge
 } from 'rxjs/operators';
 import { ICache, DataTables } from 'core';
-import { DocumentStateFacade } from 'shared';
 import { DatabaseCacheSaver } from './database-cache-saver';
 import { Store, State } from '@ngrx/store';
 
@@ -23,15 +21,18 @@ export interface IterableDocuments extends IterableIterator<Observable<Document>
 @Injectable({
   providedIn: 'platform'
 })
-export class DatabaseCache implements ICache {
+export class DatabaseCache  extends SubscriptionManager implements ICache {
   public nextLevelCache: ICache;
   private dbSaver: DatabaseCacheSaver;
 
-  constructor(private db: Database, private store: Store<any>, private state: State<any>) {}
+  constructor(private db: Database, private store: Store<any>, private state: State<any>) {
+    super();
+  }
 
   init(nextLevelCache: ICache) {
     this.nextLevelCache = nextLevelCache;
     this.dbSaver = new DatabaseCacheSaver(this.db, this.nextLevelCache, this.store, this.state);
+    super.addSub(this.dbSaver.autoSave$);
     return this;
   }
 

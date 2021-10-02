@@ -9,7 +9,7 @@ import {
 
 @Injectable()
 export class DocumentStateFacade {
-  constructor(private store: Store<any>, private state: State<any>) {}
+  constructor(private store: Store<any>, private state: State<any>) { }
 
   updateCurrentDocumentMemDirtyStatus(memDirty: boolean) {
     const status = selectCurrentDocStatus(this.state.value);
@@ -31,7 +31,7 @@ export class DocumentStateFacade {
   modifyCurrentDocumentSavingToNetStatus() {
     const status = selectCurrentDocStatus(this.state.value);
     this.store.dispatch(
-      new UpdateCurrentDocumentStatus({ ...status, isDbDirty: false, isSyncing: true })
+      new UpdateCurrentDocumentStatus({ ...status, isSyncing: true })
     );
   }
   modifyCurrentDocumentSavedToNetStatus() {
