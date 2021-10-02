@@ -9,6 +9,7 @@ import { MarkdownEditorService } from './markdown.editor.service';
 import { Store } from '@ngrx/store';
 import { DEFAULT_DOC_META } from 'shared';
 import { FileUploadService } from './file-upload.service';
+import { ICodeMirrorEditor } from './markdown.editor.service';
 
 interface ICommandConfig {
   [key: string]: {
@@ -23,7 +24,7 @@ interface ICommandConfig {
 @Injectable()
 export class KeyMapService {
   private static COMMANDS_CONFIG: ICommandConfig;
-  editor: CodeMirror.Editor & CodeMirror.Doc;
+  editor: ICodeMirrorEditor;
 
   constructor(
     private _editorService: MarkdownEditorService,
