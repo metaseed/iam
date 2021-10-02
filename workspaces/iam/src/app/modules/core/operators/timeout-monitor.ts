@@ -31,40 +31,40 @@ export const timeOutMonitor = <T, R>(
   stopSelector: (start: T, current: T) => boolean,
   observableOrValue?: ((start: T) => Observable<T | R>) | ((start: T) => T | R),
   scheduler: SchedulerLike = asyncScheduler
-) => (source: Observable<T>) => new Observable<T | R>(observer => {
+) => (source: Observable<T>) => new Observable<T | R>(subscriber => {
   const absoluteTimeout = isDate(due);
   const waitFor = absoluteTimeout ? +due - scheduler.now() : Math.abs(<number>due);
   let startValue: T;
-  let action: SchedulerAction<Subscriber<T | R>>;
+  let timeoutAction: SchedulerAction<Subscriber<T | R>>;
 
-  function dispatchTimeout(obs: Subscriber<T | R>): void {
+  function dispatchTimeout(subscriber: Subscriber<T | R>): void {
     if (observableOrValue) {
       const o = observableOrValue(startValue);
       if (o instanceof Observable) {
-        obs.unsubscribe();
-        const sub = o.subscribe(obs);
-        obs.add(sub);
+        subscriber.unsubscribe();
+        const sub = o.subscribe(subscriber);
+        subscriber.add(sub);
       } else {
-        obs.next(o);
+        subscriber.next(o);
       }
     } else {
-      obs.unsubscribe()
+      subscriber.unsubscribe()
     }
   }
 
   function scheduleTimeout(): void {
-    if (action) {
+    if (timeoutAction) {
       // Recycle the action if we've already scheduled one.
-      action = <SchedulerAction<Subscriber<T | R>>>(
-        action.schedule(observer, this.waitFor)
+      timeoutAction = <SchedulerAction<Subscriber<T | R>>>(
+        timeoutAction.schedule(subscriber, this.waitFor)
       );
     } else {
-      observer.add(
-        (action = <SchedulerAction<Subscriber<T | R>>>(
+      subscriber.add(
+        (timeoutAction = <SchedulerAction<Subscriber<T | R>>>(
           scheduler.schedule<Subscriber<T | R>>(
             dispatchTimeout,
             waitFor,
-            observer
+            subscriber
           )
         ))
       );
@@ -80,14 +80,14 @@ export const timeOutMonitor = <T, R>(
         }
       }
       if (stopSelector(this.startValue, value)) {
-        if (action) {
-          action.unsubscribe();
+        if (timeoutAction) {
+          timeoutAction.unsubscribe();
         }
       }
-      observer.next(value);
+      subscriber.next(value);
     },
-    error(err) { observer.error(err) },
-    complete() { observer.complete() }
+    error(err) { subscriber.error(err) },
+    complete() { subscriber.complete() }
   });
 
   return sub;

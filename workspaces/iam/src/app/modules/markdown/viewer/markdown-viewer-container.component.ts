@@ -44,30 +44,15 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
   defaultTimeoutHandler = err =>
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
 
-  isScrollDown$ = this.store
-    .select(selectViewState)
-    .subscribe(viewState => {
-      // default value is null
-      const v = viewState.isScrollDown;
-      if (v === null || !this.viewerContainerDiv) return;
-      if (v) {
-        this.viewerContainerDiv.nativeElement.scrollTop += 50;
-      } else {
-        this.viewerContainerDiv.nativeElement.scrollTop -= 50;
-      }
-    });
-
   isLoadDone$ = merge(
     monitorActionStatus$(
       this.store,
       DocumentEffectsActionType.ReadDocument,
       NET_COMMU_TIMEOUT,
-      this.defaultTimeoutHandler
-    ).pipe(
-      map(v => {
-        return v.isNotStartStatus();
-      })
-    ),
+      this.defaultTimeoutHandler)
+      .pipe(
+        map(v => v.isNotStartStatus())
+      ),
     actionStatusState$(this.store, DocumentEffectsActionType.Create).pipe(
       map(v => v.isNotStartStatus())
     )
@@ -82,7 +67,9 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
     private ngZone: NgZone,
     private _docRef: DocumentRef,
     private _location: PlatformLocation
-  ) { super() }
+  ) {
+    super();
+  }
 
   container: IContainer;
   scrollDown$: Observable<ScrollEvent>;
@@ -99,31 +86,47 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
     this.scrollDown$ = this.container.scrollDown$;
     (this.markdownService.viewer$ as Subject<IContainer>).next(this.container);
 
-    setTimeout(_ => this.scroll(), 500);
+    setTimeout(_ => this.scrollToHashIdElement(), 500);
 
     let v_per_last = 0;
     this.isLockScrollWithView$ = this.store.pipe(
       select(markdown.selectEditLockScrollWithViewState)
     );
 
-    super.addSub(this.isLockScrollWithView$.pipe(tap(isLock => {
-      this.isLockScrollWithView = isLock;
-    }))).addSub(
-      this.markdownService.editor$
-        .pipe(
-          switchMap(c => c.scrollDown$),
-          tap(value => {
-            if (this.isLockScrollWithView && value.event) {
-              const edit_div = value.event.target as HTMLElement;
-              const v_per = edit_div.scrollTop / (edit_div.scrollHeight - edit_div.clientHeight);
-              const delta_per = v_per - v_per_last;
-              v_per_last = v_per;
-              const view_div = me.viewerContainerDiv.nativeElement;
-              const delta_v_view = (view_div.scrollHeight - view_div.clientHeight) * delta_per;
-              me.viewerContainerDiv.nativeElement.scrollTop += delta_v_view;
-            }
-          })
-        )
+    super.addSub(
+      this.isLockScrollWithView$.pipe(
+        tap(isLock => {
+          this.isLockScrollWithView = isLock;
+        })
+      )
+    ).addSub(
+      this.markdownService.editor$.pipe(
+        switchMap(c => c.scrollDown$),
+        tap(value => {
+          if (this.isLockScrollWithView && value.event) {
+            const edit_div = value.event.target as HTMLElement;
+            const v_per = edit_div.scrollTop / (edit_div.scrollHeight - edit_div.clientHeight);
+            const delta_per = v_per - v_per_last;
+            v_per_last = v_per;
+            const view_div = me.viewerContainerDiv.nativeElement;
+            const delta_v_view = (view_div.scrollHeight - view_div.clientHeight) * delta_per;
+            me.viewerContainerDiv.nativeElement.scrollTop += delta_v_view;
+          }
+        })
+      )
+    ).addSub(this.store
+      .select(selectViewState)
+      .subscribe(viewState => {
+        const isScrollDown = viewState.isScrollDown;
+        // default value is null
+        if (isScrollDown === null || !this.viewerContainerDiv) return;
+
+        if (isScrollDown) {
+          (this.viewerContainerDiv.nativeElement as HTMLElement).scrollTop += 50;
+        } else {
+          (this.viewerContainerDiv.nativeElement as HTMLElement).scrollTop -= 50;
+        }
+      })
     );
 
     (this.viewerContainerDiv.nativeElement as HTMLElement).addEventListener(
@@ -133,19 +136,20 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
       }
     );
   }
-  private scroll() {
-    const hash = this.getCurrentHash();
-    if (hash) {
-      const elementWithId = this._docRef.document.getElementById(hash);
+
+  private scrollToHashIdElement() {
+    const id = this.getHashIdFromUrl();
+    if (id) {
+      const elementWithId = this._docRef.document.getElementById(id);
       if (!elementWithId) return;
       elementWithId.scrollIntoView();
       this.viewerContainerDiv.nativeElement.scrollTop = elementWithId.offsetTop - 64;
     }
   }
-  private getCurrentHash() {
+
+  private getHashIdFromUrl() {
     return decodeURIComponent(this._location.hash.replace(/^#/, ''));
   }
-
 
   public swipe(e) {
     let element = e.target as HTMLElement;
