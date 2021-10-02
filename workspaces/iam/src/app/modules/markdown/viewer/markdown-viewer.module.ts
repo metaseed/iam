@@ -42,7 +42,7 @@ export class MarkdownViewerModule {
         {
           provide: MarkdownViewerService,
           useFactory: configureMarkdownService,
-          deps: [Router, DocumentRef, Utilities, State, Store, 'MarkdownConfig']
+          deps: [DocumentRef, Utilities, State, Store, 'MarkdownConfig']
         }
       ]
     };
@@ -56,5 +56,5 @@ export function configureMarkdownService(
   store: Store<any>,
   config: MarkdownConfig
 ) {
-  return new MarkdownViewerService( document, utils, state, store, config);
+  return new MarkdownViewerService(document, utils, state, store, config);
 }

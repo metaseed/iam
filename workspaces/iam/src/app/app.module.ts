@@ -57,6 +57,12 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
       enabled: environment.production
     }),
     StoreModule.forRoot(reducers, { metaReducers }),
+    // Instrumentation must be imported after importing StoreModule (config is optional)
+    StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retains last 25 states
+      logOnly: environment.production, // Restrict extension to log-only mode
+      autoPause: true, // Pauses recording actions and state changes when the extension window is not open
+    }),
     HotkeyModule.forRoot({
       disableCheatSheet: false,
       cheatSheetHotkey: 'h',
