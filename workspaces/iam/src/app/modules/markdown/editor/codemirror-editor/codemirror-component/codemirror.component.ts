@@ -8,6 +8,7 @@ import {
   OnInit,
   AfterViewInit,
   OnDestroy,
+  ElementRef,
 } from "@angular/core";
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from "@angular/forms";
 
@@ -32,7 +33,7 @@ import "codemirror/addon/edit/matchtags";
 import "codemirror/addon/comment/comment";
 import { MarkdownEditorService } from "../../services/markdown.editor.service";
 import { Subject } from "rxjs";
-import { Utilities } from "core";
+import { SubscriptionManager, Utilities } from "core";
 import { takeUntil } from "rxjs/operators";
 /**
  * Usage : <ms-codemirror [(ngModel)]="markdown" [config]="{...}"></ms-codemirror>
@@ -48,13 +49,13 @@ import { takeUntil } from "rxjs/operators";
   ],
   template: ` <textarea #host></textarea> `,
 })
-export class CodemirrorComponent
-  implements ControlValueAccessor, OnInit, AfterViewInit, OnDestroy
-{
+export class CodemirrorComponent extends SubscriptionManager
+  implements ControlValueAccessor, OnInit, AfterViewInit, OnDestroy {
   //    var map = {"Alt-Space": function(cm){...}}
   //    editor.addKeyMap(map);
   @Input()
   config;
+
   @Output()
   change = new EventEmitter();
   @Output()
@@ -63,10 +64,9 @@ export class CodemirrorComponent
   blur = new EventEmitter();
 
   @ViewChild("host")
-  host;
+  host: ElementRef;
 
-  @Output()
-  codemirror = null;
+  codemirror: CodeMirror.EditorFromTextArea;
 
   _value = "";
   private showLineNumber;
@@ -75,10 +75,13 @@ export class CodemirrorComponent
     private editorService: MarkdownEditorService,
     private utils: Utilities
   ) {
-    this.utils.isWideScreen$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(wide => this.showLineNumber = wide);
+    super();
+    super.addSub(
+      this.utils.isWideScreen$
+        .subscribe(wide => this.showLineNumber = wide)
+    );
   }
+
   ngOnInit() {
     this.config = this.config || {
       mode: {
@@ -112,17 +115,7 @@ export class CodemirrorComponent
     };
   }
 
-  get value() {
-    return this._value;
-  }
-
-  @Input()
-  set value(v) {
-    if (v !== this._value) {
-      this._value = v;
-      this.onChange(v);
-    }
-  }
+  get value() { return this._value; }
 
   ngAfterViewInit() {
     this.codemirrorInit(this.config);
@@ -140,19 +133,20 @@ export class CodemirrorComponent
     //     }
     //   });
   }
-  destroy$ = new Subject();
-
-  ngOnDestroy() {
-    this.destroy$.next(null);
-  }
 
   codemirrorInit(config) {
     this.codemirror = CodeMirror.fromTextArea(this.host.nativeElement, config);
     this.codemirror.setValue(this._value);
 
-    this.codemirror.on("change", () =>
-      this.updateValue(this.codemirror.getValue())
-    );
+    this.codemirror.on("change", () => {
+      const value = this.codemirror.getValue();
+      if (value !== this._value) {
+        this._value = value;
+        this._onChange(value);
+        this.change.emit(value);
+        this.editorService.docContentModified$.next(value);
+      }
+    });
 
     this.codemirror.on("cursorActivity", doc => this.changeCursorStyle(doc));
 
@@ -161,6 +155,7 @@ export class CodemirrorComponent
     });
 
     this.codemirror.on("blur", () => {
+      this._onTouched();
       this.blur.emit();
     });
   }
@@ -186,15 +181,8 @@ export class CodemirrorComponent
     this.codemirror.refresh();
   }
 
-  /**
-   * Value update process
-   */
-  updateValue(value) {
-    this.value = value;
-    this.onTouched();
-    this.editorService.docContentModified$.next(value);
-    this.change.emit(value);
-  }
+  private _onChange(_) { }
+  private _onTouched() { }
 
   /**
    * Implements ControlValueAccessor
@@ -206,13 +194,16 @@ export class CodemirrorComponent
       if (value) this.editorService.docContentSet$.next(this.codemirror);
     }
   }
-  onChange(_) {}
-  onTouched() {}
+
   registerOnChange(fn) {
-    this.onChange = fn;
+    this._onChange = fn;
   }
 
   registerOnTouched(fn) {
-    this.onTouched = fn;
+    this._onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean) {
+    (<HTMLTextAreaElement>(this.host.nativeElement)).disabled = true;
   }
 }
