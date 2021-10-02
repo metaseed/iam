@@ -38,11 +38,8 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
   @ViewChild('editorDiv')
   editorDiv: ElementRef;
 
-  private destroy$ = new Subject();
-
   docMode$ = this.store.pipe(
     select(fromMarkdown.selectDocumentModeState),
-    takeUntil(this.destroy$)
   );
   showEdit$ = this.docMode$.pipe(
     map(mode => {
@@ -74,8 +71,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     @Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService,
     private _http: HttpClient,
     @Inject(APP_BASE_HREF) private baseHref,
-    private changeDetecorRef: ChangeDetectorRef,
-    private route: ActivatedRoute,
+    private changeDetectorRef: ChangeDetectorRef,
     private router: Router,
     private store: Store<fromMarkdown.MarkdownState>,
     private utils: Utilities
@@ -99,11 +95,10 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
 
   ngOnDestroy() {
     this.store.dispatch(new SetCurrentDocumentId({ id: undefined }));
-    this.destroy$.next(null);
   }
 
   ngAfterViewChecked() {
-    this.changeDetecorRef.detectChanges();
+    this.changeDetectorRef.detectChanges();
   }
 
   ngAfterViewInit() {

@@ -9,9 +9,8 @@ import { ElementsLoader } from './elements/elements-loader';
 import { getAddr } from './utils/getUri';
 import { MarkdownViewerContainerComponent } from './markdown-viewer-container.component';
 import { Inject } from '@angular/core';
-import { of, asyncScheduler, Subject } from 'rxjs';
+import { asyncScheduler, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { Document } from 'core';
 
 export const NO_ANIMATIONS = 'no-animations';
 
@@ -33,8 +32,6 @@ export class MarkdownViewerComponent {
     this.updateContent.next(value);
     this.updateToc.next(value);
   }
-
-  private destroy$ = new EventEmitter<void>();
 
   constructor(
     @Inject(MarkdownViewerContainerComponent) private parent: MarkdownViewerContainerComponent,
@@ -75,9 +72,6 @@ export class MarkdownViewerComponent {
     });
   }
 
-  ngOnDestroy() {
-    this.destroy$.emit();
-  }
 }
 
 // https://jsfiddle.net/axtn/a91fsar3/
