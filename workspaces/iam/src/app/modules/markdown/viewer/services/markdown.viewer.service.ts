@@ -59,7 +59,7 @@ import { getAddr } from "../utils/getUri";
 import { Utilities } from "core";
 import { LispPlugin } from "./markdown-it-plugins/lisp";
 import { sourceLine } from "./markdown-it-plugins/source-line";
-import MarkdonwItIncrementalDom from "markdown-it-incremental-dom";
+import MarkdownItIncrementalDom from "markdown-it-incremental-dom";
 import * as IncrementalDom from "incremental-dom";
 import { MetaPlugin } from "./markdown-it-plugins/meta";
 import { State, Store } from "@ngrx/store";
@@ -111,7 +111,7 @@ export class MarkdownViewerService {
     this.metaPlugin = new MetaPlugin(this.markdown, this.updateMeta);
     this.lispPlugin = new LispPlugin(this.markdown);
     this.markdown
-      .use(MarkdonwItIncrementalDom, IncrementalDom, {
+      .use(MarkdownItIncrementalDom, IncrementalDom, {
         incrementalizeDefaultRules: true,
       })
       .use(
