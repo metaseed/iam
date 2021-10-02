@@ -14,7 +14,7 @@ import { DocumentRef } from 'core';
 import { ElementsModule } from './elements/elements.module';
 import { TocService } from './services/toc.service';
 import { Utilities } from '../../core/utils';
-import { ActiveElementService } from './services/active-element.service';
+import { ViewerActiveElementService } from './services/active-element.service';
 import { Store, State } from '@ngrx/store';
 
 @NgModule({
@@ -28,7 +28,7 @@ import { Store, State } from '@ngrx/store';
     ElementsModule
   ],
   exports: [MarkdownViewerComponent, ViewerToolbarComponent, MarkdownViewerContainerComponent],
-  providers: [TocService, ActiveElementService]
+  providers: [TocService, ViewerActiveElementService]
 })
 export class MarkdownViewerModule {
   static forChild(config?: MarkdownConfig): ModuleWithProviders<MarkdownViewerModule> {

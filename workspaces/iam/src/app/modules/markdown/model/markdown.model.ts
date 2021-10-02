@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ScrollEvent, IContainer } from 'core';
+import { IContainer } from 'core';
 
 export const MARKDOWN_SERVICE_TOKEN = new InjectionToken('MARKDOWN_SERVICE_TOKEN');
 

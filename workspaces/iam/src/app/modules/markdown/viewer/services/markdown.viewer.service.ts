@@ -1,8 +1,5 @@
 import {
-  Injectable,
   Optional,
-  Renderer2,
-  RendererFactory2,
 } from "@angular/core";
 // import highlightjs from 'highlight.js/lib/highlight';
 import * as prismjs from "prismjs";
@@ -65,18 +62,14 @@ import { sourceLine } from "./markdown-it-plugins/source-line";
 import MarkdonwItIncrementalDom from "markdown-it-incremental-dom";
 import * as IncrementalDom from "incremental-dom";
 import { MetaPlugin } from "./markdown-it-plugins/meta";
-import { Document } from "core";
-import { MarkdownState } from "../../state";
 import { State, Store } from "@ngrx/store";
 import {
   selectCurrentDocumentState,
-  UpsertDocument,
   UpdateDocument,
 } from "shared";
 
 const enableIDOM = true;
 
-// @Injectable()
 export class MarkdownViewerService {
   private defaultConfig: MarkdownConfig = {
     markdownIt: {
@@ -196,7 +189,7 @@ export class MarkdownViewerService {
       ...meta,
     };
     asyncScheduler.schedule(
-      (m) => {
+      m => {
         this.store.dispatch(
           new UpdateDocument({
             collectionDocument: {
