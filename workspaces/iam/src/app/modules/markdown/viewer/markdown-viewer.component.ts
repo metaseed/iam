@@ -65,9 +65,9 @@ export class MarkdownViewerComponent extends SubscriptionManager {
         debounceTime(3000, asyncScheduler),
         tap(_ => {
           const docId = getAddr(this.documentRef.document.location.href);
-          const targetElement = this.parent.viewerContainerDiv.nativeElement;
+          const viewerContainerDiv = this.parent.viewerContainerDiv.nativeElement;
           let addTitleAndToc = () => {
-            this.tocService.genToc(targetElement, docId);
+            this.tocService.genToc(viewerContainerDiv, docId);
           };
           if (MarkdownViewerComponent.config_addTocByDefault) {
             addTitleAndToc = TocComponent.prepareTitleAndToc(
