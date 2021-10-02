@@ -1,7 +1,7 @@
-import { Component, OnInit, AfterViewInit, ViewChild, Inject, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { MarkdownComponent } from '../../markdown.component';
 
-import { combineLatest, Subject } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { DocService } from 'home';
 import { MarkdownEditorService } from '..';
 import { DocFormat } from 'core';
@@ -10,11 +10,10 @@ import { DocumentMode } from '../../state/reducers/document';
 import { Store, State } from '@ngrx/store';
 import * as doc from '../../state/actions/document';
 import * as edit from '../../state/actions/edit';
-import * as CodeMirror from 'codemirror';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';
-import { map, startWith, takeUntil, tap } from 'rxjs/operators';
-import { Utilities } from '../../../core/utils';
+import { map, startWith, tap } from 'rxjs/operators';
+import { SubscriptionManager, Utilities } from '../../../core/utils';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import {
   DocumentEffectsSave,
@@ -51,14 +50,11 @@ import { Router } from '@angular/router';
     ])
   ]
 })
-export class EditorToolbarComponent implements AfterViewInit {
+export class EditorToolbarComponent extends SubscriptionManager implements AfterViewInit {
   DocumentMode = DocumentMode;
   editor: any;
   @ViewChild('toolbar', { read: ElementRef })
   toolbar: ElementRef;
-
-  private _destroy$ = new Subject();
-
   isScreenWide$ = this.utils.isWideScreen$;
   isMemDirty$ = this.store
     .select(selectCurrentDocStatus_IsMemDirty)
@@ -71,13 +67,13 @@ export class EditorToolbarComponent implements AfterViewInit {
     .pipe(tap(a => console.log('++dbDirty: ' + a)), startWith(false));
   isSyncing$ = this.store
     .select(selectCurrentDocStatus_IsSyncing)
-    .pipe(tap(a => console.log('++syncing: ' + a)),startWith(false));
+    .pipe(tap(a => console.log('++syncing: ' + a)), startWith(false));
 
   dirtyInfo$ = combineLatest([this.isMemDirty$, this.isDbDirty$, this.isSyncing$]).pipe(
     map(([memDirty, dbDirty, sync]) => {
-      if(memDirty) { return 'modification not saved'}
-      else if(dbDirty) { return 'modification not sync with server'}
-      else if(sync) { return 'syncing modification with server'}
+      if (memDirty) { return 'modification not saved' }
+      else if (dbDirty) { return 'modification not sync with server' }
+      else if (sync) { return 'syncing modification with server' }
       else return '';
     })
   )
@@ -95,18 +91,18 @@ export class EditorToolbarComponent implements AfterViewInit {
     public docSaver: DocSaveCoordinateService,
     private _breakpointObserver: BreakpointObserver
   ) {
-    this._breakpointObserver
-      .observe(['(orientation: portrait)', '(orientation: landscape)'])
-      .pipe(takeUntil(this._destroy$))
-      .subscribe(_ => { });
+    super();
+    super.addSub(
+      this._breakpointObserver.observe(['(orientation: portrait)', '(orientation: landscape)'])
+    ).addSub(
+      this._editorService.docEditorLoaded$.subscribe(editor => {
+        this.editor = editor;
+      })
+    );
 
-    this._editorService.docEditorLoaded$.pipe(takeUntil(this._destroy$)).subscribe(editor => {
-      this.editor = editor;
-    });
-
-    (<any>CodeMirror).commands.save = this.save;
-    const cmds = (<any>CodeMirror).commands;
-    cmds.scrollLineUp = function (cm) {
+    const commands = this._editorService.commands;
+    commands.save = this.save;
+    commands.scrollLineUp = function (cm) {
       const info = cm.getScrollInfo();
       if (!cm.somethingSelected()) {
         const visibleBottomLine = cm.lineAtHeight(info.top + info.clientHeight, 'local');
@@ -115,7 +111,7 @@ export class EditorToolbarComponent implements AfterViewInit {
       cm.scrollTo(null, info.top - cm.defaultTextHeight());
     };
 
-    cmds.scrollLineDown = function (cm) {
+    commands.scrollLineDown = function (cm) {
       const info = cm.getScrollInfo();
       if (!cm.somethingSelected()) {
         const visibleTopLine = cm.lineAtHeight(info.top, 'local') + 1;
@@ -125,9 +121,6 @@ export class EditorToolbarComponent implements AfterViewInit {
     };
   }
 
-  ngDestroy() {
-    this._destroy$.next(null);
-  }
 
   back(e) {
     // this.location.back();

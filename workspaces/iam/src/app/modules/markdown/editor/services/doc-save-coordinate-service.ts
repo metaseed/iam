@@ -13,6 +13,7 @@ import {
   selectCurrentDocStatus,
 } from 'shared';
 import { backOffAfter, DocFormat, SubscriptionManager } from 'core';
+import { ICodeMirrorEditor } from '.';
 
 @Injectable()
 export class DocSaveCoordinateService extends SubscriptionManager {
@@ -43,7 +44,7 @@ export class DocSaveCoordinateService extends SubscriptionManager {
             backOffAfter(5, 1000)
           ))
       .addSub(
-        this.editorService.docContentSet$.subscribe((editor: CodeMirror.Editor) => {
+        this.editorService.docContentSet$.subscribe((editor: ICodeMirrorEditor) => {
           this.docLoadedHandler(editor);
         }))
       .addSub(
