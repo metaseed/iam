@@ -5,7 +5,7 @@
       Subpages({{ids.length}})
     </mat-panel-title>
     <mat-panel-description>
-      Subpages of this document
+      Subpages of document
     </mat-panel-description>
   </mat-expansion-panel-header>
   <div class="card-container">
@@ -15,9 +15,11 @@
 
       <p>{{meta.summary}}</p>
       <p class="meta-version-date card-footer">
+        <button class="delete-button" mat-button (click)="showDelete=true">
+          <mat-icon>delete_forever</mat-icon>
+        </button>
         <span class="meta-version"> v{{meta.version}} </span>
-        <span style="margin-left:10px" class="meta-date">{{meta.createDate?.toLocaleDateString()}} - </span>
-        <span class="meta-date"> {{meta.updateDate.toLocaleDateString()}}</span>
+        <span style="margin-left:10px" class="meta-date">{{meta.createDate?.toLocaleDateString()}} - {{meta.updateDate.toLocaleDateString()}}</span>
       </p>
     </div>
   </div>

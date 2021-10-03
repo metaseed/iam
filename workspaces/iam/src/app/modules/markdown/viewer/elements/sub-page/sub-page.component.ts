@@ -3,7 +3,7 @@ import { DocMeta } from 'core';
 import { Router, NavigationExtras } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { getDocumentsByIdsSelector, DocumentEffectsReadDocMetas } from 'shared';
-import { map, tap, filter } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -21,6 +21,7 @@ export class SubPageComponent {
   public onPanelOpen = () => {
     this.panelOpenState = true;
     if (this.hasOpened) return;
+
     this.hasOpened = true;
     this.pageList$ = this.store.pipe(
       select(getDocumentsByIdsSelector(this.ids)),
@@ -42,6 +43,17 @@ export class SubPageComponent {
       this.onPanelOpen();
     }
   }
+
+  private sourceLineStart:Number;
+  private sourceLineEnd: Number;
+  // eslint-disable-next-line @angular-eslint/no-input-rename
+  @Input("data-source-lines")
+  public set sourceLines(value) {
+    const match = /\[\s*(\d+)\s*,\s*(\d+)\s*\]/.exec(value)
+    this.sourceLineStart = +match[1];
+    this.sourceLineEnd = + match[2];
+  }
+  showDelete
 
   public pageList$: Observable<DocMeta[]>
 

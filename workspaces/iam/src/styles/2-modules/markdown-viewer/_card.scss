@@ -18,6 +18,15 @@
         max-width: none;
       }
 
+      .delete-button {
+        color: lightblue;
+        visibility: hidden;
+      }
+      &:hover {
+        .delete-button {
+          visibility: visible;
+        }
+      }
       &:hover {
         text-decoration: none;
         background-color: rgba($blue, 0.01);
@@ -58,10 +67,14 @@
       }
 
       .card-footer {
+        height: 4rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         bottom: 0;
         border-top: 0.5px solid $lightgray;
         box-sizing: border-box;
-        @include line-height(48);
+        @include line-height(2rem);
         left: 0;
         position: absolute;
         right: 0;
