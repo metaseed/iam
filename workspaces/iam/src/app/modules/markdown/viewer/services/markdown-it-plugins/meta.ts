@@ -16,7 +16,7 @@ export class DocYamlMeta {
 }
 
 export class MetaPlugin {
-  constructor(private markdownIt: MarkdownIt, private updateMeta: (object) => DocYamlMeta) {
+  constructor(private markdownIt: MarkdownIt, private updateMeta: (obj) => DocYamlMeta) {
     this.markdownIt.use(this.metaPlugin);
   }
 
@@ -26,7 +26,8 @@ export class MetaPlugin {
     md.renderer.rules.meta_close = (tokens, index) => '</articleinfo>';
     md.renderer.rules.meta_body = (tokens, index) => {
       try {
-        const meta = tokens[index].content as unknown as DocYamlMeta;
+        const token = tokens[index];
+        const meta = token.content as unknown as DocYamlMeta;
         let content = '';
         if (meta.author) {
           let link;
@@ -72,7 +73,9 @@ export class MetaPlugin {
         // tags
         const tag = meta.tags || meta.tag;
         if (tag) {
-          content += '<ul class="meta-tags">';
+          const tagsStart = token.attrGet('tagsStart');
+          const tagsEnd = token.attrGet('tagsEnd');
+          content += `<ul data-source-lines="[${tagsStart}, ${tagsEnd}]" tags="${tag}"  class="meta-tags">`;
           tag.forEach(t => {
             content += '<li class="meta-tag">' + t + '</li>';
           });
@@ -107,11 +110,21 @@ export class MetaPlugin {
       return false;
     }
     const data = [];
+    let subPagesLineStart;
+    let subPagesLineEnd;
+    let tagsStart;
+    let tagsEnd;
     let line = startLine;
     let findEnd = false;
     while (line < endLine) {
       line++;
       const str = this.getLine(state, line);
+      if (/subPage\s*:\s*\[/.test(str)) subPagesLineStart = line;
+      if (subPagesLineStart && !subPagesLineEnd && /.*\]/.test(str)) subPagesLineEnd = line + 1;
+
+      if (/tag\s*:\s*\[/.test(str)) tagsStart= line;
+      if (tagsStart&& !tagsEnd && /.*\]/.test(str)) tagsEnd = line + 1;
+
       if (str.match(/^---\s*$/)) {
         findEnd = true;
         break;
@@ -125,14 +138,18 @@ export class MetaPlugin {
     if (!findEnd) return;
 
     try {
-      const d = YAML.load(data.join('\n'), { json: true });
+      const rawYAML = YAML.load(data.join('\n'), { json: true });
 
       state.line = line + 1;
-      if (d) {
+      if (rawYAML) {
         let token = state.push('meta_open', 'meta', 1);
         token.markup = '---';
         token = state.push('meta_body', 'meta-body', 0);
-        const meta = this.updateMeta(d);
+        const meta = this.updateMeta(rawYAML);
+        if(tagsStart && tagsEnd) {
+          token.attrSet('tagsStart', tagsStart);
+          token.attrSet('tagsEnd', tagsEnd);
+        }
         token.content = <any>meta;
         if (meta?.enable.includes('toc')) {
           // put web component in html block; should not render it directly.
@@ -144,7 +161,7 @@ export class MetaPlugin {
           // put web component in html block; should not render it directly.
           token = state.push('html_block', '', 0);
           const pages = meta.subPage.join(' ');
-          token.content = `<i-subpage pages="${pages}"></i-subpage>`
+          token.content = `<i-subpage data-source-lines="[${subPagesLineStart}, ${subPagesLineEnd}]" pages="${pages}"></i-subpage>`
         }
         token = state.push('meta_close', 'meta', -1);
         token.markup = '---';

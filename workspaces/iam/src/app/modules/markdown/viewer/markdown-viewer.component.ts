@@ -62,7 +62,7 @@ export class MarkdownViewerComponent extends SubscriptionManager {
       )
     ).addSub(
       this.updateToc$.pipe(
-        debounceTime(3000, asyncScheduler),
+        debounceTime(2000, asyncScheduler),
         tap(_ => {
           const docId = getAddr(this.documentRef.document.location.href);
           const viewerContainerDiv = this.parent.viewerContainerDiv.nativeElement;

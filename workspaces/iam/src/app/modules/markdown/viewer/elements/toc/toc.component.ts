@@ -7,10 +7,10 @@ import {
   QueryList,
   ViewChildren
 } from '@angular/core';
-import { startWith, takeUntil /*, subscribeOn */, subscribeOn } from 'rxjs/operators';
-import { Subject, combineLatest, asapScheduler } from 'rxjs'; // rxjs 6
+import { startWith, subscribeOn, tap } from 'rxjs/operators';
+import { combineLatest, asapScheduler } from 'rxjs'; // rxjs 6
 import { TocItem, TocService } from '../../services/toc.service';
-import { ScrollService } from 'core';
+import { ScrollService, SubscriptionManager } from 'core';
 import { Title } from '@angular/platform-browser';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Breakpoints } from '@angular/cdk/layout';
@@ -22,11 +22,11 @@ type TocType = 'None' | 'Floating' | 'EmbeddedSimple' | 'EmbeddedExpandable';
 @Component({
   selector: 'i-toc',
   host: {
-    '(document:click)': 'onClick($event)'
+    '(document:click)': 'onDocumentClick($event)'
   },
   templateUrl: 'toc.component.html'
 })
-export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
+export class TocComponent extends SubscriptionManager implements OnInit, AfterViewInit, OnDestroy {
   activeIndex: number | null = null;
   type: TocType = 'None';
 
@@ -36,7 +36,6 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
   isEmbedded = false;
   @ViewChildren('tocItem')
   private items: QueryList<ElementRef>;
-  private onDestroy = new Subject();
   public primaryMax = 4;
   tocList: TocItem[];
 
@@ -46,13 +45,13 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
     tocService: TocService,
     titleService: Title
   ): () => void {
-    const titleEl = targetElem.querySelector('h1');
-    const needsToc = !!titleEl && !/no-?toc/i.test(titleEl.className);
+    const h1Title = targetElem.querySelector('h1');
+    const needsToc = !!h1Title && !/no-?toc/i.test(h1Title.className);
     const embeddedToc = targetElem.querySelector('i-toc.embedded');
 
     if (needsToc && !embeddedToc) {
       // Add an embedded ToC if it's needed and there isn't one in the content already.
-      titleEl!.insertAdjacentHTML('afterend', '<i-toc></i-toc>');
+      h1Title.insertAdjacentHTML('afterend', '<i-toc></i-toc>');
     } else if (!needsToc && embeddedToc) {
       // Remove the embedded Toc if it's there and not needed.
       embeddedToc.remove();
@@ -64,26 +63,27 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // Only create ToC for docs with an `<h1>` heading.
       // If you don't want a ToC, add "no-toc" class to `<h1>`.
-      if (titleEl) {
-        title = typeof titleEl.innerText === 'string' ? titleEl.innerText : titleEl.textContent;
+      if (h1Title) {
+        title = typeof h1Title.innerText === 'string' ? h1Title.innerText : h1Title.textContent;
 
         if (needsToc) {
           tocService.genToc(targetElem, docId);
         }
       }
 
-      // titleService.setTitle(title ? `Angular - ${title}` : "Angular");
+      titleService.setTitle(title ? `I'm - ${title}` : "I'm");
     };
   }
 
   constructor(
-    private bm: BreakpointObserver,
+    breakpointObserver: BreakpointObserver,
     private scrollService: ScrollService,
     public tocService: TocService,
     private elementRef: ElementRef,
     private location: Location
   ) {
-    bm.observe([Breakpoints.Small, Breakpoints.XSmall]).subscribe((state: BreakpointState) => {
+    super();
+    breakpointObserver.observe([Breakpoints.Small, Breakpoints.XSmall]).subscribe((state: BreakpointState) => {
       if (state.matches) {
         this.show = false;
         this.isSmallScreen = true;
@@ -96,24 +96,23 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.tocService.tocList
-      .pipe(
-        takeUntil(this.onDestroy),
-        subscribeOn(asapScheduler)
+    super.addSub(
+      this.tocService.tocList.pipe(
+        subscribeOn(asapScheduler),
+        tap(tocList => {
+          const itemCount = count(tocList, item => item.level !== 'h1');
+          this.type =
+            itemCount > 0
+              ? this.isEmbedded
+                ? itemCount > this.primaryMax
+                  ? 'EmbeddedExpandable'
+                  : 'EmbeddedSimple'
+                : 'Floating'
+              : 'None';
+          this.tocList = tocList;
+        })
       )
-      .subscribe(tocList => {
-        const itemCount = count(tocList, item => item.level !== 'h1');
-
-        this.type =
-          itemCount > 0
-            ? this.isEmbedded
-              ? itemCount > this.primaryMax
-                ? 'EmbeddedExpandable'
-                : 'EmbeddedSimple'
-              : 'Floating'
-            : 'None';
-        this.tocList = tocList;
-      });
+    );
   }
 
   ngAfterViewInit() {
@@ -121,34 +120,29 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
       // We use the `asap` scheduler because updates to `activeItemIndex$` are triggered by DOM changes,
       // which, in turn, are caused by the rendering that happened due to a ChangeDetection.
       // Without asap, we would be updating the model while still in a ChangeDetection handler, which is disallowed by Angular.
-      combineLatest(
-        this.tocService.activeItemIndex$.pipe(subscribeOn(asapScheduler)),
-        this.items.changes.pipe(startWith(this.items))
-      )
-        .pipe(takeUntil(this.onDestroy))
-        .subscribe(([index, items]: [number,  QueryList<ElementRef<any>>]) => {
-          this.activeIndex = index;
-          if (index === null || index === undefined || index >= items.length) {
-            return;
-          }
+      super.addSub(
+        combineLatest([
+          this.tocService.activeItemIndex$.pipe(subscribeOn(asapScheduler)),
+          this.items.changes.pipe(startWith(this.items))])
+          .subscribe(([index, items]: [number, QueryList<ElementRef<any>>]) => {
+            this.activeIndex = index;
+            if (index === null || index === undefined || index >= items.length) {
+              return;
+            }
 
-          const e: HTMLElement = items.toArray()[index].nativeElement;
-          const p = e.offsetParent;
-          if (!p) return;
-          const eRect = e.getBoundingClientRect();
-          const pRect = p.getBoundingClientRect();
+            const e: HTMLElement = items.toArray()[index].nativeElement;
+            const p = e.offsetParent;
+            if (!p) return;
+            const eRect = e.getBoundingClientRect();
+            const pRect = p.getBoundingClientRect();
 
-          const isInViewport = eRect.top >= pRect.top && eRect.bottom <= pRect.bottom;
+            const isInViewport = eRect.top >= pRect.top && eRect.bottom <= pRect.bottom;
 
-          if (!isInViewport) {
-            p.scrollTop += eRect.top - (pRect.top + p.clientHeight / 2);
-          }
-        });
+            if (!isInViewport) {
+              p.scrollTop += eRect.top - (pRect.top + p.clientHeight / 2);
+            }
+          }));
     }
-  }
-
-  ngOnDestroy() {
-    this.onDestroy.next(null);
   }
 
   toggle(canScroll = true) {
@@ -157,11 +151,13 @@ export class TocComponent implements OnInit, AfterViewInit, OnDestroy {
       this.toTop();
     }
   }
-  onClick(event) {
+
+  onDocumentClick(event) {
     if (!this.elementRef.nativeElement.contains(event.target)) {
       this.show = false;
     }
   }
+
   navigate(addr) {
     if (this.isSmallScreen) this.show = false;
   }

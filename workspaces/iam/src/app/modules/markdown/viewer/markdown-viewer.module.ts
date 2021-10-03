@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { MarkdownViewerComponent } from './markdown-viewer.component';
 import { MarkdownConfig } from './markdown.config';
 import { MarkdownViewerService } from './services/markdown.viewer.service';
-import { Router } from '@angular/router';
 import { SharedModule } from 'shared';
 import { ViewerToolbarComponent } from './viewer-toolbar/viewer-toolbar.component';
 import { MaterialModule } from 'material';
