@@ -19,10 +19,14 @@
       }
 
       .delete-button {
+        &:hover{
+          color: #f008;
+        }
         color: lightblue;
         visibility: hidden;
       }
       &:hover {
+        cursor: pointer;
         .delete-button {
           visibility: visible;
         }
