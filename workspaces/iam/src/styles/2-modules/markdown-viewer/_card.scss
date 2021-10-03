@@ -18,6 +18,11 @@
         max-width: none;
       }
 
+      .card-body {
+        &:hover{
+          cursor: pointer;
+        }
+      }
       .delete-button {
         &:hover{
           color: #f008;
@@ -26,7 +31,7 @@
         visibility: hidden;
       }
       &:hover {
-        cursor: pointer;
+
         .delete-button {
           visibility: visible;
         }

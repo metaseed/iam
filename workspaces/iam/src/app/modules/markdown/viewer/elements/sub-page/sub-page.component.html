@@ -1,25 +1,29 @@
-<mat-expansion-panel (opened)="onPanelOpen()" style="background-color:transparent;box-shadow: none;"
-  (closed)="panelOpenState = false">
+<mat-expansion-panel
+  (opened)="onPanelOpen()"
+  style="background-color: transparent; box-shadow: none"
+  (closed)="panelOpenState = false"
+>
   <mat-expansion-panel-header>
-    <mat-panel-title>
-      Subpages({{ids.length}})
-    </mat-panel-title>
-    <mat-panel-description>
-      Subpages of document
-    </mat-panel-description>
+    <mat-panel-title> Subpages({{ ids.length }}) </mat-panel-title>
+    <mat-panel-description> Subpages of document </mat-panel-description>
   </mat-expansion-panel-header>
   <div class="card-container">
-    <div *ngFor="let meta of pageList$|async" (click)="onShow(meta)" class="docs-card">
-      <section>{{meta.title}}</section>
-      <span class="doc-id">{{meta.id}}</span>
+    <div *ngFor="let meta of pageList$ | async" class="docs-card">
+      <div class="card-body" (click)="onShow(meta)">
+        <section>{{ meta.title }}</section>
+        <span class="doc-id">{{ meta.id }}</span>
 
-      <p>{{meta.summary}}</p>
+        <p>{{ meta.summary }}</p>
+      </div>
       <p class="meta-version-date card-footer">
-        <button class="delete-button" mat-button (click)="showDelete=true">
+        <button class="delete-button" mat-button (click)="showDelete = true">
           <mat-icon>delete_forever</mat-icon>
         </button>
-        <span class="meta-version"> v{{meta.version}} </span>
-        <span style="margin-left:10px" class="meta-date">{{meta.createDate?.toLocaleDateString()}} - {{meta.updateDate.toLocaleDateString()}}</span>
+        <span class="meta-version"> v{{ meta.version }} </span>
+        <span style="margin-left: 10px" class="meta-date"
+          >{{ meta.createDate?.toLocaleDateString() }} -
+          {{ meta.updateDate.toLocaleDateString() }}</span
+        >
       </p>
     </div>
   </div>
