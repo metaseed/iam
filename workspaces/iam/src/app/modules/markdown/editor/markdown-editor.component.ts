@@ -30,7 +30,6 @@ import {
 import { IMarkdownContainerService, MARKDOWN_CONTAINER_SERVICE_TOKEN } from '../model/markdown.model';
 import { IContainer, ContainerRef, ICanComponentDeactivate } from 'core';
 import { selectDocumentEditItState, EditMode, ViewMode } from '../state';
-import { KeyMapService } from './services';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 
 @Component({
