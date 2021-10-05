@@ -23,9 +23,9 @@ import {
   DocumentEffectsSave,
   selectCurrentDocumentId,
   DocumentEffectsDelete,
-  selectCurrentDocument,
   NEW_DOC_ID,
-  selectCurrentDocStatus
+  selectCurrentDocStatus,
+  selectCurrentDocumentContentString
 } from 'shared';
 import { IMarkdownContainerService, MARKDOWN_CONTAINER_SERVICE_TOKEN } from '../model/markdown.model';
 import { IContainer, ContainerRef, ICanComponentDeactivate } from 'core';
@@ -48,15 +48,7 @@ export class MarkdownEditorComponent implements ICanComponentDeactivate, AfterVi
 
   docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
 
-  markdown$ = this.store.select(selectCurrentDocument).pipe(
-    map(doc => {
-      if (doc && doc.content) {
-        return doc.content.content;
-      } else {
-        return '';
-      }
-    })
-  );
+  markdown$ = this.store.select(selectCurrentDocumentContentString);
 
   // could not use takeuntil, otherwise the view is not updated when edit,
   // when reconstruct this component

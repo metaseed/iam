@@ -25,7 +25,7 @@ export const selectCurrentDocumentContent = createSelector(
 )
 export const selectCurrentDocumentContentString = createSelector(
   selectCurrentDocumentContent,
-  content => content?.content
+  content => content?.content ?? ''
 )
 export const selectCurrentDocStatus = createSelector(
   selectCurrentDocument,
