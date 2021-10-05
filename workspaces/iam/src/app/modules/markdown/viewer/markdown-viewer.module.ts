@@ -39,21 +39,11 @@ export class MarkdownViewerModule {
           useValue: config
         },
         {
-          provide: MarkdownViewerService,
-          useFactory: configureMarkdownService,
-          deps: [DocumentRef, Utilities, State, Store, 'MarkdownConfig']
+          provide: MarkdownViewerService
         }
       ]
     };
   }
 }
 
-export function configureMarkdownService(
-  document: DocumentRef,
-  utils: Utilities,
-  state: State<any>,
-  store: Store<any>,
-  config: MarkdownConfig
-) {
-  return new MarkdownViewerService(document, utils, state, store, config);
-}
+

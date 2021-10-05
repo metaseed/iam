@@ -1,4 +1,6 @@
 import {
+  Inject,
+  Injectable,
   Optional,
 } from "@angular/core";
 // import highlightjs from 'highlight.js/lib/highlight';
@@ -69,6 +71,7 @@ import {
 
 const enableIDOM = true;
 
+@Injectable()
 export class MarkdownViewerService {
   private defaultConfig: MarkdownConfig = {
     markdownIt: {
@@ -94,7 +97,7 @@ export class MarkdownViewerService {
     private utils: Utilities,
     private state: State<any>,
     private store: Store<any>,
-    @Optional() config?: MarkdownConfig
+    @Inject('MarkdownConfig') @Optional() config?: MarkdownConfig
   ) {
     this.utils.isWideScreen$.subscribe(
       (wide) => (this.showCodeLineNumber = wide)
