@@ -72,7 +72,7 @@
     "markdown-it-table-of-contents": "^0.5.2",
     "markdown-it-task-lists": "^2.1.1",
     "markdown-it-video": "^0.6.3",
-    "mermaid": "^8.13.2",
+    "mermaid": "^8.2.3",
     "mousetrap": "^1.6.5",
     "pica": "^7.1.0",
     "prismjs": "^1.24.1",
