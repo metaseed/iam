@@ -1,6 +1,6 @@
 import { Subject } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
-import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../../model/markdown.model';
+import { MARKDOWN_CONTAINER_SERVICE_TOKEN, IMarkdownContainerService } from '../../model/markdown.model';
 import * as CodeMirror from 'codemirror';
 import { ICodeMirrorEditor } from '../model';
 
@@ -8,7 +8,7 @@ import { ICodeMirrorEditor } from '../model';
 export class MarkdownEditorService {
   private editor: ICodeMirrorEditor;
 
-  constructor(@Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService) {
+  constructor(@Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) public markdownService: IMarkdownContainerService) {
     this.docEditorLoaded$.subscribe(e => this.editor = e);
   }
 

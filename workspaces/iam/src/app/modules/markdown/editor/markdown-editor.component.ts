@@ -27,7 +27,7 @@ import {
   NEW_DOC_ID,
   selectCurrentDocStatus
 } from 'shared';
-import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from '../model/markdown.model';
+import { IMarkdownContainerService, MARKDOWN_CONTAINER_SERVICE_TOKEN } from '../model/markdown.model';
 import { IContainer, ContainerRef, ICanComponentDeactivate } from 'core';
 import { selectDocumentEditItState, EditMode, ViewMode } from '../state';
 import { KeyMapService } from './services';
@@ -66,7 +66,7 @@ export class MarkdownEditorComponent implements ICanComponentDeactivate, AfterVi
     private _elementRef: ElementRef,
     private state: StoreState<fromMarkdown.MarkdownState>,
     private dialog: MatDialog,
-    @Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService,
+    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) public markdownService: IMarkdownContainerService,
     @Inject(HAMMER_GESTURE_CONFIG) private gestureConfig: HammerGestureConfig,
     private editorService: MarkdownEditorService,
     private docSaveCoordinatorService: DocSaveCoordinateService,

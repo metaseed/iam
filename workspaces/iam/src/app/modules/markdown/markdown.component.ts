@@ -19,9 +19,9 @@ import {
   SetCurrentDocumentId,
   DocumentEffectsRead
 } from 'shared';
-import { Document } from 'core';
+import {Document} from 'core';
 import { Utilities } from '../core/utils';
-import { IMarkdownService, MARKDOWN_SERVICE_TOKEN } from './model/markdown.model';
+import { IMarkdownContainerService, MARKDOWN_CONTAINER_SERVICE_TOKEN } from './model/markdown.model';
 
 @Component({
   selector: 'ms-markdown',
@@ -65,7 +65,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
   markdown$: Observable<string>;
 
   constructor(
-    @Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService,
+    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) public markdownService: IMarkdownContainerService,
     private _http: HttpClient,
     @Inject(APP_BASE_HREF) private baseHref,
     private changeDetectorRef: ChangeDetectorRef,
@@ -80,14 +80,15 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     })
     this.markdown$ = merge(
       this.store.select<Document>(selectCurrentDocument).pipe(
-        filter(d => d && !d.isUpdateMeta),
-        map(d => {
-          if (!d || !d.content) return '';
-          return d.content.content;
+        filter(doc => doc && !doc.isUpdateMeta),
+        map(doc => {
+          if (!doc.content) return '';
+          return doc.content.content;
         })
       ),
       this.markdownService.editorContentChanged$
     ).pipe(backOffAfter<string>(80, 1000));
+
   }
 
   ngOnDestroy() {

@@ -19,7 +19,7 @@ import * as fromMarkdown from '../state';
 
 import { map, observeOn, switchMap, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MARKDOWN_SERVICE_TOKEN, IMarkdownService } from '../model/markdown.model';
+import { MARKDOWN_CONTAINER_SERVICE_TOKEN, IMarkdownContainerService } from '../model/markdown.model';
 import { PlatformLocation } from '@angular/common';
 import { EditItAction, selectViewState } from '../state';
 
@@ -63,7 +63,7 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
   constructor(
     private store: Store<any>,
     private snackBar: MatSnackBar,
-    @Inject(MARKDOWN_SERVICE_TOKEN) public markdownService: IMarkdownService,
+    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) public markdownService: IMarkdownContainerService,
     private ngZone: NgZone,
     private _docRef: DocumentRef,
     private _location: PlatformLocation
