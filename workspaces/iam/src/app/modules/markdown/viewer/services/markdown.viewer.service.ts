@@ -195,7 +195,7 @@ export class MarkdownViewerService {
           new UpdateDocument({
             collectionDocument: {
               id: doc.id,
-              changes: { ...doc, ...{ metaData: m, isUpdateMeta: true } },
+              changes: { metaData: {...doc.metaData, ...m} },
             },
           })
         );

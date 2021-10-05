@@ -1,5 +1,4 @@
 import { DocMeta } from './doc-meta';
-import { Issue, Content } from 'net-storage';
 import { DocContent } from './doc-content';
 import { DocumentStatus } from './doc-status';
 
@@ -10,7 +9,6 @@ export interface IDocument {
 }
 
 export interface IDocumentTempState {
-  isUpdateMeta: boolean;
 }
 
 export enum DocFormat {
@@ -22,7 +20,6 @@ export class Document implements IDocument, IDocumentTempState {
     public id: number,
     public metaData: DocMeta,
     public content: DocContent,
-    public isUpdateMeta = false,
     public documentStatus = new DocumentStatus(id)
   ) {}
 }

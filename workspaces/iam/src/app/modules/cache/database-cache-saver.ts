@@ -46,7 +46,7 @@ export class DatabaseCacheSaver {
     ).pipe(
       map(([content, meta]) => {
         let status = this.docFacade.getCurrentDocumentStatusState();
-        return new Document(docMeta.id, docMeta, docContent, false, {
+        return new Document(docMeta.id, docMeta, docContent, {
           ...status,
           isMemDirty: false,
           isDbDirty: true

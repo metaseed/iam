@@ -31,7 +31,7 @@ import "codemirror/addon/fold/foldcode";
 import "codemirror/addon/fold/brace-fold";
 import "codemirror/addon/edit/matchtags";
 import "codemirror/addon/comment/comment";
-import { MarkdownEditorService } from "../../services/markdown.editor.service";
+import { MarkdownEditorService } from "../../services/markdown-editor.service";
 import { Subject } from "rxjs";
 import { SubscriptionManager, Utilities } from "core";
 import { takeUntil } from "rxjs/operators";

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MarkdownEditorService } from './markdown.editor.service';
+import { MarkdownEditorService } from './markdown-editor.service';
 import { BehaviorSubject } from 'rxjs';
 import { combineLatestWith, tap, debounceTime } from 'rxjs/operators';
 import { Store, State } from '@ngrx/store';

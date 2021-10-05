@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EditorToolbarComponent } from './editor-toolbar/markdown.editor-toolbar.component';
-import { MarkdownEditorService } from './services/markdown.editor.service';
+import { MarkdownEditorService } from './services/markdown-editor.service';
 import { MarkdownEditorRoutingModule } from './markdown-editor-routing.module';
 import { MarkdownEditorComponent } from './markdown-editor.component';
 import { FormsModule } from '@angular/forms';

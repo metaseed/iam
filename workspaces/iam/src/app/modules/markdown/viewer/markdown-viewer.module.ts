@@ -9,12 +9,9 @@ import { MaterialModule } from 'material';
 import { RouterModule } from '@angular/router';
 import { MarkdownViewerContainerComponent } from './markdown-viewer-container.component';
 import { SpinnerModule } from '@metaseed/spinner';
-import { DocumentRef } from 'core';
 import { ElementsModule } from './elements/elements.module';
 import { TocService } from './services/toc.service';
-import { Utilities } from '../../core/utils';
 import { ViewerActiveElementService } from './services/active-element.service';
-import { Store, State } from '@ngrx/store';
 
 @NgModule({
   imports: [

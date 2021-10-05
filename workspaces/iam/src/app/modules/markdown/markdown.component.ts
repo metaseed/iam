@@ -2,8 +2,8 @@ import * as doc from './state/actions/document';
 import { Component, OnInit, ViewChild, Inject, ElementRef, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { APP_BASE_HREF } from '@angular/common';
-import { map, tap, takeUntil, combineLatest, filter, combineLatestWith } from 'rxjs/operators';
-import { ActivatedRoute, Router } from '@angular/router';
+import { map, tap, combineLatestWith } from 'rxjs/operators';
+import { Router } from '@angular/router';
 import { DocFormat, backOffAfter } from 'core';
 import { Store, select } from '@ngrx/store';
 import * as fromMarkdown from './state';
@@ -12,14 +12,13 @@ import * as document from './state/actions/document';
 import { ChangeDetectorRef } from '@angular/core';
 import { OnDestroy } from '@angular/core';
 import { MarkdownViewerContainerComponent } from './viewer/markdown-viewer-container.component';
-import { Observable, Subject, merge } from 'rxjs';
+import { Observable, merge } from 'rxjs';
 import {
-  selectCurrentDocument,
   DocumentEffectsCreate,
   SetCurrentDocumentId,
-  DocumentEffectsRead
+  DocumentEffectsRead,
+  selectCurrentDocumentContentString
 } from 'shared';
-import {Document} from 'core';
 import { Utilities } from '../core/utils';
 import { IMarkdownContainerService, MARKDOWN_CONTAINER_SERVICE_TOKEN } from './model/markdown.model';
 
@@ -79,13 +78,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       console.log(e)
     })
     this.markdown$ = merge(
-      this.store.select<Document>(selectCurrentDocument).pipe(
-        filter(doc => doc && !doc.isUpdateMeta),
-        map(doc => {
-          if (!doc.content) return '';
-          return doc.content.content;
-        })
-      ),
+      this.store.select<string>(selectCurrentDocumentContentString),
       this.markdownService.editorContentChanged$
     ).pipe(backOffAfter<string>(80, 1000));
 

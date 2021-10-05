@@ -19,7 +19,14 @@ export const selectCurrentDocument = createSelector(
   selectCurrentDocumentId,
   (entities, id) => entities[id]
 );
-
+export const selectCurrentDocumentContent = createSelector(
+  selectCurrentDocument,
+  doc => doc?.content
+)
+export const selectCurrentDocumentContentString = createSelector(
+  selectCurrentDocumentContent,
+  content => content?.content
+)
 export const selectCurrentDocStatus = createSelector(
   selectCurrentDocument,
   state => state && state.documentStatus
