@@ -59,21 +59,22 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
   ) {
     super();
 
-    this.editorService.docEditorLoaded$.subscribe(() => {
-      setTimeout(() => (this.editorLoaded = true), 0);
-    });
-
-    this.store
-      .select(selectDocumentEditItState)
-      .subscribe(({ sourceLine } = {} as any) => {
-        if (!sourceLine) return;
-        this.store.dispatch(new EditMode());
-        setTimeout(() => {
-          this.editorService.goToLine(sourceLine[0]);
-        }, 0);
-      });
-
     super
+      .addSub(
+        this.editorService.docEditorLoaded$.subscribe(() => {
+          setTimeout(() => (this.editorLoaded = true), 0);
+        }))
+      .addSub(
+
+        this.store
+          .select(selectDocumentEditItState)
+          .subscribe(({ sourceLine } = {} as any) => {
+            if (!sourceLine) return;
+            this.store.dispatch(new EditMode());
+            setTimeout(() => {
+              this.editorService.goToLine(sourceLine[0]);
+            }, 0);
+          }))
       .addSub(
         this.editorService.docContentModified$.subscribe(this
           .markdownService.editorContentChanged$ as Subject<string>))
@@ -82,7 +83,6 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
           switch (mode) {
             case DocumentMode.Edit: {
               setTimeout(() => this.codeMirrorComponent.refresh(), 0);
-
               break;
             }
           }
@@ -102,9 +102,9 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
       )
     );
 
-    const hammer = this.gestureConfig.buildHammer((this._elementRef.nativeElement as HTMLElement).getElementsByClassName(
-      'CodeMirror-scroll'
-    )[0] as HTMLElement);
+    const hammer = this.gestureConfig.buildHammer(
+      (this._elementRef.nativeElement as HTMLElement).getElementsByClassName('CodeMirror-scroll')[0] as HTMLElement
+    );
 
     super.addSub(
       fromEvent(hammer, 'swiperight')
