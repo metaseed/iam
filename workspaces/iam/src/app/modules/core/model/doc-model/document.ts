@@ -19,7 +19,7 @@ export class Document implements IDocument, IDocumentTempState {
   constructor(
     public id: number,
     public metaData: DocMeta,
-    public content: DocContent,
+    public content?: DocContent,
     public documentStatus = new DocumentStatus(id)
   ) {}
 }

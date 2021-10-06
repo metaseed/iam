@@ -63,7 +63,12 @@ export const getDocumentByIdSelector = (id: number) => {
     entities => entities[id]
   );
 };
-
+export const getDocumentMetaByIdSelector = (id: number) => {
+  return createSelector(
+    getDocumentByIdSelector(id),
+    doc => doc?.metaData
+  );
+};
 export const getDocumentsByIdsSelector = (ids: Array<number>) => {
   return createSelector(
     selectDocumentEntities,

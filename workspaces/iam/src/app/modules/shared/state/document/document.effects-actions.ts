@@ -2,11 +2,11 @@ import { DocFormat } from 'core';
 import { CorrelationAction } from '../action-stauts/actions';
 
 export enum DocumentEffectsActionType {
-  ReadBulkDocMeta = '[DocumentEffects] Load',
-  ReadDocMetas = '[DocumentEffects] ReadMetas',
+  ReadBulkDocMeta = '[DocumentEffects] ReadBulkDocMeta',
+  ReadDocMetas = '[DocumentEffects] ReadDocMetas',
   Delete = '[DocumentEffects] Delete',
-  ReadDocument = '[DocumentEffects] Show',
-  Create = '[DocumentEffects] New',
+  ReadDocument = '[DocumentEffects] ReadDocument',
+  Create = '[DocumentEffects] Creat',
   Save = '[DocumentEffects] Save',
   Search = '[DocumentEffects] Search'
 }

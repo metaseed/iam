@@ -17,7 +17,7 @@ export class ActionMonitor {
       complete: () => { // to use 'this', we have to use lambda
         const coId = action.coId;
         const msg = `${action.type}-${coId}->complete`;
-        console.groupCollapsed(msg, 'background-color:#4285f4');
+        console.groupCollapsed(`%c${msg}`, 'background-color:#4285f4');
         console.count(msg);
         console.groupEnd();
         this.store.dispatch(

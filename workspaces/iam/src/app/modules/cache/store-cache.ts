@@ -24,8 +24,7 @@ import {
   DocumentEffectsDelete,
   SetSearchResultAction,
   selectDocuments,
-  UpsertDocument,
-  selectCurrentDocument
+  getDocumentMetaByIdSelector
 } from '../shared/state/document';
 import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../shared/state/document/const';
 import { SharedState } from '../shared/state/state';
@@ -107,10 +106,16 @@ export class StoreCache implements ICache {
     return this.nextLevelCache.readDocMeta(key, checkNextCache).pipe(tap(meta => {
       if (meta.isDeleted) this.store.dispatch(new DeleteDocument({ id: meta.id }));
       else {
-        const doc = selectCurrentDocument(this.state.value);
-        if (!doc || doc.metaData.updateDate.getTime() < meta.updateDate.getTime()) {
-          const content = doc && doc.content;
-          this.store.dispatch(new UpsertDocument({ collectionDocument: new Document(meta.id, meta, content) }));
+        const metaInStore = getDocumentMetaByIdSelector(meta.id)(this.state.value);
+        if (!metaInStore) {
+          this.store.dispatch(new AddDocument({ collectionDocument: new Document(meta.id, meta) }));
+        } else if (metaInStore.updateDate.getTime() < meta.updateDate.getTime()) {
+          this.store.dispatch(new UpdateDocument({
+            collectionDocument: {
+              id: meta.id,
+              changes: { metaData: meta }
+            }
+          }));
         }
       }
     }));
