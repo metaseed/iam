@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
-
-import { Observable } from 'rxjs';
-import { ReplaySubject, Subject } from 'rxjs';
-import { ContainerRef } from '../../dom/container-ref';
+import { ReplaySubject, Subject, Observable } from 'rxjs';
+import { ContainerRef } from '../../dom';
 
 export interface IScrollElement {
   element: Element;
@@ -19,7 +17,7 @@ export interface ScrollSpyToken {
 export class ScrollSpiedElement implements IScrollElement {
   top: number;
 
-  constructor(public readonly element: Element, public readonly index: number) {}
+  constructor(public readonly element: Element, public readonly index: number) { }
 
   calculateTop(scrollTop: number, topOffset: number) {
     this.top = scrollTop + this.element.getBoundingClientRect().top - topOffset;
@@ -89,7 +87,7 @@ export class ScrollSpiedElementGroup extends ContainerRef {
   };
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ScrollSpyService {
   private spiedElementGroups: ScrollSpiedElementGroup[] = [];
 

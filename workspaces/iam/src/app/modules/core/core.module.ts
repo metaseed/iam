@@ -5,8 +5,6 @@ import { CommandService } from './services/command.service';
 import { UpdateService } from './services/update.service';
 import { CopierService } from 'packages/copier.service';
 import { DialogService } from './services/dialog/dialog.service';
-import { ScrollService } from './services/scroll/scroll.service';
-import { ScrollSpyService } from './services/scroll/scroll-spy.service';
 import { ConfigService } from './config/config.service';
 @NgModule({
   imports: [CommonModule, HotkeyModule],
@@ -17,8 +15,6 @@ import { ConfigService } from './config/config.service';
     UpdateService,
     CopierService,
     DialogService,
-    ScrollService,
-    ScrollSpyService,
   ]
 })
 export class CoreModule {}

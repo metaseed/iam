@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { DOCUMENT, PlatformLocation } from '@angular/common';
 
-@Injectable()
+@Injectable({providedIn:'root'})
 export class ScrollService {
   private _topOfPageElement: Element;
 
