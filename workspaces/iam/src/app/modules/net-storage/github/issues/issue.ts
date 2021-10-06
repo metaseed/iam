@@ -88,6 +88,7 @@ export class Issue extends Requestable {
       params
     ) as Observable<Issue>;
   }
+  // https://docs.github.com/en/rest/reference/issues#get-an-issue
   get(issueNumber: number): Observable<Issue> {
     return <Observable<Issue>>(
       this.request<Issue>(
