@@ -138,17 +138,13 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
   }
 
   private scrollToHashIdElement() {
-    const id = this.getHashIdFromUrl();
+    const id = decodeURIComponent(this._location.hash.replace(/^#/, ''));
     if (id) {
       const elementWithId = this._docRef.document.getElementById(id);
       if (!elementWithId) return;
       elementWithId.scrollIntoView();
       this.viewerContainerDiv.nativeElement.scrollTop = elementWithId.offsetTop - 64;
     }
-  }
-
-  private getHashIdFromUrl() {
-    return decodeURIComponent(this._location.hash.replace(/^#/, ''));
   }
 
   public swipe(e) {

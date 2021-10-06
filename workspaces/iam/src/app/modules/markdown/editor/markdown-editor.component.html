@@ -1,4 +1,4 @@
-<editor-toolbar #toolbar [scrollHide]="[{container$:markdownService.viewer$},{container$:markdownService.editor$}]" [hide]="(docMode$|async)!==DocumentMode.Edit"
+<editor-toolbar #toolbar [scrollHide]="[{container$:markdownContainerService.viewer$},{container$:markdownContainerService.editor$}]" [hide]="(docMode$|async)!==DocumentMode.Edit"
   [hideHeight]="toolbar.hideHeight"></editor-toolbar>
 <ms-codemirror [ngModel]="markdown$|async"></ms-codemirror>
 <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>

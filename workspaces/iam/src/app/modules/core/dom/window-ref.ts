@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ContainerRef } from './container-ref';
 
-@Injectable()
+@Injectable({providedIn:'root'})
 export class WindowRef extends ContainerRef {
   constructor() {
     super(window);
