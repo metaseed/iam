@@ -51,7 +51,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
     private _elementRef: ElementRef,
     private state: StoreState<fromMarkdown.MarkdownState>,
     private dialog: MatDialog,
-    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) public markdownService: IMarkdownContainerService,
+    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) public markdownContainerService: IMarkdownContainerService,
     @Inject(HAMMER_GESTURE_CONFIG) private gestureConfig: HammerGestureConfig,
     private editorService: MarkdownEditorService,
     private store: Store<fromMarkdown.MarkdownState>,
@@ -77,7 +77,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
           }))
       .addSub(
         this.editorService.docContentModified$.subscribe(this
-          .markdownService.editorContentChanged$ as Subject<string>))
+          .markdownContainerService.editorContentChanged$ as Subject<string>))
       .addSub(
         this.docMode$.subscribe(mode => {
           switch (mode) {
@@ -91,20 +91,18 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
   }
 
   ngAfterViewInit() {
-    (this.markdownService.editor$ as Subject<IContainer>).next(
+    const codeMirrorScrollElement = (this._elementRef.nativeElement as HTMLElement).getElementsByClassName('CodeMirror-scroll')[0] as HTMLElement;
+
+    (this.markdownContainerService.editor$ as Subject<IContainer>).next(
       new ContainerRef(
-        (this._elementRef.nativeElement as HTMLElement).getElementsByClassName(
-          'CodeMirror-scroll'
-        )[0] as HTMLElement,
+        codeMirrorScrollElement,
         undefined,
         undefined,
         this.ngZone
       )
     );
 
-    const hammer = this.gestureConfig.buildHammer(
-      (this._elementRef.nativeElement as HTMLElement).getElementsByClassName('CodeMirror-scroll')[0] as HTMLElement
-    );
+    const hammer = this.gestureConfig.buildHammer(codeMirrorScrollElement);
 
     super.addSub(
       fromEvent(hammer, 'swiperight')
