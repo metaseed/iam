@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { DocMeta } from 'core';
 import { Router, NavigationExtras } from '@angular/router';
 import { Store, select } from '@ngrx/store';
-import { getDocumentsByIdsSelector, DocumentEffectsReadDocMetas } from 'shared';
+import { getDocumentsByIdsSelector, DocumentEffectsReadDocMetas, getDocumentMetasByIdsSelector } from 'shared';
 import { map, filter } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
@@ -24,12 +24,10 @@ export class SubPageComponent {
 
     this.hasOpened = true;
     this.pageList$ = this.store.pipe(
-      select(getDocumentsByIdsSelector(this.ids)),
-      map(docs => [...docs
-        .map(doc => doc?.metaData)
-        .filter(m => !!m)]
-      ),
-      filter(docs => !!docs?.length));
+      select(getDocumentMetasByIdsSelector(this.ids)),
+      filter(metas => !!metas?.length),
+      map(metas => [...metas.filter(meta => !!meta)])
+    );
     const ids = this.ids;
     this.store.dispatch(new DocumentEffectsReadDocMetas({ ids }));
   }

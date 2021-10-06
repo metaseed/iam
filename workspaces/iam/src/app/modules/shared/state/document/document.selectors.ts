@@ -75,6 +75,13 @@ export const getDocumentsByIdsSelector = (ids: Array<number>) => {
     entities => ids.map(id => entities[id])
   );
 };
+
+export const getDocumentMetasByIdsSelector = (ids: Array<number>) => {
+  return createSelector(
+    getDocumentsByIdsSelector(ids),
+    docs => docs.map(doc=>doc?.metaData)
+  );
+};
 export const selectSearchResultState = createSelector(
   selectDocumentState,
   document => document.searchResult
