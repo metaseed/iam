@@ -7,17 +7,14 @@ import { LoadChildrenCallback } from '@angular/router';
 export const ELEMENT_MODULE_LOAD_CALLBACKS_AS_ROUTES = [
   {
     selector: 'i-toc',
-    path: '',
     loadChildren: () => import('./toc/toc.module').then(m => m.TocModule)
   },
   {
     selector: 'i-subpage',
-    path: '',
     loadChildren: () => import('./sub-page/sub-page.module').then(m => m.SubPageModule)
   },
   {
     selector: 'i-code',
-    path: '',
     loadChildren: () => import('./code/code-example.module').then(m => m.CodeExampleModule)
   }
 ];
@@ -31,7 +28,7 @@ export interface WithCustomElementComponent {
 }
 
 /** Injection token to provide the element path modules. */
-export const ELEMENT_MODULE_LOAD_CALLBACKS_TOKEN = new InjectionToken<Map<string, LoadChildrenCallback>>('aio/elements-map');
+export const ELEMENT_MODULE_LOAD_CALLBACKS_TOKEN = new InjectionToken<Map<string, LoadChildrenCallback>>('iam/elements-map');
 
 /** Map of possible custom element selectors to their lazy-loadable module paths. */
 export const ELEMENT_MODULE_LOAD_CALLBACKS = new Map<string, LoadChildrenCallback>();

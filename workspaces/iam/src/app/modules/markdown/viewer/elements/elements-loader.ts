@@ -50,7 +50,7 @@ export class ElementsLoader {
 
     if (this.elementsToLoad.has(selector)) {
       // Load and register the custom element (for the first time).
-      const modulePathLoader = this.elementsToLoad.get(selector)!;
+      const modulePathLoader = this.elementsToLoad.get(selector);
       const loadedAndRegistered =
           (modulePathLoader() as Promise<NgModuleFactory<WithCustomElementComponent> | Type<WithCustomElementComponent>>)
           .then(elementModuleOrFactory => {
