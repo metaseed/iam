@@ -4,7 +4,7 @@ import { Directive, Input } from "@angular/core";
   exportAs: 'markdownRaw',
   selector: '[data-source-lines]'
 })
-export class DataSourceLines {
+export class DataSourceLinesDirective {
 
   public sourceLineStart:Number;
   public sourceLineEnd: Number;
@@ -13,7 +13,7 @@ export class DataSourceLines {
   public set sourceLines(value) {
     const match = /\[\s*(\d+)\s*,\s*(\d+)\s*\]/.exec(value)
     this.sourceLineStart = +match[1];
-    this.sourceLineEnd = + match[2];
+    this.sourceLineEnd = +match[2];
   }
 
 }
