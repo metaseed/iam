@@ -4,7 +4,7 @@ import {MatChipInputEvent} from '@angular/material/chips';
 import { DataSourceLines } from "../data-source-lines";
 import { State, Store } from "@ngrx/store";
 import { Router } from "@angular/router";
-
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 @Component({
   templateUrl: './tags.component.html',
   styleUrls: ['./tags.component.scss'],
@@ -41,5 +41,8 @@ export class TagsComponent extends DataSourceLines {
     if (index >= 0) {
       this.tagList.splice(index, 1);
     }
+  }
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.tagList, event.previousIndex, event.currentIndex);
   }
 }

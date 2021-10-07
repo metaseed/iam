@@ -1,7 +1,9 @@
 <mat-form-field class="tags-list">
   <mat-label>tags</mat-label>
-  <mat-chip-list #chipList aria-label="tags">
-    <mat-chip class="tag" *ngFor="let tag of tagList" [selectable]="selectable"
+  <mat-chip-list #chipList aria-label="tags" cdkDropList
+  cdkDropListOrientation="horizontal"
+  (cdkDropListDropped)="drop($event)">
+    <mat-chip class="tag" *ngFor="let tag of tagList" [selectable]="selectable" cdkDrag
              [removable]="removable" (removed)="remove(tag)">
       {{tag}}
       <button matChipRemove class="hide-button">

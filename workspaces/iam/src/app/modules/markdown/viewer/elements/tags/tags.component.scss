@@ -1,6 +1,9 @@
 .tags-list {
   width: 100%;
   .tag {
+    &.cdk-drop-list-dragging {
+      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
     &:hover .hide-button{
       visibility: visible;
     }
@@ -9,6 +12,10 @@
       visibility: collapse;
     }
   }
+  .cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  }
+
 }
 
 
