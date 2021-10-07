@@ -1,3 +1,14 @@
 .tags-list {
   width: 100%;
+  .tag {
+    &:hover .hide-button{
+      visibility: visible;
+    }
+    .hide-button{
+      margin: 0;
+      visibility: collapse;
+    }
+  }
 }
+
+
