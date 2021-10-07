@@ -29,22 +29,22 @@ export const selectCurrentDocumentContentString = createSelector(
 )
 export const selectCurrentDocStatus = createSelector(
   selectCurrentDocument,
-  state => state && state.documentStatus
+  state => state?.documentStatus
 );
 
 export const selectCurrentDocStatus_IsMemDirty = createSelector(
   selectCurrentDocStatus,
-  status => status && status.isMemDirty
+  status => status?.isMemDirty
 );
 
 export const selectCurrentDocStatus_IsDbDirty = createSelector(
   selectCurrentDocStatus,
-  status => status && status.isDbDirty
+  status => status?.isDbDirty
 );
 
 export const selectCurrentDocStatus_IsSyncing = createSelector(
   selectCurrentDocStatus,
-  status => status && status.isSyncing
+  status => status?.isSyncing
 );
 
 export const selectIdRangeHigh = createSelector(
