@@ -79,11 +79,13 @@ export class MetaPlugin {
         if (tag) {
           const tagsStart = token.attrGet('tagsStart');
           const tagsEnd = token.attrGet('tagsEnd');
-          content += `<ul data-source-lines="[${tagsStart}, ${tagsEnd}]" tags="[${tag}]"  class="meta-tags">`;
-          tag.forEach(t => {
-            content += '<li class="meta-tag">' + t + '</li>';
-          });
-          content += '</ul>';
+          // content += `<ul data-source-lines="[${tagsStart}, ${tagsEnd}]" tags="[${tag}]"  class="meta-tags">`;
+          // tag.forEach(t => {
+          //   content += '<li class="meta-tag">' + t + '</li>';
+          // });
+          // content += '</ul>';
+          content += `<i-tag data-source-lines="[${tagsStart}, ${tagsEnd}]" tags="${tag}">`
+          content += '</i-tag>'
         }
 
 

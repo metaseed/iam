@@ -16,6 +16,10 @@ export const ELEMENT_MODULE_LOAD_CALLBACKS_AS_ROUTES = [
   {
     selector: 'i-code',
     loadChildren: () => import('./code/code-example.module').then(m => m.CodeExampleModule)
+  },
+  {
+    selector: 'i-tag',
+    loadChildren: () => import('./tags/tags.module').then(m => m.TagsModule)
   }
 ];
 
