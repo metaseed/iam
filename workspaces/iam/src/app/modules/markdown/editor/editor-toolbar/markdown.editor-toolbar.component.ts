@@ -59,15 +59,18 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   isMemDirty$ = this.store
     .select(selectCurrentDocStatus_IsMemDirty)
     .pipe(
-      tap(a => console.log('++memDirty: ' + a)),
       startWith(false)
     );
   isDbDirty$ = this.store
     .select(selectCurrentDocStatus_IsDbDirty)
-    .pipe(tap(a => console.log('++dbDirty: ' + a)), startWith(false));
+    .pipe(
+      startWith(false)
+    );
   isSyncing$ = this.store
     .select(selectCurrentDocStatus_IsSyncing)
-    .pipe(tap(a => console.log('++syncing: ' + a)), startWith(false));
+    .pipe(
+      startWith(false)
+    );
 
   dirtyInfo$ = combineLatest([this.isMemDirty$, this.isDbDirty$, this.isSyncing$]).pipe(
     map(([memDirty, dbDirty, sync]) => {
