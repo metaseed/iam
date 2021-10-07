@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Input } from "@angular/core";
 
 @Component({
   templateUrl: './tags.component.html',
@@ -7,4 +7,6 @@ import { Component } from "@angular/core";
 })
 export class TagsComponent {
   selectable = false;
+
+  @Input()tags
 }

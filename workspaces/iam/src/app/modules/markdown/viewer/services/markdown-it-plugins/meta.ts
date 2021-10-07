@@ -79,7 +79,7 @@ export class MetaPlugin {
         if (tag) {
           const tagsStart = token.attrGet('tagsStart');
           const tagsEnd = token.attrGet('tagsEnd');
-          content += `<ul data-source-lines="[${tagsStart}, ${tagsEnd}]" tags="${tag}"  class="meta-tags">`;
+          content += `<ul data-source-lines="[${tagsStart}, ${tagsEnd}]" tags="[${tag}]"  class="meta-tags">`;
           tag.forEach(t => {
             content += '<li class="meta-tag">' + t + '</li>';
           });
@@ -165,8 +165,7 @@ export class MetaPlugin {
         if (subPages.length) {
           // put web component in html block; should not render it directly.
           token = state.push('html_block', '', 0);
-          const pages = '[' + subPages.join(', ') + ']';
-          token.content = `<i-subpage data-source-lines="[${subPagesLineStart}, ${subPagesLineEnd}]" pages="${pages}"></i-subpage>`
+          token.content = `<i-subpage data-source-lines="[${subPagesLineStart}, ${subPagesLineEnd}]" pages="[${subPages}]"></i-subpage>`
         }
         token = state.push('meta_close', 'meta', -1);
         token.markup = '---';
