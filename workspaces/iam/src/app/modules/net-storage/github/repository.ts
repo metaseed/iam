@@ -42,20 +42,19 @@ export class Repository extends Requestable {
       })
     );
   }
-  // https://developer.github.com/v3/repos/contents/#update-a-file
+  // https://docs.github.com/en/rest/reference/repos#create-or-update-file-contents
   updateFile(path, contents, sha, branch = 'master') {
     return this.request('PUT', `/repos/${this.fullName}/contents/${path}`, {
-      path: 'pp',
       message: 'update file',
       committer: {
         name: this._userInfo.name,
         email: this._userInfo.email
       },
       content: base64Encode(contents),
-      sha: sha,
+      sha,
       branch
     }).pipe(
-      tap(x => console.log(x), e => console.log(e))
+      tap({ next: x => console.log(x), error: e => console.log(e) })
     );
   }
 
@@ -119,7 +118,7 @@ export class Repository extends Requestable {
           branch
         }
       })
-      .pipe(tap(x => console.log(x), e => console.log(e)));
+      .pipe(tap({ next: x => console.log(x), error: e => console.log(e) }));
   }
 
   searchIssue(query: string) {
@@ -136,8 +135,7 @@ export class Repository extends Requestable {
     return this._http.get(`githubapi/search/code`, {
       headers: { Accept: 'application/vnd.github.v3.text-match+json' },
       params: {
-        q: `${query.replace(' ', '+')}+in:file+extension:${extension}+path:${folder}+repo:${
-          this.fullName
+        q: `${query.replace(' ', '+')}+in:file+extension:${extension}+path:${folder}+repo:${this.fullName
           }`
       },
       observe: 'response'

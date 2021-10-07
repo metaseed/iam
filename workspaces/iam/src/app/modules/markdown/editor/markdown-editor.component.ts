@@ -132,7 +132,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
     };
 
     const status = selectCurrentDocStatus(this.state.value);
-    if (status.isMemDirty) {
+    if (status.isEditorDirty) {
       return this.dialog
         .open(DocDirtyNotifyDialog)
         .afterClosed()

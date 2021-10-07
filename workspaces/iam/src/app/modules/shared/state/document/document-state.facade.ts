@@ -12,32 +12,27 @@ export class DocumentStateFacade {
   constructor(private store: Store<any>, private state: State<any>) { }
 
   updateCurrentDocumentMemDirtyStatus(memDirty: boolean) {
-    const status = selectCurrentDocStatus(this.state.value);
-    this.store.dispatch(new UpdateCurrentDocumentStatus({ ...status, isMemDirty: memDirty }));
+    this.store.dispatch(new UpdateCurrentDocumentStatus({  isEditorDirty: memDirty }));
   }
 
   setCurrentDocumentDbDirtyStatus() {
-    const status = selectCurrentDocStatus(this.state.value);
-    this.store.dispatch(new UpdateCurrentDocumentStatus({ ...status, isDbDirty: true }));
+    this.store.dispatch(new UpdateCurrentDocumentStatus({ isDbDirty: true }));
   }
 
   setCurrentDocumentSavedToDbStatus() {
-    const status = selectCurrentDocStatus(this.state.value);
     this.store.dispatch(
-      new UpdateCurrentDocumentStatus({ ...status, isMemDirty: false, isDbDirty: true })
+      new UpdateCurrentDocumentStatus({ isEditorDirty: false, isDbDirty: true })
     );
   }
 
   setCurrentDocumentSavingToNetStatus() {
-    const status = selectCurrentDocStatus(this.state.value);
     this.store.dispatch(
-      new UpdateCurrentDocumentStatus({ ...status, isSyncing: true })
+      new UpdateCurrentDocumentStatus({ isSyncing: true })
     );
   }
   setCurrentDocumentSavedToNetStatus() {
-    const status = selectCurrentDocStatus(this.state.value);
     this.store.dispatch(
-      new UpdateCurrentDocumentStatus({ ...status, isDbDirty: false, isSyncing: false })
+      new UpdateCurrentDocumentStatus({ isDbDirty: false, isSyncing: false })
     );
   }
 

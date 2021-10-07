@@ -1,9 +1,10 @@
 export class DocumentStatus {
   constructor(
     public id: number,
-    public isMemDirty?, // only in mem
+    // editor content changed and not save to store and local db.
+    public isEditorDirty?,
     public isDbDirty = false,
-    public isSyncing? // only in mem
+    public isSyncing?
   ) {}
 }
 

@@ -4,7 +4,7 @@ import { State, Store } from '@ngrx/store';
 import { ICache, DocContent, DataTables, DocMeta, Document } from 'core';
 import { Database } from '../database/database-engine';
 import { DirtyDocuments } from '../core/model/doc-model/doc-status';
-import { DocumentStateFacade } from '../shared/state/document/document.facade';
+import { DocumentStateFacade } from '../shared/state/document/document-state.facade';
 
 export class DatabaseCacheSaver {
   static readonly SAVE_INTERVAL = 5 * 60 * 1000; //5min
@@ -48,7 +48,7 @@ export class DatabaseCacheSaver {
         let status = this.docFacade.getCurrentDocumentStatusState();
         return new Document(docMeta.id, docMeta, docContent, {
           ...status,
-          isMemDirty: false,
+          isEditorDirty: false,
           isDbDirty: true
         });
       }),

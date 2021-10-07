@@ -317,8 +317,7 @@ export class GithubCache implements ICache {
                   const sanitizedTitleOld = DocMeta.sanitizeTitle(docMeta.title)
                   if (sanitizedTitle !== sanitizedTitleOld) {
                     // delete old docContent, if title changed.
-                    repo
-                      .delFileViaSha(
+                    repo.delFileViaSha(
                         `${DOCUMENTS_FOLDER_NAME}/${sanitizedTitleOld}_${docMeta.id}.${docMeta.format}`,
                         docMeta.contentSha
                       )

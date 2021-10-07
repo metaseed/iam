@@ -1,4 +1,5 @@
 import { EntityState, EntityAdapter, createEntityAdapter, Update } from '@ngrx/entity';
+import { DocumentStatus } from 'app/modules/core/model/doc-model/doc-status';
 import { Document, SearchResult } from 'core';
 import { DocumentActions, DocumentActionType } from './document.actions';
 
@@ -50,9 +51,10 @@ export function documentReducer(
     }
 
     case DocumentActionType.UpdateCurrentDocumentStatus: {
+      const doc = state.entities[state.currentDocumentId];
       let collectionDocument: Update<Document> = {
         id: state.currentDocumentId,
-        changes: { documentStatus: action.payload }
+        changes: { documentStatus: {...doc?.documentStatus,...action.payload} }
       };
 
       return adapter.updateOne(collectionDocument, state);

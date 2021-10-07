@@ -8,7 +8,7 @@ import {
   DocumentEffectsSave,
   actionStatusState$,
   DocumentEffectsActionType,
-  selectCurrentDocStatus_IsMemDirty,
+  selectCurrentDocStatus_IsEditorDirty,
   UpdateCurrentDocumentStatus,
   selectCurrentDocStatus,
 } from 'shared';
@@ -32,7 +32,7 @@ export class DocSaveCoordinateService extends SubscriptionManager {
     super();
     super
       .addSub(
-        this.store.select(selectCurrentDocStatus_IsMemDirty)
+        this.store.select(selectCurrentDocStatus_IsEditorDirty)
           .pipe(
             combineLatestWith(this.editorLoaded$),
             debounceTime(DocSaveCoordinateService.AUTO_SAVE_DELAY_AFTER_LAST_EDIT_MS), // e  e e          |
@@ -85,11 +85,11 @@ export class DocSaveCoordinateService extends SubscriptionManager {
   private checkDirty(editor: CodeMirror.Editor) {
     const oldStatus = selectCurrentDocStatus(this.state.value);
     if (!oldStatus || !this.contentGeneration) return; // initial content load
-    const oldValue = oldStatus.isMemDirty;
+    const oldValue = oldStatus.isEditorDirty;
 
     const isDirty = !editor.getDoc().isClean(this.contentGeneration);
     if (oldValue !== isDirty) {
-      this.store.dispatch(new UpdateCurrentDocumentStatus({ ...oldStatus, isMemDirty: isDirty }));
+      this.store.dispatch(new UpdateCurrentDocumentStatus({ ...oldStatus, isEditorDirty: isDirty }));
     }
   }
 

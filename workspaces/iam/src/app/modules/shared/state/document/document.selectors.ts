@@ -32,9 +32,9 @@ export const selectCurrentDocStatus = createSelector(
   state => state?.documentStatus
 );
 
-export const selectCurrentDocStatus_IsMemDirty = createSelector(
+export const selectCurrentDocStatus_IsEditorDirty = createSelector(
   selectCurrentDocStatus,
-  status => status?.isMemDirty
+  status => status?.isEditorDirty
 );
 
 export const selectCurrentDocStatus_IsDbDirty = createSelector(

@@ -18,7 +18,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import {
   DocumentEffectsSave,
   DocumentEffectsCreate,
-  selectCurrentDocStatus_IsMemDirty,
+  selectCurrentDocStatus_IsEditorDirty,
   selectCurrentDocStatus_IsDbDirty,
   selectCurrentDocStatus_IsSyncing
 } from 'shared';
@@ -56,8 +56,8 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   @ViewChild('toolbar', { read: ElementRef })
   toolbar: ElementRef;
   isScreenWide$ = this.utils.isWideScreen$;
-  isMemDirty$ = this.store
-    .select(selectCurrentDocStatus_IsMemDirty)
+  isEditorDirty$ = this.store
+    .select(selectCurrentDocStatus_IsEditorDirty)
     .pipe(
       startWith(false)
     );
@@ -72,7 +72,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
       startWith(false)
     );
 
-  dirtyInfo$ = combineLatest([this.isMemDirty$, this.isDbDirty$, this.isSyncing$]).pipe(
+  dirtyInfo$ = combineLatest([this.isEditorDirty$, this.isDbDirty$, this.isSyncing$]).pipe(
     map(([memDirty, dbDirty, sync]) => {
       if (memDirty) { return 'modification not saved' }
       else if (dbDirty) { return 'modification not sync with server' }

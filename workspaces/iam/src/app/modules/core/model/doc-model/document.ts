@@ -21,5 +21,6 @@ export class Document implements IDocument, IDocumentTempState {
     public metaData: DocMeta,
     public content?: DocContent,
     public documentStatus = new DocumentStatus(id)
-  ) {}
+  ) {
+  }
 }

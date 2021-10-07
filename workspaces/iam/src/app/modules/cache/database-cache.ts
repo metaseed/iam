@@ -15,13 +15,14 @@ import {
 import { ICache, DataTables } from 'core';
 import { DatabaseCacheSaver } from './database-cache-saver';
 import { Store, State } from '@ngrx/store';
+import { UpdateCurrentDocumentStatus } from 'shared';
 
 const DB_PAGE_SIZE = 50;
-export interface IterableDocuments extends IterableIterator<Observable<Document>> {}
+export interface IterableDocuments extends IterableIterator<Observable<Document>> { }
 @Injectable({
   providedIn: 'platform'
 })
-export class DatabaseCache  extends SubscriptionManager implements ICache {
+export class DatabaseCache extends SubscriptionManager implements ICache {
   public nextLevelCache: ICache;
   private dbSaver: DatabaseCacheSaver;
 
@@ -162,18 +163,27 @@ export class DatabaseCache  extends SubscriptionManager implements ICache {
             .subscribe();
 
           return true;
-        } else if (shouldUpdate(inCache, fromNext)) {
-          this.db
-            .put(table, fromNext)
-            .pipe(
-              subscribeOn(asyncScheduler),
-              catchError(err => {
-                throw err;
-              })
-            )
-            .subscribe();
-          return true;
-        } else return false;
+        } else
+          if (shouldUpdate(inCache, fromNext)) {
+            this.db
+              .put(table, fromNext)
+              .pipe(
+                subscribeOn(asyncScheduler),
+                catchError(err => {
+                  throw err;
+                })
+              )
+              .subscribe();
+            return true;
+          }
+          else
+            return false;
+          // // else {
+          //   this.store.dispatch(
+          //     new UpdateCurrentDocumentStatus({ isDbDirty: true })
+          //   );
+          //   return false;
+          // }
       })
     );
     return concat(_cache$, _nextCache$).pipe(filter(t => !!t));

@@ -60,7 +60,7 @@ export class UpdateDocument implements IPayloadAction {
 
 export class UpdateCurrentDocumentStatus implements IPayloadAction {
   readonly type = DocumentActionType.UpdateCurrentDocumentStatus;
-  constructor(public payload: DocumentStatus) {}
+  constructor(public payload: Partial<DocumentStatus>) {}
 }
 
 export class UpdateDocuments implements IPayloadAction {
