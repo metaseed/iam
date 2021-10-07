@@ -18,7 +18,6 @@ import { ICodeMirrorEditor } from '../model';
 @Injectable()
 export class DocSaveCoordinateService extends SubscriptionManager {
   static readonly AUTO_SAVE_DELAY_AFTER_LAST_EDIT_MS = 10 * 1000;
-  private isDirty$ = this.store.select(selectCurrentDocStatus_IsMemDirty);
   isSyncing$ = new BehaviorSubject(false);
   isSaving: boolean;
 
@@ -33,7 +32,7 @@ export class DocSaveCoordinateService extends SubscriptionManager {
     super();
     super
       .addSub(
-        this.isDirty$
+        this.store.select(selectCurrentDocStatus_IsMemDirty)
           .pipe(
             combineLatestWith(this.editorLoaded$),
             debounceTime(DocSaveCoordinateService.AUTO_SAVE_DELAY_AFTER_LAST_EDIT_MS), // e  e e          |
@@ -41,7 +40,7 @@ export class DocSaveCoordinateService extends SubscriptionManager {
               if (isDirty)
                 this.store.dispatch(new DocumentEffectsSave({ content: editor.getValue(), format: DocFormat.md }));
             }),
-            backOffAfter(5, 1000)
+            backOffAfter(8, DocSaveCoordinateService.AUTO_SAVE_DELAY_AFTER_LAST_EDIT_MS)
           ))
       .addSub(
         this.editorService.docContentSet$.subscribe((editor: ICodeMirrorEditor) => {
