@@ -119,10 +119,10 @@ export class MetaPlugin {
     while (line < endLine) {
       line++;
       const str = this.getLine(state, line);
-      if (/subPage\s*:\s*\[/.test(str)) subPagesLineStart = line;
+      if (/subPages?\s*:\s*\[/i.test(str)) subPagesLineStart = line;
       if (subPagesLineStart && !subPagesLineEnd && /.*\]/.test(str)) subPagesLineEnd = line + 1;
 
-      if (/tag\s*:\s*\[/.test(str)) tagsStart= line;
+      if (/tags?\s*:\s*\[/i.test(str)) tagsStart= line;
       if (tagsStart&& !tagsEnd && /.*\]/.test(str)) tagsEnd = line + 1;
 
       if (str.match(/^---\s*$/)) {
