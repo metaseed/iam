@@ -74,20 +74,17 @@ export class MetaPlugin {
           content += `</div>`;
         }
 
-        // tags
-        const tag = meta.tags || meta.tag;
-        if (tag) {
-          const tagsStart = token.attrGet('tagsStart');
-          const tagsEnd = token.attrGet('tagsEnd');
-          // content += `<ul data-source-lines="[${tagsStart}, ${tagsEnd}]" tags="[${tag}]"  class="meta-tags">`;
-          // tag.forEach(t => {
-          //   content += '<li class="meta-tag">' + t + '</li>';
-          // });
-          // content += '</ul>';
-          content += `<i-tag data-source-lines="[${tagsStart}, ${tagsEnd}]" tags="${tag}">`
-          content += '</i-tag>'
-        }
-
+        // tags note if put <i-tag></i-tag> here if could not rerender, if the tags modified in markdown.
+        // const tag = meta.tags || meta.tag;
+        // if (tag) {
+        //   const tagsStart = token.attrGet('tagsStart');
+        //   const tagsEnd = token.attrGet('tagsEnd');
+        //   content += `<ul data-source-lines="[${tagsStart}, ${tagsEnd}]" tags="[${tag}]"  class="meta-tags">`;
+        //   tag.forEach(t => {
+        //     content += '<li class="meta-tag">' + t + '</li>';
+        // });
+        // content += '</ul>';
+        //}
 
         if (meta.enable && meta.enable.length > 0) {
         }
@@ -152,17 +149,18 @@ export class MetaPlugin {
         token.markup = '---';
         token = state.push('meta_body', 'meta-body', 0);
         const meta = this.updateMeta(rawYAML);
-        if (tagsStart && tagsEnd) {
-          token.attrSet('tagsStart', tagsStart);
-          token.attrSet('tagsEnd', tagsEnd);
-        }
         token.content = <any>meta;
         if (meta?.enable.includes('toc')) {
           // put web component in html block; should not render it directly.
           token = state.push('html_block', '', 0);
           token.content = '<i-toc>/n</i-toc>';
         }
-
+        const tag = meta.tags || meta.tag;
+        if (tag) {
+          token = state.push('html_block', '', 0);
+          token.content += `<i-tag data-source-lines="[${tagsStart}, ${tagsEnd}]" tags="${tag}">`
+          token.content += '</i-tag>'
+        }
         const subPages = meta?.subPage || meta?.subPages || meta?.subpage || meta?.subpages;
         if (subPages.length) {
           // put web component in html block; should not render it directly.
