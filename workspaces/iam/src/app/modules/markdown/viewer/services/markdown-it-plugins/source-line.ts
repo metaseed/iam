@@ -22,9 +22,7 @@ export function sourceLine(
 
   const originalHeadingOpen = md.renderer.rules.heading_open;
   md.core.ruler.push('source_line', state => {
-    const tokens = state.tokens;
-
-    tokens
+    state.tokens
       .filter(t => t.map)
       .forEach(token => {
         const parentMap = JSON.stringify(token.map); // start from 0
@@ -61,6 +59,6 @@ export function sourceLine(
           // code
         }
       });
-      return null;// null is ok for core ruler
+    return null;// null is ok for core ruler
   });
 }
