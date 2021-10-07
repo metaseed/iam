@@ -1,12 +1,8 @@
-import { Directive, Input } from "@angular/core";
+import { Input } from "@angular/core";
 import { State, Store } from "@ngrx/store";
 import { selectCurrentDocumentContentString, selectCurrentDocumentId, UpdateDocument } from "shared";
 
-@Directive({
-  exportAs: 'markdownRaw',
-  selector: '[data-source-lines]'
-})
-export class DataSourceLinesDirective {
+export class DataSourceLines {
 
   public sourceLineStart: Number;
   public sourceLineEnd: Number;
@@ -21,13 +17,13 @@ export class DataSourceLinesDirective {
   constructor(private _store: Store, private _state: State<any>) {
   }
 
-  get Source() {
+  get source() {
     const content = selectCurrentDocumentContentString(this._state.value);
     const [start, end] = this.getRange(content);
     const source = content.substring(start, end);
     return source;
   }
-  set Source(value) {
+  set source(value) {
     const originalContent = selectCurrentDocumentContentString(this._state.value);
     const id = selectCurrentDocumentId(this._state.value);
     const [start, end] = this.getRange(originalContent);
@@ -36,17 +32,19 @@ export class DataSourceLinesDirective {
   }
 
   private getRange(content: string) {
-    if (this.sourceLineStart >= this.sourceLineEnd) throw 'sourceLineStart should less than sourceLineEnd';
-    let i = 0, lineIndex = 0, start, end; // [start, end)
-    while (content[i++] === '/n') {
-      lineIndex++;
-      if (lineIndex === this.sourceLineStart) start = i;
-      if (lineIndex === this.sourceLineEnd) {
-        end = i - 1;// at '/n'
-        break;
+    if (this.sourceLineStart >= this.sourceLineEnd) throw 'DataSourceLines: sourceLineStart should less than sourceLineEnd';
+    let lineIndex = 0, start, end; // [start, end)
+    for (let i = 0; i < content.length; i++) {
+      if (content[i] === '\n') {
+        lineIndex++;
+        if (lineIndex === this.sourceLineStart) start = i + 1;
+        if (lineIndex === this.sourceLineEnd) {
+          end = i;// at '\n'
+          break;
+        }
       }
     }
-    if (start === undefined || end === undefined) throw 'content lenth is less than expected!'
+    if (start === undefined || end === undefined) throw 'DataSourceLines: content lenth is less than expected!'
     return [start, end];
   }
 }

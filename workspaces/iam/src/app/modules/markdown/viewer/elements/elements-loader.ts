@@ -73,7 +73,7 @@ export class ElementsLoader {
             const CustomElementComponent = elementModuleRef.instance.customElementComponent;
             const CustomElement = createCustomElement(CustomElementComponent, {injector});
 
-            customElements!.define(selector, CustomElement);
+            customElements.define(selector, CustomElement);
             return customElements.whenDefined(selector);
           })
           .then(() => {
