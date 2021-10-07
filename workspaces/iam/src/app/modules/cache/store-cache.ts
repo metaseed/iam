@@ -74,8 +74,8 @@ export class StoreCache implements ICache {
     );
   }
 
-  readBulkDocMeta(key: number, isBelowTheKey = true) {
-    return this.nextLevelCache.readBulkDocMeta(key, isBelowTheKey).pipe(
+  readBulkDocMeta(id: number, isBelowTheKey = true) {
+    return this.nextLevelCache.readBulkDocMeta(id, isBelowTheKey).pipe(
       tap(metaArray => {
         if (metaArray[0]?.isDeleted) {// grouped in next cache
           this.store.dispatch(new DeleteDocuments({ ids: metaArray.map(m => m.id) }));
@@ -102,8 +102,8 @@ export class StoreCache implements ICache {
     );
   }
 
-  readDocMeta(key: number, checkNextCache?: boolean): Observable<DocMeta> {
-    return this.nextLevelCache.readDocMeta(key, checkNextCache).pipe(tap(meta => {
+  readDocMeta(id: number, checkNextCache?: boolean): Observable<DocMeta> {
+    return this.nextLevelCache.readDocMeta(id, checkNextCache).pipe(tap(meta => {
       if (meta.isDeleted) this.store.dispatch(new DeleteDocument({ id: meta.id }));
       else {
         const metaInStore = getDocumentMetaByIdSelector(meta.id)(this.state.value);

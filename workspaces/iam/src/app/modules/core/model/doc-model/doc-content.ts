@@ -9,9 +9,14 @@ export class DocContent implements IDocContent {
   constructor(
     public id: number,
     public content: string,
-    // used to trace remote sha, not change locally.
-    // if different: someone/another app instance has updated it.
-    // if same: sync with remote.
+
+    /**
+     * used to trace remote sha, not change locally.
+     * used to set the contentSha in DocMeta
+     * use contentSha if possible
+     * if different from remote: someone/another app instance has updated it.
+     * if same wit remote: sync with remote.
+     */
     public sha: string,
     public isDeleted = false
   ) {}
