@@ -10,9 +10,13 @@ export class DocYamlMeta {
   updateDate: Date;
   createDate: Date;
   tag: Array<string>;
-  tags: Array<string>; // tag list
+  tags?: Array<string>; // tag list
   enable: Array<string>; // feature list
   subPage: Array<string>; // sub pages list
+  subPages?: Array<string>;
+  subpage: Array<string>;
+  subpages?: Array<string>;
+
 }
 
 export class MetaPlugin {
@@ -122,8 +126,8 @@ export class MetaPlugin {
       if (/subPages?\s*:\s*\[/i.test(str)) subPagesLineStart = line;
       if (subPagesLineStart && !subPagesLineEnd && /.*\]/.test(str)) subPagesLineEnd = line + 1;
 
-      if (/tags?\s*:\s*\[/i.test(str)) tagsStart= line;
-      if (tagsStart&& !tagsEnd && /.*\]/.test(str)) tagsEnd = line + 1;
+      if (/tags?\s*:\s*\[/i.test(str)) tagsStart = line;
+      if (tagsStart && !tagsEnd && /.*\]/.test(str)) tagsEnd = line + 1;
 
       if (str.match(/^---\s*$/)) {
         findEnd = true;
@@ -146,7 +150,7 @@ export class MetaPlugin {
         token.markup = '---';
         token = state.push('meta_body', 'meta-body', 0);
         const meta = this.updateMeta(rawYAML);
-        if(tagsStart && tagsEnd) {
+        if (tagsStart && tagsEnd) {
           token.attrSet('tagsStart', tagsStart);
           token.attrSet('tagsEnd', tagsEnd);
         }
@@ -157,10 +161,11 @@ export class MetaPlugin {
           token.content = '<i-toc>/n</i-toc>';
         }
 
-        if (meta?.subPage?.length) {
+        const subPages = meta?.subPage || meta?.subPages || meta?.subpage || meta?.subpages;
+        if (subPages.length) {
           // put web component in html block; should not render it directly.
           token = state.push('html_block', '', 0);
-          const pages = '['+meta.subPage.join(', ')+']';
+          const pages = '[' + subPages.join(', ') + ']';
           token.content = `<i-subpage data-source-lines="[${subPagesLineStart}, ${subPagesLineEnd}]" pages="${pages}"></i-subpage>`
         }
         token = state.push('meta_close', 'meta', -1);
