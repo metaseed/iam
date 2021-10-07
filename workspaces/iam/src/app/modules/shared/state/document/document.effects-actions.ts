@@ -48,6 +48,10 @@ export class DocumentEffectsRead extends CorrelationAction {
 }
 export class DocumentEffectsSave extends CorrelationAction {
   readonly type = DocumentEffectsActionType.Save;
+  /**
+   *
+   * @param payload forceUpdate: true save to Net too
+   */
   constructor(public payload: { content: string; format?: DocFormat; forceUpdate?: boolean }) {
     super();
   }

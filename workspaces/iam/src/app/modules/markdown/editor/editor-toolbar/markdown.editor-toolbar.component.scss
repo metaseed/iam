@@ -14,15 +14,18 @@ a:hover {
   margin-left: 0.9rem;
   position: absolute;
 }
-.db-dirty:after {
-  content: ' \25CF';
-  font-size: 1.34rem;
-  color: blue;
-  margin-top: 0.5rem;
-  margin-left: -0.9rem;
-  position: absolute;
+// the blue dot
+// .db-dirty:after {
+//   content: ' \25CF';
+//   font-size: 1.34rem;
+//   color: blue;
+//   margin-top: 0.5rem;
+//   margin-left: -0.9rem;
+//   position: absolute;
+// }
+.db-dirty {
+  color:royalblue;
 }
-
 .net-syncing:after {
   margin-top: -1em;
   margin-left: 0.4em;

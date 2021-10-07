@@ -21,20 +21,20 @@ export class DocumentStateFacade {
     this.store.dispatch(new UpdateCurrentDocumentStatus({ ...status, isDbDirty: true }));
   }
 
-  modifyCurrentDocumentDbSaveStatus() {
+  setCurrentDocumentSavedToDbStatus() {
     const status = selectCurrentDocStatus(this.state.value);
     this.store.dispatch(
       new UpdateCurrentDocumentStatus({ ...status, isMemDirty: false, isDbDirty: true })
     );
   }
 
-  modifyCurrentDocumentSavingToNetStatus() {
+  setCurrentDocumentSavingToNetStatus() {
     const status = selectCurrentDocStatus(this.state.value);
     this.store.dispatch(
       new UpdateCurrentDocumentStatus({ ...status, isSyncing: true })
     );
   }
-  modifyCurrentDocumentSavedToNetStatus() {
+  setCurrentDocumentSavedToNetStatus() {
     const status = selectCurrentDocStatus(this.state.value);
     this.store.dispatch(
       new UpdateCurrentDocumentStatus({ ...status, isDbDirty: false, isSyncing: false })

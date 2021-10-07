@@ -1,8 +1,8 @@
 export class DocumentStatus {
   constructor(
     public id: number,
-    public isDbDirty = false,
     public isMemDirty?, // only in mem
+    public isDbDirty = false,
     public isSyncing? // only in mem
   ) {}
 }

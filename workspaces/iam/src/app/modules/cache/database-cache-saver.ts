@@ -81,10 +81,10 @@ export class DatabaseCacheSaver {
       )
     ).pipe(
       switchMap(([content, docMeta]) => {
-        this.docFacade.modifyCurrentDocumentSavingToNetStatus();
+        this.docFacade.setCurrentDocumentSavingToNetStatus();
         return this.nextLevelCache.UpdateDocument(docMeta, content.content, false).pipe(
           tap(doc => {
-            this.docFacade.modifyCurrentDocumentSavedToNetStatus();
+            this.docFacade.setCurrentDocumentSavedToNetStatus();
             this.db.delete<DirtyDocuments>(DataTables.DirtyDocs, id);
           })
         );
