@@ -29,6 +29,7 @@ import {
 import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../shared/state/document/const';
 import { SharedState } from '../shared/state/state';
 import { StoreSearchService } from './services/store-search.service';
+import { afterUpdateDoc } from './after-update-doc';
 
 @Injectable({
   providedIn: 'platform'
@@ -170,22 +171,11 @@ export class StoreCache implements ICache {
     );
   }
 
+
+
   UpdateDocument(oldDocMeta: DocMeta, content: string, forceUpdate: boolean) {
     return this.nextLevelCache.UpdateDocument(oldDocMeta, content, forceUpdate).pipe(
-      tap(doc =>
-        this.store.dispatch(
-          new UpdateDocument({
-            collectionDocument: {
-              id: oldDocMeta.id,
-              changes: {
-                content: doc.content,
-                metaData: doc.metaData,
-                documentStatus: doc.documentStatus
-              }
-            }
-          })
-        )
-      )
+      afterUpdateDoc(this.store)
     );
   }
 

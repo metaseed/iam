@@ -8,6 +8,6 @@ export class DocumentStatus {
   ) {}
 }
 
-export class DirtyDocuments {
+export class DirtyDocument {
   constructor(public id: number) {}
 }

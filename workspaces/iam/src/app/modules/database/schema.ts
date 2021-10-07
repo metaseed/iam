@@ -15,6 +15,7 @@ export const schema: DBSchema = {
     },
 
     dirty_docs: {
+      autoIncrement: true,
       primaryKey: 'id'
     }
   }

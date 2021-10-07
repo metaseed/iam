@@ -70,11 +70,12 @@ export class Database {
     }
   }
 
-  private _createObjectStore(db: IDBDatabase, key: string, schema: DBStore) {
-    let objectStore = db.createObjectStore(key, {
-      autoIncrement: true,
+  private _createObjectStore(db: IDBDatabase, storeName: string, schema: DBStore) {
+    let objectStore = db.createObjectStore(storeName, {
+      autoIncrement: schema.autoIncrement,
       keyPath: schema.primaryKey
     });
+    return objectStore;
   }
 
   private _open$;

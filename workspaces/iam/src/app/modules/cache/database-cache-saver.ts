@@ -3,8 +3,9 @@ import { tap, subscribeOn, catchError, switchMap, map } from 'rxjs/operators';
 import { State, Store } from '@ngrx/store';
 import { ICache, DocContent, DataTables, DocMeta, Document } from 'core';
 import { Database } from '../database/database-engine';
-import { DirtyDocuments } from '../core/model/doc-model/doc-status';
+import { DirtyDocument } from '../core/model/doc-model/doc-status';
 import { DocumentStateFacade } from '../shared/state/document/document-state.facade';
+import { afterUpdateDoc } from './after-update-doc';
 
 export class DatabaseCacheSaver {
   static readonly SAVE_INTERVAL = 5 * 60 * 1000; //5min
@@ -21,7 +22,9 @@ export class DatabaseCacheSaver {
     this.docFacade = new DocumentStateFacade(this.store, this.state);
     this.autoSave$ = interval(DatabaseCacheSaver.SAVE_INTERVAL).pipe(
       switchMap(() => this.db.getAllKeys<number[]>(DataTables.DirtyDocs)),
-      switchMap(ids => merge(...(ids.map(id => this.saveToNet(id))))),
+      switchMap(ids => merge(...(ids.map(id => this.saveToNet(id).pipe(
+        afterUpdateDoc(this.store)
+      ))))),
       catchError(err => { console.error(err); return EMPTY; })
     )
   }
@@ -53,11 +56,11 @@ export class DatabaseCacheSaver {
         });
       }),
       switchMap(doc => {
-        this.db.put<DirtyDocuments>(DataTables.DirtyDocs, new DirtyDocuments(doc.id));
+        const ro = this.db.put<DirtyDocument>(DataTables.DirtyDocs, new DirtyDocument(doc.id));
         if (forceSave) {
-          return this.saveToNet(doc.id);
+          return ro.pipe(switchMap(r => this.saveToNet(doc.id)));
         } else {
-          return of(doc);
+          return ro.pipe(map(r => doc));
         }
       })
     );
@@ -83,9 +86,11 @@ export class DatabaseCacheSaver {
       switchMap(([content, docMeta]) => {
         this.docFacade.setCurrentDocumentSavingToNetStatus();
         return this.nextLevelCache.UpdateDocument(docMeta, content.content, false).pipe(
-          tap(doc => {
+          switchMap(doc => {
             this.docFacade.setCurrentDocumentSavedToNetStatus();
-            this.db.delete<DirtyDocuments>(DataTables.DirtyDocs, id);
+            return this.db.delete<DirtyDocument>(DataTables.DirtyDocs, id).pipe(
+              map(r => doc)
+            );
           })
         );
       })

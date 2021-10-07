@@ -15,7 +15,6 @@ import {
 import { ICache, DataTables } from 'core';
 import { DatabaseCacheSaver } from './database-cache-saver';
 import { Store, State } from '@ngrx/store';
-import { UpdateCurrentDocumentStatus } from 'shared';
 
 const DB_PAGE_SIZE = 50;
 export interface IterableDocuments extends IterableIterator<Observable<Document>> { }
