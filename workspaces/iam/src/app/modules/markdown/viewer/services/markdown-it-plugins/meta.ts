@@ -160,7 +160,7 @@ export class MetaPlugin {
         if (meta?.subPage?.length) {
           // put web component in html block; should not render it directly.
           token = state.push('html_block', '', 0);
-          const pages = meta.subPage.join(' ');
+          const pages = '['+meta.subPage.join(', ')+']';
           token.content = `<i-subpage data-source-lines="[${subPagesLineStart}, ${subPagesLineEnd}]" pages="${pages}"></i-subpage>`
         }
         token = state.push('meta_close', 'meta', -1);

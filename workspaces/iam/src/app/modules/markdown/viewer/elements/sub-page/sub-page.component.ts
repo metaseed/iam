@@ -38,8 +38,7 @@ export class SubPageComponent  extends DataSourceLines{
   public ids = [];
   @Input()
   public set pages(value: string) {
-    const ids = value.split(' ').map(id => +id);
-    this.ids = ids;
+    this.ids = JSON.parse(value);
     if (this.panelOpenState) {
       this.hasOpened = false;
       this.onPanelOpen();
