@@ -281,7 +281,7 @@ export class GithubCache implements ICache {
     );
   }
 
-  UpdateDocument(docMeta: DocMeta, content: string, forceUpdate: boolean) {
+  updateDocument(docMeta: DocMeta, content: string, forceUpdate: boolean) {
     const title = DocMeta.getTitle(content);
     const sanitizedTitle = DocMeta.sanitizeTitle(title);
 

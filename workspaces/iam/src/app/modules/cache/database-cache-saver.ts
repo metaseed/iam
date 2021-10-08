@@ -85,7 +85,7 @@ export class DatabaseCacheSaver {
     ).pipe(
       switchMap(([content, docMeta]) => {
         this.docFacade.setCurrentDocumentSavingToNetStatus();
-        return this.nextLevelCache.UpdateDocument(docMeta, content.content, false).pipe(
+        return this.nextLevelCache.updateDocument(docMeta, content.content, false).pipe(
           switchMap(doc => {
             this.docFacade.setCurrentDocumentSavedToNetStatus();
             return this.db.delete<DirtyDocument>(DataTables.DirtyDocs, id).pipe(

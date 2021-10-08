@@ -125,7 +125,7 @@ export class DocumentEffects {
           );
         } else {
           return this.cacheFacade
-            .UpdateDocument(doc.metaData, content, action.payload.forceUpdate)
+            .updateDocument(doc.metaData, content, action.payload.forceUpdate)
             .pipe(
               tap({
                 next: d => {
