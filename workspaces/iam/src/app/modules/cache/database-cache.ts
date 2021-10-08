@@ -15,6 +15,7 @@ import {
 import { ICache, DataTables } from 'core';
 import { DatabaseCacheSaver } from './database-cache-saver';
 import { Store, State } from '@ngrx/store';
+import { selectCurrentDocStatus_IsDbDirty, selectCurrentDocumentId, UpdateCurrentDocumentStatus } from 'shared';
 
 const DB_PAGE_SIZE = 50;
 export interface IterableDocuments extends IterableIterator<Observable<Document>> { }
@@ -164,8 +165,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
           return true;
         } else
           if (shouldUpdate(inCache, fromNext)) {
-            this.db
-              .put(table, fromNext)
+            this.db.put(table, fromNext)
               .pipe(
                 subscribeOn(asyncScheduler),
                 catchError(err => {
@@ -177,12 +177,6 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
           }
           else
             return false;
-          // // else {
-          //   this.store.dispatch(
-          //     new UpdateCurrentDocumentStatus({ isDbDirty: true })
-          //   );
-          //   return false;
-          // }
       })
     );
     return concat(_cache$, _nextCache$).pipe(filter(t => !!t));
@@ -197,6 +191,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
       DataTables.DocMeta,
       cache$,
       nextCache$,
+      // shouldUpdate: another app instance changed remote data
       (inCache, fromNext) => !inCache || inCache.updateDate < fromNext.updateDate,
       (inCache, fromNext) => fromNext.isDeleted
     );
@@ -205,21 +200,27 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
   readDocContent(id: number, title: string, format: string): Observable<DocContent> {
     const cache$ = this.db.get<DocContent>(DataTables.DocContent, id);
     const nextCache$ = this.nextLevelCache.readDocContent(id, title, format);
-
+    // do it 1s later to wait the read data has saved to store (wait 0s not work)
+    setTimeout(() => {
+      this.updateDbDirtyStatus();
+    }, 1000);
     return this.cacheRead<DocContent>(
       DataTables.DocContent,
       cache$,
       nextCache$,
+      // shouldUpdate
       (inCache, fromNext) => {
+        // another app instance changed remote data, so update local with remote
         const toUpdate = !inCache || inCache.sha !== fromNext.sha;
         return toUpdate;
       },
+      // shouldDelete
       (inCache, fromNext) => fromNext.isDeleted
     );
   }
 
   updateDocument(oldDocMeta: DocMeta, content: string, forceUpdate: boolean) {
-    return this.dbSaver.saveToDb(oldDocMeta, content, forceUpdate) as Observable<Document>;
+    return this.dbSaver.saveToDb(oldDocMeta, content, forceUpdate);
   }
 
   deleteDoc(id: number) {
@@ -237,6 +238,18 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
 
   search(query: string) {
     return this.nextLevelCache.search(query);
+  }
+
+  // if db is dirty, and user F5, after reload, set the save button blue
+  private updateDbDirtyStatus() {
+    const isDbDirty = selectCurrentDocStatus_IsDbDirty(this.state.value);
+    if(isDbDirty) return;
+    const currentDocId = selectCurrentDocumentId(this.state.value);
+    this.db.getAllKeys<number[]>(DataTables.DirtyDocs).subscribe(dirtyDocIds=>{
+      if(dirtyDocIds.includes(currentDocId)) {
+        this.store.dispatch(new UpdateCurrentDocumentStatus({ isDbDirty: true }))
+      }
+    });
   }
 }
 // todo: up low key state value;

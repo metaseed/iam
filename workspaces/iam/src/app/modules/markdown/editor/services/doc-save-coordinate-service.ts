@@ -17,7 +17,7 @@ import { ICodeMirrorEditor } from '../model';
 
 @Injectable()
 export class DocSaveCoordinateService extends SubscriptionManager {
-  static readonly AUTO_SAVE_DELAY_AFTER_LAST_EDIT_MS = 10 * 1000;
+  static readonly AUTO_SAVE_DELAY_AFTER_LAST_EDIT_MS = 10 * 1000; // 10s
   isSyncing$ = new BehaviorSubject(false);
   isSaving: boolean;
 
@@ -83,13 +83,14 @@ export class DocSaveCoordinateService extends SubscriptionManager {
   }
 
   private checkDirty(editor: CodeMirror.Editor) {
-    const oldStatus = selectCurrentDocStatus(this.state.value);
-    if (!oldStatus || !this.contentGeneration) return; // initial content load
-    const oldValue = oldStatus.isEditorDirty;
+    const statusInStore = selectCurrentDocStatus(this.state.value);
+    if (!statusInStore ) return;
 
-    const isDirty = !editor.getDoc().isClean(this.contentGeneration);
-    if (oldValue !== isDirty) {
-      this.store.dispatch(new UpdateCurrentDocumentStatus({ ...oldStatus, isEditorDirty: isDirty }));
+    if(!this.contentGeneration) return; // initial content load
+
+    const isEditorDirty = !editor.getDoc().isClean(this.contentGeneration);
+    if (statusInStore.isEditorDirty !== isEditorDirty) {
+      this.store.dispatch(new UpdateCurrentDocumentStatus({ ...statusInStore, isEditorDirty }));
     }
   }
 
