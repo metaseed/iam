@@ -258,7 +258,7 @@ export class GithubCache implements ICache {
               state = 1;
               return this.readDocMeta(id).pipe(
                 switchMap(meta => {
-                  // using the parameters from net via key; means title, format or format is modifyed.
+                  // using the parameters from net via key; means title, format or format is modified.
                   return getContent(repo, id, meta.title, meta.format, state, meta.isDeleted);
                 })
               );

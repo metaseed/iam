@@ -12,12 +12,11 @@ import {
   UpdateCurrentDocumentStatus,
   selectCurrentDocStatus,
 } from 'shared';
-import { backOffAfter, DocFormat, SubscriptionManager } from 'core';
+import { AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL, backOffAfter, DocFormat, SubscriptionManager } from 'core';
 import { ICodeMirrorEditor } from '../model';
 
 @Injectable()
 export class DocSaveCoordinateService extends SubscriptionManager {
-  static readonly AUTO_SAVE_DELAY_AFTER_LAST_EDIT_MS = 10 * 1000; // 10s
   isSyncing$ = new BehaviorSubject(false);
   isSaving: boolean;
 
@@ -35,12 +34,12 @@ export class DocSaveCoordinateService extends SubscriptionManager {
         this.store.select(selectCurrentDocStatus_IsEditorDirty)
           .pipe(
             combineLatestWith(this.editorLoaded$),
-            debounceTime(DocSaveCoordinateService.AUTO_SAVE_DELAY_AFTER_LAST_EDIT_MS), // e  e e          |
+            debounceTime(AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL), // e  e e          |
             tap(([isDirty, editor]) => {
               if (isDirty)
                 this.store.dispatch(new DocumentEffectsSave({ content: editor.getValue(), format: DocFormat.md }));
             }),
-            backOffAfter(8, DocSaveCoordinateService.AUTO_SAVE_DELAY_AFTER_LAST_EDIT_MS)
+            backOffAfter(8, AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL)
           ))
       .addSub(
         this.editorService.docContentSet$.subscribe((editor: ICodeMirrorEditor) => {

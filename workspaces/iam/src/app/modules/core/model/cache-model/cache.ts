@@ -8,6 +8,9 @@ export enum DataTables {
   DirtyDocs = 'dirty_docs'
 }
 
+export const AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL = 10 * 1000; // 10s
+export const AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL = 5 * 60 * 1000; //5min
+
 export interface ICache {
   nextLevelCache: ICache;
 

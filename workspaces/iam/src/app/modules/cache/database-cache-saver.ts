@@ -1,14 +1,13 @@
-import { interval, asyncScheduler, zip, of, EMPTY, merge } from 'rxjs';
-import { tap, subscribeOn, catchError, switchMap, map } from 'rxjs/operators';
+import { interval, asyncScheduler, zip, EMPTY, merge } from 'rxjs';
+import { subscribeOn, catchError, switchMap, map } from 'rxjs/operators';
 import { State, Store } from '@ngrx/store';
-import { ICache, DocContent, DataTables, DocMeta, Document } from 'core';
+import { ICache, DocContent, DataTables, DocMeta, Document, AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL } from 'core';
 import { Database } from '../database/database-engine';
 import { DirtyDocument } from '../core/model/doc-model/doc-status';
 import { DocumentStateFacade } from '../shared/state/document/document-state.facade';
 import { afterUpdateDoc } from './after-update-doc';
 
 export class DatabaseCacheSaver {
-  static readonly SAVE_INTERVAL = 5 * 60 * 1000; //5min
 
   private docFacade: DocumentStateFacade;
 
@@ -20,7 +19,7 @@ export class DatabaseCacheSaver {
     private state: State<any>
   ) {
     this.docFacade = new DocumentStateFacade(this.store, this.state);
-    this.autoSave$ = interval(DatabaseCacheSaver.SAVE_INTERVAL).pipe(
+    this.autoSave$ = interval(AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL).pipe(
       switchMap(() => this.db.getAllKeys<number[]>(DataTables.DirtyDocs)),
       switchMap(ids => merge(...(ids.map(id => this.saveToNet(id).pipe(
         afterUpdateDoc(this.store)
