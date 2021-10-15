@@ -1,2 +1,2 @@
-export * from './store';
+export * from './state-observable';
 export * from './state-subject';
