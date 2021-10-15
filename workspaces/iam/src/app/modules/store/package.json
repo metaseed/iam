@@ -1,0 +1,29 @@
+{
+  "name": "rx-store",
+  "version": "1.0.0",
+  "description": "reactiveX state store",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx webpack --config=webpack.config.js",
+    "test": "jasmine-ts --config=./spec/support/jasmine.json",
+    "test-watch": "nodemon --ext ts --exec npm test"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jasmine": "^3.9.1",
+    "jasmine": ">=3.4",
+    "jasmine-spec-reporter": "^7.0.0",
+    "jasmine-ts": "^0.4.0",
+    "nodemon": "^2.0.13",
+    "ts-loader": "^9.2.6",
+    "ts-node": ">=3.2.0 <=11",
+    "typescript": ">=3.5.2",
+    "webpack": "^5.58.2",
+    "webpack-cli": "^4.9.0",
+    "webpack-dev-server": "^4.3.1"
+  },
+  "dependencies": {
+    "rxjs": "^7.4.0"
+  }
+}
