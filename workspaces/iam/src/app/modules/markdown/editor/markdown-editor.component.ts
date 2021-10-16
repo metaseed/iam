@@ -93,7 +93,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
   ngAfterViewInit() {
     const codeMirrorScrollElement = (this._elementRef.nativeElement as HTMLElement).getElementsByClassName('CodeMirror-scroll')[0] as HTMLElement;
 
-    (this.markdownContainerService.editor$ as Subject<IContainer>).next(
+    (this.markdownContainerService.editor_ as Subject<IContainer>).next(
       new ContainerRef(
         codeMirrorScrollElement,
         undefined,

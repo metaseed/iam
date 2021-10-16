@@ -84,7 +84,7 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
     );
     this.viewerContainerDiv.nativeElement.focus();
     this.scrollDown$ = this.container.scrollDown$;
-    (this.markdownService.viewer$ as Subject<IContainer>).next(this.container);
+    (this.markdownService.viewer_ as Subject<IContainer>).next(this.container);
 
     setTimeout(_ => this.scrollToHashIdElement(), 500);
 
@@ -100,7 +100,7 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
         })
       )
     ).addSub(
-      this.markdownService.editor$.pipe(
+      this.markdownService.editor_.pipe(
         switchMap(c => c.scrollDown$),
         tap(value => {
           if (this.isLockScrollWithView && value.event) {

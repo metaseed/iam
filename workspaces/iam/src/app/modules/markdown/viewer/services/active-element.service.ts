@@ -14,7 +14,7 @@ export class ViewerActiveElementService {
     private tocService: TocService
   ) {
     combineLatest([
-      markdownService.viewer$.pipe(map(v => v.activeElement$)),
+      markdownService.viewer_.pipe(map(v => v.activeElement$)),
       tocService.activeElement$,
     ]).subscribe(([viewerActiveElement$, tocActiveItem]) => {
       (viewerActiveElement$ as Subject<Element>).next(tocActiveItem);

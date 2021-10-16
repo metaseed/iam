@@ -24,7 +24,7 @@
       "@metaseed/angular-hotkey/*": ["../projects/angular-hotkey/*"],
       "@metaseed/spinner": ["../projects/spinner"],
       "@metaseed/spinner/*": ["../projects/spinner/*"],
-      "@metaseed/rx-store": ["app/modules/rx-store"],
+      "@metaseed/rx-store": ["../packages/rx-store/src"],
       "lispjs": ["../packages/lisp.js"]
     },
     "typeRoots": ["node_modules/@types"],
