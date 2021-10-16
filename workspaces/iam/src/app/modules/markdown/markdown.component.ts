@@ -20,7 +20,7 @@ import {
   selectCurrentDocumentContentString
 } from 'shared';
 import { Utilities } from '../core/utils';
-import { IMarkdownContainerService, MARKDOWN_CONTAINER_SERVICE_TOKEN } from './model/markdown.model';
+import { IMarkdownContainerStore, MARKDOWN_CONTAINER_SERVICE_TOKEN } from './model/markdown.model';
 
 @Component({
   selector: 'ms-markdown',
@@ -64,7 +64,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
   markdown$: Observable<string>;
 
   constructor(
-    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) public markdownService: IMarkdownContainerService,
+    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) public markdownContainerStore: IMarkdownContainerStore,
     private _http: HttpClient,
     @Inject(APP_BASE_HREF) private baseHref,
     private changeDetectorRef: ChangeDetectorRef,
@@ -79,7 +79,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     })
     this.markdown$ = merge(
       this.store.select<string>(selectCurrentDocumentContentString),
-      this.markdownService.editorContentChanged$
+      this.markdownContainerStore.editorContentChanged_
     ).pipe(backOffAfter<string>(80, 1000));
 
   }

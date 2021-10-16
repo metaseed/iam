@@ -1,11 +1,11 @@
 import { InjectionToken } from '@angular/core';
-import { Observable } from 'rxjs';
 import { IContainer } from 'core';
+import { StateSubject } from '@metaseed/rx-store';
 
-export const MARKDOWN_CONTAINER_SERVICE_TOKEN = new InjectionToken('MARKDOWN_CONTAINER_SERVICE_TOKEN');
+export const MARKDOWN_CONTAINER_SERVICE_TOKEN = new InjectionToken<IMarkdownContainerStore>('MARKDOWN_CONTAINER_SERVICE_TOKEN');
 
-export interface IMarkdownContainerService {
-  viewer_: Observable<IContainer>;
-  editor_: Observable<IContainer>;
-  editorContentChanged$: Observable<string>;
+export interface IMarkdownContainerStore {
+  viewer_: StateSubject<IContainer>;
+  editor_: StateSubject<IContainer>;
+  editorContentChanged_: StateSubject<string>;
 }

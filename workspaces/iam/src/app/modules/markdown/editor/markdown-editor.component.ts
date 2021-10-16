@@ -25,7 +25,7 @@ import {
   selectCurrentDocStatus,
   selectCurrentDocumentContentString
 } from 'shared';
-import { IMarkdownContainerService, MARKDOWN_CONTAINER_SERVICE_TOKEN } from '../model/markdown.model';
+import { IMarkdownContainerStore, MARKDOWN_CONTAINER_SERVICE_TOKEN } from '../model/markdown.model';
 import { IContainer, ContainerRef, ICanComponentDeactivate } from 'core';
 import { selectDocumentEditItState, EditMode, ViewMode, selectDocumentModeState } from '../state';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
@@ -51,7 +51,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
     private _elementRef: ElementRef,
     private state: StoreState<fromMarkdown.MarkdownState>,
     private dialog: MatDialog,
-    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) public markdownContainerService: IMarkdownContainerService,
+    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) public markdownContainerStore: IMarkdownContainerStore,
     @Inject(HAMMER_GESTURE_CONFIG) private gestureConfig: HammerGestureConfig,
     private editorService: MarkdownEditorService,
     private store: Store<fromMarkdown.MarkdownState>,
@@ -77,7 +77,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
           }))
       .addSub(
         this.editorService.docContentModified$.subscribe(this
-          .markdownContainerService.editorContentChanged$ as Subject<string>))
+          .markdownContainerStore.editorContentChanged_))
       .addSub(
         this.docMode$.subscribe(mode => {
           switch (mode) {
@@ -93,7 +93,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
   ngAfterViewInit() {
     const codeMirrorScrollElement = (this._elementRef.nativeElement as HTMLElement).getElementsByClassName('CodeMirror-scroll')[0] as HTMLElement;
 
-    (this.markdownContainerService.editor_ as Subject<IContainer>).next(
+    this.markdownContainerStore.editor_.next(
       new ContainerRef(
         codeMirrorScrollElement,
         undefined,

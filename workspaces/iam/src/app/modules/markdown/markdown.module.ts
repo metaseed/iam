@@ -11,7 +11,7 @@ import * as fromState from './state';
 import { SharedModule } from 'shared';
 import { EffectsModule } from '@ngrx/effects';
 import { MarkdownEffects } from './markdown.effects';
-import { MarkdownContainerService } from './markdown-container.service';
+import { MarkdownContainerStore } from './markdown-container.store';
 import { MARKDOWN_CONTAINER_SERVICE_TOKEN } from './model/markdown.model';
 import { moduleStateName } from './state';
 @NgModule({
@@ -28,8 +28,8 @@ import { moduleStateName } from './state';
   ],
   declarations: [MarkdownComponent],
   providers: [
-    MarkdownContainerService,
-    { provide: MARKDOWN_CONTAINER_SERVICE_TOKEN, useExisting: MarkdownContainerService }
+    MarkdownContainerStore,
+    { provide: MARKDOWN_CONTAINER_SERVICE_TOKEN, useExisting: MarkdownContainerStore }
   ],
   exports: [MarkdownViewerModule, MarkdownComponent]
 })

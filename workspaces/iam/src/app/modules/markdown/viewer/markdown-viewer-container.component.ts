@@ -19,7 +19,7 @@ import * as fromMarkdown from '../state';
 
 import { map, observeOn, switchMap, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MARKDOWN_CONTAINER_SERVICE_TOKEN, IMarkdownContainerService } from '../model/markdown.model';
+import { MARKDOWN_CONTAINER_SERVICE_TOKEN, IMarkdownContainerStore } from '../model/markdown.model';
 import { PlatformLocation } from '@angular/common';
 import { EditItAction, selectViewState } from '../state';
 
@@ -63,7 +63,7 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
   constructor(
     private store: Store<any>,
     private snackBar: MatSnackBar,
-    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) public markdownService: IMarkdownContainerService,
+    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) public markdownService: IMarkdownContainerStore,
     private ngZone: NgZone,
     private _docRef: DocumentRef,
     private _location: PlatformLocation
@@ -84,7 +84,7 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
     );
     this.viewerContainerDiv.nativeElement.focus();
     this.scrollDown$ = this.container.scrollDown$;
-    (this.markdownService.viewer_ as Subject<IContainer>).next(this.container);
+    this.markdownService.viewer_.next(this.container);
 
     setTimeout(_ => this.scrollToHashIdElement(), 500);
 
