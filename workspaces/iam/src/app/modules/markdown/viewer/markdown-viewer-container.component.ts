@@ -89,12 +89,9 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
     setTimeout(_ => this.scrollToHashIdElement(), 500);
 
     let v_per_last = 0;
-    this.isLockScrollWithView$ = this.store.pipe(
-      select(markdown.selectEditLockScrollWithViewState)
-    );
 
     super.addSub(
-      this.isLockScrollWithView$.pipe(
+      this.markdownContainerStore.isLockScrollWithView_.pipe(
         tap(isLock => {
           this.isLockScrollWithView = isLock;
         })

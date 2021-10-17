@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, Inject } from '@angular/core';
 import { MarkdownComponent } from '../../markdown.component';
 
 import { combineLatest } from 'rxjs';
@@ -9,7 +9,6 @@ import * as fromMarkdown from '../../state';
 import { DocumentMode } from '../../state/reducers/document';
 import { Store, State } from '@ngrx/store';
 import * as doc from '../../state/actions/document';
-import * as edit from '../../state/actions/edit';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';
 import { map, startWith, tap } from 'rxjs/operators';
@@ -23,6 +22,7 @@ import {
   selectCurrentDocStatus_IsSyncing
 } from 'shared';
 import { Router } from '@angular/router';
+import { IMarkdownContainerStore, MARKDOWN_CONTAINER_SERVICE_TOKEN } from '../../model/markdown.model';
 
 @Component({
   selector: 'editor-toolbar',
@@ -92,7 +92,8 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
     private store: Store<fromMarkdown.MarkdownState>,
     private state: State<fromMarkdown.MarkdownState>,
     public docSaver: DocSaveCoordinateService,
-    private _breakpointObserver: BreakpointObserver
+    private _breakpointObserver: BreakpointObserver,
+    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) private markdownContainerStore: IMarkdownContainerStore,
   ) {
     super();
     super.addSub(
@@ -180,7 +181,8 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   more(event: { item: HTMLElement }) {
     if (event.item.id === '0') {
       this.lockScrollWithView = !this.lockScrollWithView;
-      this.store.dispatch(new edit.LockScrollWithView(this.lockScrollWithView));
+      this.markdownContainerStore.isLockScrollWithView_.next(this.lockScrollWithView);
+      // this.store.dispatch(new edit.LockScrollWithView(this.lockScrollWithView));
     } else if (event.item.id === '1') {
       // const dialogRef = this.dialog.open(KeyMapSelectionDialog, {
       //   escapeToClose: true,
