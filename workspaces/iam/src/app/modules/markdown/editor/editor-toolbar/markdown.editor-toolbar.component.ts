@@ -80,7 +80,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
     })
   )
 
-  showPreview$ = this.store.select(fromMarkdown.selectDocumentShowPreviewState);
+  showPreview$ = this.markdownContainerStore.editWithPreview_;
 
   constructor(
     private router: Router,
@@ -149,11 +149,10 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   };
 
   togglePreview() {
-    const markdownState: fromMarkdown.MarkdownState = this.state.value.markdown;
-    if (markdownState.document.showPreview) {
-      this.store.dispatch(new doc.HidePreview());
+    if (this.markdownContainerStore.editWithPreview_.value) {
+      this.markdownContainerStore.editWithPreview_.next(false);
     } else {
-      this.store.dispatch(new doc.ShowPreview());
+      this.markdownContainerStore.editWithPreview_.next(true);
     }
   }
 

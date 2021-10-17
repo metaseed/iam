@@ -16,19 +16,6 @@ const initialState: State = {
 export function reducer(state = initialState, action: DocumentActions): State {
   switch (action.type) {
 
-
-    case DocumentActionTypes.ShowPreview: {
-      return {
-        ...state,
-        showPreview: true
-      };
-    }
-    case DocumentActionTypes.HidePreview: {
-      return {
-        ...state,
-        showPreview: false
-      };
-    }
     case DocumentActionTypes.EditIt: {
       return {
         ...state,

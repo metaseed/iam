@@ -44,14 +44,14 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       combineLatestWith(this.utils.isWideScreen$),
       map(([isShowEdit, wide]) => {
         if (isShowEdit && !wide) {
-            this.store.dispatch(new doc.HidePreview());
+          this.markdownContainerStore.editWithPreview_.next(false);
             return false;
         }
-        this.store.dispatch(new doc.ShowPreview());
+        this.markdownContainerStore.editWithPreview_.next(true);
         return true;
       })
     ),
-    this.store.select(fromMarkdown.selectDocumentShowPreviewState)
+    this.markdownContainerStore.editWithPreview_
   );
 
   markdown$: Observable<string>;
