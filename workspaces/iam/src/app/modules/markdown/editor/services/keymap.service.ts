@@ -1,8 +1,8 @@
 import 'codemirror/keymap/vim';
 import 'codemirror/keymap/sublime';
 import 'codemirror/keymap/emacs';
-import { Injectable } from '@angular/core';
-import { MarkdownState, ViewScrollAction } from '../../state';
+import { Inject, Injectable } from '@angular/core';
+import { MarkdownState } from '../../state';
 import { CommandService, Command } from 'core';
 import { MarkdownEditorService } from './markdown-editor.service';
 import { Store } from '@ngrx/store';
@@ -10,6 +10,7 @@ import { DEFAULT_DOC_META } from 'shared';
 import { FileUploadService } from './file-upload.service';
 import * as CodeMirror from 'codemirror';
 import { ICodeMirrorEditor } from '../model';
+import { MARKDOWN_CONTAINER_SERVICE_TOKEN, IMarkdownContainerStore } from '../../model/markdown.model';
 
 interface ICommandConfig {
   [key: string]: {
@@ -30,7 +31,9 @@ export class KeyMapService {
     private _editorService: MarkdownEditorService,
     private _commandService: CommandService,
     private _store: Store<MarkdownState>,
-    private _uploadService: FileUploadService
+    private _uploadService: FileUploadService,
+    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) private markdownContainerStore: IMarkdownContainerStore
+
   ) {
     // cm.setOption('keyMap', 'vim');
     // cm.setOption('keyMap', 'sublime');
@@ -135,10 +138,10 @@ export class KeyMapService {
       editor.display.input.textarea.blur();
     };
     option['Ctrl-Alt-Up'] = () => {
-      this._store.dispatch(new ViewScrollAction({ isScrollDown: false }));
+      this.markdownContainerStore.scrollView_.next({isUp:true});
     };
     option['Ctrl-Alt-Down'] = () => {
-      this._store.dispatch(new ViewScrollAction({ isScrollDown: true }));
+      this.markdownContainerStore.scrollView_.next({isUp:false});
     };
     option['Ctrl-Up'] = 'scrollLineUp';
     option['Ctrl-G'] = 'jumpToLine';

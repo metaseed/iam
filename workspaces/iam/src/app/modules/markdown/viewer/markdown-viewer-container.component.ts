@@ -9,10 +9,9 @@ import {
   SubscriptionManager
 } from 'core';
 import { ViewChild } from '@angular/core';
-import * as markdown from '../state';
 import { Store, select } from '@ngrx/store';
 import { ElementRef } from '@angular/core';
-import { Subject, merge, asyncScheduler, Observable } from 'rxjs';
+import { merge, asyncScheduler, Observable } from 'rxjs';
 import { DocumentEffectsActionType, monitorActionStatus$, actionStatusState$ } from 'shared';
 import { DocumentMode } from '../state/reducers/document';
 import * as fromMarkdown from '../state';
@@ -21,7 +20,7 @@ import { map, observeOn, switchMap, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MARKDOWN_CONTAINER_SERVICE_TOKEN, IMarkdownContainerStore } from '../model/markdown.model';
 import { PlatformLocation } from '@angular/common';
-import { EditItAction, selectViewState } from '../state';
+import { EditItAction } from '../state';
 
 @Component({
   selector: 'markdown-viewer-container',
@@ -111,17 +110,16 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
           }
         })
       )
-    ).addSub(this.store
-      .select(selectViewState)
+    ).addSub(this.markdownContainerStore.scrollView_
       .subscribe(viewState => {
-        const isScrollDown = viewState.isScrollDown;
+        const isScrollUp = viewState.isUp;
         // default value is null
-        if (isScrollDown === null || !this.viewerContainerDiv) return;
+        if (isScrollUp === null || !this.viewerContainerDiv) return;
 
-        if (isScrollDown) {
-          (this.viewerContainerDiv.nativeElement as HTMLElement).scrollTop += 50;
-        } else {
+        if (isScrollUp) {
           (this.viewerContainerDiv.nativeElement as HTMLElement).scrollTop -= 50;
+        } else {
+          (this.viewerContainerDiv.nativeElement as HTMLElement).scrollTop += 50;
         }
       })
     );
