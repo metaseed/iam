@@ -9,6 +9,6 @@ export class MarkdownContainerStore implements IMarkdownContainerStore {
   viewer_ = new StateSubject<IContainer>();
   editor_ = new StateSubject<IContainer>();
   editorContentChanged_ = new StateSubject<string>();
-  isLockScrollWithView_ = new Subject<boolean>();
+  isLockEditorScrollWithView_ = new Subject<boolean>();
 
 }

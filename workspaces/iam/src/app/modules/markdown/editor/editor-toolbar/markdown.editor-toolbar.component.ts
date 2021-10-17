@@ -181,7 +181,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   more(event: { item: HTMLElement }) {
     if (event.item.id === '0') {
       this.lockScrollWithView = !this.lockScrollWithView;
-      this.markdownContainerStore.isLockScrollWithView_.next(this.lockScrollWithView);
+      this.markdownContainerStore.isLockEditorScrollWithView_.next(this.lockScrollWithView);
       // this.store.dispatch(new edit.LockScrollWithView(this.lockScrollWithView));
     } else if (event.item.id === '1') {
       // const dialogRef = this.dialog.open(KeyMapSelectionDialog, {

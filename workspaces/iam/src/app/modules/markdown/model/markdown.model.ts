@@ -9,5 +9,5 @@ export interface IMarkdownContainerStore {
   viewer_: StateSubject<IContainer>;
   editor_: StateSubject<IContainer>;
   editorContentChanged_: StateSubject<string>;
-  isLockScrollWithView_: Subject<boolean>;
+  isLockEditorScrollWithView_: Subject<boolean>;
 }

@@ -91,7 +91,7 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
     let v_per_last = 0;
 
     super.addSub(
-      this.markdownContainerStore.isLockScrollWithView_.pipe(
+      this.markdownContainerStore.isLockEditorScrollWithView_.pipe(
         tap(isLock => {
           this.isLockScrollWithView = isLock;
         })
