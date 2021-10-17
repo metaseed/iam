@@ -18,7 +18,7 @@ export const selectDocumentEditItState = createSelector(
 
 // edit
 export const selectEditState = createSelector(selectMarkdownState, state => state.edit);
-export const selectEditSaveState = createSelector(selectEditState, fromEdit.getSave);
+// export const selectEditSaveState = createSelector(selectEditState, fromEdit.getSave);
 export const selectEditLockScrollWithViewState = createSelector(
   selectEditState,
   state => state.lockScrollWithView

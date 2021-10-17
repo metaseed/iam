@@ -132,7 +132,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
 
   save = () => {
     const content = this.editor.getValue();
-    this.store.dispatch(new edit.Save(content));
+    // this.store.dispatch(new edit.Save(content));
     this.store.dispatch(
       new DocumentEffectsSave({ content, format: DocFormat.md, forceUpdate: true })
     );

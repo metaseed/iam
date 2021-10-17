@@ -45,10 +45,9 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     map(mode => mode === DocumentMode.Edit)
   );
 
-  isScreenWide$ = this.utils.isWideScreen$;
   showView$ = merge(
     this.showEdit$.pipe(
-      combineLatestWith(this.isScreenWide$),
+      combineLatestWith(this.utils.isWideScreen$),
       map(([isShowEdit, wide]) => {
         if (isShowEdit && !wide) {
             this.store.dispatch(new doc.HidePreview());

@@ -16,12 +16,12 @@ export const initialState: State = {
 
 export function reducer(state = initialState, action: EditActions) {
   switch (action.type) {
-    case EditActionTypes.Save: {
-      return {
-        ...state,
-        save: action.payload
-      };
-    }
+    // case EditActionTypes.Save: {
+    //   return {
+    //     ...state,
+    //     save: action.payload
+    //   };
+    // }
     case EditActionTypes.LockScrollWithView: {
       return {
         ...state,
