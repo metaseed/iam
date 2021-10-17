@@ -62,7 +62,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     @Inject(APP_BASE_HREF) private baseHref,
     private changeDetectorRef: ChangeDetectorRef,
     private router: Router,
-    private store: Store<fromMarkdown.MarkdownState>,
+    private store: Store<any>,
     private utils: Utilities
   ) { }
 

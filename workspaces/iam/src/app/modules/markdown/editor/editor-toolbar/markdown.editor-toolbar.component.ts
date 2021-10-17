@@ -5,12 +5,10 @@ import { combineLatest } from 'rxjs';
 import { DocService } from 'home';
 import { ICodeMirrorEditor, MarkdownEditorService } from '..';
 import { DocFormat } from 'core';
-import * as fromMarkdown from '../../state';
-import { Store, State } from '@ngrx/store';
-import * as doc from '../../state/actions/document';
+import { Store } from '@ngrx/store';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';
-import { map, startWith, tap } from 'rxjs/operators';
+import { map, startWith } from 'rxjs/operators';
 import { SubscriptionManager, Utilities } from '../../../core/utils';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import {
@@ -88,8 +86,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
     public markdown: MarkdownComponent,
     private _editorService: MarkdownEditorService,
     public docService: DocService,
-    private store: Store<fromMarkdown.MarkdownState>,
-    private state: State<fromMarkdown.MarkdownState>,
+    private store: Store<any>,
     public docSaver: DocSaveCoordinateService,
     private _breakpointObserver: BreakpointObserver,
     @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) private markdownContainerStore: IMarkdownContainerStore,

@@ -2,7 +2,6 @@ import 'codemirror/keymap/vim';
 import 'codemirror/keymap/sublime';
 import 'codemirror/keymap/emacs';
 import { Inject, Injectable } from '@angular/core';
-import { MarkdownState } from '../../state';
 import { CommandService, Command } from 'core';
 import { MarkdownEditorService } from './markdown-editor.service';
 import { Store } from '@ngrx/store';
@@ -30,7 +29,6 @@ export class KeyMapService {
   constructor(
     private _editorService: MarkdownEditorService,
     private _commandService: CommandService,
-    private _store: Store<MarkdownState>,
     private _uploadService: FileUploadService,
     @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) private markdownContainerStore: IMarkdownContainerStore
 

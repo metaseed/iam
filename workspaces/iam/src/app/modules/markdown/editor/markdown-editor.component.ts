@@ -26,7 +26,6 @@ import {
 } from 'shared';
 import { DocumentMode, IMarkdownContainerStore, MARKDOWN_CONTAINER_SERVICE_TOKEN } from '../model/markdown.model';
 import { ContainerRef, ICanComponentDeactivate } from 'core';
-import { selectDocumentEditItState } from '../state';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { SubscriptionManager } from 'app/modules/core/utils/subscription-manager';
 
@@ -48,12 +47,12 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
 
   constructor(
     private _elementRef: ElementRef,
-    private state: StoreState<fromMarkdown.MarkdownState>,
+    private state: StoreState<any>,
     private dialog: MatDialog,
     @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) public markdownContainerStore: IMarkdownContainerStore,
     @Inject(HAMMER_GESTURE_CONFIG) private gestureConfig: HammerGestureConfig,
     private editorService: MarkdownEditorService,
-    private store: Store<fromMarkdown.MarkdownState>,
+    private store: Store<any>,
     private ngZone: NgZone
   ) {
     super();
@@ -64,9 +63,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
           setTimeout(() => (this.editorLoaded = true), 0);
         }))
       .addSub(
-
-        this.store
-          .select(selectDocumentEditItState)
+          this.markdownContainerStore.editIt_
           .subscribe(({ sourceLine } = {} as any) => {
             if (!sourceLine) return;
             this.markdownContainerStore.documentMode_.next(DocumentMode.Edit);

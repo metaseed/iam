@@ -18,4 +18,5 @@ export interface IMarkdownContainerStore {
   scrollView_: Subject<{isUp: boolean}>;
   documentMode_: Subject<DocumentMode>;
   editWithPreview_: StateSubject<boolean>;
+  editIt_: Subject<{ element?: HTMLElement; sourceLine: [number, number] }>;
 }

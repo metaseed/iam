@@ -18,7 +18,6 @@ import { map, observeOn, switchMap, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MARKDOWN_CONTAINER_SERVICE_TOKEN, IMarkdownContainerStore, DocumentMode } from '../model/markdown.model';
 import { PlatformLocation } from '@angular/common';
-import { EditItAction } from '../state';
 
 @Component({
   selector: 'markdown-viewer-container',
@@ -125,7 +124,7 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
     (this.viewerContainerDiv.nativeElement as HTMLElement).addEventListener(
       'edit-it',
       (e: CustomEvent) => {
-        this.store.dispatch(new EditItAction(e.detail));
+        this.markdownContainerStore.editIt_.next(e.detail);
       }
     );
   }
@@ -148,8 +147,7 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
       lines = element.getAttribute('data-source-lines');
       element = element.parentElement;
     } while (!lines && !!element && i++ < 4);
-    this.store.dispatch(new EditItAction({ sourceLine: JSON.parse(lines) }
-    ));
+    this.markdownContainerStore.editIt_.next({ sourceLine: JSON.parse(lines)});
   }
 
 }

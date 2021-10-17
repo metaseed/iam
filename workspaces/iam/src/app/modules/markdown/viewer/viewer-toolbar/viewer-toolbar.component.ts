@@ -1,7 +1,6 @@
-import { Component, ViewChild, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, Inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as document from '../../state/actions/document';
-import * as fromMarkdown from '../../state';
 import { MatToolbar } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
 import { DocumentMode, IMarkdownContainerStore, MARKDOWN_CONTAINER_SERVICE_TOKEN } from '../../model/markdown.model';
@@ -13,7 +12,7 @@ import { DocumentMode, IMarkdownContainerStore, MARKDOWN_CONTAINER_SERVICE_TOKEN
 })
 export class ViewerToolbarComponent {
   @ViewChild('toolbar') toolbar: MatToolbar;
-  constructor(private router: Router, private store: Store<fromMarkdown.MarkdownState>,
+  constructor(private router: Router, private store: Store<any>,
     @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) private markdownContainerStore: IMarkdownContainerStore
     ) {}
 
