@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IContainer } from 'core';
-import { IMarkdownContainerStore } from './model/markdown.model';
+import { DocumentMode, IMarkdownContainerStore } from './model/markdown.model';
 import { StateSubject } from '@metaseed/rx-store';
 import { Subject } from 'rxjs';
 
@@ -11,4 +11,5 @@ export class MarkdownContainerStore implements IMarkdownContainerStore {
   editorContentChanged_ = new StateSubject<string>();
   isLockEditorScrollWithView_ = new Subject<boolean>();
   scrollView_ = new Subject<{ isUp: boolean }>();
+  documentMode_ = new StateSubject<DocumentMode>(DocumentMode.View);
 }

@@ -10,7 +10,6 @@ import {
 import { MarkdownEditorService } from '.';
 import { CodemirrorComponent } from './codemirror-editor/codemirror-component/codemirror.component';
 import * as fromMarkdown from '../state';
-import { DocumentMode } from '../state/reducers/document';
 import { Observable, Subject, fromEvent } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Store, select, State as StoreState } from '@ngrx/store';
@@ -25,9 +24,9 @@ import {
   selectCurrentDocStatus,
   selectCurrentDocumentContentString
 } from 'shared';
-import { IMarkdownContainerStore, MARKDOWN_CONTAINER_SERVICE_TOKEN } from '../model/markdown.model';
-import { IContainer, ContainerRef, ICanComponentDeactivate } from 'core';
-import { selectDocumentEditItState, EditMode, ViewMode, selectDocumentModeState } from '../state';
+import { DocumentMode, IMarkdownContainerStore, MARKDOWN_CONTAINER_SERVICE_TOKEN } from '../model/markdown.model';
+import { ContainerRef, ICanComponentDeactivate } from 'core';
+import { selectDocumentEditItState } from '../state';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { SubscriptionManager } from 'app/modules/core/utils/subscription-manager';
 
@@ -43,7 +42,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
   @ViewChild(CodemirrorComponent)
   codeMirrorComponent: CodemirrorComponent;
 
-  docMode$ = this.store.pipe(select(selectDocumentModeState));
+  docMode$ = this.markdownContainerStore.documentMode_;
 
   markdown$ = this.store.select(selectCurrentDocumentContentString);
 
@@ -70,7 +69,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
           .select(selectDocumentEditItState)
           .subscribe(({ sourceLine } = {} as any) => {
             if (!sourceLine) return;
-            this.store.dispatch(new EditMode());
+            this.markdownContainerStore.documentMode_.next(DocumentMode.Edit);
             setTimeout(() => {
               this.editorService.goToLine(sourceLine[0]);
             }, 0);
@@ -118,7 +117,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
   }
 
   private toViewMode = event => {
-    this.store.dispatch(new ViewMode());
+    this.markdownContainerStore.documentMode_.next(DocumentMode.View);
   };
 
 

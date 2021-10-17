@@ -4,6 +4,7 @@ import * as document from '../../state/actions/document';
 import * as fromMarkdown from '../../state';
 import { MatToolbar } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
+import { DocumentMode, IMarkdownContainerStore, MARKDOWN_CONTAINER_SERVICE_TOKEN } from '../../model/markdown.model';
 
 @Component({
   selector: 'ms-viewer-toolbar',
@@ -12,7 +13,9 @@ import { Router } from '@angular/router';
 })
 export class ViewerToolbarComponent {
   @ViewChild('toolbar') toolbar: MatToolbar;
-  constructor(private router: Router, private store: Store<fromMarkdown.MarkdownState>) {}
+  constructor(private router: Router, private store: Store<fromMarkdown.MarkdownState>,
+    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) private markdownContainerStore: IMarkdownContainerStore
+    ) {}
 
   onRefresh(e) {
     this.store.dispatch(new document.RefreshAction());
@@ -24,6 +27,7 @@ export class ViewerToolbarComponent {
   }
 
   toEditMode(e) {
-    this.store.dispatch(new document.EditMode());
+    this.markdownContainerStore.documentMode_.next(DocumentMode.Edit);
+
   }
 }

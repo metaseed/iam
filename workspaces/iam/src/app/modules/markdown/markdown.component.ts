@@ -7,8 +7,6 @@ import { Router } from '@angular/router';
 import { DocFormat, backOffAfter } from 'core';
 import { Store, select } from '@ngrx/store';
 import * as fromMarkdown from './state';
-import { DocumentMode } from './state/reducers/document';
-import * as document from './state/actions/document';
 import { ChangeDetectorRef } from '@angular/core';
 import { OnDestroy } from '@angular/core';
 import { MarkdownViewerContainerComponent } from './viewer/markdown-viewer-container.component';
@@ -20,7 +18,7 @@ import {
   selectCurrentDocumentContentString
 } from 'shared';
 import { Utilities } from '../core/utils';
-import { IMarkdownContainerStore, MARKDOWN_CONTAINER_SERVICE_TOKEN } from './model/markdown.model';
+import { DocumentMode, IMarkdownContainerStore, MARKDOWN_CONTAINER_SERVICE_TOKEN } from './model/markdown.model';
 
 @Component({
   selector: 'ms-markdown',
@@ -37,11 +35,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
   @ViewChild('editorDiv')
   editorDiv: ElementRef;
 
-  docMode$ = this.store.pipe(
-    select(fromMarkdown.selectDocumentModeState),
-  );
-
-  showEdit$ = this.docMode$.pipe(
+  showEdit$ = this.markdownContainerStore.documentMode_.pipe(
     map(mode => mode === DocumentMode.Edit)
   );
 
@@ -98,7 +92,8 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
           if (this.router.url.startsWith('/doc/new')) {
             const format = params['f'] as DocFormat;
             this.store.dispatch(new DocumentEffectsCreate({ format }));
-            this.store.dispatch(new document.EditMode());
+            this.markdownContainerStore.documentMode_.next(DocumentMode.Edit);
+
           } else {
             const title = params['title'];
             const num = +params['id']

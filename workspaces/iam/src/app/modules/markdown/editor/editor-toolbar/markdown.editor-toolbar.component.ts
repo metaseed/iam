@@ -6,7 +6,6 @@ import { DocService } from 'home';
 import { ICodeMirrorEditor, MarkdownEditorService } from '..';
 import { DocFormat } from 'core';
 import * as fromMarkdown from '../../state';
-import { DocumentMode } from '../../state/reducers/document';
 import { Store, State } from '@ngrx/store';
 import * as doc from '../../state/actions/document';
 import { trigger, state, style, animate, transition } from '@angular/animations';
@@ -22,7 +21,7 @@ import {
   selectCurrentDocStatus_IsSyncing
 } from 'shared';
 import { Router } from '@angular/router';
-import { IMarkdownContainerStore, MARKDOWN_CONTAINER_SERVICE_TOKEN } from '../../model/markdown.model';
+import { DocumentMode, IMarkdownContainerStore, MARKDOWN_CONTAINER_SERVICE_TOKEN } from '../../model/markdown.model';
 
 @Component({
   selector: 'editor-toolbar',
@@ -165,7 +164,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   }
 
   toViewMode = event => {
-    this.store.dispatch(new doc.ViewMode());
+    this.markdownContainerStore.documentMode_.next(DocumentMode.View)
   };
 
   new = () => {

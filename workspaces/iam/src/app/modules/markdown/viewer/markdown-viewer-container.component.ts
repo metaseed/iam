@@ -13,12 +13,11 @@ import { Store, select } from '@ngrx/store';
 import { ElementRef } from '@angular/core';
 import { merge, asyncScheduler, Observable } from 'rxjs';
 import { DocumentEffectsActionType, monitorActionStatus$, actionStatusState$ } from 'shared';
-import { DocumentMode } from '../state/reducers/document';
 import * as fromMarkdown from '../state';
 
 import { map, observeOn, switchMap, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MARKDOWN_CONTAINER_SERVICE_TOKEN, IMarkdownContainerStore } from '../model/markdown.model';
+import { MARKDOWN_CONTAINER_SERVICE_TOKEN, IMarkdownContainerStore, DocumentMode } from '../model/markdown.model';
 import { PlatformLocation } from '@angular/common';
 import { EditItAction } from '../state';
 
@@ -29,7 +28,7 @@ import { EditItAction } from '../state';
 })
 export class MarkdownViewerContainerComponent extends SubscriptionManager implements AfterViewInit {
   DocumentMode = DocumentMode;
-  docMode$ = this.store.pipe(select(fromMarkdown.selectDocumentModeState));
+  docMode$ = this.markdownContainerStore.documentMode_;
   editWithView$ = this.store.pipe(select(fromMarkdown.selectDocumentShowPreviewState));
   @Input()
   markdown$: Observable<string>;
