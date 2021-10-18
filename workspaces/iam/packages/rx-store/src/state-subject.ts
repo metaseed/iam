@@ -3,7 +3,9 @@ import { backOffAfter } from ".";
 import { pass } from "./operators/pass";
 
 export type EffectOption = {
-  // undefined: to disable the default
+  /**
+   * undefined: to disable the default
+   */
   error?: OperatorFunction<any, any>
 };
 const effectError = backOffAfter(6, 77);
