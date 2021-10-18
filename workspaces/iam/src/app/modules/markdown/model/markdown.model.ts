@@ -19,7 +19,5 @@ export interface IMarkdownStore {
   documentMode_: Subject<DocumentMode>;
   editWithPreview_: StateSubject<boolean>;
   editIt_: Subject<{ element?: HTMLElement; sourceLine: [number, number] }>;
-  // effects
-  refresh_:Subject<any>;
 
 }

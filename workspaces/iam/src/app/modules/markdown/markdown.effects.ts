@@ -3,14 +3,12 @@ import { Store } from '@ngrx/store';
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { DocumentEffectsRead } from 'shared';
-import { MarkdownStore } from './markdown-container.store';
-import { sideEffect } from 'packages/rx-store/src';
+import { StateSubject } from '@metaseed/rx-store';
 
 @Injectable()
 export class MarkdownEffects {
-  constructor(private store: MarkdownStore, private router: Router,private rxStore: Store<any>) {
-    sideEffect(store.refresh_,tap(() => this.onRefresh()));
-  }
+  constructor(private router: Router, private rxStore: Store<any>) { }
+  refresh_ = new StateSubject<any>().addSideEffect(tap(() => this.onRefresh()));
 
   private onRefresh() {
     if (this.router.url.startsWith('/doc/new')) return;

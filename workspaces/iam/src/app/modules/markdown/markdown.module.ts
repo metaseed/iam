@@ -7,9 +7,8 @@ import { MarkdownViewerModule } from './viewer';
 import { MarkdownRoutingModule } from './markdown-routing.module';
 import { SpinnerModule } from '@metaseed/spinner';
 import { SharedModule } from 'shared';
-import { EffectsModule } from '@ngrx/effects';
 import { MarkdownEffects } from './markdown.effects';
-import { MarkdownStore } from './markdown-container.store';
+import { MarkdownStore } from './markdown.store';
 import { MARKDOWN_STORE_TOKEN } from './model/markdown.model';
 @NgModule({
   imports: [
@@ -20,10 +19,10 @@ import { MARKDOWN_STORE_TOKEN } from './model/markdown.model';
     MarkdownRoutingModule,
     SharedModule,
     MarkdownViewerModule.forFeature(),
-    EffectsModule.forFeature([MarkdownEffects])
   ],
   declarations: [MarkdownComponent],
   providers: [
+    MarkdownEffects,
     MarkdownStore,
     { provide: MARKDOWN_STORE_TOKEN, useExisting: MarkdownStore }
   ],

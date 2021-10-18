@@ -3,6 +3,7 @@ import { Store } from '@ngrx/store';
 import { MatToolbar } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
 import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from '../../model/markdown.model';
+import { MarkdownEffects } from '../../markdown.effects';
 
 @Component({
   selector: 'ms-viewer-toolbar',
@@ -12,11 +13,12 @@ import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from '../../model/
 export class ViewerToolbarComponent {
   @ViewChild('toolbar') toolbar: MatToolbar;
   constructor(private router: Router, private store: Store<any>,
-    @Inject(MARKDOWN_STORE_TOKEN) private markdownStore: IMarkdownStore
+    @Inject(MARKDOWN_STORE_TOKEN) private markdownStore: IMarkdownStore,
+    private markdownEffects: MarkdownEffects
     ) {}
 
   onRefresh(e) {
-    this.markdownStore.refresh_.next(null);
+    this.markdownEffects.refresh_.next(null);
   }
 
   back(e) {

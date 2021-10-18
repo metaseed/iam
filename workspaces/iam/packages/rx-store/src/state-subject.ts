@@ -23,10 +23,13 @@ export class StateSubject<T> extends ReplaySubject<T>{
   addSetter<M>(setter: OperatorFunction<M, T>) {
     const source = new Subject<M>();
     setter(source).subscribe(this);
-    return { set: (value: M) => source.next(value) , addSideEffect: curry(sideEffect, source)};
+    return { set: (value: M) => source.next(value) , addSideEffect: (effect: OperatorFunction<M,any>)=> sideEffect(source, effect)};
   }
 
-  addSideEffect = curry(sideEffect, this);
+  addSideEffect(effect: OperatorFunction<T,any>) {
+    sideEffect(this, effect);
+    return this;
+  }
 }
 
 export function sideEffect<T>(source: Observable<T>, effect: OperatorFunction<T,any>) {
