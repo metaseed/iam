@@ -1,7 +1,7 @@
 import { Injectable, Inject } from "@angular/core";
-import { UserInfo } from ".";
 import { base64Encode } from "core";
 import { GITHUB_AUTHENTICATION } from "./tokens";
+import { UserInfo } from "./user-info";
 
 @Injectable()
 export class AuthService {
