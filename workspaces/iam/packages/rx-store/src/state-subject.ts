@@ -4,9 +4,11 @@ import { pass } from "./operators/pass";
 
 export type EffectOption = {
   // undefined: to disable the default
-  error: OperatorFunction<any, any>
+  error?: OperatorFunction<any, any>
 };
 const effectError = backOffAfter(6, 77);
+
+const defaultEffectOption = { error: effectError };
 /**
  * only difference with BehaviorSubject is:
  * it would not emit value if initial value is 'undefined'.
@@ -29,16 +31,17 @@ export class StateSubject<T> extends ReplaySubject<T>{
   addSetter<M>(setter: OperatorFunction<M, T>) {
     const source = new Subject<M>();
     source.pipe(setter).subscribe(this);
-    return { set: (value: M) => source.next(value), addSideEffect: (effect: OperatorFunction<M, any>, options: EffectOption = { error: effectError }) => sideEffect(source, effect, options) };
+    return { set: (value: M) => source.next(value), addSideEffect: (effect: OperatorFunction<M, any>, options: EffectOption = defaultEffectOption) => sideEffect(source, effect, options) };
   }
 
-  addSideEffect(effect: OperatorFunction<T, any>, options: EffectOption = { error: effectError }) {
+  addSideEffect(effect: OperatorFunction<T, any>, options: EffectOption = defaultEffectOption) {
     sideEffect(this, effect, options);
     return this;
   }
 }
 
 export function sideEffect<T>(source: Observable<T>, effect: OperatorFunction<T, any>, options: EffectOption) {
-  const error =  options.error? options.error: pass;
+  const option = {...defaultEffectOption, ...options};
+  const error =  option.error? option.error: pass;
   source.pipe(effect, error).subscribe();
 }
