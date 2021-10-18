@@ -1,12 +1,10 @@
-import * as doc from './state/actions/document';
 import { Component, OnInit, ViewChild, Inject, ElementRef, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { APP_BASE_HREF } from '@angular/common';
 import { map, tap, combineLatestWith } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { DocFormat, backOffAfter } from 'core';
-import { Store, select } from '@ngrx/store';
-import * as fromMarkdown from './state';
+import { Store } from '@ngrx/store';
 import { ChangeDetectorRef } from '@angular/core';
 import { OnDestroy } from '@angular/core';
 import { MarkdownViewerContainerComponent } from './viewer/markdown-viewer-container.component';

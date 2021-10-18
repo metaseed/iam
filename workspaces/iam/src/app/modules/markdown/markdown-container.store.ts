@@ -15,4 +15,7 @@ export class MarkdownStore implements IMarkdownStore {
   editWithPreview_ = new StateSubject<boolean>();
   editIt_ = new Subject<{ element?: HTMLElement; sourceLine: [number, number] }>();
 
+  // for effects
+  refresh_ = new Subject<any>();
+
 }

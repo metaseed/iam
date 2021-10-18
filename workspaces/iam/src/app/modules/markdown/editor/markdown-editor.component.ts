@@ -9,10 +9,9 @@ import {
 } from '@angular/core';
 import { MarkdownEditorService } from '.';
 import { CodemirrorComponent } from './codemirror-editor/codemirror-component/codemirror.component';
-import * as fromMarkdown from '../state';
-import { Observable, Subject, fromEvent } from 'rxjs';
+import { Observable, fromEvent } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Store, select, State as StoreState } from '@ngrx/store';
+import { Store, State as StoreState } from '@ngrx/store';
 import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';

@@ -1,21 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Observable } from 'rxjs';
-import { Action } from '@ngrx/store';
-import { map } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { RefreshAction } from './state/actions/document';
-import { DocumentActionTypes } from './state/actions/document';
 import { DocumentEffectsRead } from 'shared';
+import { MarkdownStore } from './markdown-container.store';
+import { sideEffect } from 'packages/rx-store/src';
 
 @Injectable()
 export class MarkdownEffects {
-  Refresh: Observable<Action> = createEffect(() => this.actions$.pipe(
-    ofType<RefreshAction>(DocumentActionTypes.Refresh),
-    map(_ => {
-      return this.onRefresh();
-    })
-  ));
+  constructor(private store: MarkdownStore, private router: Router,private rxStore: Store<any>) {
+    sideEffect(store.refresh_,tap(() => this.onRefresh()));
+  }
 
   private onRefresh() {
     if (this.router.url.startsWith('/doc/new')) return;
@@ -23,7 +18,6 @@ export class MarkdownEffects {
     const title = params['title'];
     const num = +params['id'];
     const format = params['f'];
-    return new DocumentEffectsRead({ id: num, title, format });
+    this.rxStore.dispatch(new DocumentEffectsRead({ id: num, title, format }));
   }
-  constructor(private actions$: Actions, private router: Router) { }
 }

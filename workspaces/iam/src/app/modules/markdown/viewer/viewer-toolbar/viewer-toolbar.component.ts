@@ -1,6 +1,5 @@
 import { Component, ViewChild, Inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import * as document from '../../state/actions/document';
 import { MatToolbar } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
 import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from '../../model/markdown.model';
@@ -17,7 +16,7 @@ export class ViewerToolbarComponent {
     ) {}
 
   onRefresh(e) {
-    this.store.dispatch(new document.RefreshAction());
+    this.markdownStore.refresh_.next(null);
   }
 
   back(e) {
