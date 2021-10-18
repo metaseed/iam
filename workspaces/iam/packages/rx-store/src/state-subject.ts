@@ -1,6 +1,12 @@
 import { Observable, OperatorFunction, ReplaySubject, Subject } from "rxjs";
-import { curry } from "./utils";
+import { backOffAfter } from ".";
+import { pass } from "./operators/pass";
 
+export type EffectOption = {
+  // undefined: to disable the default
+  error: OperatorFunction<any, any>
+};
+const effectError = backOffAfter(6, 77);
 /**
  * only difference with BehaviorSubject is:
  * it would not emit value if initial value is 'undefined'.
@@ -22,16 +28,17 @@ export class StateSubject<T> extends ReplaySubject<T>{
 
   addSetter<M>(setter: OperatorFunction<M, T>) {
     const source = new Subject<M>();
-    setter(source).subscribe(this);
-    return { set: (value: M) => source.next(value) , addSideEffect: (effect: OperatorFunction<M,any>)=> sideEffect(source, effect)};
+    source.pipe(setter).subscribe(this);
+    return { set: (value: M) => source.next(value), addSideEffect: (effect: OperatorFunction<M, any>, options: EffectOption = { error: effectError }) => sideEffect(source, effect, options) };
   }
 
-  addSideEffect(effect: OperatorFunction<T,any>) {
-    sideEffect(this, effect);
+  addSideEffect(effect: OperatorFunction<T, any>, options: EffectOption = { error: effectError }) {
+    sideEffect(this, effect, options);
     return this;
   }
 }
 
-export function sideEffect<T>(source: Observable<T>, effect: OperatorFunction<T,any>) {
-  source.pipe(effect).subscribe();
+export function sideEffect<T>(source: Observable<T>, effect: OperatorFunction<T, any>, options: EffectOption) {
+  const error =  options.error? options.error: pass;
+  source.pipe(effect, error).subscribe();
 }
