@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { IContainer } from 'core';
-import { DocumentMode, IMarkdownContainerStore } from './model/markdown.model';
+import { DocumentMode, IMarkdownStore } from './model/markdown.model';
 import { StateSubject } from '@metaseed/rx-store';
 import { Subject } from 'rxjs';
 
 @Injectable()
-export class MarkdownContainerStore implements IMarkdownContainerStore {
+export class MarkdownStore implements IMarkdownStore {
   viewer_ = new StateSubject<IContainer>();
   editor_ = new StateSubject<IContainer>();
   editorContentChanged_ = new StateSubject<string>();

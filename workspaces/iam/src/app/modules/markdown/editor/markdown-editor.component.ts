@@ -24,7 +24,7 @@ import {
   selectCurrentDocStatus,
   selectCurrentDocumentContentString
 } from 'shared';
-import { DocumentMode, IMarkdownContainerStore, MARKDOWN_CONTAINER_SERVICE_TOKEN } from '../model/markdown.model';
+import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from '../model/markdown.model';
 import { ContainerRef, ICanComponentDeactivate } from 'core';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { SubscriptionManager } from 'app/modules/core/utils/subscription-manager';
@@ -41,7 +41,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
   @ViewChild(CodemirrorComponent)
   codeMirrorComponent: CodemirrorComponent;
 
-  docMode$ = this.markdownContainerStore.documentMode_;
+  docMode$ = this.markdownStore.documentMode_;
 
   markdown$ = this.store.select(selectCurrentDocumentContentString);
 
@@ -49,7 +49,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
     private _elementRef: ElementRef,
     private state: StoreState<any>,
     private dialog: MatDialog,
-    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) public markdownContainerStore: IMarkdownContainerStore,
+    @Inject(MARKDOWN_STORE_TOKEN) public markdownStore: IMarkdownStore,
     @Inject(HAMMER_GESTURE_CONFIG) private gestureConfig: HammerGestureConfig,
     private editorService: MarkdownEditorService,
     private store: Store<any>,
@@ -63,17 +63,17 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
           setTimeout(() => (this.editorLoaded = true), 0);
         }))
       .addSub(
-          this.markdownContainerStore.editIt_
+          this.markdownStore.editIt_
           .subscribe(({ sourceLine } = {} as any) => {
             if (!sourceLine) return;
-            this.markdownContainerStore.documentMode_.next(DocumentMode.Edit);
+            this.markdownStore.documentMode_.next(DocumentMode.Edit);
             setTimeout(() => {
               this.editorService.goToLine(sourceLine[0]);
             }, 0);
           }))
       .addSub(
         this.editorService.docContentModified$.subscribe(this
-          .markdownContainerStore.editorContentChanged_))
+          .markdownStore.editorContentChanged_))
       .addSub(
         this.docMode$.subscribe(mode => {
           switch (mode) {
@@ -89,7 +89,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
   ngAfterViewInit() {
     const codeMirrorScrollElement = (this._elementRef.nativeElement as HTMLElement).getElementsByClassName('CodeMirror-scroll')[0] as HTMLElement;
 
-    this.markdownContainerStore.editor_.next(
+    this.markdownStore.editor_.next(
       new ContainerRef(
         codeMirrorScrollElement,
         undefined,
@@ -114,7 +114,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
   }
 
   private toViewMode = event => {
-    this.markdownContainerStore.documentMode_.next(DocumentMode.View);
+    this.markdownStore.documentMode_.next(DocumentMode.View);
   };
 
 

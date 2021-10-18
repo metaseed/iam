@@ -16,7 +16,7 @@ import { DocumentEffectsActionType, monitorActionStatus$, actionStatusState$ } f
 
 import { map, observeOn, switchMap, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MARKDOWN_CONTAINER_SERVICE_TOKEN, IMarkdownContainerStore, DocumentMode } from '../model/markdown.model';
+import { MARKDOWN_STORE_TOKEN, IMarkdownStore, DocumentMode } from '../model/markdown.model';
 import { PlatformLocation } from '@angular/common';
 
 @Component({
@@ -26,8 +26,8 @@ import { PlatformLocation } from '@angular/common';
 })
 export class MarkdownViewerContainerComponent extends SubscriptionManager implements AfterViewInit {
   DocumentMode = DocumentMode;
-  docMode$ = this.markdownContainerStore.documentMode_;
-  editWithView$ = this.markdownContainerStore.editWithPreview_;
+  docMode$ = this.markdownStore.documentMode_;
+  editWithView$ = this.markdownStore.editWithPreview_;
   @Input()
   markdown$: Observable<string>;
   @Input()
@@ -59,7 +59,7 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
   constructor(
     private store: Store<any>,
     private snackBar: MatSnackBar,
-    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) public markdownContainerStore: IMarkdownContainerStore,
+    @Inject(MARKDOWN_STORE_TOKEN) public markdownStore: IMarkdownStore,
     private ngZone: NgZone,
     private _docRef: DocumentRef,
     private _location: PlatformLocation
@@ -80,20 +80,20 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
     );
     this.viewerContainerDiv.nativeElement.focus();
     this.scrollDown$ = this.container.scrollDown$;
-    this.markdownContainerStore.viewer_.next(this.container);
+    this.markdownStore.viewer_.next(this.container);
 
     setTimeout(_ => this.scrollToHashIdElement(), 500);
 
     let v_per_last = 0;
 
     super.addSub(
-      this.markdownContainerStore.isLockEditorScrollWithView_.pipe(
+      this.markdownStore.isLockEditorScrollWithView_.pipe(
         tap(isLock => {
           this.isLockScrollWithView = isLock;
         })
       )
     ).addSub(
-      this.markdownContainerStore.editor_.pipe(
+      this.markdownStore.editor_.pipe(
         switchMap(c => c.scrollDown$),
         tap(value => {
           if (this.isLockScrollWithView && value.event) {
@@ -107,7 +107,7 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
           }
         })
       )
-    ).addSub(this.markdownContainerStore.scrollView_
+    ).addSub(this.markdownStore.scrollView_
       .subscribe(viewState => {
         const isScrollUp = viewState.isUp;
         // default value is null
@@ -124,7 +124,7 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
     (this.viewerContainerDiv.nativeElement as HTMLElement).addEventListener(
       'edit-it',
       (e: CustomEvent) => {
-        this.markdownContainerStore.editIt_.next(e.detail);
+        this.markdownStore.editIt_.next(e.detail);
       }
     );
   }
@@ -147,7 +147,7 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
       lines = element.getAttribute('data-source-lines');
       element = element.parentElement;
     } while (!lines && !!element && i++ < 4);
-    this.markdownContainerStore.editIt_.next({ sourceLine: JSON.parse(lines)});
+    this.markdownStore.editIt_.next({ sourceLine: JSON.parse(lines)});
   }
 
 }

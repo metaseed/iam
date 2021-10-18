@@ -9,7 +9,7 @@ import { DEFAULT_DOC_META } from 'shared';
 import { FileUploadService } from './file-upload.service';
 import * as CodeMirror from 'codemirror';
 import { ICodeMirrorEditor } from '../model';
-import { MARKDOWN_CONTAINER_SERVICE_TOKEN, IMarkdownContainerStore } from '../../model/markdown.model';
+import { MARKDOWN_STORE_TOKEN, IMarkdownStore } from '../../model/markdown.model';
 
 interface ICommandConfig {
   [key: string]: {
@@ -30,7 +30,7 @@ export class KeyMapService {
     private _editorService: MarkdownEditorService,
     private _commandService: CommandService,
     private _uploadService: FileUploadService,
-    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) private markdownContainerStore: IMarkdownContainerStore
+    @Inject(MARKDOWN_STORE_TOKEN) private markdownStore: IMarkdownStore
 
   ) {
     // cm.setOption('keyMap', 'vim');
@@ -136,10 +136,10 @@ export class KeyMapService {
       editor.display.input.textarea.blur();
     };
     option['Ctrl-Alt-Up'] = () => {
-      this.markdownContainerStore.scrollView_.next({isUp:true});
+      this.markdownStore.scrollView_.next({isUp:true});
     };
     option['Ctrl-Alt-Down'] = () => {
-      this.markdownContainerStore.scrollView_.next({isUp:false});
+      this.markdownStore.scrollView_.next({isUp:false});
     };
     option['Ctrl-Up'] = 'scrollLineUp';
     option['Ctrl-G'] = 'jumpToLine';

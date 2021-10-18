@@ -19,7 +19,7 @@ import {
   selectCurrentDocStatus_IsSyncing
 } from 'shared';
 import { Router } from '@angular/router';
-import { DocumentMode, IMarkdownContainerStore, MARKDOWN_CONTAINER_SERVICE_TOKEN } from '../../model/markdown.model';
+import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from '../../model/markdown.model';
 
 @Component({
   selector: 'editor-toolbar',
@@ -78,7 +78,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
     })
   )
 
-  showPreview$ = this.markdownContainerStore.editWithPreview_;
+  showPreview$ = this.markdownStore.editWithPreview_;
 
   constructor(
     private router: Router,
@@ -89,7 +89,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
     private store: Store<any>,
     public docSaver: DocSaveCoordinateService,
     private _breakpointObserver: BreakpointObserver,
-    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) private markdownContainerStore: IMarkdownContainerStore,
+    @Inject(MARKDOWN_STORE_TOKEN) private markdownStore: IMarkdownStore,
   ) {
     super();
     super.addSub(
@@ -146,10 +146,10 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   };
 
   togglePreview() {
-    if (this.markdownContainerStore.editWithPreview_.value) {
-      this.markdownContainerStore.editWithPreview_.next(false);
+    if (this.markdownStore.editWithPreview_.value) {
+      this.markdownStore.editWithPreview_.next(false);
     } else {
-      this.markdownContainerStore.editWithPreview_.next(true);
+      this.markdownStore.editWithPreview_.next(true);
     }
   }
 
@@ -160,7 +160,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   }
 
   toViewMode = event => {
-    this.markdownContainerStore.documentMode_.next(DocumentMode.View)
+    this.markdownStore.documentMode_.next(DocumentMode.View)
   };
 
   new = () => {
@@ -176,7 +176,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   more(event: { item: HTMLElement }) {
     if (event.item.id === '0') {
       this.lockScrollWithView = !this.lockScrollWithView;
-      this.markdownContainerStore.isLockEditorScrollWithView_.next(this.lockScrollWithView);
+      this.markdownStore.isLockEditorScrollWithView_.next(this.lockScrollWithView);
       // this.store.dispatch(new edit.LockScrollWithView(this.lockScrollWithView));
     } else if (event.item.id === '1') {
       // const dialogRef = this.dialog.open(KeyMapSelectionDialog, {

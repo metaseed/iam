@@ -18,7 +18,7 @@ import {
   selectCurrentDocumentContentString
 } from 'shared';
 import { Utilities } from '../core/utils';
-import { DocumentMode, IMarkdownContainerStore, MARKDOWN_CONTAINER_SERVICE_TOKEN } from './model/markdown.model';
+import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from './model/markdown.model';
 
 @Component({
   selector: 'ms-markdown',
@@ -35,7 +35,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
   @ViewChild('editorDiv')
   editorDiv: ElementRef;
 
-  showEdit$ = this.markdownContainerStore.documentMode_.pipe(
+  showEdit$ = this.markdownStore.documentMode_.pipe(
     map(mode => mode === DocumentMode.Edit)
   );
 
@@ -44,20 +44,20 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       combineLatestWith(this.utils.isWideScreen$),
       map(([isShowEdit, wide]) => {
         if (isShowEdit && !wide) {
-          this.markdownContainerStore.editWithPreview_.next(false);
+          this.markdownStore.editWithPreview_.next(false);
             return false;
         }
-        this.markdownContainerStore.editWithPreview_.next(true);
+        this.markdownStore.editWithPreview_.next(true);
         return true;
       })
     ),
-    this.markdownContainerStore.editWithPreview_
+    this.markdownStore.editWithPreview_
   );
 
   markdown$: Observable<string>;
 
   constructor(
-    @Inject(MARKDOWN_CONTAINER_SERVICE_TOKEN) public markdownContainerStore: IMarkdownContainerStore,
+    @Inject(MARKDOWN_STORE_TOKEN) public markdownStore: IMarkdownStore,
     private _http: HttpClient,
     @Inject(APP_BASE_HREF) private baseHref,
     private changeDetectorRef: ChangeDetectorRef,
@@ -72,7 +72,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     })
     this.markdown$ = merge(
       this.store.select<string>(selectCurrentDocumentContentString),
-      this.markdownContainerStore.editorContentChanged_
+      this.markdownStore.editorContentChanged_
     ).pipe(backOffAfter<string>(80, 1000));
 
   }
@@ -92,7 +92,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
           if (this.router.url.startsWith('/doc/new')) {
             const format = params['f'] as DocFormat;
             this.store.dispatch(new DocumentEffectsCreate({ format }));
-            this.markdownContainerStore.documentMode_.next(DocumentMode.Edit);
+            this.markdownStore.documentMode_.next(DocumentMode.Edit);
 
           } else {
             const title = params['title'];
