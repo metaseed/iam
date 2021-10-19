@@ -8,7 +8,7 @@ import { StateSubject } from '@metaseed/rx-store';
 @Injectable()
 export class MarkdownEffects {
   constructor(private router: Router, private rxStore: Store<any>) { }
-  refresh_ = new StateSubject<any>().addSideEffect(tap(() => this.onRefresh()));
+  refresh_ = new StateSubject<any>().addEffect(tap(() => this.onRefresh()));
 
   private onRefresh() {
     if (this.router.url.startsWith('/doc/new')) return;
