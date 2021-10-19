@@ -1,7 +1,7 @@
-import { extend } from "hammerjs";
 import { Observable, OperatorFunction, ReplaySubject, skip, Subject } from "rxjs";
 import { backOffAfter } from "./operators";
 import { pass } from "./operators/pass";
+import { StateObservable } from "./state-observable";
 
 export type EffectOption = {
   /**
@@ -25,12 +25,12 @@ interface SideEffect<T> {
   addEffect(effect: OperatorFunction<T, any>, options?: EffectOption)
 }
 
-export interface StateSetter<M> extends SideEffect<M> {
+export interface StateSetter<T> extends SideEffect<T> {
   /**
-   * pass one message to the transform operation
-   * @param message
+   * pass one value in.
+   * @param value
    */
-  next(message: M): void,
+  next(value: T): void,
 }
 
 /**
@@ -39,7 +39,7 @@ export interface StateSetter<M> extends SideEffect<M> {
  * only difference with BehaviorSubject is:
  * it would not emit value if initial value is 'undefined'.
  */
-export class StateSubject<T> extends ReplaySubject<T> implements StateSetter<T>{
+export class StateSubject<T> extends ReplaySubject<T> implements StateSetter<T>, StateObservable<T>{
   /**
    *
    * @param _value the initial state, omit: no initial value
@@ -49,15 +49,12 @@ export class StateSubject<T> extends ReplaySubject<T> implements StateSetter<T>{
     if (_value !== undefined) super.next(_value);
   }
 
-  /**
-   * get state: last passed value
-   */
   get value() {
     return this._value;
   }
 
   /**
-   * send next value
+   * set the sate value
    * @param value
    */
   next(value: T): void {
@@ -74,7 +71,7 @@ export class StateSubject<T> extends ReplaySubject<T> implements StateSetter<T>{
     const source = new Subject<M>();
     source.pipe(operation).subscribe(this);
     return {
-      next: (value: M) => source.next(value),
+      next: source.next,
       addEffect: (effect: OperatorFunction<M, any>, options = defaultEffectOption) =>
         sideEffect(source, effect, {...options, ...defaultEffectOption})
     }  as StateSetter<M>;
