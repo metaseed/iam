@@ -1,4 +1,4 @@
-import { OperatorFunction, ReplaySubject, skip, Subject } from "rxjs";
+import { OperatorFunction, ReplaySubject, skip, Subject} from "rxjs";
 import { StateObservable } from "./state-observable";
 import { defaultEffectOption, sideEffect, SideEffect } from './side-effect';
 
@@ -10,13 +10,17 @@ export interface StateSetter<T> extends SideEffect<T> {
   next(value: T): void,
 }
 
+export interface IStateSubject<T> extends StateSetter<T>, StateObservable<T> {
+
+}
+
 /**
  * keep latest passed value as state
  *
  * only difference with BehaviorSubject is:
  * it would not emit value if initial value is 'undefined'.
  */
-export class StateSubject<T> extends ReplaySubject<T> implements StateSetter<T>, StateObservable<T>{
+export class StateSubject<T> extends ReplaySubject<T> implements IStateSubject<T>{
   /**
    *
    * @param _value the initial state, omit: no initial value
