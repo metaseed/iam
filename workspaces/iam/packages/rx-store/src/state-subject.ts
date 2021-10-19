@@ -1,4 +1,4 @@
-import { Observable, OperatorFunction, ReplaySubject, Subject } from "rxjs";
+import { Observable, OperatorFunction, ReplaySubject, skip, Subject } from "rxjs";
 import { backOffAfter } from "./operators";
 import { pass } from "./operators/pass";
 
@@ -40,10 +40,18 @@ export class StateSubject<T> extends ReplaySubject<T>{
     sideEffect(this, effect, options);
     return this;
   }
+
+  get noState$() {
+    const o = this.asObservable();
+    if (this.value !== undefined)
+      return o.pipe(skip(1));
+    else
+      return o;
+  }
 }
 
 export function sideEffect<T>(source: Observable<T>, effect: OperatorFunction<T, any>, options: EffectOption) {
-  const option = {...defaultEffectOption, ...options};
-  const error =  option.error? option.error: pass;
+  const option = { ...defaultEffectOption, ...options };
+  const error = option.error ? option.error : pass;
   source.pipe(effect, error).subscribe();
 }

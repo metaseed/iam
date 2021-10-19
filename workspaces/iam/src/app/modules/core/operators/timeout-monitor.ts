@@ -15,7 +15,7 @@ export function isDate(value: any): value is Date {
  * start timeout monitor when select the start value, stop timer when select the stop item.
  * If timeout:
  * unsubscribe from the source and then subscribe to the Observable output from observableOrValue function.
- * or emit item to subscriber and continue monitor the source.
+ * or emit specified value to subscriber and continue monitor the source.
  * @param due timeout value, unit is millisecond
  * @param startSelector is from the item to start timer?
  * @param stopSelector is the time to stop timer?
