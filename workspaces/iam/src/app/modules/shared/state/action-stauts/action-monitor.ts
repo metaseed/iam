@@ -11,8 +11,8 @@ export class ActionMonitor {
   constructor(private store: Store<ActionMonitorState>, private actions$: Actions) { }
 
   // call this function when inner observable complete to monitor the completion of the action
-  complete = (action: CorrelationAction) => {
-    return tap({
+  complete = <T>(action: CorrelationAction) => {
+    return tap<T>({
       error: err => { console.error(err) },
       complete: () => { // to use 'this', we have to use lambda
         const coId = action.coId;

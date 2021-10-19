@@ -1,6 +1,6 @@
 import { filter, Observable, OperatorFunction } from "rxjs";
-import { timeOutMonitor } from "./operators/timeout-monitor";
-import { StateSubject } from "./state-subject";
+import { timeOutMonitor } from "../operators/timeout-monitor";
+import { StateSubject } from "../state-subject";
 
 export enum OperationStep {
   Start = 'Start',
@@ -27,13 +27,39 @@ export class OperationStatus {
  * it's process step: start, continue1, continue2,..., complete/fail/timeout
  */
 export class OperationStatusStore {
-  operationStatus_ = new StateSubject<OperationStatus>();
+  all_ = new StateSubject<OperationStatus>();
+
+  start$ = this.all_.pipe(
+    ofStep(OperationStep.Start)
+  );
+
+  continue$ = this.all_.pipe(
+    ofStep(OperationStep.Continue)
+  );
+
+  complete$ = this.all_.pipe(
+    ofStep(OperationStep.Complete)
+  );
+
+  fail$ = this.all_.pipe(
+    ofStep(OperationStep.Fail)
+  );
+
+  timeOut$ = this.all_.pipe(
+    ofStep(OperationStep.Timeout)
+  );
 
 }
 
 export function ofType(...allowedType: string[]) {
   return filter((status: OperationStatus) => {
     return status && allowedType.some(t => t === status.type);
+  });
+}
+
+export function ofStep(...monitoredSteps: string[]) {
+  return filter<OperationStatus>(status => {
+    return status && monitoredSteps.some(t => t === status.step);
   });
 }
 
