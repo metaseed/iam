@@ -120,7 +120,7 @@ export class DocumentEffects {
                 this.util.modifyUrlAfterSaved(d.id, newTitle, format);
                 this.snackbar.open('New document saved!', 'OK');
               },
-              error: this.actionMonitor.complete(action)
+              error: ()=>this.actionMonitor.complete(action)
             })
           );
         } else {
@@ -132,7 +132,7 @@ export class DocumentEffects {
                   this.util.modifyUrlAfterSaved(d.id, newTitle, format);
                   console.log('Saved!');
                 },
-                error: this.actionMonitor.complete(action)
+                error: ()=> this.actionMonitor.complete(action)
               })
             );
         }

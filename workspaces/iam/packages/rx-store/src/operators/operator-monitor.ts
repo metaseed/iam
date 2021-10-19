@@ -1,4 +1,4 @@
-import { tap} from "rxjs";
+import { OperatorFunction, pipe, Subject, tap} from "rxjs";
 import { TapObserver } from "rxjs/internal/operators/tap";
 
 type IOperatorStatusReporter<T> = Partial<TapObserver<T>>
