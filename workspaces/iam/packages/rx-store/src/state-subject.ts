@@ -1,29 +1,6 @@
-import { Observable, OperatorFunction, ReplaySubject, skip, Subject } from "rxjs";
-import { backOffAfter } from "./operators";
-import { pass } from "./operators/pass";
+import { OperatorFunction, ReplaySubject, skip, Subject } from "rxjs";
 import { StateObservable } from "./state-observable";
-
-export type EffectOption = {
-  /**
-   * undefined: to disable the default
-   */
-  error?: OperatorFunction<any, any>
-}
-
-const effectError = backOffAfter(6, 77);
-
-const defaultEffectOption = { error: effectError };
-/**
- * operation triggered when observable value pass by.
- */
-interface SideEffect<T> {
-  /**
-   * add side effect triggered by value passed by
-   * @param effect side effect operation
-   * @param options effect options. default option handled error retry with the backOffAfter operator
-   */
-  addEffect(effect: OperatorFunction<T, any>, options?: EffectOption)
-}
+import { defaultEffectOption, sideEffect, SideEffect } from './side-effect';
 
 export interface StateSetter<T> extends SideEffect<T> {
   /**
@@ -34,7 +11,7 @@ export interface StateSetter<T> extends SideEffect<T> {
 }
 
 /**
- * keep last passed value as state
+ * keep latest passed value as state
  *
  * only difference with BehaviorSubject is:
  * it would not emit value if initial value is 'undefined'.
@@ -73,12 +50,12 @@ export class StateSubject<T> extends ReplaySubject<T> implements StateSetter<T>,
     return {
       next: source.next,
       addEffect: (effect: OperatorFunction<M, any>, options = defaultEffectOption) =>
-        sideEffect(source, effect, {...options, ...defaultEffectOption})
-    }  as StateSetter<M>;
+        sideEffect(source, effect, { ...options, ...defaultEffectOption })
+    } as StateSetter<M>;
   }
 
   addEffect(effect: OperatorFunction<T, any>, options = defaultEffectOption) {
-    sideEffect(this, effect, {...options, ...defaultEffectOption});
+    sideEffect(this, effect, { ...options, ...defaultEffectOption });
     return this;
   }
 
@@ -93,10 +70,4 @@ export class StateSubject<T> extends ReplaySubject<T> implements StateSetter<T>,
     else
       return o;
   }
-}
-
-export function sideEffect<T>(source: Observable<T>, effect: OperatorFunction<T, any>, options: EffectOption) {
-  const option = { ...defaultEffectOption, ...options };
-  const error = option.error ? option.error : pass;
-  source.pipe(effect, error).subscribe();
 }
