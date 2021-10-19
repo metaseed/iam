@@ -1,8 +1,8 @@
-import { Observable, shareReplay, tap } from "rxjs";
+import { Observable, shareReplay, Subscribable, tap } from "rxjs";
 /**
  * Observable has a value property that stores the latest value from the observable
  */
-export interface StateObservable<T> extends Observable<T> {
+export interface IStateObservable<T> extends Observable<T>{
   /**
    * get state: latest passed value;
    * undefined: if state is not set.
@@ -11,8 +11,9 @@ export interface StateObservable<T> extends Observable<T> {
 
 }
 
-export function state<T>(source: Observable<T>): StateObservable<T> {
+
+export function StateObservable<T>(source: Observable<T>): IStateObservable<T> {
   let replay = shareReplay<T>(1)(source);
-  let state = tap<T>(o => (state as any).value = o)(replay) as unknown as StateObservable<T>;
+  let state = tap<T>(o => (state as any).value = o)(replay);
   return state;
 }

@@ -56,7 +56,7 @@ export const timeOutMonitor = <T, R>(
     if (timeoutAction) {
       // Recycle the action if we've already scheduled one.
       timeoutAction = <SchedulerAction<Subscriber<T | R>>>(
-        timeoutAction.schedule(subscriber, this.waitFor)
+        timeoutAction.schedule(subscriber, waitFor)
       );
     } else {
       subscriber.add(
@@ -79,7 +79,7 @@ export const timeOutMonitor = <T, R>(
           scheduleTimeout();
         }
       }
-      if (stopSelector(this.startValue, value)) {
+      if (stopSelector(startValue, value)) {
         if (timeoutAction) {
           timeoutAction.unsubscribe();
         }
