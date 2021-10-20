@@ -40,4 +40,5 @@ export function backoff<T>(maxTries: number, ms: number, intervalMap = (i: numbe
         mergeMap(i => timer(i * ms))
       )
     )
- 
+  );
+}
