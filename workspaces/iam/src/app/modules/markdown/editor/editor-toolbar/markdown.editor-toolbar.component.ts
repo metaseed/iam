@@ -146,7 +146,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   };
 
   togglePreview() {
-    if (this.markdownStore.editWithPreview_.value) {
+    if (this.markdownStore.editWithPreview_.state) {
       this.markdownStore.editWithPreview_.next(false);
     } else {
       this.markdownStore.editWithPreview_.next(true);
