@@ -1,4 +1,4 @@
-import { curry } from "../src/utils";
+import { curry } from "../src/core/utils";
 
 describe('curry', ()=> {
   it('should curry', ()=> {
