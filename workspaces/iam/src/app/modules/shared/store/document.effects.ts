@@ -1,5 +1,5 @@
 import { Injectable, InjectionToken } from "@angular/core";
-import { StateSubject } from "packages/rx-store/src";
+import { StateSubject } from "packages/rx-store/src/core";
 
 export interface IDocumentEffects{
   CreateDocument: StateSubject<;

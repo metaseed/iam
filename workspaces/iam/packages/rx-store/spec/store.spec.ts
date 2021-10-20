@@ -2,7 +2,7 @@
 import { } from 'jasmine'; // import all from jasmine
 import { NEVER, scan } from 'rxjs';
 import { map, of } from 'rxjs';
-import { StateObservable, state, StateSubject } from '../src';
+import { StateObservable, state, StateSubject } from '../src/core';
 
 describe('StateObservable', () => {
   it('should add last value after state it in the last pipe', () => {

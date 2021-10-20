@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { DocumentEffectsRead } from 'shared';
-import { StateSubject } from '@metaseed/rx-store';
+import { StateSubject } from 'packages/rx-store/src/core';
 
 @Injectable()
 export class MarkdownEffects {

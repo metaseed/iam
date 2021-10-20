@@ -1,5 +1,5 @@
 import { Observable, OperatorFunction } from "rxjs";
-import { backOffAfter } from "./operators";
+import { backOffAfter } from "./core/operators";
 import { pass } from "./operators/pass";
 
 export type EffectOption = {
