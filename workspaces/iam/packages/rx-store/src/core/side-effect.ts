@@ -1,5 +1,5 @@
 import { Observable, OperatorFunction } from "rxjs";
-import { backOffAfter } from "./operators";
+import { backoff } from "./operators";
 import { pass } from "./operators/pass";
 
 export type EffectOption = {
@@ -9,7 +9,7 @@ export type EffectOption = {
   error?: OperatorFunction<any, any>
 }
 
-const effectError = backOffAfter(6, 77);
+const effectError = backoff(6, 77);
 
 export const defaultEffectOption = { error: effectError };
 /**
@@ -23,7 +23,6 @@ export interface SideEffect<T> {
    */
   addEffect(effect: OperatorFunction<T, any>, options?: EffectOption): any
 }
-
 
 export function sideEffect<T>(source: Observable<T>, effect: OperatorFunction<T, any>, options: EffectOption = defaultEffectOption) {
   const option = { ...defaultEffectOption, ...options };

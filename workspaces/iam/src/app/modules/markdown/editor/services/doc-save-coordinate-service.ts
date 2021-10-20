@@ -12,7 +12,7 @@ import {
   UpdateCurrentDocumentStatus,
   selectCurrentDocStatus,
 } from 'shared';
-import { AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL, backOffAfter, DocFormat, SubscriptionManager } from 'core';
+import { AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL, backoff, DocFormat, SubscriptionManager } from 'core';
 import { ICodeMirrorEditor } from '../model';
 
 @Injectable()
@@ -39,7 +39,7 @@ export class DocSaveCoordinateService extends SubscriptionManager {
               if (isDirty)
                 this.store.dispatch(new DocumentEffectsSave({ content: editor.getValue(), format: DocFormat.md }));
             }),
-            backOffAfter(8, AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL)
+            backoff(8, AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL)
           ))
       .addSub(
         this.editorService.docContentSet$.subscribe((editor: ICodeMirrorEditor) => {

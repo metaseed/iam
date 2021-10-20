@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { APP_BASE_HREF } from '@angular/common';
 import { map, tap, combineLatestWith } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { DocFormat, backOffAfter } from 'core';
+import { DocFormat, backoff } from 'core';
 import { Store } from '@ngrx/store';
 import { ChangeDetectorRef } from '@angular/core';
 import { OnDestroy } from '@angular/core';
@@ -71,7 +71,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     this.markdown$ = merge(
       this.store.select<string>(selectCurrentDocumentContentString),
       this.markdownStore.editorContentChanged_
-    ).pipe(backOffAfter<string>(80, 1000));
+    ).pipe(backoff<string>(80, 1000));
 
   }
 
