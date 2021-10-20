@@ -13,10 +13,12 @@ describe('StateObservable', () => {
   });
 
   it('should add last value after state it in the last pipe', () => {
-    const o$ = state(of(1, 2).pipe(map(o => ++o))).addEffect(scan((acc, v)=> acc+v));
+    let r;
+    const o$ = state(of(1, 2).pipe(map(o => ++o))).addEffect(scan((acc, v)=> r = acc+v));
     o$.subscribe();
 
     expect(o$.value).toBe(3);
+    expect(r).toBe(5);
   });
 
   it('should add last value after apply on Observable', () => {

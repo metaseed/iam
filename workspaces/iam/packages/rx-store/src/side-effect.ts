@@ -29,4 +29,5 @@ export function sideEffect<T>(source: Observable<T>, effect: OperatorFunction<T,
   const option = { ...defaultEffectOption, ...options };
   const error = option.error ? option.error : pass;
   source.pipe(effect, error).subscribe();
+  return source;
 }
