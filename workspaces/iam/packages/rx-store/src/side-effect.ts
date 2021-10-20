@@ -21,11 +21,11 @@ export interface SideEffect<T> {
    * @param effect side effect operation
    * @param options effect options. default option handled error retry with the backOffAfter operator
    */
-  addEffect(effect: OperatorFunction<T, any>, options?: EffectOption)
+  addEffect(effect: OperatorFunction<T, any>, options?: EffectOption): any
 }
 
 
-export function sideEffect<T>(source: Observable<T>, effect: OperatorFunction<T, any>, options: EffectOption) {
+export function sideEffect<T>(source: Observable<T>, effect: OperatorFunction<T, any>, options: EffectOption = defaultEffectOption) {
   const option = { ...defaultEffectOption, ...options };
   const error = option.error ? option.error : pass;
   source.pipe(effect, error).subscribe();

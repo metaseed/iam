@@ -1,27 +1,33 @@
 
-import { S } from '@angular/cdk/keycodes';
-import { } from 'jasmine';
-import { NEVER } from 'rxjs';
+import { } from 'jasmine'; // import all from jasmine
+import { NEVER, scan } from 'rxjs';
 import { map, of } from 'rxjs';
-import { IStateObservable, StateObservable, StateSubject } from '../src';
+import { StateObservable, state, StateSubject } from '../src';
 
 describe('StateObservable', () => {
   it('should add last value after state it in the last pipe', () => {
-    const o$ = of(1, 2).pipe(map(o => ++o), StateObservable) as IStateObservable<number>;
+    const o$ = of(1, 2).pipe(map(o => ++o), state) as StateObservable<number>;
+    o$.subscribe();
+
+    expect(o$.value).toBe(3);
+  });
+
+  it('should add last value after state it in the last pipe', () => {
+    const o$ = state(of(1, 2).pipe(map(o => ++o))).addEffect(scan((acc, v)=> acc+v));
     o$.subscribe();
 
     expect(o$.value).toBe(3);
   });
 
   it('should add last value after apply on Observable', () => {
-    const o$ = StateObservable(of(1, 2).pipe(map(o => ++o)));
+    const o$ = state(of(1, 2).pipe(map(o => ++o)));
     o$.subscribe();
 
     expect(o$.value).toBe(3);
   });
 
   it('should be undefined if no value emitted', ()=> {
-    const o$ = StateObservable(NEVER.pipe(map(o=>++o)));
+    const o$ = state(NEVER.pipe(map(o=>++o)));
     o$.subscribe();
     expect(o$.value).toBe(undefined)
   });
@@ -32,7 +38,7 @@ describe('StateSubject', () => {
     const s_ = new StateSubject<number>();
     expect(s_.value).toBe(undefined);
 
-    const o$ = s_.pipe(map(o=>++o), StateObservable) as IStateObservable<number>;
+    const o$ = s_.pipe(map(o=>++o), state) as StateObservable<number>;
     o$.subscribe();
 
     expect(s_.value).toBe(undefined);
