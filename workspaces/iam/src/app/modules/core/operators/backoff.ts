@@ -5,7 +5,7 @@ import { retryWhen, map, mergeMap, zipWith } from 'rxjs/operators';
  *
  * @param maxTries number of retries, Infinity: always retry.
  * @param ms interval of first time retry. milliseconds
- * @param intervalMap map integer to milliseconds interval, i would increase from 1 until to the maxTries(include). default is (1,2,3,4...) => (1, 2, 3, 4...) * ms
+ * @param intervalMap map integer to milliseconds interval, i would increase from 1 until to the maxTries(include). default is (1,2,3,4...) => ((1, 2, 3, 4...) * interval) ms
  * @returns
  *
  * @example
@@ -22,3 +22,22 @@ import { retryWhen, map, mergeMap, zipWith } from 'rxjs/operators';
  *
  * @example retry after error happens, 8 times, with interval from error time increase at a quadratic of i;
  * backoff(8, 10, i=>i*i)
+ * (1,2,3,4...) => (10, 40, 90, 160...) * ms
+ *
+ * @example complex retry interval calculation: interval 10, 40, 90, 160, 250; 10; 40, 90,... ms
+ * backoff(Infinity, 10, i => {
+ *  const t = (i-1)%5 + 1; // 1, 2, 3, 4, 5; 1, 2, 3...
+ *  return t*t; // 1,4,9,16,25;1,4,9...
+ * })
+ *
+ */
+export function backoff<T>(maxTries: number, ms: number, intervalMap = (i: number) => i) {
+  return pipe(
+    retryWhen<T>(err$ =>
+      range(1, maxTries).pipe(
+        zipWith(err$), // attach number sequence to the errors observable
+        map(([i]) => intervalMap(i)), // every error correspond to a squared result of number
+        mergeMap(i => timer(i * ms))
+      )
+    )
+ 

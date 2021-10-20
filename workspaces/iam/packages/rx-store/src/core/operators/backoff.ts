@@ -5,7 +5,7 @@ import { retryWhen, map, mergeMap, zipWith } from 'rxjs/operators';
  *
  * @param maxTries number of retries, Infinity: always retry.
  * @param ms interval of first time retry. milliseconds
- * @param intervalMap map integer to milliseconds interval, i would increase from 1 until to the maxTries(include). default is (1,2,3,4...) => (1, 2, 3, 4...) * ms
+ * @param intervalMap map integer to milliseconds interval, i would increase from 1 until to the maxTries(include). default is (1,2,3,4...) => ((1, 2, 3, 4...) * interval) ms
  * @returns
  *
  * @example
@@ -24,10 +24,10 @@ import { retryWhen, map, mergeMap, zipWith } from 'rxjs/operators';
  * backoff(8, 10, i=>i*i)
  * (1,2,3,4...) => (10, 40, 90, 160...) * ms
  *
- * @example complex retry interval calculation: interval 10, 40, 90, 160; 10; 40, 90,... ms
+ * @example complex retry interval calculation: interval 10, 40, 90, 160, 250; 10; 40, 90,... ms
  * backoff(Infinity, 10, i => {
  *  const t = (i-1)%5 + 1; // 1, 2, 3, 4, 5; 1, 2, 3...
- *  return i*i; // 1,4,9,16;1,4,9...
+ *  return t*t; // 1,4,9,16,25;1,4,9...
  * })
  *
  */
