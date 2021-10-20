@@ -23,24 +23,24 @@ export interface IStateSubject<T> extends StateSetter<T>, Exclude<SideEffect<T>,
 export class StateSubject<T> extends ReplaySubject<T> implements IStateSubject<T>{
   /**
    *
-   * @param _value the initial state, omit: no initial value
+   * @param _state the initial state, omit: no initial value
    */
-  constructor(private _value?: T) {
+  constructor(private _state?: T) {
     super(1);
-    if (_value !== undefined) super.next(_value);
+    if (_state !== undefined) super.next(_state);
   }
 
-  get value() {
-    return this._value;
+  get state() {
+    return this._state;
   }
 
   /**
    * set the sate value
-   * @param value
+   * @param state
    */
-  next(value: T): void {
-    this._value = value;
-    super.next(value);
+  next(state: T): void {
+    this._state = state;
+    super.next(state);
   }
 
   /**
@@ -69,7 +69,7 @@ export class StateSubject<T> extends ReplaySubject<T> implements IStateSubject<T
    */
   get noState$() {
     const o = this.asObservable();
-    if (this.value !== undefined)
+    if (this.state !== undefined)
       return o.pipe(skip(1));
     else
       return o;

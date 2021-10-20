@@ -8,7 +8,7 @@ export interface StateObservable<T> extends Observable<T>, SideEffect<T>{
    * get state: latest passed value;
    * undefined: if state is not set.
    */
-  value: T | undefined;
+  state: T | undefined;
   addEffect(effect: OperatorFunction<T, any>, options?: EffectOption): StateObservable<T>
 
 }
@@ -16,8 +16,8 @@ export interface StateObservable<T> extends Observable<T>, SideEffect<T>{
 
 export function state<T>(source: Observable<T>): StateObservable<T> {
   const replay = shareReplay<T>(1)(source);
-  const state = tap<T>(o => (state as any).value = o)(replay);
-  state.addEffect = sideEffect.bind(state, state);
-  return state;
+  const state$ = tap<T>(o => (state$ as any).state = o)(replay);
+  state$.addEffect = sideEffect.bind(state$, state$);
+  return state$;
 }
 

@@ -1,2 +1,2 @@
 export * from './backoff';
-export * from './error-retry';
+export * from './timeout-monitor';
