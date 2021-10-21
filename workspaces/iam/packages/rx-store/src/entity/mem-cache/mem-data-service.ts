@@ -24,14 +24,18 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
   }
 
   addMany(entities: T[]): Observable<(T | undefined)[]> {
-    const toAdd = entities.map(e => ({ id: this.idGenerator(e), entity: e })).filter(ep => this.ids.indexOf(ep.id) === -1);
+    const result: (T | undefined)[] = [];
+    const toAdd = entities.map(e => ({ id: this.idGenerator(e), entity: e })).filter(ep => {
+      const notIn = this.ids.indexOf(ep.id) === -1;
+      result.push(notIn ? ep.entity : toUndefined(ep.entity, `addMany: entity not added: this id: ${ep.id.toString()} is already there.`))
+      return notIn
+    });
     add(toAdd, this, this.sortComparer);
-    const result = entities.map(e => this.ids.indexOf(this.idGenerator(e)) === -1 ? e : toUndefined(e, 'add: this id already there'))
     return of(result);
   }
 
   delete(id: ID): Observable<ID | undefined> {
-    if (this.ids.indexOf(id) === -1) return of(toUndefined(id, `${id.toString()} not exist`));
+    if (this.ids.indexOf(id) === -1) return of(toUndefined(id, `delete: not deleted: ${id.toString()} not exist`));
 
     delete this.entities[id];
     removeItem(this.ids, id);
@@ -39,7 +43,7 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
   }
 
   update(update: Update<T>): Observable<T | undefined> {
-
+    return this.updateMany([update]).pipe(map(a => a[0]));
   }
 
   updateMany(updates: Update<T>[]): Observable<(T | undefined)[]> {
@@ -49,7 +53,7 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
     for (const { id, changes } of updates) {
       const entityInCache = this.entities[id];
       if (!entityInCache) {
-        result.push(toUndefined(changes,`updateMany: entity not updated: can not find id for it.`));
+        result.push(toUndefined(changes, `updateMany: entity not updated: can not find id for it.`));
         continue;
       }
       const mergedEntity = { ...entityInCache, ...changes }
@@ -63,9 +67,10 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
         idEntityPairToAdd.push({ id: newId, entity: mergedEntity });
       }
     }
-    add(idEntityPairToAdd,this,this.sortComparer);
+    add(idEntityPairToAdd, this, this.sortComparer);
     return of(result);
   }
+
   set(entity: T): Observable<T> {
 
   }
@@ -73,8 +78,6 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
   upsert(entity: T): Observable<T> {
 
   }
-
-
 
   getAll(): Observable<T[]> {
     const entities = Object.values(this.entities);
