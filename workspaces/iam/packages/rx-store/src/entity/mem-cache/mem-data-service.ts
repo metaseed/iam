@@ -44,7 +44,6 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
 
   updateMany(updates: Update<T>[]): Observable<(T | undefined)[]> {
     const result: (T | undefined)[] = [];
-    const idsToAdd: ID[] = [];
     const idEntityPairToAdd: IdEntityPair<T>[] = [];
 
     for (const { id, changes } of updates) {
@@ -59,7 +58,8 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
       if (id === newId) {
         this.entities[id] = mergedEntity;
       } else {
-        idsToAdd.push[newId];
+        delete this.entities[id];
+        removeItem(this.ids, id);
         idEntityPairToAdd.push({ id: newId, entity: mergedEntity });
       }
     }
