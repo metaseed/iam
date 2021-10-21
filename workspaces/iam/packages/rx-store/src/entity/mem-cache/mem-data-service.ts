@@ -7,6 +7,8 @@ import { removeItem } from "../utils/remove-array-item";
 import { sortComparerWrapper } from "../utils/sort-comparer-wrapper";
 import { EntityCache } from "./models";
 
+type IdEntityPair<T> = { id: ID; entity: T }
+
 export class MemDataService<T> extends EntityDataServiceBase<T> implements EntityCache<T> {
   ids: ID[] = [];
   entities: Record<ID, T> = Object.create(null); // not use {}, to remove inheritance from Object.prototype.
@@ -22,17 +24,14 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
   }
 
   addMany(entities: T[]): Observable<(T | undefined)[]> {
-    if (isDevMode()) {
-      entities.filter(ent => this.ids.indexOf(this.idGenerator(ent)) !== -1).forEach(ent => console.warn('MemDataService: entity is not add,\n id of entity already there, entity: \n', ent));
-    }
-    const toAdd = entities.filter(ent => this.ids.indexOf(this.idGenerator(ent)) === -1);
-    add(toAdd, this, this.idGenerator, this.sortComparer);
-    const result = entities.map(e => this.ids.indexOf(this.idGenerator(e)) === -1 ? e : undefined)
+    const toAdd = entities.map(e => ({ id: this.idGenerator(e), entity: e })).filter(ep => this.ids.indexOf(ep.id) === -1);
+    add(toAdd, this, this.sortComparer);
+    const result = entities.map(e => this.ids.indexOf(this.idGenerator(e)) === -1 ? e : toUndefined(e, 'add: this id already there'))
     return of(result);
   }
 
   delete(id: ID): Observable<ID | undefined> {
-    if (this.ids.indexOf(id) === -1) return of(undefined);
+    if (this.ids.indexOf(id) === -1) return of(toUndefined(id, `${id.toString()} not exist`));
 
     delete this.entities[id];
     removeItem(this.ids, id);
@@ -42,13 +41,40 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
   update(update: Update<T>): Observable<T | undefined> {
 
   }
-  set(entity:T): Observable<T>{
+
+  updateMany(updates: Update<T>[]): Observable<(T | undefined)[]> {
+    const result: (T | undefined)[] = [];
+    const idsToAdd: ID[] = [];
+    const idEntityPairToAdd: IdEntityPair<T>[] = [];
+
+    for (const { id, changes } of updates) {
+      const entityInCache = this.entities[id];
+      if (!entityInCache) {
+        result.push(toUndefined(changes,`updateMany: entity not updated: can not find id for it.`));
+        continue;
+      }
+      const mergedEntity = { ...entityInCache, ...changes }
+      const newId = this.idGenerator(mergedEntity);
+      result.push(mergedEntity);
+      if (id === newId) {
+        this.entities[id] = mergedEntity;
+      } else {
+        idsToAdd.push[newId];
+        idEntityPairToAdd.push({ id: newId, entity: mergedEntity });
+      }
+    }
+    add(idEntityPairToAdd,this,this.sortComparer);
+    return of(result);
+  }
+  set(entity: T): Observable<T> {
 
   }
 
-  upsert(entity: T): Observable<T | undefined> {
+  upsert(entity: T): Observable<T> {
 
   }
+
+
 
   getAll(): Observable<T[]> {
     const entities = Object.values(this.entities);
@@ -65,11 +91,17 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
   }
 }
 
-function add<T>(entities: T[], cache: EntityCache<T>, idGenerator: IdGenerator<T>, sortComparer?: SortComparer<T>) {
+function toUndefined(e: any, msg: string) {
+  if (isDevMode()) {
+    console.warn(`MemDataService:${msg}\n entity: \n`, e)
+  }
+  return undefined;
+}
+
+function add<T>(idEntityPairs: IdEntityPair<T>[], cache: EntityCache<T>, entitySortComparer?: SortComparer<T>) {
   try {
-    if (!sortComparer) {
-      for (const entity of entities) {
-        const id = idGenerator(entity)
+    if (!entitySortComparer) {
+      for (const { id, entity } of idEntityPairs) {
         cache.ids.push(id);
         cache.entities[id] = entity;
       }
@@ -77,15 +109,15 @@ function add<T>(entities: T[], cache: EntityCache<T>, idGenerator: IdGenerator<T
       let i = 0;
       let j = 0;
       const ids: ID[] = [];
-      entities.sort(sortComparer);
+      //note: entities would be modified here by sort
+      idEntityPairs.sort((a, b) => entitySortComparer(a.entity, b.entity));
 
-      while (i < entities.length && j < cache.ids.length) {
-        const entity = entities[i];
-        const id = idGenerator(entity);
+      while (i < idEntityPairs.length && j < cache.ids.length) {
+        const { id, entity } = idEntityPairs[i];
         const idInCache = cache.ids[j];
         const entityInCache = cache.entities[idInCache];
 
-        if (sortComparer(entity, entityInCache) <= 0) {
+        if (entitySortComparer(entity, entityInCache) <= 0) {
           ids.push(id);
           i++;
         } else {
@@ -94,15 +126,15 @@ function add<T>(entities: T[], cache: EntityCache<T>, idGenerator: IdGenerator<T
         }
       }
 
-      if (i < entities.length) {
-        cache.ids = ids.concat(entities.slice(i).map(idGenerator));
+      if (i < idEntityPairs.length) {
+        cache.ids = ids.concat(idEntityPairs.slice(i).map(ep => ep.id));
       } else {
         cache.ids = ids.concat(cache.ids.slice(j));
       }
 
-      entities.forEach((model, i) => {
-        cache.entities[idGenerator(model)] = model;
-      });
+      for (const { id, entity } of idEntityPairs) {
+        cache.entities[id] = entity;
+      }
     }
   } catch (e: any) {
     console.error(e);
