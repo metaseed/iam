@@ -4,7 +4,8 @@
         "mdc",
         "monokai",
         "scrollable",
-        "snackbar"
+        "snackbar",
+        "upsert"
     ],
     "prettier.singleQuote": true
 }
