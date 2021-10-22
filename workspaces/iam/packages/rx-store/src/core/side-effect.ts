@@ -4,16 +4,18 @@ import { pass } from "./operators/pass";
 
 export type EffectOption = {
   /**
-   * undefined: to disable the default handler, which retry at a pace: 100, 400, 900, 1600, 2500; 100, 400, 900, 1600, 2500; 100, 400... ms
+   * undefined: to disable the default handler.
+   *
+   * default one retry at a pace: 10, 40, 90, 160, 250, 500; 10, 40, 90, 160, 250, 500; 10, 40... ms
    */
   error?: OperatorFunction<any, any>
 }
 
 /**
- * retry at a pace: 100, 400, 900, 1600, 2500; 100, 400, 900, 1600, 2500; 100, 400... ms
+ * retry after error at a pace: 10, 40, 90, 160, 250, 500; 10, 40, 90, 160, 250, 500; 10, 40... ms
  */
-const effectError = backoff(Infinity, 100, i => {
-  const t = (i - 1) % 5 + 1; return t * t
+const effectError = backoff(Infinity, 10, i => {
+  const t = (i - 1) % 6 + 1; return t * t
 });
 
 export const defaultEffectOption = { error: effectError };
@@ -22,9 +24,14 @@ export const defaultEffectOption = { error: effectError };
  */
 export interface SideEffect<T> {
   /**
-   * add side effect triggered by value passed by
+   * add side effect triggered by value passed by.
+   * subscribe to the observable and handle errors from it.
+   *
+   * default option handled error retry at a delay pace:
+   * 10, 40, 90, 160, 250, 500; 10, 40, 90, 160, 250, 500; 10, 40... ms.
+   * could use `backoff` operator or any others to customize.
    * @param effect side effect operation
-   * @param options effect options. default option handled error retry at a delay pace: 100, 400, 900, 1600, 2500; 100, 400, 900, 1600, 2500; 100, 400... ms
+   * @param options effect options.
    */
   addEffect(effect: OperatorFunction<T, any>, options?: EffectOption): any
 }

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { OperationStatusConsoleReporter, OperationStatusStore } from "packages/rx-store/src/core";
+import { OperationStatusConsoleReporter, OperationStatusStore } from "@metaseed/rx-store";
 
 @Injectable({providedIn:'root'})
 export class OperationStatus extends OperationStatusStore {
