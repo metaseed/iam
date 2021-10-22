@@ -38,6 +38,12 @@ export interface EntityDataService<T> {
  */
   set(entity: T): Observable<T>;
   setMany(entities: T[]): Observable<T[]>;
+  /**
+   * update or insert
+   * here we pass T not Partial<T>, because we want generate id from entity, if we want to pass just partial T,
+   * we can make the id irrelevant properties of T optional. (add ? after property name)
+   * @param entity
+   */
   upsert(entity: T): Observable<T>;
   upsertMany(updates: T[]): Observable<T[]>;
   getAll(): Observable<T[]>;

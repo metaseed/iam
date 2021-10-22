@@ -1,7 +1,7 @@
 import { map, Observable, of } from "rxjs";
-import { isDevMode } from "..";
 import { EntityDataServiceBase } from "../entity-data-service-base";
 import { ID, IdGenerator, QueryParams, SortComparer, Update } from "../entity-data-service.interface";
+import { isDevMode } from "../utils";
 import { idGeneratorWrapper } from "../utils/id-generator-wrapper";
 import { removeItem } from "../utils/remove-array-item";
 import { sortComparerWrapper } from "../utils/sort-comparer-wrapper";
@@ -30,7 +30,7 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
       result.push(notIn ? ep.entity : toUndefined(ep.entity, `addMany: entity not added: this id: ${ep.id.toString()} is already there.`))
       return notIn
     });
-    add(toAdd, this, this.sortComparer);
+    insert(toAdd, this, this.sortComparer);
     return of(result);
   }
 
@@ -110,7 +110,7 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
         idEntityPairToAdd.push({ id: newId, entity: newEntity });
       }
     }
-    add(idEntityPairToAdd, this, this.sortComparer);
+    insert(idEntityPairToAdd, this, this.sortComparer);
     return of(result);
   }
 }
@@ -122,7 +122,7 @@ function toUndefined(e: any, msg: string) {
   return undefined;
 }
 
-function add<T>(idEntityPairs: IdEntityPair<T>[], cache: EntityCache<T>, entitySortComparer?: SortComparer<T>) {
+function insert<T>(idEntityPairs: IdEntityPair<T>[], cache: EntityCache<T>, entitySortComparer?: SortComparer<T>) {
   try {
     if (!entitySortComparer) {
       for (const { id, entity } of idEntityPairs) {
