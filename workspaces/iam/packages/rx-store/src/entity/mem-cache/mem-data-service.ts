@@ -13,7 +13,7 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
   ids: ID[] = [];
   entities: Record<ID, T> = Object.create(null); // not use {}, to remove inheritance from Object.prototype.
 
-  constructor(private idGenerator: IdGenerator<T>, private sortComparer?: SortComparer<T>) {
+  constructor(name:string, private idGenerator: IdGenerator<T>, private sortComparer?: SortComparer<T>) {
     super();
     this.idGenerator = idGeneratorWrapper(idGenerator);
     if (sortComparer) this.sortComparer = sortComparerWrapper(sortComparer);
