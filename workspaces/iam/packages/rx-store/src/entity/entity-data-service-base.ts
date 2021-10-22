@@ -1,4 +1,4 @@
-import { filter, map, merge, Observable, zip } from "rxjs";
+import { Observable, zip } from "rxjs";
 import { EntityDataService } from ".";
 import { Update, QueryParams, ID } from "./entity-data-service.interface";
 
@@ -33,7 +33,7 @@ export abstract class EntityDataServiceBase<T> implements EntityDataService<T> {
   upsert(entity: T): Observable<T> {
     throw new Error("Method not implemented.");
   }
-  upsertMany(updates: Update<T>[]): Observable<T[]> {
+  upsertMany(updates: T[]): Observable<T[]> {
     return zip(updates.map(e => this.upsert(e)));
   }
   getAll(): Observable<T[]> {

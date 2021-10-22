@@ -36,9 +36,7 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
 
   delete(id: ID): Observable<ID | undefined> {
     if (this.ids.indexOf(id) === -1) return of(toUndefined(id, `delete: not deleted: ${id.toString()} not exist`));
-
-    delete this.entities[id];
-    removeItem(this.ids, id);
+    this.delete(id);
     return of(id);
   }
 
@@ -47,50 +45,73 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
   }
 
   updateMany(updates: Update<T>[]): Observable<(T | undefined)[]> {
-    const result: (T | undefined)[] = [];
-    const idEntityPairToAdd: IdEntityPair<T>[] = [];
-
-    for (const { id, changes } of updates) {
-      const entityInCache = this.entities[id];
-      if (!entityInCache) {
-        result.push(toUndefined(changes, `updateMany: entity not updated: can not find id for it.`));
-        continue;
-      }
-      const mergedEntity = { ...entityInCache, ...changes }
-      const newId = this.idGenerator(mergedEntity);
-      result.push(mergedEntity);
-      if (id === newId) {
-        this.entities[id] = mergedEntity;
-      } else {
-        delete this.entities[id];
-        removeItem(this.ids, id);
-        idEntityPairToAdd.push({ id: newId, entity: mergedEntity });
-      }
-    }
-    add(idEntityPairToAdd, this, this.sortComparer);
-    return of(result);
+    return this.changeOrInsert(updates, { insert: false, update: true });
   }
 
   set(entity: T): Observable<T> {
+    return this.setMany([entity]).pipe(map(es=> es[0]));
+  }
 
+  setMany(entities: T[]): Observable<T[]> {
+    // replace or insert
+    const changes = entities.map(e => ({ id: this.idGenerator(e), changes: e }));
+    return this.changeOrInsert(changes, { insert: true, update: false }) as Observable<T[]>
   }
 
   upsert(entity: T): Observable<T> {
+    return this.upsertMany([entity]).pipe(map(es => es[0]));
+  }
 
+  upsertMany(entities:T[]): Observable<T[]>{
+    const changes = entities.map(e => ({ id: this.idGenerator(e), changes: e }));
+    return this.changeOrInsert(changes, { insert: true, update: true }) as Observable<T[]>
   }
 
   getAll(): Observable<T[]> {
-    const entities = Object.values(this.entities);
     if (this.sortComparer)
       return of(this.ids.map(id => this.entities[id]));
     else
-      return of(entities);
+      return of(Object.values(this.entities));
   }
   getById(id: ID): Observable<T | undefined> {
     return of(this.entities[id]);
   }
   getWithQuery(params: string | QueryParams): Observable<T[]> {
     throw new Error("Method not implemented.");
+  }
+
+  private deleteId(id) {
+    delete this.entities[id];
+    removeItem(this.ids, id);
+  }
+
+  private changeOrInsert(changeEntities: Update<T>[], option: { insert: boolean, /**update or replace */ update: boolean }): Observable<(T | undefined)[]> {
+    const result: (T | undefined)[] = [];
+    const idEntityPairToAdd: IdEntityPair<T>[] = [];
+
+    for (const { id, changes } of changeEntities) {
+      const entityInCache = this.entities[id];
+      if (!entityInCache) {
+        if (option.insert) {
+          result.push(changes as T);
+          idEntityPairToAdd.push({ id, entity: changes as T })
+        }
+        else
+          result.push(toUndefined(changes, `updateMany: entity not updated: can not find id for it.`));
+        continue;
+      }
+      const newEntity = option.update ? { ...entityInCache, ...changes } : changes as T;
+      const newId = this.idGenerator(newEntity);
+      result.push(newEntity);
+      if (id === newId) {
+        this.entities[id] = newEntity;
+      } else {
+        this.deleteId(id);
+        idEntityPairToAdd.push({ id: newId, entity: newEntity });
+      }
+    }
+    add(idEntityPairToAdd, this, this.sortComparer);
+    return of(result);
   }
 }
 
