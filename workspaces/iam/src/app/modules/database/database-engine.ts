@@ -1,6 +1,6 @@
 import { Observable, Observer, Subject, from, of } from 'rxjs';
-import { mergeMap, tap, share, shareReplay, filter } from 'rxjs/operators';
-import { InjectionToken, Inject, Injectable, NgModule, ModuleWithProviders } from '@angular/core';
+import { mergeMap, tap, shareReplay, filter } from 'rxjs/operators';
+import { InjectionToken, Inject, Injectable } from '@angular/core';
 
 const IDB_SUCCESS = 'success';
 const IDB_COMPLETE = 'complete';

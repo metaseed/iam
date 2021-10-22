@@ -15,7 +15,7 @@ export abstract class EntityDataServiceBase<T> implements EntityDataService<T> {
   deleteMany(ids: ID[]): Observable<(ID|undefined)[]> {
     return zip(ids.map(id => this.delete(id)));
   }
-  deleteAll() {
+  deleteAll():Observable<undefined> {
     throw new Error("Method not implemented.");
   }
   update(update: Update<T>): Observable<T|undefined> {

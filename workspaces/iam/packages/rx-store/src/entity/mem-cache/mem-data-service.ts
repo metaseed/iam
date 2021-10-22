@@ -39,6 +39,11 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
     this.delete(id);
     return of(id);
   }
+  deleteAll(): Observable<undefined> {
+    this.ids = [];
+    this.entities = {};
+    return of(undefined);
+  }
 
   update(update: Update<T>): Observable<T | undefined> {
     return this.updateMany([update]).pipe(map(a => a[0]));
@@ -49,7 +54,7 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
   }
 
   set(entity: T): Observable<T> {
-    return this.setMany([entity]).pipe(map(es=> es[0]));
+    return this.setMany([entity]).pipe(map(es => es[0]));
   }
 
   setMany(entities: T[]): Observable<T[]> {
@@ -62,7 +67,7 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
     return this.upsertMany([entity]).pipe(map(es => es[0]));
   }
 
-  upsertMany(entities:T[]): Observable<T[]>{
+  upsertMany(entities: T[]): Observable<T[]> {
     const changes = entities.map(e => ({ id: this.idGenerator(e), changes: e }));
     return this.changeOrInsert(changes, { insert: true, update: true }) as Observable<T[]>
   }

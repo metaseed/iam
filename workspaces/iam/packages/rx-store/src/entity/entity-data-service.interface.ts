@@ -28,7 +28,7 @@ export interface EntityDataService<T> {
    * @returns ids that are deleted, filtered out ids not in there.
    */
   deleteMany(ids: ID[]): Observable<(ID | undefined)[]>
-  deleteAll();
+  deleteAll():Observable<undefined>;
 
   update(update: Update<T>): Observable<T | undefined>;
   updateMany(updates: Update<T>[]): Observable<(T | undefined)[]>;
