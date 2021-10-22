@@ -27,7 +27,7 @@ export class ActionMonitor {
     });
   }
 
-  do$ = <T extends CorrelationAction>(actionType: string, pipe: OperatorFunction<T, any>) => {
+  do$ = <T extends CorrelationAction>(actionType: string, pipe: OperatorFunction<T, unknown>) => {
     let coId: number;
     let action: CorrelationAction;
     return this.actions$.pipe(

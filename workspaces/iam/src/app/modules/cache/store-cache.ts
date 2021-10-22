@@ -50,6 +50,10 @@ export class StoreCache implements ICache {
     return this;
   }
 
+  /**
+   * just creat draft doc, not create at next level cache
+   * @param format
+   */
   createDoc(format: DocFormat) {
     const id = NEW_DOC_ID;
     const doc = new Document(id, undefined, new DocContent(id, DEFAULT_NEW_DOC_CONTENT, undefined));
@@ -57,6 +61,9 @@ export class StoreCache implements ICache {
     this.store.dispatch(new SetCurrentDocumentId({ id: id }));
   }
 
+  /**
+   * would be called at user save
+   */
   CreateDocument(content: string, format: DocFormat) {
     return this.nextLevelCache.CreateDocument(content, format).pipe(
       tap(doc => {

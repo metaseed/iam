@@ -1,4 +1,4 @@
-import { OperatorFunction, ReplaySubject, skip, Subject } from "rxjs";
+import { OperatorFunction, ReplaySubject, skip, Subject, tap } from "rxjs";
 import { StateObservable } from "./state-observable";
 import { defaultEffectOption, EffectOption, sideEffect, SideEffect } from './side-effect';
 
@@ -48,17 +48,17 @@ export class StateSubject<T> extends ReplaySubject<T> implements IStateSubject<T
    * @param operation operation to transform a message into state value, it's like the operation in the store's reducer for the action message
    * @returns
    */
-  addSetter<M>(operation: OperatorFunction<M, T>) {
+  addSetter<M>(operation: OperatorFunction<M, T>): StateSetter<M> {
     const source = new Subject<M>();
     source.pipe(operation).subscribe(this);
     return {
       next: source.next,
-      addEffect: (effect: OperatorFunction<M, any>, options = defaultEffectOption) =>
+      addEffect: (effect: OperatorFunction<M, unknown>, options = defaultEffectOption) =>
         sideEffect(source, effect, { ...options, ...defaultEffectOption })
-    } as StateSetter<M>;
+    };
   }
 
-  addEffect(effect: OperatorFunction<T, any>, options = defaultEffectOption) {
+  addEffect(effect: OperatorFunction<T, unknown>, options = defaultEffectOption): StateSubject<T> {
     sideEffect(this, effect, { ...options, ...defaultEffectOption });
     return this;
   }

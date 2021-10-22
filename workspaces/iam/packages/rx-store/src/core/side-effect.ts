@@ -33,7 +33,7 @@ export interface SideEffect<T> {
    * @param effect side effect operation
    * @param options effect options.
    */
-  addEffect(effect: OperatorFunction<T, any>, options?: EffectOption): any
+  addEffect(effect: OperatorFunction<T, unknown>, options?: EffectOption): any
 }
 
 export function sideEffect<T>(source: Observable<T>, effect: OperatorFunction<T, any>, options: EffectOption = defaultEffectOption) {
