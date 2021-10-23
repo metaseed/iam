@@ -15,8 +15,8 @@ export interface StateObservable<T> extends Observable<T>, SideEffect<T>{
 
 export function state<T>(source: Observable<T>): StateObservable<T> {
   const replay = shareReplay<T>(1)(source);
-  const state$ = tap<T>(o => (state$ as any).state = o)(replay);
+  const state = tap<T>(o => (state$ as any).state = o)(replay);
+  const state$ = Object.create(state);
   state$.addEffect = sideEffect.bind(state$, state$);
   return state$;
 }
-

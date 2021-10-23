@@ -1,6 +1,8 @@
 import { OperatorFunction, ReplaySubject, skip, Subject, tap } from "rxjs";
 import { StateObservable } from "./state-observable";
 import { defaultEffectOption, EffectOption, sideEffect, SideEffect } from './side-effect';
+import { MonitoredEffectOption, monitorSideEffect } from "../operation-status/monitored-effect";
+import { OperationStatus } from "../operation-status";
 
 export interface StateSetter<T> extends SideEffect<T> {
   /**
@@ -10,8 +12,11 @@ export interface StateSetter<T> extends SideEffect<T> {
   next(value: T): void,
 }
 
+type AddEffect<T> = (effect: OperatorFunction<T, unknown>, options?: EffectOption) => IStateSubject<T>
+type MonitorEffect<T> = ( monitoredEffect: (status: OperationStatus) => OperatorFunction<T, unknown>,option: MonitoredEffectOption) => IStateSubject<T>
 export interface IStateSubject<T> extends StateSetter<T>, Exclude<SideEffect<T>, StateObservable<T>> {
-  addEffect(effect: OperatorFunction<T, any>, options?: EffectOption): IStateSubject<T>
+  addEffect: AddEffect<T>,
+  addMonitoredEffect: MonitorEffect<T>
 }
 
 /**
@@ -53,25 +58,23 @@ export class StateSubject<T> extends ReplaySubject<T> implements IStateSubject<T
     source.pipe(operation).subscribe(this);
     return {
       next: source.next,
-      addEffect: (effect: OperatorFunction<M, unknown>, options = defaultEffectOption) =>
-        sideEffect(source, effect, { ...options, ...defaultEffectOption })
+      addEffect: (effect: OperatorFunction<M, unknown>, options?: EffectOption) =>
+        sideEffect(source, effect, { ...defaultEffectOption, ...options })
     };
   }
 
-  addEffect(effect: OperatorFunction<T, unknown>, options = defaultEffectOption): StateSubject<T> {
-    sideEffect(this, effect, { ...options, ...defaultEffectOption });
-    return this;
-  }
+  addEffect = sideEffect.bind(this, this) as any as  AddEffect<T>;
+  addMonitoredEffect = monitorSideEffect.bind(this, this) as any as MonitorEffect<T>
 
-  /**
-   * Observable without current state
-   * current state (if available) would not emitted to observer
-   */
-  get noState$() {
-    const o = this.asObservable();
-    if (this.state !== undefined)
-      return o.pipe(skip(1));
-    else
-      return o;
-  }
+    /**
+     * Observable without current state
+     * current state (if available) would not emitted to observer
+     */
+    get noState$() {
+      const o = this.asObservable();
+      if (this.state !== undefined)
+        return o.pipe(skip(1));
+      else
+        return o;
+    }
 }

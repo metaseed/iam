@@ -1,9 +1,9 @@
 import { tap } from "rxjs";
 import { OperationStatusReporter } from "./operation-status-reporter.interface";
-import { OperationStatusStore } from "./operation-status.store";
+import { OperationState } from "./operation-state";
 
 export class OperationStatusConsoleReporter implements OperationStatusReporter {
-  constructor(operationStatusStore: OperationStatusStore) {
+   setup(operationStatusStore: OperationState) {
     operationStatusStore.start$.pipe(tap((status) => {
       console.log(`%c${status.id}->start`, 'background-color:#4285f4');
     })).subscribe();

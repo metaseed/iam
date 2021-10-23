@@ -1,4 +1,5 @@
 import { StateSubject } from "../core";
+import { OperationStatusReporter } from "./operation-status-reporter.interface";
 import { ofStep, OperationStatus, OperationStep } from "./operation-status.model";
 
 /**
@@ -10,26 +11,29 @@ import { ofStep, OperationStatus, OperationStep } from "./operation-status.model
  * so the normal store uses action to trigger operation in reducer to modify state of store.
  *
  */
-export class OperationStatusStore {
-  all_ = new StateSubject<OperationStatus>();
+export class OperationState extends StateSubject<OperationStatus>{
 
-  start$ = this.all_.pipe(
+  addReporter(reporter: OperationStatusReporter){
+    reporter.setup(this);
+  }
+
+  start$ = this.pipe(
     ofStep(OperationStep.Start)
   );
 
-  continue$ = this.all_.pipe(
+  continue$ = this.pipe(
     ofStep(OperationStep.Continue)
   );
 
-  complete$ = this.all_.pipe(
+  complete$ = this.pipe(
     ofStep(OperationStep.Complete)
   );
 
-  error$ = this.all_.pipe(
+  error$ = this.pipe(
     ofStep(OperationStep.Error)
   );
 
-  timeOut$ = this.all_.pipe(
+  timeOut$ = this.pipe(
     ofStep(OperationStep.Timeout)
   );
 

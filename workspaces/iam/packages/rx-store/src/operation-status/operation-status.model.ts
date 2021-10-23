@@ -9,19 +9,42 @@ export enum OperationStep {
 }
 
 export class OperationStatus {
-  constructor(
-    public type: string,
-    /**
-     * correlation Id, should be the same during lifetime of the operation.
-     * used to differentiate operations of the same type
-     */
-    public coId: number,
-    public step: OperationStep,
-    public context?: any
-  ) { }
 
-  get id() {
-    return `${this.type}-${this.coId}`;
+
+  constructor(
+    /**
+     * name that identify the specific operation
+     */
+    public type: string,
+    public step?: OperationStep,
+    public context?: any,
+    /**
+     * could be used as correlation id if no overlapped status between start and end of different operations
+     * correlation Id: the same during lifetime of the operation, used to differentiate operations of the same type
+     */
+    public coId?: number,
+  ) {
+    if (type === OperationStep.Start) this.coId = Date.now();
+  }
+
+  get Start() {
+    return new OperationStatus(this.type, OperationStep.Start, this.context);
+  }
+  get Continue() {
+    return new OperationStatus(this.type, OperationStep.Continue, this.context, this.coId);
+  }
+  get Error() {
+    return new OperationStatus(this.type, OperationStep.Error, this.context, this.coId);
+  }
+  get Complete() {
+    return new OperationStatus(this.type, OperationStep.Complete, this.context, this.coId);
+  }
+  get Timeout() {
+    return new OperationStatus(this.type, OperationStep.Timeout, this.context, this.coId);
+  }
+
+  with(context?: any) {
+    return new OperationStatus(this.type, OperationStep.Timeout, context, this.coId);
   }
 
   isNotStartStatus() {

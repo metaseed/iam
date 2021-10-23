@@ -24,11 +24,7 @@ export function operationTimeout(
           operationStatus.step === OperationStep.Complete),
       start => {
         if (timeOutHandler) timeOutHandler(start);
-        return new OperationStatus(
-          type,
-          start.coId,
-          OperationStep.Timeout
-        );
+        return start.Timeout;
       }
     )
   );
