@@ -6,14 +6,11 @@ export interface EffectOption {
   /**
    * undefined: to disable the default handler.
    *
-   * default one retry at a pace:0, 40, 160, 360, 640, 1000, 1440, 1960; 0, 40, 160, 360, 640, ... ms
+   * default one retry at a pace: 0, 40, 160, 360, 640, 1000, 1440, 1960; 0, 40, 160, 360, 640, ... ms
    */
   error?: OperatorFunction<any, any>
 }
 
-/**
- * retry after error at a pace: 0, 40, 160, 360, 640, 1000, 1440, 1960; 0, 40, 160, 360, 640, ... ms
- */
 const effectError = backoff(Infinity, 40, i => {
   const t = (i - 1) % 8; return t * t
 });
@@ -21,6 +18,7 @@ const effectError = backoff(Infinity, 40, i => {
 export const defaultEffectOption = {
   error: effectError,
 };
+
 /**
  * operation triggered when observable value pass by.
  */

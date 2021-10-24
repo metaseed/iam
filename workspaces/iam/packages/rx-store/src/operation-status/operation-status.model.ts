@@ -3,6 +3,7 @@ import { filter } from "rxjs";
 export enum OperationStep {
   Start = 'Start',
   Continue = 'Continue',
+  Retry = 'Retry',
   Error = 'Error',
   Complete = 'Complete',
   Timeout = 'Timeout'
