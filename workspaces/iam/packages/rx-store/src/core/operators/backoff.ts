@@ -42,4 +42,6 @@ export function backoff<T>(maxTries: number, interval: number|((i: number) => nu
         map(([i]) => typeof interval === 'function'? interval(i): interval), // every error correspond to a squared result of number
         mergeMap(i => timer(i))
       )
-   
+    )
+  );
+}

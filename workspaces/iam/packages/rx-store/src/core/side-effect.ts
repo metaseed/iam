@@ -11,8 +11,8 @@ export interface EffectOption {
   error?: OperatorFunction<any, any>
 }
 
-const effectError = backoff(Infinity, 40, i => {
-  const t = (i - 1) % 8; return t * t
+const effectError = backoff(Infinity,  i => {
+  const t = (i - 1) % 8; return 40* t * t
 });
 
 export const defaultEffectOption = {
