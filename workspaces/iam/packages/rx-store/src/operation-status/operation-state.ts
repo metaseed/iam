@@ -30,7 +30,7 @@ export class OperationState extends StateSubject<OperationStatus>{
   );
 
   error$ = this.pipe(
-    ofStep(OperationStep.Error)
+    ofStep(OperationStep.ErrorRetry)
   );
 
   timeOut$ = this.pipe(

@@ -1,6 +1,6 @@
 import { Observable, OperatorFunction } from "rxjs";
-import { backoff } from "./operators";
 import { pass } from "./operators/pass";
+import { defaultEffectErrorOperator } from "./side-effect.internal";
 
 export interface EffectOption {
   /**
@@ -9,10 +9,8 @@ export interface EffectOption {
   error?: OperatorFunction<any, any>
 }
 
-const effectError = backoff({ maxTries: Infinity, interval: i => { const t = (i - 1) % 6; return 40 * t * t }, skipIfConsecutiveErrors: 5 });
-
 export const defaultEffectOption = {
-  error: effectError,
+  errorOperator: defaultEffectErrorOperator,
 };
 
 /**
@@ -35,7 +33,7 @@ export interface SideEffect<T> {
 
 export function sideEffect<T>(source: Observable<T>, effect: OperatorFunction<T, unknown>, option?: EffectOption) {
   const options = { ...defaultEffectOption, ...option };
-  const error = options.error ? options.error : pass;
+  const error = options.errorOperator ? options.errorOperator : pass;
   source.pipe(effect, error).subscribe();
   return source;
 }

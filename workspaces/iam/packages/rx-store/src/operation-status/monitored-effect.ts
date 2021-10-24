@@ -1,8 +1,8 @@
-import { catchError, mergeMap, Observable, of, OperatorFunction, pipe, tap } from "rxjs";
-import { OperationStep } from ".";
+import { mergeMap, Observable, of, OperatorFunction, pipe } from "rxjs";
 import { defaultEffectOption, EffectOption, sideEffect } from "../core";
+import { getDefaultMonitoredEffectErrorOperator } from "../core/side-effect.internal";
 import { OperationState } from "./operation-state";
-import { OperationStatus } from "./operation-status.model";
+import { OperationStatus, OperationStep } from "./operation-status.model";
 
 export interface MonitoredEffectOption extends EffectOption {
   effectName: string;
@@ -39,15 +39,20 @@ export function monitorSideEffect<T>(
      * because it's merged from different state change, so coId tracing lost.
      *
      */
-    mergeMap((state:T) => {
+    mergeMap((state: T) => {
       let status = new OperationStatus(effectName, OperationStep.Start);
       operationState.next(status);
 
       return of(state).pipe(
         monitoredEffect(status),
-        catchError(e => {
-          operationState.next(status.Error.with(e));
-          throw e;
+        getDefaultMonitoredEffectErrorOperator((state, context) => {
+          const st = state === 'Error' ? status.Error.with(context) :
+            state === 'Retry' ? status.Retry :
+              state === 'Fail' ? status.Fail :
+                undefined;
+          if (st === undefined)
+            throw Error('unexpected state reported from error handler of monitored side effect.');
+          operationState.next(st);
         })
       );
 

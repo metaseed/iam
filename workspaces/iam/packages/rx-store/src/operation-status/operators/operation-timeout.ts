@@ -20,7 +20,7 @@ export function operationTimeout(
         operationStatus.coId === start.coId &&
         (!sameOperationDiff ? true : sameOperationDiff(operationStatus)) &&
         (operationStatus.step === OperationStep.Continue ||
-          operationStatus.step === OperationStep.Error ||
+          operationStatus.step === OperationStep.ErrorRetry ||
           operationStatus.step === OperationStep.Complete),
       start => {
         if (timeOutHandler) timeOutHandler(start);

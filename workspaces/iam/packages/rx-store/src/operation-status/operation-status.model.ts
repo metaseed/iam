@@ -2,9 +2,20 @@ import { filter } from "rxjs";
 
 export enum OperationStep {
   Start = 'Start',
+
+  // internal steps
   Continue = 'Continue',
-  Retry = 'Retry',
   Error = 'Error',
+  /**
+   * retrying several times if error happens
+   */
+  Retry = 'Retry',
+
+  // end steps
+  /**
+   * skip process this operation because of consecutive errors happens
+   */
+  Fail = 'Fail',
   Complete = 'Complete',
   Timeout = 'Timeout'
 }
@@ -37,6 +48,12 @@ export class OperationStatus {
   get Error() {
     return new OperationStatus(this.type, OperationStep.Error, this.context, this.coId);
   }
+  get Retry() {
+    return new OperationStatus(this.type, OperationStep.Retry, this.context, this.coId);
+  }
+  get Fail() {
+    return new OperationStatus(this.type, OperationStep.Fail, this.context, this.coId);
+  }
   get Complete() {
     return new OperationStatus(this.type, OperationStep.Complete, this.context, this.coId);
   }
@@ -56,7 +73,7 @@ export class OperationStatus {
 
   isEndStatus() {
     return this.step === OperationStep.Complete ||
-      this.step === OperationStep.Error ||
+      this.step === OperationStep.Fail ||
       this.step === OperationStep.Timeout;
   }
 }

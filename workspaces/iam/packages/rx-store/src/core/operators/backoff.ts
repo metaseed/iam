@@ -1,4 +1,5 @@
-import { pipe, range, timer } from 'rxjs';
+import { config } from 'process';
+import { EMPTY, pipe, range, timer } from 'rxjs';
 import { retryWhen, map, mergeMap, zipWith, tap } from 'rxjs/operators';
 /**
  * backoff from error happens again
@@ -34,51 +35,49 @@ import { retryWhen, map, mergeMap, zipWith, tap } from 'rxjs/operators';
  * @example retry at a pace: 0, 40, 160, 360, 640, 1000, 1440, 1960; 0, 40, 160, 360, 640, ... ms
  *  backoff(Infinity,  i => {const t = (i - 1) % 8; return 40*t * t});
  *
- * @example retry at a pace:  0, 40, 160, 360, 640, 1000 ms; repeat...
+ * @example retry at a pace:  0, 40, 160, 360, 640, 1000 ms; repeat... and skip the item from source that triggers error if 5 consecutive errors happens
  * backoff({maxTries:Infinity,  interval: i => {const t = (i - 1) % 6; return 40*t * t}, skipIfConsecutiveErrors: 5});
  */
 export function backoff<T>(config: BackoffConfig, interval?: number | ((i: number) => number));
 export function backoff<T>(maxTriesOrConfig: number, interval: number | ((i: number) => number));
 export function backoff<T>(maxTriesOrConfig: any, interval: number | ((i: number) => number)) {
-  let maxTries: number;
-  let skipIfConsecutiveErrors: number;
+  let config: BackoffConfig;
   if (typeof maxTriesOrConfig === 'object') {
-    const config = maxTriesOrConfig;
-    maxTries = config.maxTries;
-    interval = config.interval ?? interval;
-    skipIfConsecutiveErrors = config.skipIfConsecutiveErrors
+    config = maxTriesOrConfig as BackoffConfig;
+    config.interval ??= interval;
   } else {
-    maxTries = maxTriesOrConfig;
+    config = { maxTries: maxTriesOrConfig, interval }
   }
   let consecutiveErrors = 0;
   return pipe(
-    consecutiveStatus([5,Infinity], errors => consecutiveErrors = errors),
+    consecutiveStatus([5, Infinity], errors => consecutiveErrors = errors),
     retryWhen<T>(err$ =>
-      range(1, maxTries).pipe(
+      range(1, config.maxTries).pipe(
         zipWith(err$), // attach number sequence to the errors observable
-        map(([i]) => typeof interval === 'function' ? interval(i) : interval), // every error correspond to a squared result of number
-        mergeMap(i => {
-          if (skipIfConsecutiveErrors) {
-            if (consecutiveErrors <= skipIfConsecutiveErrors)
-              return timer(i);
-            else //not emit: skip it.
-              console.warn(`backoff: skip item process because of consecutive errors happened: ${skipIfConsecutiveErrors}`);
-          } else
-            return timer(i); // retry after timer emit
+        map(([i,err]) => [typeof interval === 'function' ? interval(i) : interval, err]),
+        mergeMap(([i,err]) => {
+          config.state?.('Error',err);
+          if (!config.failIfConsecutiveErrors || consecutiveErrors < config.failIfConsecutiveErrors) {
+            return timer(i).pipe(tap(() => config.state?.('Retry'))); // retry after timer emit.
+          }
+          config.state?.('Fail');
+          console.warn(`backoff: skip item process because of consecutive errors happened: consecutiveError: ${consecutiveErrors}>=${config.failIfConsecutiveErrors}`);
+          return EMPTY;
         })
       )
     )
   );
 }
 
-
+export type BackoffStateHandler = (state: 'Error' | 'Retry' | 'Fail', context?:any) => void;
 export interface BackoffConfig {
   maxTries: number;
   interval: number | ((i: number) => number);
   /**
    * to skip the item from source that triggers error if consecutive errors happens.(no successful emit in between)
    */
-  skipIfConsecutiveErrors?: number
+  failIfConsecutiveErrors?: number;
+  state?: BackoffStateHandler
 }
 
 export function consecutiveStatus(
