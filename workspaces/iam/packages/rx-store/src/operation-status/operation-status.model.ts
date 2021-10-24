@@ -43,7 +43,9 @@ export class OperationStatus {
   get Timeout() {
     return new OperationStatus(this.type, OperationStep.Timeout, this.context, this.coId);
   }
-
+  get id(){
+    return `[${this.type}] - ${this.coId}`;
+  }
   with(context?: any) {
     return new OperationStatus(this.type, OperationStep.Timeout, context, this.coId);
   }
