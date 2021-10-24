@@ -50,31 +50,9 @@ export function backoff<T>(maxTriesOrConfig: any, interval: number | ((i: number
   } else {
     maxTries = maxTriesOrConfig;
   }
-
   let consecutiveErrors = 0;
-  let consecutiveItems = 0
-  let lastIsError = false;
   return pipe(
-    tap({
-      next: () => {
-        if (lastIsError) {
-          lastIsError = false;
-          consecutiveErrors = 0;
-          consecutiveItems = 0;
-        } else {
-          consecutiveItems++;
-        }
-      },
-      error: () => {
-        if (lastIsError) {
-          consecutiveErrors++;
-        } else {
-          lastIsError = true;
-          consecutiveErrors = 0;
-          consecutiveItems = 0;
-        }
-      }
-    }),
+    consecutiveStatus([5,Infinity], errors => consecutiveErrors = errors),
     retryWhen<T>(err$ =>
       range(1, maxTries).pipe(
         zipWith(err$), // attach number sequence to the errors observable
@@ -103,8 +81,36 @@ export interface BackoffConfig {
   skipIfConsecutiveErrors?: number
 }
 
-export function consecutiveStatusMonitor(
-  errors: number, consecutiveErrors: (errors: number) => void,
-  items: number, consecutiveItems: (items: number) => void) {
-
+export function consecutiveStatus(
+  errors: [number, number], consecutiveErrorStatus: (errors: number) => void,
+  items?: [number, number], consecutiveItemStatus?: (items: number) => void) {
+  let consecutiveErrors = 0;
+  let consecutiveItems = 0
+  let lastIsError = false;
+  return tap({
+    next: () => {
+      if (lastIsError) {
+        lastIsError = false;
+        consecutiveErrors = 0;
+        consecutiveItems = 0;
+      } else {
+        consecutiveItems++;
+        if (items)
+          if (items[0] <= consecutiveItems && consecutiveItems <= items[1])
+            consecutiveItemStatus?.(consecutiveItems);
+      }
+    },
+    error: () => {
+      if (lastIsError) {
+        consecutiveErrors++;
+        if (errors[0] <= consecutiveErrors && consecutiveErrors <= errors[1])
+          consecutiveErrorStatus(consecutiveErrors);
+      } else {
+        lastIsError = true;
+        consecutiveErrors = 0;
+        consecutiveItems = 0;
+      }
+    }
+  })
 }
+
