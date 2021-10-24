@@ -35,9 +35,9 @@ import { retryWhen, map, mergeMap, zipWith, tap } from 'rxjs/operators';
  *  backoff(Infinity,  i => {const t = (i - 1) % 8; return 40*t * t});
  *
  * @example retry at a pace:  0, 40, 160, 360, 640, 1000 ms; repeat...
- * backoff({maxTries:Infinity,  interval: i => {const t = (i - 1) % 6; return 40*t * t}, skipIfConsecutiveErrors: 5);
+ * backoff({maxTries:Infinity,  interval: i => {const t = (i - 1) % 6; return 40*t * t}, skipIfConsecutiveErrors: 5});
  */
-export function backoff<T>(config: BackoffConfig,  interval?: number | ((i: number) => number));
+export function backoff<T>(config: BackoffConfig, interval?: number | ((i: number) => number));
 export function backoff<T>(maxTriesOrConfig: number, interval: number | ((i: number) => number));
 export function backoff<T>(maxTriesOrConfig: any, interval: number | ((i: number) => number)) {
   let maxTries: number;
@@ -101,4 +101,10 @@ export interface BackoffConfig {
    * to skip the item from source that triggers error if consecutive errors happens.(no successful emit in between)
    */
   skipIfConsecutiveErrors?: number
+}
+
+export function consecutiveStatusMonitor(
+  errors: number, consecutiveErrors: (errors: number) => void,
+  items: number, consecutiveItems: (items: number) => void) {
+
 }

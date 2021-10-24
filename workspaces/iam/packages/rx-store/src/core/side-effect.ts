@@ -5,15 +5,11 @@ import { pass } from "./operators/pass";
 export interface EffectOption {
   /**
    * undefined: to disable the default handler.
-   *
-   * default one retry at a pace: 0, 40, 160, 360, 640, 1000, 1440, 1960; 0, 40, 160, 360, 640, ... ms
    */
   error?: OperatorFunction<any, any>
 }
 
-const effectError = backoff(Infinity,  i => {
-  const t = (i - 1) % 8; return 40* t * t
-});
+const effectError = backoff({ maxTries: Infinity, interval: i => { const t = (i - 1) % 6; return 40 * t * t }, skipIfConsecutiveErrors: 5 });
 
 export const defaultEffectOption = {
   error: effectError,
@@ -28,7 +24,8 @@ export interface SideEffect<T> {
    * subscribe to the observable and handle errors from it.
    *
    * default option handled error retry at a delay pace:
-   * 0, 40, 160, 360, 640, 1000, 1440, 1960; 0, 40, 160, 360, 640, ... ms
+   * 0, 40, 160, 360, 640, 1000ms; then repeat...
+   * it also handles error skip: skip process the item from source observable if 5 consecutive errors happens.
    * could use `backoff` operator or any others to customize.
    * @param effect side effect operation
    * @param options effect options.
