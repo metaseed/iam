@@ -40,13 +40,13 @@ import { retryWhen, map, mergeMap, zipWith, tap } from 'rxjs/operators';
  */
 export function backoff<T>(config: BackoffConfig, interval?: number | ((i: number) => number));
 export function backoff<T>(maxTriesOrConfig: number, interval: number | ((i: number) => number));
-export function backoff<T>(maxTriesOrConfig: any, interval: number | ((i: number) => number)) {
+export function backoff<T>(maxTriesOrConfig: any, interval?: number | ((i: number) => number)) {
   let config: BackoffConfig;
   if (typeof maxTriesOrConfig === 'object') {
     config = maxTriesOrConfig as BackoffConfig;
-    config.interval ??= interval;
+    config.interval ??= interval as (number | ((i: number) => number));
   } else {
-    config = { maxTries: maxTriesOrConfig, interval }
+    config = { maxTries: maxTriesOrConfig, interval: interval as (number | ((i: number) => number)) }
   }
   let consecutiveErrors = 0;
   return pipe(
@@ -80,13 +80,13 @@ export interface BackoffConfig {
   state?: BackoffStateHandler
 }
 
-export function consecutiveStatus(
+export function consecutiveStatus<T>(
   errors: [number, number], consecutiveErrorStatus: (errors: number) => void,
   items?: [number, number], consecutiveItemStatus?: (items: number) => void) {
   let consecutiveErrors = 0;
   let consecutiveItems = 0
   let lastIsError = false;
-  return tap({
+  return tap<T>({
     next: () => {
       if (lastIsError) {
         lastIsError = false;
