@@ -22,7 +22,6 @@ export enum OperationStep {
 
 export class OperationStatus {
 
-
   constructor(
     /**
      * name that identify the specific operation
@@ -31,7 +30,7 @@ export class OperationStatus {
     public step?: OperationStep,
     public context?: any,
     /**
-     * could be used as correlation id if no overlapped status between start and end of different operations
+     * default value: Date.now() when create the Start status.
      * correlation Id: the same during lifetime of the operation, used to differentiate operations of the same type
      */
     public coId?: number,
@@ -42,6 +41,7 @@ export class OperationStatus {
   get Start() {
     return new OperationStatus(this.type, OperationStep.Start, this.context);
   }
+
   get Continue() {
     return new OperationStatus(this.type, OperationStep.Continue, this.context, this.coId);
   }
@@ -51,6 +51,7 @@ export class OperationStatus {
   get Retry() {
     return new OperationStatus(this.type, OperationStep.Retry, this.context, this.coId);
   }
+
   get Fail() {
     return new OperationStatus(this.type, OperationStep.Fail, this.context, this.coId);
   }
@@ -60,11 +61,13 @@ export class OperationStatus {
   get Timeout() {
     return new OperationStatus(this.type, OperationStep.Timeout, this.context, this.coId);
   }
-  get id(){
-    return `[${this.type}] - ${this.coId}`;
-  }
+
   with(context?: any) {
     return new OperationStatus(this.type, OperationStep.Timeout, context, this.coId);
+  }
+
+  get id(){
+    return `[${this.type}] - ${this.coId}`;
   }
 
   isNotStartStatus() {

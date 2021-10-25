@@ -1,6 +1,6 @@
 import { StateSubject } from "../core";
 import { OperationStatusReporter } from "./operation-status-reporter.interface";
-import { ofStep, OperationStatus, OperationStep } from "./operation-status.model";
+import { ofStep, OperationStatus, OperationStep } from "./operation-status";
 
 /**
  * operation is a sequence steps of computation.

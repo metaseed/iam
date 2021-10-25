@@ -4,7 +4,7 @@ import { operationTimeout } from ".";
 import { defaultEffectOption, EffectOption, sideEffect } from "../core";
 import { getDefaultMonitoredEffectErrorOperator } from "../core/side-effect.internal";
 import { OperationState } from "./operation-state";
-import { OperationStatus, OperationStep } from "./operation-status.model";
+import { OperationStatus, OperationStep } from "./operation-status";
 
 export interface MonitoredEffectOption extends EffectOption {
   effectName: string;
