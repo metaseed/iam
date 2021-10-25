@@ -5,6 +5,7 @@ import { defaultEffectOption, EffectOption, sideEffect } from "../core";
 import { getDefaultMonitoredEffectErrorOperator } from "../core/side-effect.internal";
 import { OperationState } from "./operation-state";
 import { OperationStatus, OperationStep } from "./operation-status";
+import { OperationStatusObservable } from "./operation-status-observable";
 
 export interface MonitoredEffectOption extends EffectOption {
   effectName: string;
@@ -16,11 +17,18 @@ export interface MonitoredEffectOption extends EffectOption {
 }
 
 export function monitorSideEffect<T>(
-  source: Observable<T>,
+  source: OperationStatusObservable<T>,
   monitoredEffect: (status: OperationStatus) => OperatorFunction<T, unknown>,
   option: MonitoredEffectOption) {
   const options = { ...defaultEffectOption, ...option };
-  const { effectName, operationState, timeOut } = options;
+  let { effectName, operationState, timeOut } = options;
+
+  if (!operationState) {
+    if (!source.operationState)
+    source.operationState = new OperationState();
+    operationState = source.operationState;
+  }
+
 
   const effect = pipe(
     /**
@@ -51,7 +59,7 @@ export function monitorSideEffect<T>(
       if (timeOut) {
         const timeoutSubscription = operationState.pipe(
           tap(st => {
-            if(st.isEndStatus() &&  st.coId === startStatus.coId) timeoutSubscription.unsubscribe();
+            if (st.isEndStatus() && st.coId === startStatus.coId) timeoutSubscription.unsubscribe();
           }),
           operationTimeout(effectName, timeOut, st => st.coId === startStatus.coId),
           tap(timeOutStatus => {
