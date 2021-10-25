@@ -1,4 +1,6 @@
-import { mergeMap, Observable, of, OperatorFunction, pipe } from "rxjs";
+import { time } from "console";
+import { mergeMap, Observable, of, OperatorFunction, pipe, Subscription, tap } from "rxjs";
+import { operationTimeout } from ".";
 import { defaultEffectOption, EffectOption, sideEffect } from "../core";
 import { getDefaultMonitoredEffectErrorOperator } from "../core/side-effect.internal";
 import { OperationState } from "./operation-state";
@@ -7,6 +9,10 @@ import { OperationStatus, OperationStep } from "./operation-status.model";
 export interface MonitoredEffectOption extends EffectOption {
   effectName: string;
   operationState: OperationState;
+  /**
+   * ms. if configured monitor the timeout status.
+   */
+  timeOut: number;
 }
 
 export function monitorSideEffect<T>(
@@ -14,7 +20,7 @@ export function monitorSideEffect<T>(
   monitoredEffect: (status: OperationStatus) => OperatorFunction<T, unknown>,
   option: MonitoredEffectOption) {
   const options = { ...defaultEffectOption, ...option };
-  const { effectName, operationState } = options;
+  const { effectName, operationState, timeOut } = options;
 
   const effect = pipe(
     /**
@@ -40,24 +46,38 @@ export function monitorSideEffect<T>(
      *
      */
     mergeMap((state: T) => {
-      let status = new OperationStatus(effectName, OperationStep.Start);
-      operationState.next(status);
+      let startStatus = new OperationStatus(effectName, OperationStep.Start);
+
+      if (timeOut) {
+        const timeoutSubscription = operationState.pipe(
+          tap(st => {
+            if(st.isEndStatus() &&  st.coId === startStatus.coId) timeoutSubscription.unsubscribe();
+          }),
+          operationTimeout(effectName, timeOut, st => st.coId === startStatus.coId),
+          tap(timeOutStatus => {
+            operationState.next(timeOutStatus);
+          }))
+          .subscribe();
+      }
+
+      operationState.next(startStatus);
 
       return of(state).pipe(
-        monitoredEffect(status),
+        monitoredEffect(startStatus),
         getDefaultMonitoredEffectErrorOperator((state, context) => {
-          const st = state === 'Error' ? status.Error.with(context) :
-            state === 'Retry' ? status.Retry :
-              state === 'Fail' ? status.Fail :
+          const st = state === 'Error' ? startStatus.Error.with(context) :
+            state === 'Retry' ? startStatus.Retry :
+              state === 'Fail' ? startStatus.Fail :
                 undefined;
           if (st === undefined)
             throw Error('unexpected state reported from error handler of monitored side effect.');
           operationState.next(st);
-        })
+        }),
       );
 
     })
 
   );
+
   return sideEffect(source, effect, options);
 }

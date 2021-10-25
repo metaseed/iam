@@ -72,9 +72,13 @@ export class OperationStatus {
   }
 
   isEndStatus() {
-    return this.step === OperationStep.Complete ||
-      this.step === OperationStep.Fail ||
+    return this.isNoneTimeoutEndStatus() ||
       this.step === OperationStep.Timeout;
+  }
+
+  isNoneTimeoutEndStatus(){
+    return this.step === OperationStep.Complete ||
+    this.step === OperationStep.Fail;
   }
 }
 

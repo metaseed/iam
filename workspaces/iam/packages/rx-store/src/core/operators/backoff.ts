@@ -1,4 +1,3 @@
-import { config } from 'process';
 import { EMPTY, pipe, range, timer } from 'rxjs';
 import { retryWhen, map, mergeMap, zipWith, tap } from 'rxjs/operators';
 /**
@@ -56,11 +55,11 @@ export function backoff<T>(maxTriesOrConfig: any, interval?: number | ((i: numbe
         zipWith(err$), // attach number sequence to the errors observable
         map(([i, err]) => [typeof interval === 'function' ? interval(i) : interval, err]),
         mergeMap(([i, err]) => {
-          config.state?.('Error', err);
+          config.stateReporter?.('Error', err);
           if (!config.failIfConsecutiveErrors || consecutiveErrors < config.failIfConsecutiveErrors) {
-            return timer(i).pipe(tap(() => config.state?.('Retry'))); // retry after timer emit.
+            return timer(i).pipe(tap(() => config.stateReporter?.('Retry'))); // retry after timer emit.
           }
-          config.state?.('Fail');
+          config.stateReporter?.('Fail');
           console.warn(`backoff: skip item process because of consecutive errors happened: consecutiveError: ${consecutiveErrors}>=${config.failIfConsecutiveErrors}`);
           return EMPTY;
         })
@@ -69,7 +68,7 @@ export function backoff<T>(maxTriesOrConfig: any, interval?: number | ((i: numbe
   );
 }
 
-export type BackoffStateHandler = (state: 'Error' | 'Retry' | 'Fail', context?: any) => void;
+export type BackoffStateReporter = (state: 'Error' | 'Retry' | 'Fail', context?: any) => void;
 export interface BackoffConfig {
   maxTries: number;
   interval: number | ((i: number) => number);
@@ -77,7 +76,7 @@ export interface BackoffConfig {
    * to skip the item from source that triggers error if consecutive errors happens.(no successful emit in between)
    */
   failIfConsecutiveErrors?: number;
-  state?: BackoffStateHandler
+  stateReporter?: BackoffStateReporter
 }
 
 export function consecutiveStatus<T>(

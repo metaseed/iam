@@ -1,4 +1,3 @@
-import { config } from 'process';
 import { EMPTY, pipe, range, timer } from 'rxjs';
 import { retryWhen, map, mergeMap, zipWith, tap } from 'rxjs/operators';
 /**
@@ -40,13 +39,13 @@ import { retryWhen, map, mergeMap, zipWith, tap } from 'rxjs/operators';
  */
 export function backoff<T>(config: BackoffConfig, interval?: number | ((i: number) => number));
 export function backoff<T>(maxTriesOrConfig: number, interval: number | ((i: number) => number));
-export function backoff<T>(maxTriesOrConfig: any, interval: number | ((i: number) => number)) {
+export function backoff<T>(maxTriesOrConfig: any, interval?: number | ((i: number) => number)) {
   let config: BackoffConfig;
   if (typeof maxTriesOrConfig === 'object') {
     config = maxTriesOrConfig as BackoffConfig;
-    config.interval ??= interval;
+    config.interval ??= interval as (number | ((i: number) => number));
   } else {
-    config = { maxTries: maxTriesOrConfig, interval }
+    config = { maxTries: maxTriesOrConfig, interval: interval as (number | ((i: number) => number)) }
   }
   let consecutiveErrors = 0;
   return pipe(
@@ -54,13 +53,13 @@ export function backoff<T>(maxTriesOrConfig: any, interval: number | ((i: number
     retryWhen<T>(err$ =>
       range(1, config.maxTries).pipe(
         zipWith(err$), // attach number sequence to the errors observable
-        map(([i,err]) => [typeof interval === 'function' ? interval(i) : interval, err]),
-        mergeMap(([i,err]) => {
-          config.state?.('Error',err);
+        map(([i, err]) => [typeof interval === 'function' ? interval(i) : interval, err]),
+        mergeMap(([i, err]) => {
+          config.stateReporter?.('Error', err);
           if (!config.failIfConsecutiveErrors || consecutiveErrors < config.failIfConsecutiveErrors) {
-            return timer(i).pipe(tap(() => config.state?.('Retry'))); // retry after timer emit.
+            return timer(i).pipe(tap(() => config.stateReporter?.('Retry'))); // retry after timer emit.
           }
-          config.state?.('Fail');
+          config.stateReporter?.('Fail');
           console.warn(`backoff: skip item process because of consecutive errors happened: consecutiveError: ${consecutiveErrors}>=${config.failIfConsecutiveErrors}`);
           return EMPTY;
         })
@@ -69,7 +68,7 @@ export function backoff<T>(maxTriesOrConfig: any, interval: number | ((i: number
   );
 }
 
-export type BackoffStateHandler = (state: 'Error' | 'Retry' | 'Fail', context?:any) => void;
+export type BackoffStateReporter = (state: 'Error' | 'Retry' | 'Fail', context?: any) => void;
 export interface BackoffConfig {
   maxTries: number;
   interval: number | ((i: number) => number);
@@ -77,38 +76,44 @@ export interface BackoffConfig {
    * to skip the item from source that triggers error if consecutive errors happens.(no successful emit in between)
    */
   failIfConsecutiveErrors?: number;
-  state?: BackoffStateHandler
+  stateReporter?: BackoffStateReporter
 }
 
-export function consecutiveStatus(
+export function consecutiveStatus<T>(
   errors: [number, number], consecutiveErrorStatus: (errors: number) => void,
   items?: [number, number], consecutiveItemStatus?: (items: number) => void) {
   let consecutiveErrors = 0;
   let consecutiveItems = 0
   let lastIsError = false;
-  return tap({
+  return tap<T>({
     next: () => {
       if (lastIsError) {
         lastIsError = false;
+        if (errors[0] <= consecutiveErrors && consecutiveErrors <= errors[1])
+          consecutiveErrorStatus(0);
         consecutiveErrors = 0;
         consecutiveItems = 0;
+
       } else {
         consecutiveItems++;
-        if (items)
-          if (items[0] <= consecutiveItems && consecutiveItems <= items[1])
-            consecutiveItemStatus?.(consecutiveItems);
       }
+      if (items)
+        if (items[0] <= consecutiveItems && consecutiveItems <= items[1])
+          consecutiveItemStatus?.(consecutiveItems);
     },
     error: () => {
       if (lastIsError) {
         consecutiveErrors++;
-        if (errors[0] <= consecutiveErrors && consecutiveErrors <= errors[1])
-          consecutiveErrorStatus(consecutiveErrors);
       } else {
         lastIsError = true;
+        if (items)
+          if (items[0] <= consecutiveItems && consecutiveItems <= items[1])
+            consecutiveItemStatus?.(0);
         consecutiveErrors = 0;
         consecutiveItems = 0;
       }
+      if (errors[0] <= consecutiveErrors && consecutiveErrors <= errors[1])
+        consecutiveErrorStatus(consecutiveErrors);
     }
   })
 }

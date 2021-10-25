@@ -5,26 +5,31 @@ import { ofType, OperationStatus, OperationStep } from "../operation-status.mode
 export function operationTimeout(
   type: string,
   timeoutMs: number,
-  timeOutHandler: (start: OperationStatus) => void,
-  sameOperationDiff?: (action: OperationStatus) => boolean
+  isStartOperation?: (status: OperationStatus) => boolean,
+  isEndOperation?:(status: OperationStatus) => boolean,
+  timeOutHandler?: (start: OperationStatus) => void,
 ): OperatorFunction<OperationStatus, OperationStatus> {
+
   return (source: Observable<OperationStatus>) => source.pipe(
     ofType(type),
     timeOutMonitor<OperationStatus, OperationStatus>(
       timeoutMs,
-      operationState =>
-        operationState.step === OperationStep.Start &&
-        (!sameOperationDiff ? true : sameOperationDiff(operationState)),
+
+      operationStatus =>
+        operationStatus.step === OperationStep.Start &&
+        (!isStartOperation ? true : isStartOperation(operationStatus)),
+
       (start, operationStatus) =>
         start &&
         operationStatus.coId === start.coId &&
-        (!sameOperationDiff ? true : sameOperationDiff(operationStatus)) &&
-        (operationStatus.step === OperationStep.Continue ||
-          operationStatus.step === OperationStep.ErrorRetry ||
-          operationStatus.step === OperationStep.Complete),
+        (!isEndOperation ? true : isEndOperation(operationStatus)) &&
+        operationStatus.isNoneTimeoutEndStatus(),
+
       start => {
-        if (timeOutHandler) timeOutHandler(start);
-        return start.Timeout;
+        const timeOut = start.Timeout;
+        if (timeOutHandler) timeOutHandler(timeOut);
+
+        return timeOut;
       }
     )
   );
