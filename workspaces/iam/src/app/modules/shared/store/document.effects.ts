@@ -9,11 +9,8 @@ import { DocEffectsUtil } from "../state/document/document.effects.util";
 import { DocumentState } from "../state/document/document.reducer";
 import { MonitoredStateSubject } from "@rx-store/effect";
 
-export interface IDocumentEffects {
-}
-
 const EFFECT_TIMEOUT = 10_000; // 10s
-export const DOCUMENT_EFFECTS_TOKEN = new InjectionToken<IDocumentEffects>('DOCUMENT_EFFECTS_TOKEN');
+export const DOCUMENT_EFFECTS_TOKEN = new InjectionToken<DocumentsEffects>('DOCUMENT_EFFECTS_TOKEN');
 
 @Injectable({ providedIn: 'root' })
 export class DocumentsEffects {
@@ -73,8 +70,8 @@ export class DocumentsEffects {
   readDocument_ = new MonitoredStateSubject<{ id: number; title?: string; format?: string }>().addMonitoredEffect(
     effectState =>
       pipe(
-        tap(state => this.store.dispatch(new SetCurrentDocumentId({ id: state.id }))),
         switchMap(state => {
+          this.store.dispatch(new SetCurrentDocumentId({ id: state.id }));
           return this.cacheFacade
             .readDocContent(state.id, state.title, state.format)
         }),
@@ -103,7 +100,6 @@ export class DocumentsEffects {
               tap(d => {
                 this.util.modifyUrlAfterSaved(d.id, newTitle, format);
                 this.snackbar.open('New document saved!', 'OK');
-                effectState.success(state);
               }),
             );
           } else {
@@ -113,11 +109,11 @@ export class DocumentsEffects {
                 tap(d => {
                   this.util.modifyUrlAfterSaved(d.id, newTitle, format);
                   console.log('Saved!');
-                  effectState.success(d);
                 })
               );
           }
-        })
+        }),
+        tap(result => effectState.success(result))
       ),
     { type: '[DocumentsEffects]saveDocument', timeOut: EFFECT_TIMEOUT }
   );
@@ -140,7 +136,6 @@ export class DocumentsEffects {
         switchMap(state =>
           this.cacheFacade.search(state.query).pipe(
             tap({
-              next: result => effectState.success(result),
               complete: () => {
                 let searchResult = selectSearchResultState(this.state.value);
                 if (searchResult.length === 0) {
@@ -151,7 +146,8 @@ export class DocumentsEffects {
               }
             })
           )
-        )
+        ),
+        tap(result => effectState.success(result))
       ),
     { type: '[DocumentsEffects]searchDocument', timeOut: EFFECT_TIMEOUT }
   );

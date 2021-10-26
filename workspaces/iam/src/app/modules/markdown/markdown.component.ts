@@ -10,13 +10,13 @@ import { OnDestroy } from '@angular/core';
 import { MarkdownViewerContainerComponent } from './viewer/markdown-viewer-container.component';
 import { Observable, merge } from 'rxjs';
 import {
-  DocumentEffectsCreate,
   SetCurrentDocumentId,
   DocumentEffectsRead,
   selectCurrentDocumentContentString
 } from 'shared';
 import { Utilities } from '../core/utils';
 import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from './model/markdown.model';
+import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from '../shared/store';
 
 @Component({
   selector: 'ms-markdown',
@@ -43,7 +43,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       map(([isShowEdit, wide]) => {
         if (isShowEdit && !wide) {
           this.markdownStore.editWithPreview_.next(false);
-            return false;
+          return false;
         }
         this.markdownStore.editWithPreview_.next(true);
         return true;
@@ -55,6 +55,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
   markdown$: Observable<string>;
 
   constructor(
+    @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     @Inject(MARKDOWN_STORE_TOKEN) public markdownStore: IMarkdownStore,
     private _http: HttpClient,
     @Inject(APP_BASE_HREF) private baseHref,
@@ -65,7 +66,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
   ) { }
 
   ngOnInit() {
-    this.router.routerState.root.firstChild.queryParams.subscribe(e=>{
+    this.router.routerState.root.firstChild.queryParams.subscribe(e => {
       console.log(e)
     })
     this.markdown$ = merge(
@@ -89,7 +90,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
         tap(params => {
           if (this.router.url.startsWith('/doc/new')) {
             const format = params['f'] as DocFormat;
-            this.store.dispatch(new DocumentEffectsCreate({ format }));
+            this.documentEffects.createDocument_.next({ format });
             this.markdownStore.documentMode_.next(DocumentMode.Edit);
 
           } else {

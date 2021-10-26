@@ -13,13 +13,13 @@ import { SubscriptionManager, Utilities } from '../../../core/utils';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import {
   DocumentEffectsSave,
-  DocumentEffectsCreate,
   selectCurrentDocStatus_IsEditorDirty,
   selectCurrentDocStatus_IsDbDirty,
   selectCurrentDocStatus_IsSyncing
 } from 'shared';
 import { Router } from '@angular/router';
 import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from '../../model/markdown.model';
+import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
 
 @Component({
   selector: 'editor-toolbar',
@@ -89,6 +89,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
     private store: Store<any>,
     public docSaver: DocSaveCoordinateService,
     private _breakpointObserver: BreakpointObserver,
+    @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     @Inject(MARKDOWN_STORE_TOKEN) private markdownStore: IMarkdownStore,
   ) {
     super();
@@ -164,7 +165,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   };
 
   new = () => {
-    this.store.dispatch(new DocumentEffectsCreate({ format: DocFormat.md }));
+    this.documentEffects.createDocument_.next({format: DocFormat.md});
   };
 
   previewPanelClick(event: Event) {
