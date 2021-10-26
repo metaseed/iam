@@ -13,7 +13,7 @@ import { ofStep, OperationStatus, OperationStep } from "./operation-status";
  */
 export class OperationState extends StateSubject<OperationStatus>{
 
-  addReporter(reporter: OperationStatusReporter){
+  addReporter(reporter: OperationStatusReporter) {
     reporter.setup(this);
   }
 
@@ -26,7 +26,7 @@ export class OperationState extends StateSubject<OperationStatus>{
   );
 
   complete$ = this.pipe(
-    ofStep(OperationStep.Complete)
+    ofStep(OperationStep.Success)
   );
 
   error$ = this.pipe(
@@ -42,5 +42,11 @@ export class OperationState extends StateSubject<OperationStatus>{
   timeOut$ = this.pipe(
     ofStep(OperationStep.Timeout)
   );
+
+  success(context?: any) {
+    if (!this.state) throw Error('OperationState.success: no earlier state to use to generate Complete state')
+
+    this.next(this.state.Success.with(context));
+  }
 
 }

@@ -37,7 +37,7 @@ export class DocumentsEffects {
    * read extend doc meta fetch in cache isBelowRange=true...(low, high]...isBelowRange=false
    */
   readBulkDocMeta_ = new MonitoredStateSubject<{ isBelowRange: boolean }>().addMonitoredEffect(
-    operation => pipe(
+    effectState => pipe(
       map((state: { isBelowRange: boolean }) => {
         const keyRangeHigh = selectIdRangeHigh(this.state.value);
         const keyRangeLow = selectIdRangeLow(this.state.value);
@@ -52,7 +52,7 @@ export class DocumentsEffects {
         return this.cacheFacade
           .readBulkDocMeta(key, isBelowRange)
           .pipe(
-            tap(_ => operation.state.Complete)
+            tap(docMetas => effectState.success(docMetas))
           );
       })
     ),
@@ -66,7 +66,7 @@ export class DocumentsEffects {
           ...state.ids.map(id =>
             this.cacheFacade.readDocMeta(id, true)
               .pipe(
-                tap(_ => operation.state.Complete))
+                tap(_ => operation.state.Success))
               )
         )
       )

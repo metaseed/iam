@@ -16,7 +16,7 @@ export enum OperationStep {
    * skip process this operation because of consecutive errors happens
    */
   Fail = 'Fail',
-  Complete = 'Complete',
+  Success = 'Success',
   Timeout = 'Timeout'
 }
 
@@ -55,8 +55,8 @@ export class OperationStatus {
   get Fail() {
     return new OperationStatus(this.type, OperationStep.Fail, this.context, this.coId);
   }
-  get Complete() {
-    return new OperationStatus(this.type, OperationStep.Complete, this.context, this.coId);
+  get Success() {
+    return new OperationStatus(this.type, OperationStep.Success, this.context, this.coId);
   }
   get Timeout() {
     return new OperationStatus(this.type, OperationStep.Timeout, this.context, this.coId);
@@ -80,7 +80,7 @@ export class OperationStatus {
   }
 
   isNoneTimeoutEndStatus(){
-    return this.step === OperationStep.Complete ||
+    return this.step === OperationStep.Success ||
     this.step === OperationStep.Fail;
   }
 }

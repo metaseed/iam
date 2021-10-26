@@ -8,7 +8,7 @@ import { operationTimeout } from "./operators/operation-timeout";
 
 export interface MonitoredEffectOption extends EffectOption {
   type: string;
-  operationState?: OperationState;
+  effectState?: OperationState;
   /**
    * ms. if configured monitor the timeout status.
    */
@@ -20,10 +20,10 @@ export function monitorSideEffect<T>(
   monitoredEffect: (status: OperationState) => OperatorFunction<T, unknown>,
   option: MonitoredEffectOption) {
   const options = { ...defaultEffectOption, ...option };
-  let { type, operationState, timeOut } = options;
+  let { type, effectState, timeOut } = options;
 
-  if (!operationState) {
-    operationState = source.operationState;
+  if (!effectState) {
+    effectState = source.operationState;
   }
 
 
@@ -54,21 +54,21 @@ export function monitorSideEffect<T>(
       let startStatus = new OperationStatus(type, OperationStep.Start);
 
       if (timeOut) {
-        const timeoutSubscription = operationState!.pipe(
+        const timeoutSubscription = effectState!.pipe(
           tap(st => {
             if (st.isEndStatus() && st.coId === startStatus.coId) timeoutSubscription.unsubscribe();
           }),
           operationTimeout(type, timeOut, st => st.coId === startStatus.coId),
           tap(timeOutStatus => {
-            operationState!.next(timeOutStatus);
+            effectState!.next(timeOutStatus);
           }))
           .subscribe();
       }
 
-      operationState!.next(startStatus);
+      effectState!.next(startStatus);
 
       return of(state).pipe(
-        monitoredEffect(operationState),
+        monitoredEffect(effectState!),
         getDefaultMonitoredEffectErrorOperator((state, context) => {
           const st = state === 'Error' ? startStatus.Error.with(context) :
             state === 'Retry' ? startStatus.Retry :
@@ -76,7 +76,7 @@ export function monitorSideEffect<T>(
                 undefined;
           if (st === undefined)
             throw Error('unexpected state reported from error handler of monitored side effect.');
-          operationState!.next(st);
+          effectState!.next(st);
         }),
       );
 
