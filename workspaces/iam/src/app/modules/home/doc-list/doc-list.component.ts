@@ -4,7 +4,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store, select } from '@ngrx/store';
 import {
   State,
-  DocumentEffectsDelete,
   monitorActionStatus$,
   DocumentEffectsActionType,
   selectDocuments,
@@ -127,7 +126,7 @@ export class DocListComponent extends SubscriptionManager implements OnInit {
   }
 
   onDelete(doc: Document) {
-    this.store.dispatch(new DocumentEffectsDelete({ id: doc.id }));
+    this.documentEffects.deleteDocument_.next({ id: doc.id });
   }
 
   private refresh() {

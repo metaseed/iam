@@ -1,13 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { DocumentEffectsRead } from 'shared';
 import { StateSubject } from 'packages/rx-store/src/core';
+import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from '../shared/store';
 
 @Injectable()
 export class MarkdownEffects {
-  constructor(private router: Router, private rxStore: Store<any>) { }
+  constructor(private router: Router, private rxStore: Store<any>,
+    @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
+    ) { }
   refresh_ = new StateSubject<any>().addEffect(tap(() => this.onRefresh()));
 
   private onRefresh() {
@@ -16,6 +18,6 @@ export class MarkdownEffects {
     const title = params['title'];
     const num = +params['id'];
     const format = params['f'];
-    this.rxStore.dispatch(new DocumentEffectsRead({ id: num, title, format }));
+    this.documentEffects.readDocument_.next({ id: num, title, format });
   }
 }

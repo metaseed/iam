@@ -1,11 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { MarkdownEditorService } from './markdown-editor.service';
 import { BehaviorSubject } from 'rxjs';
 import { combineLatestWith, tap, debounceTime } from 'rxjs/operators';
 import { Store, State } from '@ngrx/store';
 import {
   ActionState,
-  DocumentEffectsSave,
   actionStatusState$,
   DocumentEffectsActionType,
   selectCurrentDocStatus_IsEditorDirty,
@@ -14,6 +13,7 @@ import {
 } from 'shared';
 import { AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL, backoff, DocFormat, SubscriptionManager } from 'core';
 import { ICodeMirrorEditor } from '../model';
+import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
 
 @Injectable()
 export class DocSaveCoordinateService extends SubscriptionManager {
@@ -26,7 +26,9 @@ export class DocSaveCoordinateService extends SubscriptionManager {
   constructor(
     private editorService: MarkdownEditorService,
     private store: Store<any>,
-    private state: State<any>
+    private state: State<any>,
+    @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
+
   ) {
     super();
     super
@@ -37,7 +39,7 @@ export class DocSaveCoordinateService extends SubscriptionManager {
             debounceTime(AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL), // e  e e          |
             tap(([isDirty, editor]) => {
               if (isDirty)
-                this.store.dispatch(new DocumentEffectsSave({ content: editor.getValue(), format: DocFormat.md }));
+              this.documentEffects.saveDocument_.next({ content: editor.getValue(), format: DocFormat.md });
             }),
             backoff(8, AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL)
           ))

@@ -16,9 +16,7 @@ import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import {
-  DocumentEffectsSave,
   selectCurrentDocumentId,
-  DocumentEffectsDelete,
   NEW_DOC_ID,
   selectCurrentDocStatus,
   selectCurrentDocumentContentString
@@ -27,6 +25,7 @@ import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from '../model/mar
 import { ContainerRef, ICanComponentDeactivate } from 'core';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { SubscriptionManager } from 'app/modules/core/utils/subscription-manager';
+import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
 
 @Component({
   selector: 'ms-markdown-editor',
@@ -45,6 +44,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
   markdown$ = this.store.select(selectCurrentDocumentContentString);
 
   constructor(
+    @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     private _elementRef: ElementRef,
     private state: StoreState<any>,
     private dialog: MatDialog,
@@ -62,7 +62,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
           setTimeout(() => (this.editorLoaded = true), 0);
         }))
       .addSub(
-          this.markdownStore.editIt_
+        this.markdownStore.editIt_
           .subscribe(({ sourceLine } = {} as any) => {
             if (!sourceLine) return;
             this.markdownStore.documentMode_.next(DocumentMode.Edit);
@@ -122,7 +122,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
     const deleteNewDoc = () => {
       const id = selectCurrentDocumentId(this.state.value);
       if (id === NEW_DOC_ID) {
-        this.store.dispatch(new DocumentEffectsDelete({ id }));
+        this.documentEffects.deleteDocument_.next({ id });
       }
     };
 
@@ -134,12 +134,10 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
         .pipe(
           map(value => {
             if (value === 'Yes') {
-              this.store.dispatch(
-                new DocumentEffectsSave({
-                  content: this.codeMirrorComponent.value,
-                  forceUpdate: true
-                })
-              );
+              this.documentEffects.saveDocument_.next({
+                content: this.codeMirrorComponent.value,
+                forceUpdate: true
+              });
               return false;
             } else {
               deleteNewDoc();

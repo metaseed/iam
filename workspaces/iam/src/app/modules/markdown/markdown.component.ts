@@ -97,7 +97,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
             const title = params['title'];
             const num = +params['id']
             const format = params['f'];
-            this.store.dispatch(new DocumentEffectsRead({ id: num, title, format }));
+            this.documentEffects.readDocument_.next({ id: num, title, format });
           }
         })
       )

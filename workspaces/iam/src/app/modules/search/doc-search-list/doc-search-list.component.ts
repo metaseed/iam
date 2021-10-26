@@ -1,10 +1,11 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Inject, ViewChild } from '@angular/core';
 import { ISearchItem } from 'core';
 import { Store } from '@ngrx/store';
-import { selectSearchResultState, DocumentEffectsSearch } from 'shared';
+import { selectSearchResultState} from 'shared';
 import { DocSearchBarComponent } from '../doc-search-bar/doc-search-bar.component';
 import { tap } from 'rxjs/operators';
 import { debounceTime, distinctUntilChanged, Observable } from 'rxjs';
+import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
 
 @Component({
   selector: 'doc-search-list',
@@ -15,7 +16,9 @@ export class DocSearchListComponent implements AfterViewInit {
   @ViewChild(DocSearchBarComponent)
   docSearchComponent: DocSearchBarComponent;
 
-  constructor(private _store: Store<any>) { }
+  constructor(private _store: Store<any>,
+    @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
+    ) { }
 
   ngAfterViewInit() {
     this.docSearchComponent.search
@@ -25,7 +28,7 @@ export class DocSearchListComponent implements AfterViewInit {
           if (keyword.trim() === '') {
             return;
           }
-          this._store.dispatch(new DocumentEffectsSearch({ query: keyword }));
+          this.documentEffects.searchDocument_.next({ query: keyword });
         })
       )
       .subscribe();

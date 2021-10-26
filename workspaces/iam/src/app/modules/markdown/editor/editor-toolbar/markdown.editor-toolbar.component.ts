@@ -12,7 +12,6 @@ import { map, startWith } from 'rxjs/operators';
 import { SubscriptionManager, Utilities } from '../../../core/utils';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import {
-  DocumentEffectsSave,
   selectCurrentDocStatus_IsEditorDirty,
   selectCurrentDocStatus_IsDbDirty,
   selectCurrentDocStatus_IsSyncing
@@ -131,9 +130,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   save = () => {
     const content = this.editor.getValue();
     // this.store.dispatch(new edit.Save(content));
-    this.store.dispatch(
-      new DocumentEffectsSave({ content, format: DocFormat.md, forceUpdate: true })
-    );
+    this.documentEffects.saveDocument_.next({ content, format: DocFormat.md, forceUpdate: true });
   };
 
   undo = () => {
