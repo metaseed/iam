@@ -1,15 +1,14 @@
-import { time } from "console";
-import { mergeMap, Observable, of, OperatorFunction, pipe, Subscription, tap } from "rxjs";
-import { operationTimeout } from ".";
+import { mergeMap, of, OperatorFunction, pipe, tap } from "rxjs";
 import { defaultEffectOption, EffectOption, sideEffect } from "../core";
 import { getDefaultMonitoredEffectErrorOperator } from "../core/side-effect.internal";
 import { OperationState } from "./operation-state";
 import { OperationStatus, OperationStep } from "./operation-status";
 import { MonitoredStateObservable } from "./monitored-state-observable";
+import { operationTimeout } from "./operators/operation-timeout";
 
 export interface MonitoredEffectOption extends EffectOption {
-  effectName: string;
-  operationState: OperationState;
+  type: string;
+  operationState?: OperationState;
   /**
    * ms. if configured monitor the timeout status.
    */
@@ -21,7 +20,7 @@ export function monitorSideEffect<T>(
   monitoredEffect: (status: OperationStatus) => OperatorFunction<T, unknown>,
   option: MonitoredEffectOption) {
   const options = { ...defaultEffectOption, ...option };
-  let { effectName, operationState, timeOut } = options;
+  let { type, operationState, timeOut } = options;
 
   if (!operationState) {
     operationState = source.operationState;
@@ -52,14 +51,14 @@ export function monitorSideEffect<T>(
      *
      */
     mergeMap((state: T) => {
-      let startStatus = new OperationStatus(effectName, OperationStep.Start);
+      let startStatus = new OperationStatus(type, OperationStep.Start);
 
       if (timeOut) {
         const timeoutSubscription = operationState.pipe(
           tap(st => {
             if (st.isEndStatus() && st.coId === startStatus.coId) timeoutSubscription.unsubscribe();
           }),
-          operationTimeout(effectName, timeOut, st => st.coId === startStatus.coId),
+          operationTimeout(type, timeOut, st => st.coId === startStatus.coId),
           tap(timeOutStatus => {
             operationState.next(timeOutStatus);
           }))

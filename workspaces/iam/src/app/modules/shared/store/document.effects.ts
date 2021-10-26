@@ -1,16 +1,18 @@
 import { Inject, Injectable, InjectionToken } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { OperationState, StateSubject } from "@metaseed/rx-store";
+import {  StateSubject } from "@rx-store/core";
 import { State, Store } from "@ngrx/store";
 import { CACHE_FACADE_TOKEN, DocMeta, ICache } from "core";
-import { catchError, map, pipe, switchMap, tap } from "rxjs";
-import { DocumentEffectsCreate, DocumentEffectsReadBulkDocMeta, selectIdRangeHigh, selectIdRangeLow } from "shared";
+import { map, pipe, switchMap, tap } from "rxjs";
+import { selectIdRangeHigh, selectIdRangeLow } from "shared";
 import { DocEffectsUtil } from "../state/document/document.effects.util";
 import { DocumentState } from "../state/document/document.reducer";
+import { OperationState, MonitoredStateSubject } from "@rx-store/effect";
 
 export interface IDocumentEffects {
 }
 
+const EFFECT_TIMEOUT = 10_000; // 10s
 export const DOCUMENT_EFFECTS_TOKEN = new InjectionToken<IDocumentEffects>('DOCUMENT_EFFECTS_TOKEN');
 
 @Injectable({ providedIn: 'root' })
@@ -54,7 +56,7 @@ export class DocumentsEffects {
           );
       })
     ),
-    { effectName: '[DocumentsEffects]readBulkDocMeta', operationState: this.operationState }
+    { type: '[DocumentsEffects]readBulkDocMeta',  timeOut: EFFECT_TIMEOUT}
   );
 
 

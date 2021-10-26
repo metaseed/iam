@@ -24,9 +24,9 @@
       "@metaseed/angular-hotkey/*": ["../projects/angular-hotkey/*"],
       "@metaseed/spinner": ["../projects/spinner"],
       "@metaseed/spinner/*": ["../projects/spinner/*"],
-      "@rx-store/core": ["../packages/rx-store/core"],
-      "@rx-store/effect": ["../packages/rx-store/effect"],
-      "@rx-store/entity": ["../packages/rx-store/entity"],
+      "@rx-store/core": ["../packages/rx-store/src/core"],
+      "@rx-store/effect": ["../packages/rx-store/src/effect"],
+      "@rx-store/entity": ["../packages/rx-store/src/entity"],
       "lispjs": ["../packages/lisp.js"]
     },
     "typeRoots": ["node_modules/@types"],
