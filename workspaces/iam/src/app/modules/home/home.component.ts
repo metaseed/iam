@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, Inject } from '@angular/core';
 import { DocService } from './services/doc.service';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { StoreSearchService } from '../cache/services/store-search.service';
@@ -13,8 +13,8 @@ import {
   selectDocuments,
   ActionState,
   SharedState,
-  DocumentEffectsReadBulkDocMeta
 } from 'shared';
+import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from '../shared/store';
 
 @Component({
   selector: 'home',
@@ -36,6 +36,7 @@ export class HomeComponent {
   ActionStatus = ActionState;
 
   constructor(
+    @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     private store: Store<SharedState>,
     public docService: DocService,
     private docSearchService: StoreSearchService,
@@ -60,8 +61,8 @@ export class HomeComponent {
 
   ngOnInit() {
     this._rememberScrollPosition();
+    this.documentEffects.readBulkDocMeta_.next({ isBelowRange: false });
 
-    this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: false }));
     //   from([this.initDocs$, filteredDocs$]).pipe(
 
     //     switchIfEmit(),

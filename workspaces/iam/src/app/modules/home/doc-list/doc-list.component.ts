@@ -1,10 +1,9 @@
-import { Component, OnInit, Input, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, Inject } from '@angular/core';
 import { Document, NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT, IContainer, ContainerRef, SubscriptionManager } from 'core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store, select } from '@ngrx/store';
 import {
   State,
-  DocumentEffectsReadBulkDocMeta,
   DocumentEffectsDelete,
   monitorActionStatus$,
   DocumentEffectsActionType,
@@ -15,6 +14,7 @@ import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
 import { Subject, merge, asyncScheduler, tap } from 'rxjs';
 import { takeUntil, filter, map, observeOn, auditTime, startWith } from 'rxjs/operators';
 import { Router, NavigationExtras } from '@angular/router';
+import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
 
 const REFRESH_AUDIT_TIME = 3000;
 
@@ -76,6 +76,7 @@ export class DocListComponent extends SubscriptionManager implements OnInit {
 
   public container: IContainer;
   constructor(
+    @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     public elementRef: ElementRef,
     private store: Store<State>,
     private router: Router,
@@ -130,11 +131,12 @@ export class DocListComponent extends SubscriptionManager implements OnInit {
   }
 
   private refresh() {
-    this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: false }));
+    this.documentEffects.readBulkDocMeta_.next({ isBelowRange: false });
+
   }
 
   public onGetMore() {
-    this.store.dispatch(new DocumentEffectsReadBulkDocMeta({ isBelowRange: true }));
+    this.documentEffects.readBulkDocMeta_.next({ isBelowRange: true });
   }
 
   private panToRefresh() {
