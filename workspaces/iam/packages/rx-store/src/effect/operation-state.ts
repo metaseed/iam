@@ -17,31 +17,9 @@ export class OperationState extends StateSubject<OperationStatus>{
     reporter.setup(this);
   }
 
-  start$ = this.pipe(
-    ofStep(OperationStep.Start)
-  );
-
-  continue$ = this.pipe(
-    ofStep(OperationStep.Continue)
-  );
-
-  complete$ = this.pipe(
-    ofStep(OperationStep.Success)
-  );
-
-  error$ = this.pipe(
-    ofStep(OperationStep.Error)
-  );
-  retry$ = this.pipe(
-    ofStep(OperationStep.Retry)
-  );
-  fail$ = this.pipe(
-    ofStep(OperationStep.Fail)
-  );
-
-  timeOut$ = this.pipe(
-    ofStep(OperationStep.Timeout)
-  );
+  ofStep(step: OperationStep) {
+    return ofStep(step)(this);
+  }
 
   success(context?: any) {
     if (!this.state) throw Error('OperationState.success: no earlier state to use to generate Complete state')
