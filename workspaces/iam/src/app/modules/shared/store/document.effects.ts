@@ -8,6 +8,7 @@ import { selectIdRangeHigh, selectIdRangeLow } from "shared";
 import { DocEffectsUtil } from "../state/document/document.effects.util";
 import { DocumentState } from "../state/document/document.reducer";
 import { OperationState, MonitoredStateSubject } from "@rx-store/effect";
+import { merge } from "rxjs/operators";
 
 export interface IDocumentEffects {
 }
@@ -26,7 +27,6 @@ export class DocumentsEffects {
     private store: Store<DocumentState>
   ) { }
 
-  operationState = new OperationState();
   createDocument_ = new StateSubject<Pick<DocMeta, 'format'>>().addEffect(
     pipe(
       tap<Pick<DocMeta, 'format'>>(state => (this.cacheFacade as any).createDoc(state.format))
@@ -37,7 +37,7 @@ export class DocumentsEffects {
    * read extend doc meta fetch in cache isBelowRange=true...(low, high]...isBelowRange=false
    */
   readBulkDocMeta_ = new MonitoredStateSubject<{ isBelowRange: boolean }>().addMonitoredEffect(
-    status => pipe(
+    operation => pipe(
       map((state: { isBelowRange: boolean }) => {
         const keyRangeHigh = selectIdRangeHigh(this.state.value);
         const keyRangeLow = selectIdRangeLow(this.state.value);
@@ -52,13 +52,27 @@ export class DocumentsEffects {
         return this.cacheFacade
           .readBulkDocMeta(key, isBelowRange)
           .pipe(
-            tap(_ => this.operationState.next(status.Complete))
+            tap(_ => operation.state.Complete)
           );
       })
     ),
     { type: '[DocumentsEffects]readBulkDocMeta',  timeOut: EFFECT_TIMEOUT}
   );
 
+  readDocMetas_ =new MonitoredStateSubject<{ ids:number[] }>().addMonitoredEffect(
+    operation => pipe(
+      switchMap(state =>
+        merge(
+          ...state.ids.map(id =>
+            this.cacheFacade.readDocMeta(id, true)
+              .pipe(
+                tap(_ => operation.state.Complete))
+              )
+        )
+      )
+    ),
+    { type: '[DocumentsEffects]readDocMetas',  timeOut: EFFECT_TIMEOUT}
+  );
 
 
 }
