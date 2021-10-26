@@ -13,6 +13,7 @@ export interface MonitoredStateObservable<T> extends StateObservable<T> {
 
 export function monitoredState<T>(source: Observable<T>): MonitoredStateObservable<T> {
   const state$ = state(source) as MonitoredStateObservable<T>;
+  state$.operationState= new OperationState();
   state$.addMonitoredEffect = monitorSideEffect.bind(state$, state$) as MonitorEffect<T>;
   return state$;
 }

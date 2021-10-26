@@ -24,8 +24,6 @@ export function monitorSideEffect<T>(
   let { effectName, operationState, timeOut } = options;
 
   if (!operationState) {
-    if (!source.operationState)
-    source.operationState = new OperationState();
     operationState = source.operationState;
   }
 

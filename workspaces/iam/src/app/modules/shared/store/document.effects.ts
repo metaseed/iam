@@ -1,6 +1,6 @@
 import { Inject, Injectable, InjectionToken } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { OperationState, OperationStatus, StateSubject } from "@metaseed/rx-store";
+import { OperationState, StateSubject } from "@metaseed/rx-store";
 import { State, Store } from "@ngrx/store";
 import { CACHE_FACADE_TOKEN, DocMeta, ICache } from "core";
 import { catchError, map, pipe, switchMap, tap } from "rxjs";
@@ -34,7 +34,7 @@ export class DocumentsEffects {
   /**
    * read extend doc meta fetch in cache isBelowRange=true...(low, high]...isBelowRange=false
    */
-  readBulkDocMeta_ = new StateSubject<{ isBelowRange: boolean }>().addMonitoredEffect(
+  readBulkDocMeta_ = new MonitoredStateSubject<{ isBelowRange: boolean }>().addMonitoredEffect(
     status => pipe(
       map((state: { isBelowRange: boolean }) => {
         const keyRangeHigh = selectIdRangeHigh(this.state.value);
