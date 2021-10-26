@@ -5,7 +5,7 @@ import { defaultEffectOption, EffectOption, sideEffect } from "../core";
 import { getDefaultMonitoredEffectErrorOperator } from "../core/side-effect.internal";
 import { OperationState } from "./operation-state";
 import { OperationStatus, OperationStep } from "./operation-status";
-import { OperationStatusObservable } from "./operation-status-observable";
+import { MonitoredStateObservable } from "./monitored-state-observable";
 
 export interface MonitoredEffectOption extends EffectOption {
   effectName: string;
@@ -17,7 +17,7 @@ export interface MonitoredEffectOption extends EffectOption {
 }
 
 export function monitorSideEffect<T>(
-  source: OperationStatusObservable<T>,
+  source: MonitoredStateObservable<T>,
   monitoredEffect: (status: OperationStatus) => OperatorFunction<T, unknown>,
   option: MonitoredEffectOption) {
   const options = { ...defaultEffectOption, ...option };
