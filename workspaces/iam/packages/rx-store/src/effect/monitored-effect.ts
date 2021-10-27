@@ -1,10 +1,10 @@
 import { mergeMap, of, OperatorFunction, pipe, tap } from "rxjs";
 import { defaultEffectOption, EffectOption, sideEffect } from "../core";
-import { getDefaultMonitoredEffectErrorOperator } from "../core/side-effect.internal";
 import { OperationState } from "./operation-state";
 import { OperationStatus, OperationStep } from "./operation-status";
 import { MonitoredStateObservable } from "./monitored-state-observable";
 import { operationTimeout } from "./operators/operation-timeout";
+import { getDefaultMonitoredEffectErrorOperator } from "./default-monitored-effect-error-operator";
 
 export interface MonitoredEffectOption extends EffectOption {
   type: string;
@@ -12,7 +12,7 @@ export interface MonitoredEffectOption extends EffectOption {
   /**
    * ms. if configured monitor the timeout status.
    */
-  timeOut: number;
+  timeOut?: number;
 
   timeOutHandler?:(timeOut: OperationStatus) => void
 }
@@ -25,7 +25,7 @@ export function monitorSideEffect<T>(
   let { type, effectState, timeOut } = options;
 
   if (!effectState) {
-    effectState = source.operationState;
+    effectState = source.operationStatus$;
   }
 
 

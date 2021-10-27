@@ -49,7 +49,7 @@ export function backoff<T>(maxTriesOrConfig: any, interval?: number | ((i: numbe
   }
   let consecutiveErrors = 0;
   return pipe(
-    consecutiveStatus([5, Infinity], errors => consecutiveErrors = errors),
+    consecutiveStatus([config.failIfConsecutiveErrors??1, Infinity], errors => consecutiveErrors = errors),
     retryWhen<T>(err$ => {
       let errors = 0;
       return err$.pipe(
@@ -58,11 +58,11 @@ export function backoff<T>(maxTriesOrConfig: any, interval?: number | ((i: numbe
         map(([i, err]) => [typeof interval === 'function' ? interval(i) : interval, err]),
         mergeMap(([i, err]) => {
           config.stateReporter?.('Error', err);
-          if (!config.failIfConsecutiveErrors || consecutiveErrors < config.failIfConsecutiveErrors) {
+          if (config.failIfConsecutiveErrors != null && consecutiveErrors < config.failIfConsecutiveErrors) {
             return timer(i).pipe(tap(() => config.stateReporter?.('Retry'))); // retry after timer emit.
           }
           config.stateReporter?.('Fail');
-          console.warn(`backoff: skip item process because of consecutive errors happened: consecutiveError: ${consecutiveErrors}>=${config.failIfConsecutiveErrors}`);
+          console.warn(`backoff: skip item process because of consecutive errors happened: consecutiveError: ${consecutiveErrors}>=${config.failIfConsecutiveErrors}\n error: ${err}`);
           return EMPTY;
         })
       )
