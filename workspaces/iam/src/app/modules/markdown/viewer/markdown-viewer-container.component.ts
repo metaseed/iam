@@ -47,7 +47,7 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
       if (status.step === OperationStep.Timeout) {
         this.snackBar.open(status.type + ' time out', 'ok', { duration: MSG_DISPLAY_TIMEOUT });
       }
-      status.isNotStartStatus()
+      return status.isNotStartStatus()
     }),
     observeOn(asyncScheduler)
   )

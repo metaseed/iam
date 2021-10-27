@@ -1,7 +1,7 @@
-import { Input } from "@angular/core";
+import { Directive, Input } from "@angular/core";
 import { State, Store } from "@ngrx/store";
 import { selectCurrentDocumentContentString, selectCurrentDocumentId, UpdateDocument } from "shared";
-
+@Directive()
 export class DataSourceLines {
 
   public sourceLineStart: Number;
