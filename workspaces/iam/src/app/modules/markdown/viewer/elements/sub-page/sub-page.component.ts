@@ -1,11 +1,12 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, Inject } from '@angular/core';
 import { DocMeta } from 'core';
 import { Router, NavigationExtras } from '@angular/router';
 import { Store, select, State } from '@ngrx/store';
-import { getDocumentsByIdsSelector, DocumentEffectsReadDocMetas, getDocumentMetasByIdsSelector } from 'shared';
+import { getDocumentMetasByIdsSelector } from 'shared';
 import { map, filter } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { DataSourceLines } from '../data-source-lines';
+import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
 
 @Component({
   selector: 'i-subpage',
@@ -15,7 +16,9 @@ import { DataSourceLines } from '../data-source-lines';
 export class SubPageComponent  extends DataSourceLines{
 
   public panelOpenState = false;
-  constructor(private router: Router, private store: Store<any>, private state: State<any>) {
+  constructor(private router: Router, private store: Store<any>, private state: State<any>,
+    @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
+    ) {
     super(store, state);
   }
 
@@ -33,7 +36,7 @@ export class SubPageComponent  extends DataSourceLines{
       map(metas => [...metas.filter(meta => !!meta)])
     );
     const ids = this.ids;
-    this.store.dispatch(new DocumentEffectsReadDocMetas({ ids }));
+    this.documentEffects.readDocMetas_.next({ids});
   }
   public ids = [];
   @Input()

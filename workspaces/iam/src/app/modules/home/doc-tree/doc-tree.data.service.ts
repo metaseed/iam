@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { SharedState, getDocumentByIdSelector, DocumentEffectsReadDocMeta, getDocumentsByIdsSelector, DocumentEffectsReadDocMetas } from 'shared';
+import { SharedState, getDocumentByIdSelector, getDocumentsByIdsSelector } from 'shared';
 import { map, switchMap, filter } from 'rxjs/operators';
 import { DocMeta } from 'core';
 import { EMPTY, Observable } from 'rxjs';
@@ -39,7 +39,7 @@ export class DocTreeDataService {
         map(d => new DocNode(d.metaData)),
         switchMap(node => this.getChildren$(node).pipe(map(ns => { node.subPages = ns; return node }))),
       );
-    this.store.dispatch(new DocumentEffectsReadDocMeta({ id: rootId }));
+    this.documentEffects.readDocMetas_.next({ ids: [rootId] });
     return data$;
   }
 
