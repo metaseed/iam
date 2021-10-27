@@ -117,4 +117,8 @@ export function consecutiveStatus<T>(
         consecutiveItems = 0;
       }
       if (errors[0] <= consecutiveErrors && consecutiveErrors <= errors[1])
-        consecutiveErrorStatus(consecutiveEr
+        consecutiveErrorStatus(consecutiveErrors);
+    }
+  })
+}
+
