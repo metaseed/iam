@@ -7,7 +7,7 @@ export function operationTimeout(
   timeoutMs: number,
   isStartOperation?: (status: OperationStatus) => boolean,
   isEndOperation?:(status: OperationStatus) => boolean,
-  timeOutHandler?: (start: OperationStatus) => void,
+  timeOutHandler?: (timeOut: OperationStatus) => void,
 ): OperatorFunction<OperationStatus, OperationStatus> {
 
   return (source: Observable<OperationStatus>) => source.pipe(

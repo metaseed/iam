@@ -10,11 +10,9 @@ import { ScrollHideDirective } from './scroll-hide/scroll-hide.directive';
 import { CoreModule, CACHE_FACADE_TOKEN } from 'core';
 import { StoreModule } from '@ngrx/store';
 import { SharedState, reducers, moduleStateName, DocumentStateFacade } from './state';
-import { EffectsModule } from '@ngrx/effects';
 import { DocEffectsUtil } from './state/document/document.effects.util';
 import { DatabaseModule } from 'database';
 import { NetStorageModule } from 'net-storage';
-import { effects } from './state/effects';
 import { CacheModule } from '../cache';
 import { CacheFacade } from './cache-facade';
 import { MatInputAutofocusDirective } from './directives/matinput-autofocus.directive';
@@ -30,7 +28,6 @@ import { MatInputAutofocusDirective } from './directives/matinput-autofocus.dire
     SplitPaneModule,
     CacheModule,
     StoreModule.forFeature<SharedState>(moduleStateName, reducers),
-    EffectsModule.forFeature(effects)
   ],
   declarations: [ReadingPositionIndicatorComponent, BottomNavigationComponent, ScrollHideDirective, MatInputAutofocusDirective],
   exports: [

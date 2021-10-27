@@ -21,6 +21,10 @@ export class OperationState extends StateSubject<OperationStatus>{
     return ofStep(step)(this);
   }
 
+  /**
+   * send `success` step to this OperationState
+   * @param context
+   */
   success(context?: any) {
     if (!this.state) throw Error('OperationState.success: no earlier state to use to generate Complete state')
 

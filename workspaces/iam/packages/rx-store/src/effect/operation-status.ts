@@ -34,6 +34,10 @@ export class OperationStatus {
      * correlation Id: the same during lifetime of the operation, used to differentiate operations of the same type
      */
     public coId?: number,
+    /**
+     * the state that trigger this operation, set at start step, and pass along the life time.
+     */
+    public trigger?: any,
   ) {
     if (type === OperationStep.Start) this.coId = Date.now();
   }

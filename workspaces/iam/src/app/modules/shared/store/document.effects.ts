@@ -2,14 +2,14 @@ import { Inject, Injectable, InjectionToken } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { StateSubject } from "@rx-store/core";
 import { State, Store } from "@ngrx/store";
-import { CACHE_FACADE_TOKEN, DocFormat, DocMeta, ICache } from "core";
+import { CACHE_FACADE_TOKEN, DocFormat, DocMeta, ICache, NET_COMMU_TIMEOUT } from "core";
 import { forkJoin, map, pipe, switchMap, tap, throwError } from "rxjs";
 import { NEW_DOC_ID, selectCurrentDocument, selectIdRangeHigh, selectIdRangeLow, selectSearchResultState, SetCurrentDocumentId } from "shared";
 import { DocEffectsUtil } from "../state/document/document.effects.util";
 import { DocumentState } from "../state/document/document.reducer";
 import { MonitoredStateSubject } from "@rx-store/effect";
 
-const EFFECT_TIMEOUT = 10_000; // 10s
+const EFFECT_TIMEOUT = NET_COMMU_TIMEOUT;
 export const DOCUMENT_EFFECTS_TOKEN = new InjectionToken<DocumentsEffects>('DOCUMENT_EFFECTS_TOKEN');
 
 @Injectable({ providedIn: 'root' })
@@ -124,7 +124,7 @@ export class DocumentsEffects {
         switchMap(state =>
           this.cacheFacade.deleteDoc(state.id)
         ),
-        tap(result => effectState.success(result))
+        tap<number>(id => effectState.success({id}))
       ),
     { type: '[DocumentsEffects]deleteDocument', timeOut: EFFECT_TIMEOUT }
   );

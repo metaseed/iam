@@ -1,10 +1,11 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, Inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { Document, NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT } from 'core';
+import { Document, MSG_DISPLAY_TIMEOUT } from 'core';
 import { Store } from '@ngrx/store';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { monitorActionStatus$, DocumentEffectsActionType, ActionStatus, ActionState } from 'shared';
 import { map } from 'rxjs/operators';
+import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
+import { OperationStep } from 'packages/rx-store/src/effect';
 
 @Component({
   selector: 'doc-item',
@@ -22,27 +23,24 @@ export class DocItemComponent {
   @Output()
   show = new EventEmitter<Document>();
 
-  constructor(private router: Router, private store: Store<any>, private snackBar: MatSnackBar) { }
+  constructor(private router: Router, private store: Store<any>, private snackBar: MatSnackBar,
+    @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
+    ) { }
 
-  private defaultTimeoutHandler = (action: string, info?: string) => (start: ActionStatus) => {
-    console.warn('action timeout:' + action + (info ? `--${info}` : ''));
-    this.snackBar.open(action + 'time out.', 'ok', { duration: MSG_DISPLAY_TIMEOUT });
-  };
-
-  isDeleteDone$ = monitorActionStatus$(
-    this.store,
-    DocumentEffectsActionType.Delete,
-    NET_COMMU_TIMEOUT,
-    this.defaultTimeoutHandler(DocumentEffectsActionType.Delete),
-    actionStatus => actionStatus.action.payload.id === this.doc.id
-  ).pipe(
-    map(v => {
-      if (v.action.payload.id === this.doc.id) {
-        if (v.state === ActionState.Fail) {
+  isDeleteDone$ = this.documentEffects.deleteDocument_.operationStatus$.pipe(
+    map(status=> {
+      if (status.trigger.id === this.doc.id) {
+        if (status.step === OperationStep.Fail) {
           this.snackBar.open(`delete: ${this.doc.metaData.title} failed!`);
           return true;
         }
-        return v.state === ActionState.Complete || v.state === ActionState.Timeout;
+
+        if(status.step === OperationStep.Timeout) {
+          const info = `delete document (id:${this.doc.id})  timeout`;
+          console.warn(info);
+          this.snackBar.open(info, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
+        }
+        return status.step === OperationStep.Success|| status.step === OperationStep.Timeout;
       }
       return false;
     })

@@ -13,6 +13,8 @@ export interface MonitoredEffectOption extends EffectOption {
    * ms. if configured monitor the timeout status.
    */
   timeOut: number;
+
+  timeOutHandler?:(timeOut: OperationStatus) => void
 }
 
 export function monitorSideEffect<T>(
@@ -52,7 +54,7 @@ export function monitorSideEffect<T>(
      */
     mergeMap((state: T) => {
       let startStatus = new OperationStatus(type, OperationStep.Start);
-
+      startStatus.trigger = state;
       if (timeOut) {
         const timeoutSubscription = effectState!.pipe(
           tap(st => {
@@ -61,6 +63,7 @@ export function monitorSideEffect<T>(
           operationTimeout(type, timeOut, st => st.coId === startStatus.coId),
           tap(timeOutStatus => {
             effectState!.next(timeOutStatus);
+            options.timeOutHandler?.(timeOutStatus);
           }))
           .subscribe();
       }
@@ -69,14 +72,14 @@ export function monitorSideEffect<T>(
 
       return of(state).pipe(
         monitoredEffect(effectState!),
-        getDefaultMonitoredEffectErrorOperator((state, context) => {
-          const st = state === 'Error' ? startStatus.Error.with(context) :
-            state === 'Retry' ? startStatus.Retry :
-              state === 'Fail' ? startStatus.Fail :
+        getDefaultMonitoredEffectErrorOperator((sta, context) => {
+          const st = sta === 'Error' ? startStatus.Error :
+            sta === 'Retry' ? startStatus.Retry :
+              sta === 'Fail' ? startStatus.Fail :
                 undefined;
           if (st === undefined)
             throw Error('unexpected state reported from error handler of monitored side effect.');
-          effectState!.next(st);
+          effectState!.next(st.with(context));
         }),
       );
 
