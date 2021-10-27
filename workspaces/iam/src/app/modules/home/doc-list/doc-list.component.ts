@@ -4,7 +4,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store, select } from '@ngrx/store';
 import {
   State,
-  monitorActionStatus$,
   selectDocuments,
   ActionState
 } from 'shared';
@@ -13,6 +12,7 @@ import { merge, asyncScheduler, tap } from 'rxjs';
 import { filter, map, observeOn, auditTime, startWith } from 'rxjs/operators';
 import { Router, NavigationExtras } from '@angular/router';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
+import { OperationStep } from 'packages/rx-store/src/effect';
 
 const REFRESH_AUDIT_TIME = 3000;
 
@@ -24,50 +24,36 @@ const REFRESH_AUDIT_TIME = 3000;
 export class DocListComponent extends SubscriptionManager implements OnInit {
   private docs;
 
-  private defaultTimeoutHandler = (action: string, info?: string) => () => {
+  private defaultTimeoutHandler(action: string, info?: string) {
     console.warn('action timeout:' + action + (info ? `--${info}` : ''));
     this.snackBar.open(action + 'time out.', 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
-  isLoadDone$ = merge(
-    this.store.pipe(select(selectDocuments)),
-    monitorActionStatus$(
-      this.store,
-      DocumentEffectsActionType.ReadBulkDocMeta,
-      NET_COMMU_TIMEOUT,
-      this.defaultTimeoutHandler(DocumentEffectsActionType.ReadBulkDocMeta)
-    ).pipe(
-      filter(a => a.action.payload.isBelowRange === false),
-      map(v => {
-        return (
-          v.state === ActionState.Fail ||
-          v.state === ActionState.Succession ||
-          v.state === ActionState.Complete ||
-          v.state === ActionState.Timeout
-        );
-      })
-    )
-  ).pipe(observeOn(asyncScheduler));
+
+
+  isLoadDone$ = this.documentEffects.readBulkDocMeta_.operationStatus$.pipe(
+    filter(status => status.trigger.isBelowRange === false),
+    map(status => {
+      if (status.step === OperationStep.Timeout) {
+        this.defaultTimeoutHandler('load doc list', 'init')
+      }
+      return status.isNotStartStatus()
+    }),
+    observeOn(asyncScheduler)
+  );
 
   public showGetMore$ = this.isLoadDone$.pipe(
     map(_ => this.elementRef.nativeElement.scrollHeight === this.elementRef.nativeElement.clientHeight)
   );
 
-  isLoadMoreDone$ = monitorActionStatus$(
-    this.store,
-    DocumentEffectsActionType.ReadBulkDocMeta,
-    NET_COMMU_TIMEOUT,
-    this.defaultTimeoutHandler(DocumentEffectsActionType.ReadBulkDocMeta, 'load-more')
-  ).pipe(
-    filter(a => a.action.payload.isBelowRange === true),
+  isLoadMoreDone$ = this.documentEffects.readBulkDocMeta_.operationStatus$.pipe(
+    filter(status => status.trigger.isBelowRange === true),
     observeOn(asyncScheduler),
-    map(v => {
-      return (
-        v.state === ActionState.Fail ||
-        v.state === ActionState.Succession ||
-        v.state === ActionState.Complete ||
-        v.state === ActionState.Timeout
-      );
+    map(status => {
+      if (status.step === OperationStep.Timeout) {
+        this.defaultTimeoutHandler('load doc list', 'load more')
+      }
+      return status.isNotStartStatus();
     }),
     startWith(true)
   );
