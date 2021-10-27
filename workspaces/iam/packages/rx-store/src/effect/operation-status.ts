@@ -39,7 +39,7 @@ export class OperationStatus {
      */
     public trigger?: any,
   ) {
-    if (type === OperationStep.Start) this.coId = Date.now();
+    if (step === OperationStep.Start) this.coId = Date.now();
   }
 
   get Start() {
@@ -67,7 +67,7 @@ export class OperationStatus {
   }
 
   with(context?: any) {
-    return new OperationStatus(this.type, OperationStep.Timeout, context, this.coId);
+    return new OperationStatus(this.type, this.step, context, this.coId);
   }
 
   get id(){

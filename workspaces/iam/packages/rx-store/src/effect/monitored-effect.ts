@@ -1,4 +1,4 @@
-import { mergeMap, of, OperatorFunction, pipe, tap } from "rxjs";
+import { filter, mergeMap, of, OperatorFunction, pipe, tap } from "rxjs";
 import { defaultEffectOption, EffectOption, sideEffect } from "../core";
 import { OperationState } from "./operation-state";
 import { OperationStatus, OperationStep } from "./operation-status";
@@ -58,9 +58,11 @@ export function monitorSideEffect<T>(
       if (timeOut) {
         const timeoutSubscription = effectState!.pipe(
           tap(st => {
+            console.log('kkkk',st)
             if (st.isEndStatus() && st.coId === startStatus.coId) timeoutSubscription.unsubscribe();
           }),
           operationTimeout(type, timeOut, st => st.coId === startStatus.coId),
+          filter(status => status.step === OperationStep.Timeout),
           tap(timeOutStatus => {
             effectState!.next(timeOutStatus);
             options.timeOutHandler?.(timeOutStatus);

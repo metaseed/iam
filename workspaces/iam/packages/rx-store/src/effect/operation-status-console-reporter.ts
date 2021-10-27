@@ -7,7 +7,9 @@ export class OperationStatusConsoleReporter implements OperationStatusReporter {
   setup(operationStatusStore: OperationState) {
 
     operationStatusStore.ofStep(OperationStep.Start).pipe(tap((status) => {
-      console.log(`%c${status.id}->start`, 'background-color:#4285f4');
+      console.groupCollapsed(`%c${status.id}->start`, 'background-color:#4285f4');
+      console.log(status)
+      console.groupEnd();
     })).subscribe();
 
     operationStatusStore.ofStep(OperationStep.Continue).pipe(tap((status) => {
@@ -18,7 +20,17 @@ export class OperationStatusConsoleReporter implements OperationStatusReporter {
     })).subscribe();
 
     operationStatusStore.ofStep(OperationStep.Retry).pipe(tap((status) => {
-      console.log(`%c${status.id}->retry`, 'background-color:#4285f4');
+
+      console.groupCollapsed(`%c${status.id}->retry`, 'background-color:#4285f4');
+      console.log(status)
+      console.groupEnd();
+
+    })).subscribe();
+
+    operationStatusStore.ofStep(OperationStep.Timeout).pipe(tap((status) => {
+      console.groupCollapsed(`%c${status.id}->timeout`, 'color:#FF0');
+      console.warn(status);
+      console.groupEnd();
     })).subscribe();
 
     operationStatusStore.ofStep(OperationStep.Fail).pipe(tap((status) => {

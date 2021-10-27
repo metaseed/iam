@@ -45,7 +45,7 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
   ).pipe(
     map(status => {
       if (status.step === OperationStep.Timeout) {
-        this.snackBar.open(status.type + ' time out', 'ok', { duration: MSG_DISPLAY_TIMEOUT });
+        this.snackBar.open(status.type + ' timeout', 'ok', { duration: MSG_DISPLAY_TIMEOUT });
       }
       return status.isNotStartStatus()
     }),
