@@ -16,6 +16,7 @@ import { NetStorageModule } from 'net-storage';
 import { CacheModule } from '../cache';
 import { CacheFacade } from './cache-facade';
 import { MatInputAutofocusDirective } from './directives/matinput-autofocus.directive';
+import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from './store';
 
 @NgModule({
   imports: [
@@ -52,6 +53,7 @@ export class SharedModule {
       providers: [
         DocEffectsUtil,
         { provide: CACHE_FACADE_TOKEN, useClass: CacheFacade },
+        {provide: DOCUMENT_EFFECTS_TOKEN, useClass: DocumentsEffects},
         DocumentStateFacade
       ]
     };

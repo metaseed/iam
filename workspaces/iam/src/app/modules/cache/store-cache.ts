@@ -8,9 +8,9 @@ import {
   SearchResult,
   SearchResultSource
 } from 'core';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable, of, merge } from 'rxjs';
-import { tap, catchError, map, last } from 'rxjs/operators';
+import { tap, catchError, map } from 'rxjs/operators';
 import { Store, State as StoreState } from '@ngrx/store';
 import {
   UpsertDocuments,
@@ -20,7 +20,6 @@ import {
   UpdateDocument,
   DeleteDocument,
   SetCurrentDocumentId,
-  selectCurrentDocumentId,
   SetSearchResultAction,
   selectDocuments,
   getDocumentMetaByIdSelector
@@ -29,8 +28,8 @@ import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../shared/state/document/co
 import { SharedState } from '../shared/state/state';
 import { StoreSearchService } from './services/store-search.service';
 import { afterUpdateDoc } from './after-update-doc';
-import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from '../shared/store';
 
+@Injectable({ providedIn: 'platform' })
 export class StoreCache implements ICache {
   docMetaData: { hightKey: number; lowKey: number };
 
@@ -40,7 +39,6 @@ export class StoreCache implements ICache {
     private state: StoreState<SharedState>,
     private _logger: Logger,
     private _storeSearchService: StoreSearchService,
-    private documentEffects: DocumentsEffects
   ) { }
 
   init(nextLevelCache: ICache): ICache {
@@ -65,10 +63,6 @@ export class StoreCache implements ICache {
   CreateDocument(content: string, format: DocFormat) {
     return this.nextLevelCache.CreateDocument(content, format).pipe(
       tap(doc => {
-        const id = selectCurrentDocumentId(this.state.value);
-        if (id === NEW_DOC_ID) {
-          this.documentEffects.deleteDocument_.next({ id });
-        }
 
         this.store.dispatch(
           new AddDocument({
