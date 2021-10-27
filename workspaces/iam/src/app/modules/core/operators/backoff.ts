@@ -1,5 +1,6 @@
 import { EMPTY, pipe, range, timer } from 'rxjs';
 import { retryWhen, map, mergeMap, zipWith, tap } from 'rxjs/operators';
+import { complete } from './complete';
 /**
  * backoff from error happens again
  *
@@ -50,9 +51,11 @@ export function backoff<T>(maxTriesOrConfig: any, interval?: number | ((i: numbe
   let consecutiveErrors = 0;
   return pipe(
     consecutiveStatus([5, Infinity], errors => consecutiveErrors = errors),
-    retryWhen<T>(err$ =>
-      range(1, config.maxTries).pipe(
-        zipWith(err$), // attach number sequence to the errors observable
+    retryWhen<T>(err$ => {
+      let errors = 0;
+      return err$.pipe(
+        map(err => [errors++, err]),
+        complete(o => errors >= config.maxTries),
         map(([i, err]) => [typeof interval === 'function' ? interval(i) : interval, err]),
         mergeMap(([i, err]) => {
           config.stateReporter?.('Error', err);
@@ -64,6 +67,7 @@ export function backoff<T>(maxTriesOrConfig: any, interval?: number | ((i: numbe
           return EMPTY;
         })
       )
+    }
     )
   );
 }
@@ -113,8 +117,4 @@ export function consecutiveStatus<T>(
         consecutiveItems = 0;
       }
       if (errors[0] <= consecutiveErrors && consecutiveErrors <= errors[1])
-        consecutiveErrorStatus(consecutiveErrors);
-    }
-  })
-}
-
+        consecutiveErrorStatus(consecutiveEr
