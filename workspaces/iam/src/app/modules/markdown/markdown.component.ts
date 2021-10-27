@@ -11,7 +11,6 @@ import { MarkdownViewerContainerComponent } from './viewer/markdown-viewer-conta
 import { Observable, merge } from 'rxjs';
 import {
   SetCurrentDocumentId,
-  DocumentEffectsRead,
   selectCurrentDocumentContentString
 } from 'shared';
 import { Utilities } from '../core/utils';

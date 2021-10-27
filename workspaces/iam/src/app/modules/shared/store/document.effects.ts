@@ -26,10 +26,15 @@ export class DocumentsEffects extends EffectGroup {
     this.addReporter(new OperationStatusConsoleReporter());
   }
 
-  createDocument_ = new StateSubject<Pick<DocMeta, 'format'>>().addEffect(
-    pipe(
-      tap<Pick<DocMeta, 'format'>>(state => (this.cacheFacade as any).createDoc(state.format))
-    )
+  createDocument_ = new MonitoredStateSubject<Pick<DocMeta, 'format'>>().addMonitoredEffect(
+    effectState =>
+      pipe(
+        tap<Pick<DocMeta, 'format'>>(state => {
+          (this.cacheFacade as any).createDoc(state.format);
+          effectState.success(state);
+        })
+      ),
+    { type: '[DocumentsEffects]createDocument', timeOut: EFFECT_TIMEOUT }
   );
 
   /**

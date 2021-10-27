@@ -12,12 +12,13 @@ import { ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ElementRef } from '@angular/core';
 import { merge, asyncScheduler, Observable } from 'rxjs';
-import { DocumentEffectsActionType, monitorActionStatus$, actionStatusState$ } from 'shared';
 
 import { map, observeOn, switchMap, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MARKDOWN_STORE_TOKEN, IMarkdownStore, DocumentMode } from '../model/markdown.model';
 import { PlatformLocation } from '@angular/common';
+import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
+import { OperationStep } from 'packages/rx-store/src/effect';
 
 @Component({
   selector: 'markdown-viewer-container',
@@ -37,28 +38,24 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
   isLockScrollWithView$;
   isLockScrollWithView;
 
-  defaultTimeoutHandler = err =>
-    this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
 
   isLoadDone$ = merge(
-    monitorActionStatus$(
-      this.store,
-      DocumentEffectsActionType.ReadDocument,
-      NET_COMMU_TIMEOUT,
-      this.defaultTimeoutHandler)
-      .pipe(
-        map(v => v.isNotStartStatus())
-      ),
-    actionStatusState$(this.store, DocumentEffectsActionType.Create).pipe(
-      map(v => v.isNotStartStatus())
-    )
+    this.documentEffects.readDocument_.operationStatus$,
+    this.documentEffects.createDocument_.operationStatus$
   ).pipe(
+    map(status => {
+      if (status.step === OperationStep.Timeout) {
+        this.snackBar.open(status.type + ' time out', 'ok', { duration: MSG_DISPLAY_TIMEOUT });
+      }
+      status.isNotStartStatus()
+    }),
     observeOn(asyncScheduler)
-  );
+  )
 
   constructor(
     private store: Store<any>,
     private snackBar: MatSnackBar,
+    @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     @Inject(MARKDOWN_STORE_TOKEN) public markdownStore: IMarkdownStore,
     private ngZone: NgZone,
     private _docRef: DocumentRef,
@@ -147,7 +144,7 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
       lines = element.getAttribute('data-source-lines');
       element = element.parentElement;
     } while (!lines && !!element && i++ < 4);
-    this.markdownStore.editIt_.next({ sourceLine: JSON.parse(lines)});
+    this.markdownStore.editIt_.next({ sourceLine: JSON.parse(lines) });
   }
 
 }

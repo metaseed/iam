@@ -5,8 +5,6 @@ import { combineLatestWith, tap, debounceTime } from 'rxjs/operators';
 import { Store, State } from '@ngrx/store';
 import {
   ActionState,
-  actionStatusState$,
-  DocumentEffectsActionType,
   selectCurrentDocStatus_IsEditorDirty,
   UpdateCurrentDocumentStatus,
   selectCurrentDocStatus,
@@ -14,6 +12,7 @@ import {
 import { AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL, backoff, DocFormat, SubscriptionManager } from 'core';
 import { ICodeMirrorEditor } from '../model';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
+import { OperationStep } from 'packages/rx-store/src/effect';
 
 @Injectable()
 export class DocSaveCoordinateService extends SubscriptionManager {
@@ -54,15 +53,15 @@ export class DocSaveCoordinateService extends SubscriptionManager {
           )
           .subscribe(([content, editor]) => this.checkDirty(editor)))
       .addSub(
-        actionStatusState$(this.store, DocumentEffectsActionType.Save)
+        this.documentEffects.saveDocument_.operationStatus$
           .pipe(
             combineLatestWith(this.editorLoaded$)
           )
           .subscribe(([as, editor]) => {
-            if (as.state === ActionState.Start) {
+            if (as.step === OperationStep.Start) {
               this.docSavedHandler(editor);
               this.isSaving = true;
-            } else if (as.state === ActionState.Succession || as.state === ActionState.Fail) {
+            } else if (as.isEndStatus()) {
               this.isSaving = false;
             }
           })
