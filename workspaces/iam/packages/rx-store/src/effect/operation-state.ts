@@ -1,6 +1,6 @@
 import { StateSubject } from "../core";
 import { OperationStatusReporter } from "./operation-status-reporter.interface";
-import { ofStep, OperationStatus, OperationStep } from "./operation-status";
+import { ofStep, ofType, OperationStatus, OperationStep } from "./operation-status";
 
 /**
  * operation is a sequence steps of computation.
@@ -17,10 +17,13 @@ export class OperationState extends StateSubject<OperationStatus>{
     reporter.setup(this);
   }
 
-  ofStep(step: OperationStep) {
-    return ofStep(step)(this);
+  ofStep(...step: OperationStep[]) {
+    return ofStep(...step)(this);
   }
 
+  ofType(...type: string[]) {
+    return ofType(...type)(this);
+  }
   /**
    * send `success` step to this OperationState
    * @param context

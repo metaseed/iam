@@ -7,13 +7,13 @@ import { forkJoin, map, pipe, switchMap, tap, throwError } from "rxjs";
 import { NEW_DOC_ID, selectCurrentDocument, selectIdRangeHigh, selectIdRangeLow, selectSearchResultState, SetCurrentDocumentId } from "shared";
 import { DocEffectsUtil } from "../state/document/document.effects.util";
 import { DocumentState } from "../state/document/document.reducer";
-import { MonitoredStateSubject } from "@rx-store/effect";
+import { EffectGroup, MonitoredStateSubject, OperationStatusConsoleReporter } from "@rx-store/effect";
 
 const EFFECT_TIMEOUT = NET_COMMU_TIMEOUT;
 export const DOCUMENT_EFFECTS_TOKEN = new InjectionToken<DocumentsEffects>('DOCUMENT_EFFECTS_TOKEN');
 
 @Injectable({ providedIn: 'root' })
-export class DocumentsEffects {
+export class DocumentsEffects extends EffectGroup {
   constructor(
     @Inject(CACHE_FACADE_TOKEN)
     private cacheFacade: ICache,
@@ -21,7 +21,10 @@ export class DocumentsEffects {
     private state: State<DocumentState>,
     private snackbar: MatSnackBar,
     private store: Store<DocumentState>
-  ) { }
+  ) {
+    super();
+    this.addReporter(new OperationStatusConsoleReporter());
+  }
 
   createDocument_ = new StateSubject<Pick<DocMeta, 'format'>>().addEffect(
     pipe(
@@ -124,7 +127,7 @@ export class DocumentsEffects {
         switchMap(state =>
           this.cacheFacade.deleteDoc(state.id)
         ),
-        tap<number>(id => effectState.success({id}))
+        tap<number>(id => effectState.success({ id }))
       ),
     { type: '[DocumentsEffects]deleteDocument', timeOut: EFFECT_TIMEOUT }
   );

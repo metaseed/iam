@@ -5,13 +5,12 @@ import { Store, select } from '@ngrx/store';
 import {
   State,
   monitorActionStatus$,
-  DocumentEffectsActionType,
   selectDocuments,
   ActionState
 } from 'shared';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
-import { Subject, merge, asyncScheduler, tap } from 'rxjs';
-import { takeUntil, filter, map, observeOn, auditTime, startWith } from 'rxjs/operators';
+import { merge, asyncScheduler, tap } from 'rxjs';
+import { filter, map, observeOn, auditTime, startWith } from 'rxjs/operators';
 import { Router, NavigationExtras } from '@angular/router';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
 

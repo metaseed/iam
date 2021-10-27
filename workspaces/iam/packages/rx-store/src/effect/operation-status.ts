@@ -92,12 +92,12 @@ export class OperationStatus {
 
 export function ofType(...allowedType: string[]) {
   return filter((status: OperationStatus) => {
-    return status && allowedType.some(t => t === status.type);
+    return status && allowedType.some(step => step === status.type);
   });
 }
 
-export function ofStep(...monitoredSteps: string[]) {
+export function ofStep(...monitoredSteps: OperationStep[]) {
   return filter<OperationStatus>(status => {
-    return status && monitoredSteps.some(t => t === status.step);
+    return status && monitoredSteps.some(step => step === status.step);
   });
 }
