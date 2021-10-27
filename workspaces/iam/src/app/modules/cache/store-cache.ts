@@ -31,9 +31,6 @@ import { StoreSearchService } from './services/store-search.service';
 import { afterUpdateDoc } from './after-update-doc';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from '../shared/store';
 
-@Injectable({
-  providedIn: 'platform'
-})
 export class StoreCache implements ICache {
   docMetaData: { hightKey: number; lowKey: number };
 
@@ -43,7 +40,7 @@ export class StoreCache implements ICache {
     private state: StoreState<SharedState>,
     private _logger: Logger,
     private _storeSearchService: StoreSearchService,
-    @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects
+    private documentEffects: DocumentsEffects
   ) { }
 
   init(nextLevelCache: ICache): ICache {
