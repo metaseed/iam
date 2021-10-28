@@ -1,5 +1,5 @@
 import { map } from "rxjs/operators";
-import { stateful, StateSubject } from "../../core";
+import { state, StateSubject } from "../../core";
 import { EntityCache } from "../mem-cache/models";
 import { EntityDataService, ID } from "../model/entity-data-service.interface";
 import { EntityDataServiceState } from "./entity-data-service-state";
@@ -10,7 +10,7 @@ export class EntityState<T> extends EntityDataServiceState<T> {
 
   currentEntity_ = this.currentId_.pipe(
     map(id => id?this.memCache.entities[id]: undefined),
-    stateful()
+    state()
   )
 
   constructor(private memCache: EntityDataService<T>&EntityCache<T>) {
