@@ -1,4 +1,4 @@
-import { ID, IdGenerator } from "../entity-data-service.interface";
+import { ID, IdGenerator } from "../model/entity-data-service.interface";
 import { isDevMode } from "./dev-mode-checking";
 
 export function isIdType(id) {

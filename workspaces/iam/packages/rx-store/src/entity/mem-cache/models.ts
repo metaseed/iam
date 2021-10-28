@@ -1,4 +1,4 @@
-import { ID } from "../entity-data-service.interface";
+import { ID } from "../model/entity-data-service.interface";
 
 export interface EntityCache<T> {
   ids: ID[];

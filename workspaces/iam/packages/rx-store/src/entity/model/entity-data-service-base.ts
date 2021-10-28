@@ -1,5 +1,5 @@
 import { Observable, zip } from "rxjs";
-import { EntityDataService } from ".";
+import { EntityDataService } from "..";
 import { Update, QueryParams, ID } from "./entity-data-service.interface";
 
 export abstract class EntityDataServiceBase<T> implements EntityDataService<T> {

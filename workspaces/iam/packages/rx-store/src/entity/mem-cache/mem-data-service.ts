@@ -1,6 +1,6 @@
 import { map, Observable, of } from "rxjs";
-import { EntityDataServiceBase } from "../entity-data-service-base";
-import { ID, IdGenerator, QueryParams, SortComparer, Update } from "../entity-data-service.interface";
+import { EntityDataServiceBase } from "../model/entity-data-service-base";
+import { ID, IdGenerator, QueryParams, SortComparer, Update } from "../model/entity-data-service.interface";
 import { isDevMode } from "../utils";
 import { idGeneratorWrapper } from "../utils/id-generator-wrapper";
 import { removeItem } from "../utils/remove-array-item";
@@ -17,6 +17,10 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
     super();
     this.idGenerator = idGeneratorWrapper(idGenerator);
     if (sortComparer) this.sortComparer = sortComparerWrapper(sortComparer);
+    if(isDevMode()){
+      if(!globalThis.__MemDataService__) globalThis.__MemDataService__= [];
+      globalThis.__MemDataService__.push(this);
+    }
   }
 
   add(entity: T): Observable<T | undefined> {
