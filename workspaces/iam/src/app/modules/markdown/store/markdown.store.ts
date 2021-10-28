@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IContainer } from 'core';
-import { DocumentMode, IMarkdownStore } from './model/markdown.model';
+import { DocumentMode, IMarkdownStore } from '../model/markdown.model';
 import { StateSubject } from 'packages/rx-store/src/core';
 import { Subject } from 'rxjs';
 

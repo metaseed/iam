@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { MatToolbar } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
 import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from '../../model/markdown.model';
-import { MarkdownEffects } from '../../markdown.effects';
+import { MarkdownEffects } from '../../store/markdown.effects';
 
 @Component({
   selector: 'ms-viewer-toolbar',

@@ -7,8 +7,8 @@ import { MarkdownViewerModule } from './viewer';
 import { MarkdownRoutingModule } from './markdown-routing.module';
 import { SpinnerModule } from '@metaseed/spinner';
 import { SharedModule } from 'shared';
-import { MarkdownEffects } from './markdown.effects';
-import { MarkdownStore } from './markdown.store';
+import { MarkdownEffects } from './store/markdown.effects';
+import { MarkdownStore } from './store/markdown.store';
 import { MARKDOWN_STORE_TOKEN } from './model/markdown.model';
 @NgModule({
   imports: [
