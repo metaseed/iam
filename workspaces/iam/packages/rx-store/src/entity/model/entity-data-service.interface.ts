@@ -6,6 +6,7 @@ export type ID = keyof any;
  * only return successful result all errors are reported via `throw Error('msg')`
  */
 export interface EntityDataService<T> {
+  currentId?: ID;
   /**
    * @param entity
    * @returns of(undefined), if generated id already there.

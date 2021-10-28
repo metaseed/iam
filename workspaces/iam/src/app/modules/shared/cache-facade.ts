@@ -29,28 +29,5 @@ export class CacheFacade{
       )
     );
   }
-  // init(nextLevelCache: ICache, ...args: any): ICache {
-  //   return this.storeCache.init(nextLevelCache, ...args);
-  // }
-  // CreateDocument(content: string, format: DocFormat): Observable<Document> {
-  //   return this.storeCache.CreateDocument(content, format);
-  // }
-  // readBulkDocMeta(id: number, isBelowTheId: boolean): Observable<DocMeta[]> {
-  //   return this.storeCache.readBulkDocMeta(id, isBelowTheId);
-  // }
-  // readDocMeta(id: number, checkNextCache?: boolean): Observable<DocMeta> {
-  //   return this.storeCache.readDocMeta(id, checkNextCache);
-  // }
-  // readDocContent(id: number, title: string, format: string): Observable<DocContent> {
-  //   return this.storeCache.readDocContent(id, title, format);
-  // }
-  // updateDocument(oldDocMeta: DocMeta, content: string, forceUpdate: boolean): Observable<Document> {
-  //   return this.storeCache.updateDocument(oldDocMeta, content, forceUpdate);
-  // }
-  // deleteDoc(id: number): Observable<number> {
-  //   return this.storeCache.deleteDoc(id);
-  // }
-  // search(query: string): Observable<SearchResult> {
-  //   return this.storeCache.search(query);
-  // }
+
 }

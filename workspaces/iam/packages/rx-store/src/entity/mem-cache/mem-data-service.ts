@@ -43,6 +43,7 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
     this.delete(id);
     return of(id);
   }
+
   deleteAll(): Observable<undefined> {
     this.ids = [];
     this.entities = {};

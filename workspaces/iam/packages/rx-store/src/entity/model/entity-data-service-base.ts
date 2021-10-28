@@ -3,6 +3,7 @@ import { EntityDataService } from "..";
 import { Update, QueryParams, ID } from "./entity-data-service.interface";
 
 export abstract class EntityDataServiceBase<T> implements EntityDataService<T> {
+  currentId?: ID = undefined;
   add(entity: T): Observable<T|undefined> {
     throw new Error("Method not implemented.");
   }
