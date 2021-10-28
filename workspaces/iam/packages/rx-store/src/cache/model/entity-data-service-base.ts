@@ -1,9 +1,8 @@
 import { Observable, zip } from "rxjs";
-import { EntityDataService } from "..";
-import { Update, QueryParams, ID } from "./entity-data-service.interface";
+import { Update, QueryParams, ID, EntityDataService } from "./entity-data-service.interface";
 
-export abstract class EntityDataServiceBase<T> implements EntityDataService<T> {
-  currentId?: ID = undefined;
+export abstract class EntityCacheBase<T> implements EntityDataService<T> {
+
   add(entity: T): Observable<T|undefined> {
     throw new Error("Method not implemented.");
   }

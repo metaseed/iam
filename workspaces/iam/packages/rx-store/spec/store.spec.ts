@@ -4,9 +4,10 @@ import { NEVER, scan } from 'rxjs';
 import { map, of } from 'rxjs';
 import { StateObservable, state, StateSubject } from '../src/core';
 
+const stateful = state();
 describe('StateObservable', () => {
   it('should add last value after state it in the last pipe', () => {
-    const o$ = of(1, 2).pipe(map(o => ++o), state) as StateObservable<number>;
+    const o$ = of(1, 2).pipe(map(o => ++o), stateful) as StateObservable<number>;
     o$.subscribe();
 
     expect(o$.state).toBe(3);
@@ -14,7 +15,7 @@ describe('StateObservable', () => {
 
   it('should add last value after state it in the last pipe', () => {
     let r;
-    const o$ = state(of(1, 2).pipe(map(o => ++o))).addEffect(scan((acc, v)=> r = acc+v));
+    const o$ = stateful(of(1, 2).pipe(map(o => ++o))).addEffect(scan((acc, v)=> r = acc+v));
     o$.subscribe();
 
     expect(o$.state).toBe(3);
@@ -22,14 +23,14 @@ describe('StateObservable', () => {
   });
 
   it('should add last value after apply on Observable', () => {
-    const o$ = state(of(1, 2).pipe(map(o => ++o)));
+    const o$ = stateful(of(1, 2).pipe(map(o => ++o)));
     o$.subscribe();
 
     expect(o$.state).toBe(3);
   });
 
   it('should be undefined if no value emitted', ()=> {
-    const o$ = state(NEVER.pipe(map(o=>++o)));
+    const o$ = stateful(NEVER.pipe(map(o=>++o)));
     o$.subscribe();
     expect(o$.state).toBe(undefined)
   });
@@ -40,7 +41,7 @@ describe('StateSubject', () => {
     const s_ = new StateSubject<number>();
     expect(s_.state).toBe(undefined);
 
-    const o$ = s_.pipe(map(o=>++o), state) as StateObservable<number>;
+    const o$ = s_.pipe(map(o=>++o), stateful) as StateObservable<number>;
     o$.subscribe();
 
     expect(s_.state).toBe(undefined);

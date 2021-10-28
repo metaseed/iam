@@ -1,6 +1,6 @@
 import { map, Observable, of } from "rxjs";
-import { EntityDataServiceBase } from "../model/entity-data-service-base";
-import { ID, IdGenerator, QueryParams, SortComparer, Update } from "../model/entity-data-service.interface";
+import { EntityCacheBase } from "../model/entity-data-service-base";
+import { EntityChangeType, ID, IdGenerator, QueryParams, SortComparer, Update } from "../model/entity-data-service.interface";
 import { isDevMode } from "../utils";
 import { idGeneratorWrapper } from "../utils/id-generator-wrapper";
 import { removeItem } from "../utils/remove-array-item";
@@ -9,16 +9,16 @@ import { EntityCache } from "./models";
 
 type IdEntityPair<T> = { id: ID; entity: T }
 
-export class MemDataService<T> extends EntityDataServiceBase<T> implements EntityCache<T> {
+export class MemEntityCache<T> extends EntityCacheBase<T> implements EntityCache<T> {
   ids: ID[] = [];
   entities: Record<ID, T> = Object.create(null); // not use {}, to remove inheritance from Object.prototype.
 
-  constructor(name:string, private idGenerator: IdGenerator<T>, private sortComparer?: SortComparer<T>) {
+  constructor(name: string, private idGenerator: IdGenerator<T>, private sortComparer?: SortComparer<T>) {
     super();
     this.idGenerator = idGeneratorWrapper(idGenerator);
     if (sortComparer) this.sortComparer = sortComparerWrapper(sortComparer);
-    if(isDevMode()){
-      if(!globalThis.__MemDataService__) globalThis.__MemDataService__= [];
+    if (isDevMode()) {
+      if (!globalThis.__MemDataService__) globalThis.__MemDataService__ = [];
       globalThis.__MemDataService__.push(this);
     }
   }
@@ -95,7 +95,13 @@ export class MemDataService<T> extends EntityDataServiceBase<T> implements Entit
     removeItem(this.ids, id);
   }
 
-  private changeOrInsert(changeEntities: Update<T>[], option: { insert: boolean, /**update or replace */ update: boolean }): Observable<(T | undefined)[]> {
+  private changeOrInsert(changeEntities: Update<T>[],
+    option: {
+      /**add if id is not there */
+      insert: boolean,
+      /**update(merge new) or replace */
+      update: boolean
+    }): Observable<(T | undefined)[]> {
     const result: (T | undefined)[] = [];
     const idEntityPairToAdd: IdEntityPair<T>[] = [];
 

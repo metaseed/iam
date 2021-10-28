@@ -6,10 +6,10 @@ export type ID = keyof any;
  * only return successful result all errors are reported via `throw Error('msg')`
  */
 export interface EntityDataService<T> {
-  currentId?: ID;
+
   /**
    * @param entity
-   * @returns of(undefined), if generated id already there.
+   * @returns of(undefined), if generated id already there, then not added.
    */
   add(entity: T): Observable<T | undefined>;
   /**
@@ -31,6 +31,10 @@ export interface EntityDataService<T> {
   deleteMany(ids: ID[]): Observable<(ID | undefined)[]>
   deleteAll():Observable<undefined>;
 
+  /**
+   * merge mew changes if id is there, if not there `undefined`
+   * @param update
+   */
   update(update: Update<T>): Observable<T | undefined>;
   updateMany(updates: Update<T>[]): Observable<(T | undefined)[]>;
   /**
