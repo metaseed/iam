@@ -10,7 +10,6 @@ export class EntityState<T> extends EntityDataServiceState<T> {
 
   currentEntity_ = this.currentId_.pipe(
     map(id => id?this.memCache.entities[id]: undefined),
-    state()
   )
 
   constructor(private memCache: EntityDataService<T>&EntityCache<T>) {

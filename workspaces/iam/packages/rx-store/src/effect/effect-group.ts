@@ -1,4 +1,4 @@
-import { EffectStateObservable } from "./effect-state-observable";
+import { EffectStateObservable } from "./operators/effect-state-observable";
 import { OperationStatusReporter } from "./operation-status-reporter.interface";
 
 type Constructor<T> = new (...args: any[]) => T;
