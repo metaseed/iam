@@ -1,10 +1,10 @@
 import { pipe, tap } from "rxjs";
-import { MonitoredStateSubject } from "../src/effect";
+import { EffectStateSubject } from "../src/effect";
 
 describe('timeout-monitor', () => {
   it('monitored side effect', () => {
     let c = 0;
-    const e = new MonitoredStateSubject<number>().addMonitoredEffect(state => {
+    const e = new EffectStateSubject<number>().addMonitoredEffect(state => {
       return pipe(
         tap(a => {c = a;})
 

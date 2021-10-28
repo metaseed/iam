@@ -1,9 +1,9 @@
 import { OperationStatusReporter } from ".";
-import { MonitoredStateObservable } from "./monitored-state-observable";
+import { EffectStateObservable } from "./effect-state-observable";
 
 export class EffectGroup {
   addReporter(reporter: OperationStatusReporter){
-    let effect: MonitoredStateObservable<any>;
+    let effect: EffectStateObservable<any>;
     for( effect of Object.values(this)){
       if(effect.operationStatus$){
         effect.operationStatus$.addReporter(reporter);

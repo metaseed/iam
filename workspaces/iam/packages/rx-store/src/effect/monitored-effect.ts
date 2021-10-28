@@ -2,7 +2,7 @@ import { filter, mergeMap, of, OperatorFunction, pipe, tap } from "rxjs";
 import { defaultEffectOption, EffectOption, sideEffect } from "../core";
 import { OperationState } from "./operation-state";
 import { OperationStatus, OperationStep } from "./operation-status";
-import { MonitoredStateObservable } from "./monitored-state-observable";
+import { EffectStateObservable } from "./effect-state-observable";
 import { operationTimeout } from "./operators/operation-timeout";
 import { getDefaultMonitoredEffectErrorOperator } from "./default-monitored-effect-error-operator";
 
@@ -18,7 +18,7 @@ export interface MonitoredEffectOption extends EffectOption {
 }
 
 export function monitorSideEffect<T>(
-  source: MonitoredStateObservable<T>,
+  source: EffectStateObservable<T>,
   monitoredEffect: (status: OperationState) => OperatorFunction<T, unknown>,
   option: MonitoredEffectOption) {
   const options = { ...defaultEffectOption, ...option };

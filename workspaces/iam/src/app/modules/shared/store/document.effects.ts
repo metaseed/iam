@@ -7,7 +7,7 @@ import { forkJoin, map, pipe, switchMap, tap, throwError } from "rxjs";
 import { NEW_DOC_ID, selectCurrentDocument, selectIdRangeHigh, selectIdRangeLow, selectSearchResultState, SetCurrentDocumentId } from "shared";
 import { DocEffectsUtil } from "../state/document/document.effects.util";
 import { DocumentState } from "../state/document/document.reducer";
-import { EffectGroup, MonitoredStateSubject, OperationStatusConsoleReporter } from "@rx-store/effect";
+import { EffectGroup, EffectStateSubject, OperationStatusConsoleReporter } from "@rx-store/effect";
 
 const EFFECT_TIMEOUT = NET_COMMU_TIMEOUT;
 export const DOCUMENT_EFFECTS_TOKEN = new InjectionToken<DocumentsEffects>('DOCUMENT_EFFECTS_TOKEN');
@@ -26,7 +26,7 @@ export class DocumentsEffects extends EffectGroup {
     this.addReporter(new OperationStatusConsoleReporter());
   }
 
-  createDocument_ = new MonitoredStateSubject<Pick<DocMeta, 'format'>>().addMonitoredEffect(
+  createDocument_ = new EffectStateSubject<Pick<DocMeta, 'format'>>().addMonitoredEffect(
     effectStatus =>
       pipe(
         tap<Pick<DocMeta, 'format'>>(state => {
@@ -40,7 +40,7 @@ export class DocumentsEffects extends EffectGroup {
   /**
    * read extend doc meta fetch in cache isBelowRange=true...(low, high]...isBelowRange=false
    */
-  readBulkDocMeta_ = new MonitoredStateSubject<{ isBelowRange: boolean }>().addMonitoredEffect(
+  readBulkDocMeta_ = new EffectStateSubject<{ isBelowRange: boolean }>().addMonitoredEffect(
     effectStatus => pipe(
       map((state: { isBelowRange: boolean }) => {
         const keyRangeHigh = selectIdRangeHigh(this.state.value);
@@ -63,7 +63,7 @@ export class DocumentsEffects extends EffectGroup {
     { type: '[DocumentsEffects]readBulkDocMeta', timeOut: EFFECT_TIMEOUT }
   );
 
-  readDocMetas_ = new MonitoredStateSubject<{ ids: number[] }>().addMonitoredEffect(
+  readDocMetas_ = new EffectStateSubject<{ ids: number[] }>().addMonitoredEffect(
     effectStatus => pipe(
       switchMap(state =>
         forkJoin(
@@ -75,7 +75,7 @@ export class DocumentsEffects extends EffectGroup {
     { type: '[DocumentsEffects]readDocMetas', timeOut: EFFECT_TIMEOUT }
   );
 
-  readDocument_ = new MonitoredStateSubject<{ id: number; title?: string; format?: string }>().addMonitoredEffect(
+  readDocument_ = new EffectStateSubject<{ id: number; title?: string; format?: string }>().addMonitoredEffect(
     effectStatus =>
       pipe(
         switchMap(state => {
@@ -88,7 +88,7 @@ export class DocumentsEffects extends EffectGroup {
     { type: '[DocumentsEffects]readDocument', timeOut: EFFECT_TIMEOUT }
   );
 
-  saveDocument_ = new MonitoredStateSubject<{ content: string; format?: DocFormat; forceUpdate?: boolean }>().addMonitoredEffect(
+  saveDocument_ = new EffectStateSubject<{ content: string; format?: DocFormat; forceUpdate?: boolean }>().addMonitoredEffect(
     effectStatus =>
       pipe(
         switchMap(state => {
@@ -127,7 +127,7 @@ export class DocumentsEffects extends EffectGroup {
     { type: '[DocumentsEffects]saveDocument', timeOut: EFFECT_TIMEOUT }
   );
 
-  deleteDocument_ = new MonitoredStateSubject<{ id: number }>().addMonitoredEffect(
+  deleteDocument_ = new EffectStateSubject<{ id: number }>().addMonitoredEffect(
     effectStatus =>
       pipe(
         switchMap(state =>
@@ -139,7 +139,7 @@ export class DocumentsEffects extends EffectGroup {
   );
 
 
-  searchDocument_ = new MonitoredStateSubject<{ query: string; folder?: string; extension?: string }>().addMonitoredEffect(
+  searchDocument_ = new EffectStateSubject<{ query: string; folder?: string; extension?: string }>().addMonitoredEffect(
     effectStatus =>
       pipe(
         switchMap(state =>
