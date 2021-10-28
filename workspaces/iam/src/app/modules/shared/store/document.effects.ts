@@ -1,6 +1,5 @@
 import { Inject, Injectable, InjectionToken } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { StateSubject } from "@rx-store/core";
 import { State, Store } from "@ngrx/store";
 import { CACHE_FACADE_TOKEN, DocFormat, DocMeta, ICache, NET_COMMU_TIMEOUT } from "core";
 import { forkJoin, map, pipe, switchMap, tap, throwError } from "rxjs";
