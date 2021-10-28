@@ -22,10 +22,10 @@ export function monitorSideEffect<T>(
   monitoredEffect: (status: OperationState) => OperatorFunction<T, unknown>,
   option: MonitoredEffectOption) {
   const options = { ...defaultEffectOption, ...option };
-  let { type, effectState, timeOut } = options;
+  let { type, effectState: effectStatus, timeOut } = options;
 
-  if (!effectState) {
-    effectState = source.operationStatus$;
+  if (!effectStatus) {
+    effectStatus = source.operationStatus$;
   }
 
 
@@ -56,24 +56,23 @@ export function monitorSideEffect<T>(
       let startStatus = new OperationStatus(type, OperationStep.Start);
       startStatus.trigger = state;
       if (timeOut) {
-        const timeoutSubscription = effectState!.pipe(
+        const timeoutSubscription = effectStatus!.pipe(
           tap(st => {
-            console.log('kkkk',st)
             if (st.isEndStatus() && st.coId === startStatus.coId) timeoutSubscription.unsubscribe();
           }),
           operationTimeout(type, timeOut, st => st.coId === startStatus.coId),
           filter(status => status.step === OperationStep.Timeout),
           tap(timeOutStatus => {
-            effectState!.next(timeOutStatus);
+            effectStatus!.next(timeOutStatus);
             options.timeOutHandler?.(timeOutStatus);
           }))
           .subscribe();
       }
 
-      effectState!.next(startStatus);
+      effectStatus!.next(startStatus);
 
       return of(state).pipe(
-        monitoredEffect(effectState!),
+        monitoredEffect(effectStatus!),
         getDefaultMonitoredEffectErrorOperator((sta, context) => {
           const st = sta === 'Error' ? startStatus.Error :
             sta === 'Retry' ? startStatus.Retry :
@@ -81,7 +80,7 @@ export function monitorSideEffect<T>(
                 undefined;
           if (st === undefined)
             throw Error('unexpected state reported from error handler of monitored side effect.');
-          effectState!.next(st.with(context));
+          effectStatus!.next(st.with(context));
         }),
       );
 

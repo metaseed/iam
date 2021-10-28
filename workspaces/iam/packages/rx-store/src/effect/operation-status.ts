@@ -2,8 +2,9 @@ import { filter } from "rxjs";
 
 export enum OperationStep {
   Start = 'Start',
-
-  // internal steps
+  /**
+   * middle steps
+   */
   Continue = 'Continue',
   Error = 'Error',
   /**
@@ -37,8 +38,7 @@ export class OperationStatus {
     /**
      * the state that trigger this operation, set at start step, and pass along the life time.
      */
-    public trigger?: any,
-  ) {
+    public trigger?: any) {
     if (step === OperationStep.Start) this.coId = Date.now();
   }
 
@@ -70,7 +70,7 @@ export class OperationStatus {
     return new OperationStatus(this.type, this.step, context, this.coId);
   }
 
-  get id(){
+  get id() {
     return `[${this.type}] - ${this.coId}`;
   }
 
@@ -83,9 +83,9 @@ export class OperationStatus {
       this.step === OperationStep.Timeout;
   }
 
-  isNoneTimeoutEndStatus(){
+  isNoneTimeoutEndStatus() {
     return this.step === OperationStep.Success ||
-    this.step === OperationStep.Fail;
+      this.step === OperationStep.Fail;
   }
 }
 

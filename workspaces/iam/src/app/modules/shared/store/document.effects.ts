@@ -27,11 +27,11 @@ export class DocumentsEffects extends EffectGroup {
   }
 
   createDocument_ = new MonitoredStateSubject<Pick<DocMeta, 'format'>>().addMonitoredEffect(
-    effectState =>
+    effectStatus =>
       pipe(
         tap<Pick<DocMeta, 'format'>>(state => {
           (this.cacheFacade as any).createDoc(state.format);
-          effectState.success(state);
+          effectStatus.success(state);
         })
       ),
     { type: '[DocumentsEffects]createDocument', timeOut: EFFECT_TIMEOUT }
@@ -41,7 +41,7 @@ export class DocumentsEffects extends EffectGroup {
    * read extend doc meta fetch in cache isBelowRange=true...(low, high]...isBelowRange=false
    */
   readBulkDocMeta_ = new MonitoredStateSubject<{ isBelowRange: boolean }>().addMonitoredEffect(
-    effectState => pipe(
+    effectStatus => pipe(
       map((state: { isBelowRange: boolean }) => {
         const keyRangeHigh = selectIdRangeHigh(this.state.value);
         const keyRangeLow = selectIdRangeLow(this.state.value);
@@ -56,7 +56,7 @@ export class DocumentsEffects extends EffectGroup {
         return this.cacheFacade
           .readBulkDocMeta(key, isBelowRange)
           .pipe(
-            tap(docMetas => effectState.success(docMetas))
+            tap(docMetas => effectStatus.success(docMetas))
           );
       })
     ),
@@ -64,32 +64,32 @@ export class DocumentsEffects extends EffectGroup {
   );
 
   readDocMetas_ = new MonitoredStateSubject<{ ids: number[] }>().addMonitoredEffect(
-    effectState => pipe(
+    effectStatus => pipe(
       switchMap(state =>
         forkJoin(
           state.ids.map(id => this.cacheFacade.readDocMeta(id, true))
         )
       ),
-      tap<DocMeta[]>(docMetas => effectState.success(docMetas))
+      tap<DocMeta[]>(docMetas => effectStatus.success(docMetas))
     ),
     { type: '[DocumentsEffects]readDocMetas', timeOut: EFFECT_TIMEOUT }
   );
 
   readDocument_ = new MonitoredStateSubject<{ id: number; title?: string; format?: string }>().addMonitoredEffect(
-    effectState =>
+    effectStatus =>
       pipe(
         switchMap(state => {
           this.store.dispatch(new SetCurrentDocumentId({ id: state.id }));
           return this.cacheFacade
             .readDocContent(state.id, state.title, state.format)
         }),
-        tap(result => effectState.success(result))
+        tap(result => effectStatus.success(result))
       ),
     { type: '[DocumentsEffects]readDocument', timeOut: EFFECT_TIMEOUT }
   );
 
   saveDocument_ = new MonitoredStateSubject<{ content: string; format?: DocFormat; forceUpdate?: boolean }>().addMonitoredEffect(
-    effectState =>
+    effectStatus =>
       pipe(
         switchMap(state => {
           const doc = selectCurrentDocument(this.state.value);
@@ -122,25 +122,25 @@ export class DocumentsEffects extends EffectGroup {
               );
           }
         }),
-        tap(result => effectState.success(result))
+        tap(result => effectStatus.success(result))
       ),
     { type: '[DocumentsEffects]saveDocument', timeOut: EFFECT_TIMEOUT }
   );
 
   deleteDocument_ = new MonitoredStateSubject<{ id: number }>().addMonitoredEffect(
-    effectState =>
+    effectStatus =>
       pipe(
         switchMap(state =>
           this.cacheFacade.deleteDoc(state.id)
         ),
-        tap<number>(id => effectState.success({ id }))
+        tap<number>(id => effectStatus.success({ id }))
       ),
     { type: '[DocumentsEffects]deleteDocument', timeOut: EFFECT_TIMEOUT }
   );
 
 
   searchDocument_ = new MonitoredStateSubject<{ query: string; folder?: string; extension?: string }>().addMonitoredEffect(
-    effectState =>
+    effectStatus =>
       pipe(
         switchMap(state =>
           this.cacheFacade.search(state.query).pipe(
@@ -156,7 +156,7 @@ export class DocumentsEffects extends EffectGroup {
             })
           )
         ),
-        tap(result => effectState.success(result))
+        tap(result => effectStatus.success(result))
       ),
     { type: '[DocumentsEffects]searchDocument', timeOut: EFFECT_TIMEOUT }
   );
