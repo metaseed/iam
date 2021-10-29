@@ -72,6 +72,7 @@ describe('StateSubject', () => {
 
     s_.next(3);
     s_.next(4);
+    expect(s_.state).toBe(4);
     let v = -1;
     s_.subscribe(o=> v = o)
     expect(v).toBe(4)

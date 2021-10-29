@@ -12,9 +12,8 @@ export interface EffectStateObservable<T> extends StateObservable<T> {
 }
 
 export function effectState<T>(source: Observable<T>, hot = false): EffectStateObservable<T> {
-    const state$ = state(source, hot) as EffectStateObservable<T>;
-    state$.operationStatus$= new OperationState();
-    state$.addMonitoredEffect = monitorSideEffect.bind(state$, state$) as unknown as MonitorEffect<T>;
-    return state$;
-  }
+  const state$ = state(source, hot) as EffectStateObservable<T>;
+  state$.operationStatus$ = new OperationState();
+  state$.addMonitoredEffect = monitorSideEffect.bind(state$, state$) as unknown as MonitorEffect<T>;
+  return state$;
 }

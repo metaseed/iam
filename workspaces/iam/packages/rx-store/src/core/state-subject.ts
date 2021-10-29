@@ -1,4 +1,4 @@
-import { OperatorFunction, ReplaySubject, skip, Subject, tap } from "rxjs";
+import { OperatorFunction, ReplaySubject, skip, Subject } from "rxjs";
 import { StateObservable } from "./state-observable";
 import { defaultEffectOption, EffectOption, sideEffect, SideEffect } from './side-effect';
 
@@ -17,7 +17,7 @@ export interface IStateSubject<T> extends StateSetter<T>, Exclude<SideEffect<T>,
 }
 
 /**
- * keep latest passed value as state
+ * keep latest passed value as state, even the StateSubject has not subscriber.
  *
  * only difference with BehaviorSubject is:
  * it would not emit value if initial value is 'undefined'.
