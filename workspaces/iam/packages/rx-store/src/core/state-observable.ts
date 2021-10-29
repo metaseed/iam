@@ -1,5 +1,5 @@
 import { Observable, OperatorFunction, shareReplay, Subscribable, tap } from "rxjs";
-import { EffectOption, sideEffect, SideEffect } from "../side-effect";
+import { EffectOption, sideEffect, SideEffect } from "./side-effect";
 /**
  * Observable has a value property that stores the latest value from the observable
  */

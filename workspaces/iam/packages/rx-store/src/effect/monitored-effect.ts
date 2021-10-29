@@ -2,7 +2,7 @@ import { filter, mergeMap, of, OperatorFunction, pipe, tap } from "rxjs";
 import { defaultEffectOption, EffectOption, sideEffect } from "../core";
 import { OperationState } from "./operation-state";
 import { OperationStatus, OperationStep } from "./operation-status";
-import { EffectStateObservable } from "./operators/effect-state-observable";
+import { EffectStateObservable } from "./effect-state-observable";
 import { operationTimeout } from "./operators/operation-timeout";
 import { getDefaultMonitoredEffectErrorOperator } from "./default-monitored-effect-error-operator";
 

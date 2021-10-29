@@ -1,5 +1,5 @@
 import { OperatorFunction, ReplaySubject, skip, Subject, tap } from "rxjs";
-import { StateObservable } from "./operators/state-observable";
+import { StateObservable } from "./state-observable";
 import { defaultEffectOption, EffectOption, sideEffect, SideEffect } from './side-effect';
 
 export interface StateSetter<T> extends SideEffect<T> {
