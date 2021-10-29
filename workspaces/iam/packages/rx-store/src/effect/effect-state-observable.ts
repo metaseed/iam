@@ -11,8 +11,8 @@ export interface EffectStateObservable<T> extends StateObservable<T> {
   addMonitoredEffect: MonitorEffect<T>;
 }
 
-export function effectState<T>(source: Observable<T>, hotSubParent?:Subscription): EffectStateObservable<T> {
-  const state$ = state(source, hotSubParent) as EffectStateObservable<T>;
+export function effectState<T>(source: Observable<T>, cold = false): EffectStateObservable<T> {
+  const state$ = state(source, cold) as EffectStateObservable<T>;
   state$.operationStatus$ = new OperationState();
   state$.addMonitoredEffect = monitorSideEffect.bind(state$, state$) as unknown as MonitorEffect<T>;
   return state$;

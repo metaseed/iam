@@ -14,11 +14,11 @@ export interface StateObservable<T> extends Observable<T>, SideEffect<T> {
 }
 // should not make it into an operator in pipe, because it return a StateObservable, otherwise need to
 // explicitly as StateObservable<T>
-export function state<T>(source: Observable<T>, hotSubParent?: Subscription): StateObservable<T> {
+export function state<T>(source: Observable<T>, cold=false): StateObservable<T> {
   source.subscribe
   const replay = shareReplay<T>(1)(source);
   const state$ = Object.create(tap<T>(o => (state$ as any).state = o)(replay));
   state$.addEffect = sideEffect.bind(state$, state$);
-  hotSubParent && hotSubParent.add(state$.subscribe());
+  if(!cold)state$.subscribe();
   return state$;
 }

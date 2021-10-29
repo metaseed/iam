@@ -4,4 +4,5 @@ type StateMemberNames<T> =  {[K in keyof T]: K extends 'state$' ? never: T[K] ex
 type StateMember<T> = Pick<T, StateMemberNames<T>>
 
 export class Store {
+  combine(...)
 }
