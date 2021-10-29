@@ -5,4 +5,4 @@ export * from './operation-status';
 export * from './operators'
 export * from './effect-state-observable';
 export * from './effect-state-subject';
-export * from './effect-group';
+export * from './effect-manager';

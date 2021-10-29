@@ -6,13 +6,13 @@ import { forkJoin, map, pipe, switchMap, tap, throwError } from "rxjs";
 import { NEW_DOC_ID, selectCurrentDocument, selectIdRangeHigh, selectIdRangeLow, selectSearchResultState, SetCurrentDocumentId } from "shared";
 import { DocEffectsUtil } from "../state/document/document.effects.util";
 import { DocumentState } from "../state/document/document.reducer";
-import { EffectGroup, EffectStateSubject, OperationStatusConsoleReporter } from "@rx-store/effect";
+import { EffectManager, EffectStateSubject, OperationStatusConsoleReporter } from "@rx-store/effect";
 
 const EFFECT_TIMEOUT = NET_COMMU_TIMEOUT;
 export const DOCUMENT_EFFECTS_TOKEN = new InjectionToken<DocumentsEffects>('DOCUMENT_EFFECTS_TOKEN');
 
 @Injectable({ providedIn: 'root' })
-export class DocumentsEffects extends EffectGroup {
+export class DocumentsEffects extends EffectManager {
   constructor(
     @Inject(CACHE_FACADE_TOKEN)
     private cacheFacade: ICache,

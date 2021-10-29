@@ -1,4 +1,4 @@
-import { Observable, OperatorFunction } from "rxjs";
+import { Observable, OperatorFunction, Subscription } from "rxjs";
 import { state, StateObservable } from "../core";
 import { MonitoredEffectOption, monitorSideEffect } from "./monitored-effect";
 import { OperationState } from "./operation-state";
@@ -11,8 +11,8 @@ export interface EffectStateObservable<T> extends StateObservable<T> {
   addMonitoredEffect: MonitorEffect<T>;
 }
 
-export function effectState<T>(source: Observable<T>, hot = false): EffectStateObservable<T> {
-  const state$ = state(source, hot) as EffectStateObservable<T>;
+export function effectState<T>(source: Observable<T>, hotSubParent?:Subscription): EffectStateObservable<T> {
+  const state$ = state(source, hotSubParent) as EffectStateObservable<T>;
   state$.operationStatus$ = new OperationState();
   state$.addMonitoredEffect = monitorSideEffect.bind(state$, state$) as unknown as MonitorEffect<T>;
   return state$;

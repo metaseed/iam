@@ -3,7 +3,7 @@ import { OperationStatusReporter } from "./operation-status-reporter.interface";
 
 type Constructor<T> = new (...args: any[]) => T;
 
-export function MixinEffectGroup<T extends Constructor<{}>> (Base: T) {
+export function MixinEffectManager<T extends Constructor<{}>> (Base: T) {
   return class extends Base {
     addReporter(reporter: OperationStatusReporter) {
       let effect: EffectStateObservable<any>;
@@ -16,4 +16,4 @@ export function MixinEffectGroup<T extends Constructor<{}>> (Base: T) {
   }
 }
 
-export const EffectGroup = MixinEffectGroup(Object);
+export const EffectManager = MixinEffectManager(Object);
