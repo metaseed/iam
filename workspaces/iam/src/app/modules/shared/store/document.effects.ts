@@ -8,8 +8,8 @@ import { DocEffectsUtil } from "../state/document/document.effects.util";
 import { DocumentState } from "../state/document/document.reducer";
 import { EffectManager, EffectStateSubject, OperationStatusConsoleReporter } from "@rx-store/effect";
 
-const EFFECT_TIMEOUT = NET_COMMU_TIMEOUT;
 export const DOCUMENT_EFFECTS_TOKEN = new InjectionToken<DocumentsEffects>('DOCUMENT_EFFECTS_TOKEN');
+const EFFECT_TIMEOUT = NET_COMMU_TIMEOUT;
 
 @Injectable({ providedIn: 'root' })
 export class DocumentsEffects extends EffectManager {
@@ -24,8 +24,8 @@ export class DocumentsEffects extends EffectManager {
     super();
     this.addReporter(new OperationStatusConsoleReporter());
   }
-
   createDocument_ = new EffectStateSubject<Pick<DocMeta, 'format'>>().addMonitoredEffect(
+
     effectStatus =>
       pipe(
         tap<Pick<DocMeta, 'format'>>(state => {

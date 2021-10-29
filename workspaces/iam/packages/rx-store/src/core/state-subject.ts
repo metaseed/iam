@@ -12,7 +12,7 @@ export interface StateSetter<T> extends SideEffect<T> {
 
 type AddEffect<T> = (effect: OperatorFunction<T, unknown>, options?: EffectOption) => IStateSubject<T>
 
-export interface IStateSubject<T> extends StateSetter<T>, Exclude<SideEffect<T>, StateObservable<T>> {
+export interface IStateSubject<T> extends Exclude<SideEffect<T>, StateSetter<T>>, StateObservable<T> {
   addEffect: AddEffect<T>,
 }
 

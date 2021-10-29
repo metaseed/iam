@@ -1,8 +1,9 @@
 
 import { } from 'jasmine'; // import all from jasmine
-import { NEVER, scan } from 'rxjs';
+import { NEVER, scan, Subscription } from 'rxjs';
 import { map, of } from 'rxjs';
 import { StateObservable, state, StateSubject } from '../src/core';
+import { combine } from '../src/core/store';
 
 describe('StateObservable', () => {
   it('should add last value after state it in the last pipe', () => {
@@ -14,8 +15,8 @@ describe('StateObservable', () => {
 
   it('should add last value after state it in the last pipe', () => {
     let r;
-    const o$ = state(of(1, 2).pipe(map(o => ++o))).addEffect(scan((acc, v)=> r = acc+v));
-    o$.subscribe();
+    const o$ = state(of(1, 2).pipe(map(o => ++o)), true).addEffect(scan((acc, v) => r = acc + v));
+    o$.subscribe(); // make it hot here, otherwise the vale would pass by before addEffect.
 
     expect(o$.state).toBe(3);
     expect(r).toBe(5);
@@ -28,8 +29,8 @@ describe('StateObservable', () => {
     expect(o$.state).toBe(3);
   });
 
-  it('should be undefined if no value emitted', ()=> {
-    const o$ = state(NEVER.pipe(map(o=>++o)));
+  it('should be undefined if no value emitted', () => {
+    const o$ = state(NEVER.pipe(map(o => ++o)));
     o$.subscribe();
     expect(o$.state).toBe(undefined)
   });
@@ -40,7 +41,7 @@ describe('StateSubject', () => {
     const s_ = new StateSubject<number>();
     expect(s_.state).toBe(undefined);
 
-    const o$ = s_.pipe(map(o=>++o), state) as StateObservable<number>;
+    const o$ = s_.pipe(map(o => ++o), state) as StateObservable<number>;
     o$.subscribe();
 
     expect(s_.state).toBe(undefined);
@@ -53,16 +54,16 @@ describe('StateSubject', () => {
   it('should not emit any value if init-state is undefined', () => {
     const s_ = new StateSubject<number>();
     expect(s_.state).toBe(undefined);
-    s_.subscribe(()=> {throw new Error("should not come here")})
+    s_.subscribe(() => { throw new Error("should not come here") })
   });
   it('should emit init value if init-state is not undefined', () => {
     const s_ = new StateSubject<number>(2);
     expect(s_.state).toBe(2);
     let v = -1;
-    s_.subscribe(o=> {v = o})
+    s_.subscribe(o => { v = o })
     expect(v).toBe(2);
     v = -1;
-    s_.subscribe(o=> v = o)
+    s_.subscribe(o => v = o)
     expect(v).toBe(2);
 
   });
@@ -74,11 +75,26 @@ describe('StateSubject', () => {
     s_.next(4);
     expect(s_.state).toBe(4);
     let v = -1;
-    s_.subscribe(o=> v = o)
+    s_.subscribe(o => v = o)
     expect(v).toBe(4)
     v = -1;
-    s_.subscribe(o=> v = o)
+    s_.subscribe(o => v = o)
     expect(v).toBe(4)
     expect(s_.state).toBe(4)
   });
+
+  it('combine', () => {
+    const a = new StateSubject<number>();
+    const b = new StateSubject<number>();
+    const c = new StateSubject<number>();
+    a.next(1), b.next(2), c.next(3)
+
+    type A = { a: number, b: number, c: number };
+
+    const s$ = combine<A>({ a, b, c });
+    const s = s$.state;
+
+    expect(s).toEqual({ a: 1, b: 2, c: 3 })
+
+  })
 })
