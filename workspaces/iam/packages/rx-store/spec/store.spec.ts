@@ -89,6 +89,8 @@ describe('StateSubject', () => {
     const c = new StateSubject<number>();
     a.next(1), b.next(2), c.next(3)
 
+    expect(a.state).toBe(1);
+
     type A = { a: number, b: number, c: number };
 
     const s$ = combine<A>({ a, b, c });
@@ -96,5 +98,26 @@ describe('StateSubject', () => {
 
     expect(s).toEqual({ a: 1, b: 2, c: 3 })
 
+    s$.subscribe();
+    b.next(3);
+    expect(s$.state).toEqual({ a: 1, b: 3, c: 3 });
+
+  }),
+
+  it('map', ()=> {
+    const o$ = state(of(1, 2).pipe(map(o => ++o)));
+    o$.subscribe();
+
+    expect(o$.state).toBe(3);
+
+    const o1$ = o$.map(a=> ++a);
+
+    expect(o1$.state).toBe(4);
+
+    o1$.subscribe()
+
+    expect(o1$.state).toBe(4);
+
   })
+
 })

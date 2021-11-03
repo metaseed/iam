@@ -1,6 +1,6 @@
 import { Document } from "core";
-import { EntityState } from "@rx-store/entity";
+import { EntityStore } from "@rx-store/entity";
 
-export class DocumentEffect extends EntityState<Document> {
+export class DocumentEffect extends EntityStore<Document> {
 
 }
