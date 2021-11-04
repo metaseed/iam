@@ -1,9 +1,12 @@
 import { Document } from "core";
-import { EntityCacheStore, EntityCacheService } from "@rx-store/entity";
+import { EntityCacheStore } from "@rx-store/entity";
 import { StateSubject } from "@rx-store/core";
+import { DocMemCacheService } from "app/modules/cache/services/mem-cache.service";
+import { Injectable } from "@angular/core";
 
+@Injectable({ providedIn: 'root' })
 export class DocumentStore extends EntityCacheStore<Document> {
-  constructor(cache: EntityCacheService<Document>) {
+  constructor(cache: DocMemCacheService) {
     super(cache)
   }
   currentDocContent$ = this.currentEntity$.map(doc => doc?.content);
