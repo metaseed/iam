@@ -43,27 +43,27 @@ export class OperationStatus {
   }
 
   get Start() {
-    return new OperationStatus(this.type, OperationStep.Start, this.context);
+    return {...this, step: OperationStep.Start};
   }
 
   get Continue() {
-    return new OperationStatus(this.type, OperationStep.Continue, this.context, this.coId);
+    return {...this, step: OperationStep.Continue};
   }
   get Error() {
-    return new OperationStatus(this.type, OperationStep.Error, this.context, this.coId);
+    return {...this, step: OperationStep.Error};
   }
   get Retry() {
-    return new OperationStatus(this.type, OperationStep.Retry, this.context, this.coId);
+    return {...this, step: OperationStep.Retry};
   }
 
   get Fail() {
-    return new OperationStatus(this.type, OperationStep.Fail, this.context, this.coId);
+    return {...this, step: OperationStep.Fail};
   }
   get Success() {
-    return new OperationStatus(this.type, OperationStep.Success, this.context, this.coId);
+    return {...this, step: OperationStep.Success}
   }
   get Timeout() {
-    return new OperationStatus(this.type, OperationStep.Timeout, this.context, this.coId);
+    return {...this, step: OperationStep.Timeout};
   }
 
   with(context?: any) {
@@ -87,6 +87,7 @@ export class OperationStatus {
     return this.step === OperationStep.Success ||
       this.step === OperationStep.Fail;
   }
+
 }
 
 
