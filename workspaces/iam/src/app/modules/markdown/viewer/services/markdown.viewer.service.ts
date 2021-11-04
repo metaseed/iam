@@ -68,6 +68,7 @@ import {
   selectCurrentDocument,
   UpdateDocument,
 } from "shared";
+import { DocumentStore } from "app/modules/shared/store/document.store";
 
 const enableIDOM = true;
 
@@ -95,8 +96,7 @@ export class MarkdownViewerService {
   constructor(
     private docRef: DocumentRef,
     private utils: Utilities,
-    private state: State<any>,
-    private store: Store<any>,
+    private store: DocumentStore,
     @Inject('MarkdownConfig') @Optional() config?: MarkdownConfig
   ) {
     this.utils.isWideScreen$.subscribe(
@@ -182,7 +182,7 @@ export class MarkdownViewerService {
     }
 
     if (!meta) return meta;
-    const doc = selectCurrentDocument(this.state.value);
+    const doc = this.store.currentDocument$.state;
     if (!doc || !doc.metaData) return meta;
     if (!isDiff(meta, doc.metaData)) return doc.metaData;
     const newMeta = {
@@ -191,13 +191,11 @@ export class MarkdownViewerService {
     };
     asyncScheduler.schedule(
       m => {
-        this.store.dispatch(
-          new UpdateDocument({
-            collectionDocument: {
-              id: doc.id,
-              changes: { metaData: {...doc.metaData, ...m} },
-            },
-          })
+        this.store.update(
+          {
+            id: doc.id,
+            changes: { metaData: { ...doc.metaData, ...m } },
+          }
         );
       },
       0,
