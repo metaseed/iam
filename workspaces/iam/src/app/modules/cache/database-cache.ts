@@ -14,8 +14,6 @@ import {
 } from 'rxjs/operators';
 import { ICache, DataTables } from 'core';
 import { DatabaseCacheSaver } from './database-cache-saver';
-import { Store, State } from '@ngrx/store';
-import { selectCurrentDocStatus_IsDbDirty, selectCurrentDocumentId, UpdateCurrentDocumentStatus } from 'shared';
 import { DocumentStore } from '../shared/store/document.store';
 
 const DB_PAGE_SIZE = 50;

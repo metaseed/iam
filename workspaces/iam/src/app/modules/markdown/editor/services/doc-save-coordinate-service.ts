@@ -2,17 +2,11 @@ import { Inject, Injectable } from '@angular/core';
 import { MarkdownEditorService } from './markdown-editor.service';
 import { BehaviorSubject } from 'rxjs';
 import { combineLatestWith, tap, debounceTime } from 'rxjs/operators';
-import { Store, State } from '@ngrx/store';
-import {
-  ActionState,
-  selectCurrentDocStatus_IsEditorDirty,
-  UpdateCurrentDocumentStatus,
-  selectCurrentDocStatus,
-} from 'shared';
 import { AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL, backoff, DocFormat, SubscriptionManager } from 'core';
 import { ICodeMirrorEditor } from '../model';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
 import { OperationStep } from 'packages/rx-store/src/effect';
+import { DocumentStore } from 'app/modules/shared/store/document.store';
 
 @Injectable()
 export class DocSaveCoordinateService extends SubscriptionManager {
@@ -24,21 +18,20 @@ export class DocSaveCoordinateService extends SubscriptionManager {
 
   constructor(
     private editorService: MarkdownEditorService,
-    private store: Store<any>,
-    private state: State<any>,
+    private store: DocumentStore,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
 
   ) {
     super();
     super
       .addSub(
-        this.store.select(selectCurrentDocStatus_IsEditorDirty)
+        this.store.currentDocStatus_IsEditorDirty$
           .pipe(
             combineLatestWith(this.editorLoaded$),
             debounceTime(AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL), // e  e e          |
             tap(([isDirty, editor]) => {
               if (isDirty)
-              this.documentEffects.saveDocument_.next({ content: editor.getValue(), format: DocFormat.md });
+                this.documentEffects.saveDocument_.next({ content: editor.getValue(), format: DocFormat.md });
             }),
             backoff(8, AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL)
           ))
@@ -83,14 +76,14 @@ export class DocSaveCoordinateService extends SubscriptionManager {
   }
 
   private checkDirty(editor: CodeMirror.Editor) {
-    const statusInStore = selectCurrentDocStatus(this.state.value);
-    if (!statusInStore ) return;
+    const statusInStore = this.store.currentDocStatus$.state;
+    if (!statusInStore) return;
 
-    if(!this.contentGeneration) return; // initial content load
+    if (!this.contentGeneration) return; // initial content load
 
     const isEditorDirty = !editor.getDoc().isClean(this.contentGeneration);
     if (statusInStore.isEditorDirty !== isEditorDirty) {
-      this.store.dispatch(new UpdateCurrentDocumentStatus({ ...statusInStore, isEditorDirty }));
+      this.store.updateCurrentDocStatus({ isEditorDirty });
     }
   }
 
