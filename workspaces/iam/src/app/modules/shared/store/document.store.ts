@@ -6,7 +6,7 @@ import { Injectable } from "@angular/core";
 import { DocumentStatus } from "app/modules/core/model/doc-model/doc-status";
 
 @Injectable({ providedIn: 'root' })
-export class DocumentStore extends EntityCacheStore<Document> {
+export class DocumentStore extends EntityCacheStore<number,Document> {
   constructor(cache: DocMemCacheService) {
     super(cache)
   }
