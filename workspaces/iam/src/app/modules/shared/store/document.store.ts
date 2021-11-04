@@ -1,5 +1,5 @@
 import { Document, SearchResult } from "core";
-import { EntityCacheStore } from "@rx-store/entity";
+import { EntityCacheStore, EntityChangeType, ID } from "@rx-store/entity";
 import { StateSubject } from "@rx-store/core";
 import { DocMemCacheService } from "app/modules/cache/services/mem-cache.service";
 import { Injectable } from "@angular/core";
@@ -10,8 +10,6 @@ export class DocumentStore extends EntityCacheStore<number, Document> {
   constructor(cache: DocMemCacheService) {
     super(cache)
   }
-
-  get documents() { return Object.values(this.cache.entities) }
 
   currentDocument$ = this.currentEntity$;
 
@@ -38,6 +36,11 @@ export class DocumentStore extends EntityCacheStore<number, Document> {
   idRangeLow_ = new StateSubject<number>();
 
   searchResult_ = new StateSubject<SearchResult>();
+
+  document$ = this.entity$;
+  documents$ = this.entitiesOfIds$;
+
+  getAllDocuments() { return Object.values(this.cache.entities) }
 
   getDocument(id: number) {
     return this.cache.entities[id];

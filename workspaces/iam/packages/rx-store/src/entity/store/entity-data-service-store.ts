@@ -1,10 +1,10 @@
-import { firstValueFrom, Observable } from "rxjs";
+import { firstValueFrom } from "rxjs";
 import { tap } from 'rxjs/operators';
-import { StateSubject, state, StateObservable } from "../../core";
-import { EntityDataService, ID, QueryParams, Update } from "../model/entity-data-service.interface";
+import { StateSubject } from "../../core";
+import { AsyncEntityService, EntityDataService, ID, QueryParams, Update } from "../model/entity-data-service.interface";
 import { ChangeContent, EntityChangeType } from "./model";
 
-export class EntityDataServiceStore<T>  {
+export class EntityDataServiceStore<T> implements AsyncEntityService<T> {
   changes$ = new StateSubject<ChangeContent<T>>();
 
   constructor(protected dataService: EntityDataService<T>) { }
@@ -90,18 +90,18 @@ export class EntityDataServiceStore<T>  {
     ));
   }
 
-  getAll(): Observable<T[]> {
-    return this.dataService.getAll();
+  async getAll() {
+    return firstValueFrom(this.dataService.getAll());
   }
-  getById(id: ID): Observable<T | undefined> {
-    return this.dataService.getById(id);
+  async getById(id: ID) {
+    return firstValueFrom(this.dataService.getById(id));
   }
-  getMany(ids: ID[]): Observable<(T | undefined)[]> {
-    return this.dataService.getMany(ids);
+  async getMany(ids: ID[]) {
+    return firstValueFrom(this.dataService.getMany(ids));
   }
 
-  getWithQuery(params: string | QueryParams): Observable<T[]> {
-    return this.getWithQuery(params);
+  async getWithQuery(params: string | QueryParams) {
+    return firstValueFrom(this.getWithQuery(params));
   }
 
 }

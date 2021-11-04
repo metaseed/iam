@@ -2,6 +2,12 @@ import { Observable } from "rxjs";
 
 export type ID = string | number;
 
+type PromiseFunc<F> = F extends (...args: infer P) => infer R ? (...args: P) => Promise<any> : any
+
+export type AsyncEntityService<T> = {
+  [P in keyof EntityDataService<T>]: PromiseFunc<EntityDataService<T>[P]>
+}
+
 /**
  * only return successful result all errors are reported via `throw Error('msg')`
  */
@@ -29,7 +35,7 @@ export interface EntityDataService<T> {
    * @returns ids that are deleted, filtered out ids not in there.
    */
   deleteMany(ids: ID[]): Observable<(ID | undefined)[]>
-  deleteAll():Observable<undefined>;
+  deleteAll(): Observable<undefined>;
 
   /**
    * merge mew changes if id is there, if not there `undefined`
@@ -53,7 +59,7 @@ export interface EntityDataService<T> {
   upsertMany(updates: T[]): Observable<T[]>;
   getAll(): Observable<T[]>;
   getById(id: ID): Observable<T | undefined>;
-  getMany(ids:ID[]): Observable<(T|undefined)[]>;
+  getMany(ids: ID[]): Observable<(T | undefined)[]>;
   getWithQuery(params: QueryParams | string): Observable<T[]>;
 }
 

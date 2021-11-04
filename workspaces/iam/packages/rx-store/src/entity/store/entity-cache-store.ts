@@ -1,5 +1,5 @@
 import { combineLatest, distinctUntilChanged, filter, map } from "rxjs";
-import { EntityChangeType } from ".";
+import { ChangeContent, EntityChangeType } from ".";
 import { StateSubject, state } from "../../core";
 import { EntityCache } from "../mem-cache/models";
 import { EntityDataService, ID } from "../model/entity-data-service.interface";
@@ -9,7 +9,21 @@ export type EntityCacheService<T> = EntityDataService<T> & EntityCache<T>;
 
 export class EntityCacheStore<I extends ID, T> extends EntityDataServiceStore<T> {
   currentId_ = new StateSubject<I | undefined>();
-  entities$ = this.changes$.map(()=> Object.values(this.cache.entities))
+  entities$ = this.changes$.map(() => Object.values(this.cache.entities))
+
+  entity$(id: I) {
+    return this.changes$.pipe(
+      filter(change => this.isChangeRelatedToId(change, [id])),
+      map(() => this.cache.entities[id])
+    );
+  }
+
+  entitiesOfIds$(ids: I[]) {
+    return this.changes$.pipe(
+      filter(change => this.isChangeRelatedToId(change, ids)),
+      map(() => ids.map(id => this.cache.entities[id]))
+    );
+  }
 
   currentEntity$ = state(
     combineLatest([
@@ -18,19 +32,7 @@ export class EntityCacheStore<I extends ID, T> extends EntityDataServiceStore<T>
         filter(change => {
           const id = this.currentId_.state;
           if (id == undefined) return false;
-
-          if (change.changes) {
-            if (change.changeType === EntityChangeType.Delete) {
-              return (change.changes as ID[]).indexOf(id) != -1;
-            } else {
-              for (const ch of change.changes) {
-                const chId = this.cache.idGenerator(ch as T);
-                if (id === chId) return true;
-              }
-              return false;
-            }
-          }
-          return true; // undefined: delete all
+          return this.isChangeRelatedToId(change, [id]);
         })
       ))
     ]).pipe(
@@ -41,6 +43,23 @@ export class EntityCacheStore<I extends ID, T> extends EntityDataServiceStore<T>
       })
     )
   );
+
+  private isChangeRelatedToId(change: ChangeContent<T>, ids: I[]) {
+    if (!ids?.length) return false;
+
+    if (change.changes) {
+      if (change.changeType === EntityChangeType.Delete) {
+        return ids.some(id => (change.changes as ID[]).indexOf(id) != -1);
+      } else {
+        for (const ch of change.changes) {
+          const chId = this.cache.idGenerator(ch as T) as I;
+          if (ids.indexOf(chId) !== -1) return true;
+        }
+        return false;
+      }
+    }
+    return true; // changes = undefined: delete all
+  }
 
   constructor(protected cache: EntityCacheService<T>) {
     super(cache);

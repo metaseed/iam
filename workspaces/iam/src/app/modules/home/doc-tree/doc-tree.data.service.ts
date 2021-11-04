@@ -33,7 +33,7 @@ export class DocTreeDataService {
   }
 
   initialData$(rootId: number) {
-    const data$ = this.store.getById(rootId)
+    const data$ = this.store.document$(rootId)
       .pipe(filter(doc => !!doc),
         map(d => new DocNode(d.metaData)),
         switchMap(node => this.getChildren$(node).pipe(map(ns => { node.subPages = ns; return node }))),
@@ -47,7 +47,7 @@ export class DocTreeDataService {
       return EMPTY;
     }
     const ids = node.subPageIds.map(p => +p);
-    const pageList$ = this.store.getMany(ids).pipe(
+    const pageList$ = this.store.documents$(ids).pipe(
       map(docs => [...docs
         .map(doc => doc?.metaData)
         .filter(m => !!m)

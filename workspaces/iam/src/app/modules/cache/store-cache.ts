@@ -165,7 +165,7 @@ export class StoreCache implements ICache {
   }
 
   search(query: string) {
-    const docs = this._store.documents;
+    const docs = this._store.getAllDocuments();
     const fromStoreCache$ = this._storeSearchService.search(docs, query);
 
     const fromNextCache$ = this.nextLevelCache
