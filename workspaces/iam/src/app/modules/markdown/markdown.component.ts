@@ -4,18 +4,14 @@ import { APP_BASE_HREF } from '@angular/common';
 import { map, tap, combineLatestWith } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { DocFormat, backoff } from 'core';
-import { Store } from '@ngrx/store';
 import { ChangeDetectorRef } from '@angular/core';
 import { OnDestroy } from '@angular/core';
 import { MarkdownViewerContainerComponent } from './viewer/markdown-viewer-container.component';
 import { Observable, merge } from 'rxjs';
-import {
-  SetCurrentDocumentId,
-  selectCurrentDocumentContentString
-} from 'shared';
 import { Utilities } from '../core/utils';
 import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from './model/markdown.model';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from '../shared/store';
+import { DocumentStore } from '../shared/store/document.store';
 
 @Component({
   selector: 'ms-markdown',
@@ -60,7 +56,7 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     @Inject(APP_BASE_HREF) private baseHref,
     private changeDetectorRef: ChangeDetectorRef,
     private router: Router,
-    private store: Store<any>,
+    private store: DocumentStore,
     private utils: Utilities
   ) { }
 
@@ -69,14 +65,14 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       console.log(e)
     })
     this.markdown$ = merge(
-      this.store.select<string>(selectCurrentDocumentContentString),
+      this.store.currentDocContentString$,
       this.markdownStore.editorContentChanged_
     ).pipe(backoff<string>(80, 1000));
 
   }
 
   ngOnDestroy() {
-    this.store.dispatch(new SetCurrentDocumentId({ id: undefined }));
+    this.store.currentId_.next(undefined);
   }
 
   ngAfterViewChecked() {

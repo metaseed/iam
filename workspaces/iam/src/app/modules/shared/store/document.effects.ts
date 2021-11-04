@@ -1,12 +1,11 @@
 import { Inject, Injectable, InjectionToken } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { State, Store } from "@ngrx/store";
 import { CACHE_FACADE_TOKEN, DocFormat, DocMeta, ICache, NET_COMMU_TIMEOUT } from "core";
 import { forkJoin, map, pipe, switchMap, tap, throwError } from "rxjs";
-import { NEW_DOC_ID, selectCurrentDocument, selectIdRangeHigh, selectIdRangeLow, selectSearchResultState, SetCurrentDocumentId } from "shared";
+import { NEW_DOC_ID } from "shared";
 import { DocEffectsUtil } from "../state/document/document.effects.util";
-import { DocumentState } from "../state/document/document.reducer";
 import { EffectManager, EffectStateSubject, OperationStatusConsoleReporter } from "@rx-store/effect";
+import { DocumentStore } from "./document.store";
 
 export const DOCUMENT_EFFECTS_TOKEN = new InjectionToken<DocumentsEffects>('DOCUMENT_EFFECTS_TOKEN');
 const EFFECT_TIMEOUT = NET_COMMU_TIMEOUT;
@@ -17,9 +16,8 @@ export class DocumentsEffects extends EffectManager {
     @Inject(CACHE_FACADE_TOKEN)
     private cacheFacade: ICache,
     private util: DocEffectsUtil,
-    private state: State<DocumentState>,
     private snackbar: MatSnackBar,
-    private store: Store<DocumentState>
+    private store: DocumentStore
   ) {
     super();
     this.addReporter(new OperationStatusConsoleReporter());
@@ -42,8 +40,8 @@ export class DocumentsEffects extends EffectManager {
   readBulkDocMeta_ = new EffectStateSubject<{ isBelowRange: boolean }>().addMonitoredEffect(
     effectStatus => pipe(
       map((state: { isBelowRange: boolean }) => {
-        const keyRangeHigh = selectIdRangeHigh(this.state.value);
-        const keyRangeLow = selectIdRangeLow(this.state.value);
+        const keyRangeHigh = this.store.idRangHigh_.state;
+        const keyRangeLow = this.store.idRangeLow_.state;
         const isBelowRange = state.isBelowRange;
 
         return { keyRangeHigh, keyRangeLow, isBelowRange };
@@ -78,7 +76,7 @@ export class DocumentsEffects extends EffectManager {
     effectStatus =>
       pipe(
         switchMap(state => {
-          this.store.dispatch(new SetCurrentDocumentId({ id: state.id }));
+          this.store.currentId_.next(state.id);
           return this.cacheFacade
             .readDocContent(state.id, state.title, state.format)
         }),
@@ -91,7 +89,7 @@ export class DocumentsEffects extends EffectManager {
     effectStatus =>
       pipe(
         switchMap(state => {
-          const doc = selectCurrentDocument(this.state.value);
+          const doc = this.store.currentDocument$.state;
           const content = state.content;
           const format = state.format;
           const newTitle = DocMeta.getTitle(state.content);
@@ -145,7 +143,7 @@ export class DocumentsEffects extends EffectManager {
           this.cacheFacade.search(state.query).pipe(
             tap({
               complete: () => {
-                let searchResult = selectSearchResultState(this.state.value);
+                let searchResult = this.store.searchResult_.state;
                 if (searchResult.length === 0) {
                   this.snackbar.open('Find Nothing!', null, { duration: 2000 });
                 } else {
