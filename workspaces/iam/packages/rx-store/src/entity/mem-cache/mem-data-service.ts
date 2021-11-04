@@ -13,10 +13,13 @@ export class MemEntityCache<T> extends EntityCacheBase<T> implements EntityCache
   ids: ID[] = [];
   entities: Record<ID, T> = Object.create(null); // not use {}, to remove inheritance from Object.prototype.
 
-  constructor(name: string, private idGenerator: IdGenerator<T>, private sortComparer?: SortComparer<T>) {
+  private idGenerator: IdGenerator<T>;
+  private sortComparer?: SortComparer<T>
+
+  constructor(option:{idGenerator: IdGenerator<T>, sortComparer?: SortComparer<T>}) {
     super();
-    this.idGenerator = idGeneratorWrapper(idGenerator);
-    if (sortComparer) this.sortComparer = sortComparerWrapper(sortComparer);
+    this.idGenerator = idGeneratorWrapper(option.idGenerator);
+    if (option.sortComparer) this.sortComparer = sortComparerWrapper(option.sortComparer);
     if (isDevMode()) {
       if (!globalThis.__MemDataService__) globalThis.__MemDataService__ = [];
       globalThis.__MemDataService__.push(this);
