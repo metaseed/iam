@@ -11,21 +11,17 @@ import { MarkdownEditorService } from '.';
 import { CodemirrorComponent } from './codemirror-editor/codemirror-component/codemirror.component';
 import { Observable, fromEvent } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Store, State as StoreState } from '@ngrx/store';
 import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import {
-  selectCurrentDocumentId,
-  NEW_DOC_ID,
-  selectCurrentDocStatus,
-  selectCurrentDocumentContentString
-} from 'shared';
+  NEW_DOC_ID} from 'shared';
 import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from '../model/markdown.model';
 import { ContainerRef, ICanComponentDeactivate } from 'core';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { SubscriptionManager } from 'app/modules/core/utils/subscription-manager';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
+import { DocumentStore } from 'app/modules/shared/store/document.store';
 
 @Component({
   selector: 'ms-markdown-editor',
@@ -41,17 +37,16 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
 
   docMode$ = this.markdownStore.documentMode_;
 
-  markdown$ = this.store.select(selectCurrentDocumentContentString);
+  markdown$ = this.store.currentDocContentString$.state;
 
   constructor(
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     private _elementRef: ElementRef,
-    private state: StoreState<any>,
     private dialog: MatDialog,
     @Inject(MARKDOWN_STORE_TOKEN) public markdownStore: IMarkdownStore,
     @Inject(HAMMER_GESTURE_CONFIG) private gestureConfig: HammerGestureConfig,
     private editorService: MarkdownEditorService,
-    private store: Store<any>,
+    private store: DocumentStore,
     private ngZone: NgZone
   ) {
     super();
@@ -120,13 +115,13 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
   // implements ICanComponentDeactivate
   canDeactivate(): Observable<boolean> {
     const deleteNewDoc = () => {
-      const id = selectCurrentDocumentId(this.state.value);
+      const id = this.store.currentId_.state;
       if (id === NEW_DOC_ID) {
         this.documentEffects.deleteDocument_.next({ id });
       }
     };
 
-    const status = selectCurrentDocStatus(this.state.value);
+    const status = this.store.currentDocStatus$.state;
     if (status.isEditorDirty) {
       return this.dialog
         .open(DocDirtyNotifyDialog)

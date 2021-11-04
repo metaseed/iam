@@ -63,11 +63,6 @@ import { sourceLine } from "./markdown-it-plugins/source-line";
 import MarkdownItIncrementalDom from "markdown-it-incremental-dom";
 import * as IncrementalDom from "incremental-dom";
 import { MetaPlugin } from "./markdown-it-plugins/meta";
-import { State, Store } from "@ngrx/store";
-import {
-  selectCurrentDocument,
-  UpdateDocument,
-} from "shared";
 import { DocumentStore } from "app/modules/shared/store/document.store";
 
 const enableIDOM = true;

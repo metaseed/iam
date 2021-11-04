@@ -53,6 +53,7 @@ export interface EntityDataService<T> {
   upsertMany(updates: T[]): Observable<T[]>;
   getAll(): Observable<T[]>;
   getById(id: ID): Observable<T | undefined>;
+  getMany(ids:ID[]): Observable<(T|undefined)[]>;
   getWithQuery(params: QueryParams | string): Observable<T[]>;
 }
 

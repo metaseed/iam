@@ -1,10 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
-import { Store, select } from '@ngrx/store';
-import { SharedState, getDocumentByIdSelector, getDocumentsByIdsSelector } from 'shared';
 import { map, switchMap, filter } from 'rxjs/operators';
 import { DocMeta } from 'core';
 import { EMPTY, Observable } from 'rxjs';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
+import { DocumentStore } from 'app/modules/shared/store/document.store';
 
 export class DocNode {
   id: number;
@@ -28,13 +27,13 @@ export class DocNode {
 @Injectable({ providedIn: 'root' })
 export class DocTreeDataService {
 
-  constructor(private store: Store<SharedState>,
+  constructor(private store: DocumentStore,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
   ) {
   }
 
   initialData$(rootId: number) {
-    const data$ = this.store.select(getDocumentByIdSelector(rootId))
+    const data$ = this.store.getById(rootId)
       .pipe(filter(doc => !!doc),
         map(d => new DocNode(d.metaData)),
         switchMap(node => this.getChildren$(node).pipe(map(ns => { node.subPages = ns; return node }))),
@@ -48,8 +47,7 @@ export class DocTreeDataService {
       return EMPTY;
     }
     const ids = node.subPageIds.map(p => +p);
-    const pageList$ = this.store.pipe(
-      select(getDocumentsByIdsSelector(ids)),
+    const pageList$ = this.store.getMany(ids).pipe(
       map(docs => [...docs
         .map(doc => doc?.metaData)
         .filter(m => !!m)

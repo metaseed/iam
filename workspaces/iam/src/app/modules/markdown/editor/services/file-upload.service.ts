@@ -2,13 +2,12 @@ import { Injectable } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { FileUploadComponent } from "../codemirror-editor/file-upload/file-upload.component";
 import { GithubStorage } from "net-storage";
-import { switchMap, tap } from "rxjs/operators";
-import { State } from "@ngrx/store";
-import { SharedState, selectCurrentDocumentId } from "shared";
+import { switchMap } from "rxjs/operators";
 import { DOCUMENTS_FOLDER_NAME } from "app/modules/home/const";
 import { HttpEvent, HttpEventType } from "@angular/common/http";
 import { Subscription } from "rxjs";
 import { IFileUploadData } from "./file-upload-data";
+import { DocumentStore } from "app/modules/shared/store/document.store";
 
 @Injectable({
   providedIn: "root",
@@ -17,7 +16,7 @@ export class FileUploadService {
   constructor(
     private _snackBar: MatSnackBar,
     private _github: GithubStorage,
-    private _state: State<SharedState>
+    private _store: DocumentStore
   ) {}
 
   fileUploaded: (path: string) => void;
@@ -45,7 +44,7 @@ export class FileUploadService {
               .init()
               .pipe(
                 switchMap((repo) => {
-                  const id = selectCurrentDocumentId(this._state.value);
+                  const id = this._store.currentId_.state;
                   const date = new Date().toISOString().replace(/[-:.]/g, "");
                   const path = `${DOCUMENTS_FOLDER_NAME}/${id}/${type}/${date}-${file.name}`;
                   return repo.newFileReportProgress(path, base64, true);

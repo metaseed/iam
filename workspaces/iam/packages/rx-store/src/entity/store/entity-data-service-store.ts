@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import { tap } from 'rxjs/operators';
-import { StateSubject } from "../../core";
+import { StateSubject, state, StateObservable } from "../../core";
 import { EntityDataService, ID, QueryParams, Update } from "../model/entity-data-service.interface";
 import { ChangeContent, EntityChangeType } from "./model";
 
@@ -88,14 +88,19 @@ export class EntityDataServiceStore<T> implements EntityDataService<T> {
       })
     );
   }
-  getAll(): Observable<T[]> {
-    return this.dataService.getAll();
+
+  getAll(): StateObservable<T[]> {
+    return state(this.dataService.getAll());
   }
-  getById(id: ID): Observable<T | undefined> {
-    return this.getById(id);
+  getById(id: ID): StateObservable<T | undefined> {
+    return state(this.dataService.getById(id));
   }
-  getWithQuery(params: string | QueryParams): Observable<T[]> {
-    return this.getWithQuery(params);
+  getMany(ids:ID[]): StateObservable<(T|undefined)[]>{
+    return state(this.dataService.getMany(ids));
+  }
+
+  getWithQuery(params: string | QueryParams): StateObservable<T[]> {
+    return state(this.getWithQuery(params));
   }
 
 }

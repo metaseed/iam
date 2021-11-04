@@ -40,19 +40,15 @@ export class DocumentStore extends EntityCacheStore<number,Document> {
   searchResult_ = new StateSubject<SearchResult>();
 
   getDocument(id: number) {
-    return this.cache.entities[id];
+    return this.getById(id).state;
   }
 
   getDocMeta(id: number) {
     return this.getDocument(id)?.metaData;
   }
 
-  getDocuments(ids: number[]) {
-    return ids.map(id => this.cache.entities[id])
-  }
-
   getDocMetas(ids: number[]) {
-    const docs = this.getDocuments(ids);
+    const docs = this.getMany(ids).state;
     return docs.map(doc => doc?.metaData);
   }
 

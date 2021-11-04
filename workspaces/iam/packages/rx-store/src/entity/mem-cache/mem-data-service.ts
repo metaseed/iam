@@ -89,6 +89,9 @@ export class MemEntityCache<T> extends EntityCacheBase<T> implements EntityCache
   getById(id: ID): Observable<T | undefined> {
     return of(this.entities[id]);
   }
+  getMany(ids:ID[]): Observable<(T|undefined)[]>{
+    return of(ids.map(id => this.entities[id]))
+  }
   getWithQuery(params: string | QueryParams): Observable<T[]> {
     throw new Error("Method not implemented.");
   }

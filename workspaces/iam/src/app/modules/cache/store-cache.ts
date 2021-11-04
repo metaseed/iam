@@ -11,9 +11,6 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable, of, merge } from 'rxjs';
 import { tap, catchError, map } from 'rxjs/operators';
-import {
-  selectDocumentEntities,
-  selectDocuments} from '../shared/state/document';
 import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../shared/state/document/const';
 import { StoreSearchService } from './services/store-search.service';
 import { afterUpdateDoc } from './after-update-doc';
@@ -68,7 +65,7 @@ export class StoreCache implements ICache {
         } else {
           const array = new Array<Document>();
           metaArray.forEach(meta => {
-            const doc = this._store.getDocument(meta.id);
+            const doc = this._store.getById(meta.id).state;
 
             if (doc && doc.metaData.updateDate.getTime() === meta.updateDate.getTime()) return;
 

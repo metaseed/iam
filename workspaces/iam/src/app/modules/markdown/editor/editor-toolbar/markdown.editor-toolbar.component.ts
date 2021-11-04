@@ -5,20 +5,15 @@ import { combineLatest } from 'rxjs';
 import { DocService } from 'home';
 import { ICodeMirrorEditor, MarkdownEditorService } from '..';
 import { DocFormat } from 'core';
-import { Store } from '@ngrx/store';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';
 import { map, startWith } from 'rxjs/operators';
 import { SubscriptionManager, Utilities } from '../../../core/utils';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import {
-  selectCurrentDocStatus_IsEditorDirty,
-  selectCurrentDocStatus_IsDbDirty,
-  selectCurrentDocStatus_IsSyncing
-} from 'shared';
 import { Router } from '@angular/router';
 import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from '../../model/markdown.model';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
+import { DocumentStore } from 'app/modules/shared/store/document.store';
 
 @Component({
   selector: 'editor-toolbar',
@@ -52,18 +47,15 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   @ViewChild('toolbar', { read: ElementRef })
   toolbar: ElementRef;
   isScreenWide$ = this.utils.isWideScreen$;
-  isEditorDirty$ = this.store
-    .select(selectCurrentDocStatus_IsEditorDirty)
+  isEditorDirty$ = this.store.currentDocStatus_IsEditorDirty$
     .pipe(
       startWith(false)
     );
-  isDbDirty$ = this.store
-    .select(selectCurrentDocStatus_IsDbDirty)
+  isDbDirty$ = this.store.currentDocStatus_IsDbDirty$
     .pipe(
       startWith(false)
     );
-  isSyncing$ = this.store
-    .select(selectCurrentDocStatus_IsSyncing)
+  isSyncing$ = this.store.currentDocStatus_IsSyncing$
     .pipe(
       startWith(false)
     );
@@ -85,7 +77,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
     public markdown: MarkdownComponent,
     private _editorService: MarkdownEditorService,
     public docService: DocService,
-    private store: Store<any>,
+    private store: DocumentStore,
     public docSaver: DocSaveCoordinateService,
     private _breakpointObserver: BreakpointObserver,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,

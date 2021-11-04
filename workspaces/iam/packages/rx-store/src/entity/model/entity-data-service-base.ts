@@ -42,6 +42,10 @@ export abstract class EntityCacheBase<T> implements EntityDataService<T> {
   getById(id: ID): Observable<T|undefined> {
     throw new Error("Method not implemented.");
   }
+  getMany(ids:ID[]): Observable<(T|undefined)[]>{
+    throw new Error("Method not implemented.");
+  }
+
   getWithQuery(params: string | QueryParams): Observable<T[]> {
     throw new Error("Method not implemented.");
   }

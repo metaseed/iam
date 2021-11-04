@@ -1,14 +1,8 @@
 import { Component, OnInit, Input, ElementRef, Inject } from '@angular/core';
-import { Document, NET_COMMU_TIMEOUT, MSG_DISPLAY_TIMEOUT, IContainer, ContainerRef, SubscriptionManager } from 'core';
+import { Document, MSG_DISPLAY_TIMEOUT, IContainer, ContainerRef, SubscriptionManager } from 'core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Store, select } from '@ngrx/store';
-import {
-  State,
-  selectDocuments,
-  ActionState
-} from 'shared';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
-import { merge, asyncScheduler, tap } from 'rxjs';
+import { asyncScheduler, tap } from 'rxjs';
 import { filter, map, observeOn, auditTime, startWith } from 'rxjs/operators';
 import { Router, NavigationExtras } from '@angular/router';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
@@ -62,7 +56,6 @@ export class DocListComponent extends SubscriptionManager implements OnInit {
   constructor(
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     public elementRef: ElementRef,
-    private store: Store<State>,
     private router: Router,
     private snackBar: MatSnackBar
   ) {

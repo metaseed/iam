@@ -2,19 +2,16 @@ import { Component, ViewChild, ElementRef, Inject } from '@angular/core';
 import { DocService } from './services/doc.service';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { StoreSearchService } from '../cache/services/store-search.service';
-import { Store, select } from '@ngrx/store';
-import { Observable, from, Subject } from 'rxjs';
-import { map, debounceTime, distinctUntilChanged, combineLatest, tap, filter } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { switchIfEmit } from '../core/operators/switchIfEmit';
-import { MSG_DISPLAY_TIMEOUT, Document } from 'core';
+import { MSG_DISPLAY_TIMEOUT } from 'core';
 
 import {
-  selectDocuments,
   ActionState,
-  SharedState,
 } from 'shared';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from '../shared/store';
+import { DocumentStore } from '../shared/store/document.store';
 
 @Component({
   selector: 'home',
@@ -32,12 +29,12 @@ export class HomeComponent {
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
-  docs$ = this.store.select(selectDocuments).pipe(map(docs => docs.filter(d => d.id !== 1)));
+  docs$ = this.store.getAll().pipe(map(docs => docs.filter(d => d.id !== 1)));
   ActionStatus = ActionState;
 
   constructor(
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
-    private store: Store<SharedState>,
+    private store: DocumentStore,
     public docService: DocService,
     private docSearchService: StoreSearchService,
     private router: Router,
