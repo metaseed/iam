@@ -1,14 +1,12 @@
-import { ICache, Logger, NET_CACHE_TOKEN, DB_CACHE_TOKEN, DocContent, DocFormat, DocMeta, Document, SearchResult, STORE_CACHE_TOKEN } from 'core';
+import { ICache, Logger, NET_CACHE_TOKEN, DB_CACHE_TOKEN, STORE_CACHE_TOKEN } from 'core';
 import { Injectable, Inject } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { SharedState } from './state/state';
-import { SetIdRangeLow, SetIdRangeHigh } from './state/document/document.actions';
+import { DocumentStore } from './store/document.store';
 @Injectable({
   providedIn: 'platform'
 })
 export class CacheFacade{
   constructor(
-    store: Store<SharedState>,
+    store: DocumentStore,
     _logger: Logger,
     @Inject(NET_CACHE_TOKEN) githubCache: ICache,
     @Inject(DB_CACHE_TOKEN) dbCache: ICache,
@@ -20,10 +18,10 @@ export class CacheFacade{
         githubCache.init(
           undefined,
           id => {
-            store.dispatch(new SetIdRangeLow({ idRangeLow: id }));
+            store.idRangeLow_.next(id);
           },
           id => {
-            store.dispatch(new SetIdRangeHigh({ idRangeHigh: id }));
+            store.idRangHigh_.next(id);
           }
         )
       )
