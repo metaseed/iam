@@ -11,23 +11,13 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable, of, merge } from 'rxjs';
 import { tap, catchError, map } from 'rxjs/operators';
-import { Store, State as StoreState } from '@ngrx/store';
 import {
-  UpsertDocuments,
-  DeleteDocuments,
   selectDocumentEntities,
-  AddDocument,
-  UpdateDocument,
-  DeleteDocument,
-  SetCurrentDocumentId,
-  SetSearchResultAction,
-  selectDocuments,
-  getDocumentMetaByIdSelector
-} from '../shared/state/document';
+  selectDocuments} from '../shared/state/document';
 import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../shared/state/document/const';
-import { SharedState } from '../shared/state/state';
 import { StoreSearchService } from './services/store-search.service';
 import { afterUpdateDoc } from './after-update-doc';
+import { DocumentStore } from '../shared/store/document.store';
 
 @Injectable({ providedIn: 'platform' })
 export class StoreCache implements ICache {
@@ -36,8 +26,7 @@ export class StoreCache implements ICache {
   public nextLevelCache: ICache;
 
   constructor(
-    private store: Store<SharedState>,
-    private state: StoreState<SharedState>,
+    private _store: DocumentStore,
     private _logger: Logger,
     private _storeSearchService: StoreSearchService,
   ) { }
@@ -54,8 +43,9 @@ export class StoreCache implements ICache {
   createDoc(format: DocFormat) {
     const id = NEW_DOC_ID;
     const doc = new Document(id, undefined, new DocContent(id, DEFAULT_NEW_DOC_CONTENT, undefined));
-    this.store.dispatch(new AddDocument({ collectionDocument: doc }));
-    this.store.dispatch(new SetCurrentDocumentId({ id: id }));
+
+    this._store.add(doc);
+    this._store.currentId_.next(id);
   }
 
   /**
@@ -64,13 +54,8 @@ export class StoreCache implements ICache {
   CreateDocument(content: string, format: DocFormat) {
     return this.nextLevelCache.CreateDocument(content, format).pipe(
       tap(doc => {
-
-        this.store.dispatch(
-          new AddDocument({
-            collectionDocument: doc
-          })
-        );
-        this.store.dispatch(new SetCurrentDocumentId({ id: doc.id }));
+        this._store.add(doc);
+        this._store.currentId_.next(doc.id);
       })
     );
   }
@@ -79,7 +64,7 @@ export class StoreCache implements ICache {
     return this.nextLevelCache.readBulkDocMeta(id, isBelowTheKey).pipe(
       tap(metaArray => {
         if (metaArray[0]?.isDeleted) {// grouped in next cache
-          this.store.dispatch(new DeleteDocuments({ ids: metaArray.map(m => m.id) }));
+          this._store.deleteMany(metaArray.map(m => m.id));
         } else {
           const array = new Array<Document>();
           metaArray.forEach(meta => {
@@ -93,11 +78,7 @@ export class StoreCache implements ICache {
           });
 
           if (array.length)
-            this.store.dispatch(
-              new UpsertDocuments({
-                collectionDocuments: array
-              })
-            );
+            this._store.upsertMany(array);
         }
       })
     );
@@ -105,18 +86,16 @@ export class StoreCache implements ICache {
 
   readDocMeta(id: number, checkNextCache?: boolean): Observable<DocMeta> {
     return this.nextLevelCache.readDocMeta(id, checkNextCache).pipe(tap(meta => {
-      if (meta.isDeleted) this.store.dispatch(new DeleteDocument({ id: meta.id }));
+      if (meta.isDeleted) this._store.delete(meta.id);
       else {
-        const metaInStore = getDocumentMetaByIdSelector(meta.id)(this.state.value);
+        const metaInStore = this._store.getDocMeta(meta.id);
         if (!metaInStore) {
-          this.store.dispatch(new AddDocument({ collectionDocument: new Document(meta.id, meta) }));
+          this._store.add(new Document(meta.id, meta));
         } else if (metaInStore.updateDate.getTime() < meta.updateDate.getTime()) {
-          this.store.dispatch(new UpdateDocument({
-            collectionDocument: {
-              id: meta.id,
-              changes: { metaData: meta }
-            }
-          }));
+          this._store.update({
+            id: meta.id,
+            changes: { metaData: meta }
+          });
         }
       }
     }));
@@ -129,11 +108,10 @@ export class StoreCache implements ICache {
         if (!docContent) return;
 
         if (docContent.isDeleted) {
-          this.store.dispatch(new DeleteDocument({ id: docContent.id }));
+          this._store.delete(docContent.id);
         }
 
-        const documents = selectDocumentEntities(this.state.value);
-        const document = documents[id];
+        const document = this._store.getDocument(id);
 
         if (document && document.content && document.content.sha === docContent.sha) return; // nothing changed.
 
@@ -150,16 +128,12 @@ export class StoreCache implements ICache {
               }
               if (!document) {
                 const doc = new Document(id, meta, docContent);
-                this.store.dispatch(new AddDocument({ collectionDocument: doc }));
+                this._store.add(doc);
               } else {
-                this.store.dispatch(
-                  new UpdateDocument({
-                    collectionDocument: {
-                      id: document.id,
-                      changes: { metaData: meta, content: docContent }
-                    }
-                  })
-                );
+                this._store.update({
+                  id: document.id,
+                  changes: { metaData: meta, content: docContent }
+                });
               }
             }),
             catchError(err => {
@@ -175,18 +149,18 @@ export class StoreCache implements ICache {
 
   updateDocument(oldDocMeta: DocMeta, content: string, forceUpdate: boolean) {
     return this.nextLevelCache.updateDocument(oldDocMeta, content, forceUpdate).pipe(
-      afterUpdateDoc(this.store)
+      afterUpdateDoc(this._store)
     );
   }
 
   deleteDoc(id: number) {
     if (id === NEW_DOC_ID) {
-      this.store.dispatch(new DeleteDocument({ id }));
+      this._store.delete(id);
       return of(id);
     }
     return this.nextLevelCache.deleteDoc(id).pipe<number>(
       tap(_ => {
-        this.store.dispatch(new DeleteDocument({ id }));
+        this._store.delete(id);
       })
     );
   }
@@ -197,7 +171,7 @@ export class StoreCache implements ICache {
 
     const fromNextCache$ = this.nextLevelCache
       .search(query)
-      .pipe(tap(searchResult => this.store.dispatch(new SetSearchResultAction({ searchResult }))));
+      .pipe(tap(searchResult => this._store.searchResult_.next(searchResult)));
 
     let lastResult: SearchResult;
 

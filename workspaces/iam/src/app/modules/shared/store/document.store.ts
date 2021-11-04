@@ -1,4 +1,4 @@
-import { Document } from "core";
+import { Document, SearchResult } from "core";
 import { EntityCacheStore } from "@rx-store/entity";
 import { StateSubject } from "@rx-store/core";
 import { DocMemCacheService } from "app/modules/cache/services/mem-cache.service";
@@ -9,6 +9,9 @@ export class DocumentStore extends EntityCacheStore<Document> {
   constructor(cache: DocMemCacheService) {
     super(cache)
   }
+
+  currentDocument$ = this.currentEntity$;
+
   currentDocContent$ = this.currentEntity$.map(doc => doc?.content);
 
   currentDocContentString$ = this.currentDocContent$.map(content => content?.content ?? '');
@@ -31,7 +34,15 @@ export class DocumentStore extends EntityCacheStore<Document> {
    */
   idRangeLow_ = new StateSubject<number>();
 
-  searchResult_ = new StateSubject<string>();
+  searchResult_ = new StateSubject<SearchResult>();
+
+  getDocument(id: number) {
+    return this.cache.entities[id];
+  }
+
+  getDocMeta(id: number){
+    return this.getDocument(id)?.metaData;
+  }
 
   getDocuments(ids: number[]) {
     return ids.map(id => this.cache.entities[id])
