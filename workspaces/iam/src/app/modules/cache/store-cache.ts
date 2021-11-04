@@ -34,6 +34,7 @@ export class StoreCache implements ICache {
   docMetaData: { hightKey: number; lowKey: number };
 
   public nextLevelCache: ICache;
+
   constructor(
     private store: Store<SharedState>,
     private state: StoreState<SharedState>,
