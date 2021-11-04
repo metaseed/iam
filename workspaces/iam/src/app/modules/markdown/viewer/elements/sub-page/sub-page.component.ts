@@ -1,12 +1,11 @@
 import { Component, Input, Inject } from '@angular/core';
 import { DocMeta } from 'core';
 import { Router, NavigationExtras } from '@angular/router';
-import { Store, select, State } from '@ngrx/store';
-import { getDocumentMetasByIdsSelector } from 'shared';
 import { map, filter } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { DataSourceLines } from '../data-source-lines';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
+import { DocumentStore } from 'app/modules/shared/store/document.store';
 
 @Component({
   selector: 'i-subpage',
@@ -16,10 +15,10 @@ import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/sto
 export class SubPageComponent  extends DataSourceLines{
 
   public panelOpenState = false;
-  constructor(private router: Router, private store: Store<any>, private state: State<any>,
+  constructor(private router: Router, private store: DocumentStore,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     ) {
-    super(store, state);
+    super(store);
   }
 
   private hasOpened = false;
@@ -30,8 +29,7 @@ export class SubPageComponent  extends DataSourceLines{
     this.hasOpened = true;
     let source = this.source;
 
-    this.pageList$ = this.store.pipe(
-      select(getDocumentMetasByIdsSelector(this.ids)),
+    this.pageList$ = of(this.store.getDocMetas(this.ids)).pipe(
       filter(metas => !!metas?.length),
       map(metas => [...metas.filter(meta => !!meta)])
     );

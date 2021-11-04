@@ -1,6 +1,5 @@
 import { Directive, Input } from "@angular/core";
-import { State, Store } from "@ngrx/store";
-import { selectCurrentDocumentContentString, selectCurrentDocumentId, UpdateDocument } from "shared";
+import { DocumentStore } from "app/modules/shared/store/document.store";
 @Directive()
 export class DataSourceLines {
 
@@ -14,21 +13,21 @@ export class DataSourceLines {
     this.sourceLineEnd = +match[2];
   }
 
-  constructor(private _store: Store, private _state: State<any>) {
+  constructor(private _store: DocumentStore) {
   }
 
   get source() {
-    const content = selectCurrentDocumentContentString(this._state.value);
+    const content = this._store.currentDocContentString$.state;
     const [start, end] = this.getRange(content);
     const source = content.substring(start, end);
     return source;
   }
   set source(value) {
-    const originalContent = selectCurrentDocumentContentString(this._state.value);
-    const id = selectCurrentDocumentId(this._state.value);
+    const originalContent = this._store.currentDocContentString$.state;
+    const id = this._store.currentId_.state;
     const [start, end] = this.getRange(originalContent);
     const content = splice(originalContent, start, end - start, value);
-    this._store.dispatch(new UpdateDocument({ collectionDocument: { id, changes: { content } } }))
+    this._store.update({ id, changes: { content } });
   }
 
   private getRange(content: string) {

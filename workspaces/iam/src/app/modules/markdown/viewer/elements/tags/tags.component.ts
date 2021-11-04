@@ -6,6 +6,7 @@ import { State, Store } from "@ngrx/store";
 import { Router } from "@angular/router";
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { debounceTime, Subject, tap } from "rxjs";
+import { DocumentStore } from "app/modules/shared/store/document.store";
 @Component({
   templateUrl: './tags.component.html',
   styleUrls: ['./tags.component.scss'],
@@ -22,8 +23,8 @@ export class TagsComponent extends DataSourceLines {
   @Input() set tags(value: string) {
     this.tagList = value.split(',').map(tag=>tag.trim());
   }
-  constructor(private router: Router, private store: Store<any>, private state: State<any>) {
-    super(store, state);
+  constructor(private router: Router, private store: DocumentStore) {
+    super(store);
     this.modifyTags.pipe(
       debounceTime(2000),
       // tap(tags => {
