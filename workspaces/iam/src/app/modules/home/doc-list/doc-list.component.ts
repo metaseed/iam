@@ -3,7 +3,7 @@ import { Document, MSG_DISPLAY_TIMEOUT, IContainer, ContainerRef, SubscriptionMa
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
 import { asyncScheduler, tap } from 'rxjs';
-import { filter, map, observeOn, auditTime, startWith } from 'rxjs/operators';
+import { filter, map, observeOn, auditTime, startWith, share } from 'rxjs/operators';
 import { Router, NavigationExtras } from '@angular/router';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
 import { OperationStep } from 'packages/rx-store/src/effect';
@@ -33,6 +33,7 @@ export class DocListComponent extends SubscriptionManager implements OnInit {
       }
       return status.isNotStartStatus()
     }),
+    share(),
     observeOn(asyncScheduler)
   );
 

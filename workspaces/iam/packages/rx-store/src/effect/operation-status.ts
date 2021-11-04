@@ -23,7 +23,7 @@ export enum OperationStep {
 
 export class OperationStatus {
 
-  constructor(
+  private constructor(
     /**
      * name that identify the specific operation
      */
@@ -39,35 +39,47 @@ export class OperationStatus {
      * the state that trigger this operation, set at start step, and pass along the life time.
      */
     public trigger?: any) {
-    if (step === OperationStep.Start) this.coId = Date.now();
   }
 
-  get Start() {
-    return {...this, step: OperationStep.Start};
+  static Start(type: string, trigger?: any, context?: any) {
+    return new OperationStatus(type, OperationStep.Start, context, Date.now(), trigger);
   }
 
   get Continue() {
-    return {...this, step: OperationStep.Continue};
+    const status = this.clone()
+    status.step = OperationStep.Continue;
+    return status;
   }
   get Error() {
-    return {...this, step: OperationStep.Error};
+    const status = this.clone()
+    status.step = OperationStep.Error;
+    return status;
   }
   get Retry() {
-    return {...this, step: OperationStep.Retry};
+    const status = this.clone()
+    status.step = OperationStep.Retry;
+    return status;
   }
 
   get Fail() {
-    return {...this, step: OperationStep.Fail};
+    const status = this.clone()
+    status.step = OperationStep.Fail;
+    return status;
   }
   get Success() {
-    return {...this, step: OperationStep.Success}
+    const status = this.clone()
+    status.step = OperationStep.Success;
+    return status;
   }
   get Timeout() {
-    return {...this, step: OperationStep.Timeout};
+    const status = this.clone()
+    status.step = OperationStep.Timeout;
+    return status;
   }
 
   with(context?: any) {
-    return new OperationStatus(this.type, this.step, context, this.coId);
+    this.context = context;
+    return this;
   }
 
   get id() {
@@ -88,8 +100,11 @@ export class OperationStatus {
       this.step === OperationStep.Fail;
   }
 
-}
+  clone() {
+    return new OperationStatus(this.type, this.step, this.context, this.coId, this.trigger);
+  }
 
+}
 
 export function ofType(...allowedType: string[]) {
   return filter((status: OperationStatus) => {

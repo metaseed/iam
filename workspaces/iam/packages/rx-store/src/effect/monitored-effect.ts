@@ -53,8 +53,7 @@ export function monitorSideEffect<T>(
      *
      */
     mergeMap((state: T) => {
-      let startStatus = new OperationStatus(type, OperationStep.Start);
-      startStatus.trigger = state;
+      let startStatus = OperationStatus.Start(type, state);
       if (timeOut) {
         const timeoutSubscription = effectStatus!.pipe(
           tap(st => {
