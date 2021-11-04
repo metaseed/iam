@@ -65,7 +65,7 @@ export class StoreCache implements ICache {
         } else {
           const array = new Array<Document>();
           metaArray.forEach(meta => {
-            const doc = this._store.getById(meta.id).state;
+            const doc = this._store.getDocument(meta.id);
 
             if (doc && doc.metaData.updateDate.getTime() === meta.updateDate.getTime()) return;
 

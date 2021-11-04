@@ -1,4 +1,4 @@
-import { firstValueFrom } from "rxjs";
+import { firstValueFrom, Observable } from "rxjs";
 import { tap } from 'rxjs/operators';
 import { StateSubject, state, StateObservable } from "../../core";
 import { EntityDataService, ID, QueryParams, Update } from "../model/entity-data-service.interface";
@@ -90,18 +90,18 @@ export class EntityDataServiceStore<T>  {
     ));
   }
 
-  getAll(): StateObservable<T[]> {
-    return state(this.dataService.getAll());
+  getAll(): Observable<T[]> {
+    return this.dataService.getAll();
   }
-  getById(id: ID): StateObservable<T | undefined> {
-    return state(this.dataService.getById(id));
+  getById(id: ID): Observable<T | undefined> {
+    return this.dataService.getById(id);
   }
-  getMany(ids: ID[]): StateObservable<(T | undefined)[]> {
-    return state(this.dataService.getMany(ids));
+  getMany(ids: ID[]): Observable<(T | undefined)[]> {
+    return this.dataService.getMany(ids);
   }
 
-  getWithQuery(params: string | QueryParams): StateObservable<T[]> {
-    return state(this.getWithQuery(params));
+  getWithQuery(params: string | QueryParams): Observable<T[]> {
+    return this.getWithQuery(params);
   }
 
 }

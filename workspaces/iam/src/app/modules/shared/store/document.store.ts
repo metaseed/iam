@@ -6,7 +6,7 @@ import { Injectable } from "@angular/core";
 import { DocumentStatus } from "app/modules/core/model/doc-model/doc-status";
 
 @Injectable({ providedIn: 'root' })
-export class DocumentStore extends EntityCacheStore<number,Document> {
+export class DocumentStore extends EntityCacheStore<number, Document> {
   constructor(cache: DocMemCacheService) {
     super(cache)
   }
@@ -40,21 +40,25 @@ export class DocumentStore extends EntityCacheStore<number,Document> {
   searchResult_ = new StateSubject<SearchResult>();
 
   getDocument(id: number) {
-    return this.getById(id).state;
+    return this.cache.entities[id];
   }
 
   getDocMeta(id: number) {
     return this.getDocument(id)?.metaData;
   }
 
+  getDocuments(ids: number[]) {
+    return ids.map(id => this.cache.entities[id]);
+  }
+
   getDocMetas(ids: number[]) {
-    const docs = this.getMany(ids).state;
+    const docs = this.getDocuments(ids);
     return docs.map(doc => doc?.metaData);
   }
 
-  updateCurrentDocStatus( status: Partial<DocumentStatus>){
+  updateCurrentDocStatus(status: Partial<DocumentStatus>) {
     const id = this.currentId_.state;
     const docStatus = this.currentDocStatus$.state;
-    this.update({ id, changes: { documentStatus: { ...docStatus, ...status} } })
+    this.update({ id, changes: { documentStatus: { ...docStatus, ...status } } })
   }
 }

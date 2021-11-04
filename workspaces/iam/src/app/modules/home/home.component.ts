@@ -19,7 +19,6 @@ import { DocumentStore } from '../shared/store/document.store';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent {
-  private destroy$ = new Subject();
 
   @ViewChild('docList', { read: ElementRef })
   scrollDocs: ElementRef;
@@ -29,7 +28,7 @@ export class HomeComponent {
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
-  docs$ = this.store.getAll().pipe(map(docs => docs.filter(d => d.id !== 1)));
+  docs$ = this.store.entities$.pipe(map(docs => docs.filter(d => d.id !== 1)));
   ActionStatus = ActionState;
 
   constructor(
@@ -74,7 +73,4 @@ export class HomeComponent {
     // }
   }
 
-  ngOnDestroy() {
-    this.destroy$.next(null);
-  }
 }
