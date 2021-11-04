@@ -1,17 +1,16 @@
 import { Document } from "core";
-import { EntityDataService, EntityStore } from "@rx-store/entity";
+import { EntityCacheStore, EntityCacheService } from "@rx-store/entity";
 import { StateSubject } from "@rx-store/core";
-import { EntityCache } from "@rx-store/entity";
 
-export class DocumentStore extends EntityStore<Document> {
-  constructor(cache: EntityDataService<Document> & EntityCache<Document>){
+export class DocumentStore extends EntityCacheStore<Document> {
+  constructor(cache: EntityCacheService<Document>) {
     super(cache)
   }
-  currentDocContent$ = this.currentEntity$.map(doc=> doc?.content);
+  currentDocContent$ = this.currentEntity$.map(doc => doc?.content);
 
   currentDocContentString$ = this.currentDocContent$.map(content => content?.content ?? '');
 
-  currentDocStatus$ = this.currentEntity$.map(doc=>doc?.documentStatus);
+  currentDocStatus$ = this.currentEntity$.map(doc => doc?.documentStatus);
 
   currentDocStatus_IsEditorDirty$ = this.currentDocStatus$.map(status => status?.isEditorDirty);
 
@@ -37,6 +36,6 @@ export class DocumentStore extends EntityStore<Document> {
 
   getDocMetas(ids: number[]) {
     const docs = this.getDocuments(ids);
-    return docs.map(doc=> doc?.metaData);
+    return docs.map(doc => doc?.metaData);
   }
 }
