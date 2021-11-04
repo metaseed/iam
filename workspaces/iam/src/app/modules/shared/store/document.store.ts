@@ -3,12 +3,15 @@ import { EntityCacheStore } from "@rx-store/entity";
 import { StateSubject } from "@rx-store/core";
 import { DocMemCacheService } from "app/modules/cache/services/mem-cache.service";
 import { Injectable } from "@angular/core";
+import { DocumentStatus } from "app/modules/core/model/doc-model/doc-status";
 
 @Injectable({ providedIn: 'root' })
 export class DocumentStore extends EntityCacheStore<Document> {
   constructor(cache: DocMemCacheService) {
     super(cache)
   }
+
+  get documents() { return Object.values(this.cache.entities) }
 
   currentDocument$ = this.currentEntity$;
 
@@ -40,7 +43,7 @@ export class DocumentStore extends EntityCacheStore<Document> {
     return this.cache.entities[id];
   }
 
-  getDocMeta(id: number){
+  getDocMeta(id: number) {
     return this.getDocument(id)?.metaData;
   }
 
@@ -51,5 +54,11 @@ export class DocumentStore extends EntityCacheStore<Document> {
   getDocMetas(ids: number[]) {
     const docs = this.getDocuments(ids);
     return docs.map(doc => doc?.metaData);
+  }
+
+  updateCurrentDocStatus( status: Partial<DocumentStatus>){
+    const id = this.currentId_.state;
+    const docStatus = this.currentDocStatus$.state;
+    this.update({ id, changes: { documentStatus: { ...docStatus, ...status} } })
   }
 }

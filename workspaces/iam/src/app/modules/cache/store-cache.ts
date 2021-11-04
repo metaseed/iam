@@ -68,8 +68,7 @@ export class StoreCache implements ICache {
         } else {
           const array = new Array<Document>();
           metaArray.forEach(meta => {
-            const docDic = selectDocumentEntities(this.state.value);
-            const doc = docDic[meta.id];
+            const doc = this._store.getDocument(meta.id);
 
             if (doc && doc.metaData.updateDate.getTime() === meta.updateDate.getTime()) return;
 
@@ -166,7 +165,7 @@ export class StoreCache implements ICache {
   }
 
   search(query: string) {
-    const docs = selectDocuments(this.state.value);
+    const docs = this._store.documents;
     const fromStoreCache$ = this._storeSearchService.search(docs, query);
 
     const fromNextCache$ = this.nextLevelCache

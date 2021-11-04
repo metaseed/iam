@@ -1,48 +1,37 @@
 import { Injectable } from '@angular/core';
-import { Store, State } from '@ngrx/store';
-import { UpdateCurrentDocumentStatus } from './document.actions';
-import {
-  selectCurrentDocStatus,
-  selectCurrentDocument,
-  selectCurrentDocumentId
-} from './document.selectors';
+import { DocumentStore } from '../../store/document.store';
 
 @Injectable()
 export class DocumentStateFacade {
-  constructor(private store: Store<any>, private state: State<any>) { }
+  constructor(private store: DocumentStore) { }
 
   updateCurrentDocumentMemDirtyStatus(memDirty: boolean) {
-    this.store.dispatch(new UpdateCurrentDocumentStatus({  isEditorDirty: memDirty }));
+    this.store.updateCurrentDocStatus({ isEditorDirty: memDirty });
   }
 
   setCurrentDocumentDbDirtyStatus() {
-    this.store.dispatch(new UpdateCurrentDocumentStatus({ isDbDirty: true }));
+    this.store.updateCurrentDocStatus({ isDbDirty: true });
   }
 
   setCurrentDocumentSavedToDbStatus() {
-    this.store.dispatch(
-      new UpdateCurrentDocumentStatus({ isEditorDirty: false, isDbDirty: true })
-    );
+    this.store.updateCurrentDocStatus({ isEditorDirty: false, isDbDirty: true });
   }
 
   setCurrentDocumentSavingToNetStatus() {
-    this.store.dispatch(
-      new UpdateCurrentDocumentStatus({ isSyncing: true })
-    );
+    this.store.updateCurrentDocStatus({ isSyncing: true });
   }
+
   setCurrentDocumentSavedToNetStatus() {
-    this.store.dispatch(
-      new UpdateCurrentDocumentStatus({ isDbDirty: false, isSyncing: false })
-    );
+    this.store.updateCurrentDocStatus({ isDbDirty: false, isSyncing: false })
   }
 
   getCurrentDocumentStatusState() {
-    return selectCurrentDocStatus(this.state.value);
+    return this.store.currentDocStatus$.state;
   }
   getCurrentDocumentState() {
-    return selectCurrentDocument(this.state.value);
+    return this.store.currentDocument$.state;
   }
   getCurrentDocumentIdState() {
-    return selectCurrentDocumentId(this.state.value);
+    return this.store.currentId_.state;
   }
 }
