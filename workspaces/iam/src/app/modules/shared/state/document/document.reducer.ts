@@ -1,5 +1,4 @@
 import { EntityState, EntityAdapter, createEntityAdapter, Update } from '@ngrx/entity';
-import { DocumentStatus } from 'app/modules/core/model/doc-model/doc-status';
 import { Document, SearchResult } from 'core';
 import { DocumentActions, DocumentActionType } from './document.actions';
 

@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 
-export type ID = keyof any;
+export type ID = string | number;
 
 /**
  * only return successful result all errors are reported via `throw Error('msg')`

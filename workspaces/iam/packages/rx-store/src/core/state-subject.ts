@@ -1,5 +1,5 @@
-import { map, OperatorFunction, ReplaySubject, skip, Subject } from "rxjs";
-import { StateObservable, operate, Operate, map as myMap, Map } from "./state-observable";
+import { OperatorFunction, ReplaySubject, skip, Subject } from "rxjs";
+import { StateObservable, operate, map as myMap } from "./state-observable";
 import { defaultEffectOption, EffectOption, sideEffect, SideEffect } from './side-effect';
 
 export interface StateSetter<T> extends SideEffect<T> {
@@ -12,7 +12,7 @@ export interface StateSetter<T> extends SideEffect<T> {
 
 type AddEffect<T> = (effect: OperatorFunction<T, unknown>, options?: EffectOption) => IStateSubject<T>
 
-export interface IStateSubject<T> extends Exclude<SideEffect<T>, StateSetter<T>>, StateObservable<T> {
+export interface IStateSubject<T> extends  StateSetter<T>, StateObservable<T> {
   addEffect: AddEffect<T>,
 }
 
