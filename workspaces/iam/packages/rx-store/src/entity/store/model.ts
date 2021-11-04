@@ -7,6 +7,7 @@ export enum EntityChangeType { Add, Delete, Update, Set, Upsert }
 export type ChangeContent<T> = {
   changeType: EntityChangeType,
   /**
+   * ID used only for delete action
    * undefined used for delete all.
    */
   changes: T[] | ID[] | undefined

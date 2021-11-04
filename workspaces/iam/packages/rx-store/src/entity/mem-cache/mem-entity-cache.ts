@@ -1,5 +1,5 @@
 import { map, Observable, of } from "rxjs";
-import { EntityCacheBase } from "../model/entity-data-service-base";
+import { EntityDataServiceBase } from "../model/entity-data-service-base";
 import { ID, IdGenerator, QueryParams, SortComparer, Update } from "../model/entity-data-service.interface";
 import { isDevMode } from "../utils";
 import { idGeneratorWrapper } from "../utils/id-generator-wrapper";
@@ -9,12 +9,12 @@ import { EntityCache } from "./models";
 
 type IdEntityPair<T> = { id: ID; entity: T }
 
-export class MemEntityCache<T> extends EntityCacheBase<T> implements EntityCache<T> {
+export class MemEntityCache<T> extends EntityDataServiceBase<T> implements EntityCache<T> {
   ids: ID[] = [];
   entities: Record<ID, T> = Object.create(null); // not use {}, to remove inheritance from Object.prototype.
 
-  private idGenerator: IdGenerator<T>;
-  private sortComparer?: SortComparer<T>
+  public idGenerator: IdGenerator<T>;
+  public sortComparer?: SortComparer<T>
 
   constructor(option:{idGenerator: IdGenerator<T>, sortComparer?: SortComparer<T>}) {
     super();

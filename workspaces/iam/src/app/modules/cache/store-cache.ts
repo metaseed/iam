@@ -10,7 +10,7 @@ import {
 } from 'core';
 import { Injectable } from '@angular/core';
 import { Observable, of, merge } from 'rxjs';
-import { tap, catchError, map } from 'rxjs/operators';
+import { tap, catchError, map, switchMap, filter } from 'rxjs/operators';
 import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../shared/state/document/const';
 import { StoreSearchService } from './services/store-search.service';
 import { afterUpdateDoc } from './after-update-doc';
@@ -99,18 +99,21 @@ export class StoreCache implements ICache {
 
   readDocContent(id: number, title: string, format: string): Observable<DocContent> {
     return this.nextLevelCache.readDocContent(id, title, format).pipe(
-      tap(docContent => {
+      filter(docContent => {
         // no data in next level, but the next level cache should further fetch from its next level. we would receive it.
-        if (!docContent) return;
+        if (!docContent) return false;
 
         if (docContent.isDeleted) {
           this._store.delete(docContent.id);
         }
 
         const document = this._store.getDocument(id);
+        if (document?.content?.sha === docContent.sha)
+          return false; // nothing changed.
 
-        if (document && document.content && document.content.sha === docContent.sha) return; // nothing changed.
-
+        return true;
+      }),
+      tap(docContent =>
         this.nextLevelCache
           .readDocMeta(id)
           .pipe(
@@ -122,6 +125,8 @@ export class StoreCache implements ICache {
                 );
                 meta.contentSha = docContent.sha;
               }
+
+              const document = this._store.getDocument(id);
               if (!document) {
                 const doc = new Document(id, meta, docContent);
                 this._store.add(doc);
@@ -135,13 +140,11 @@ export class StoreCache implements ICache {
             catchError(err => {
               throw err;
             })
-          )
-          .subscribe();
-      })
+          ).subscribe()
+      )
+
     );
   }
-
-
 
   updateDocument(oldDocMeta: DocMeta, content: string, forceUpdate: boolean) {
     return this.nextLevelCache.updateDocument(oldDocMeta, content, forceUpdate).pipe(

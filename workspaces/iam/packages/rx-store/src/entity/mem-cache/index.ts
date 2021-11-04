@@ -1,2 +1,2 @@
-export * from './mem-data-service';
+export * from './mem-entity-cache';
 export * from './models';

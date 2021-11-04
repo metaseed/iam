@@ -47,7 +47,12 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     this.markdownStore.editWithPreview_
   );
 
-  markdown$: Observable<string>;
+  markdown$  = merge(
+    this.store.currentDocContentString$,
+    this.markdownStore.editorContentChanged_
+  ).pipe(
+    map(d => d ?? ''),
+    backoff<string>(80, 1000));
 
   constructor(
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
@@ -64,11 +69,6 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     this.router.routerState.root.firstChild.queryParams.subscribe(e => {
       console.log(e)
     })
-    this.markdown$ = merge(
-      this.store.currentDocContentString$,
-      this.markdownStore.editorContentChanged_
-    ).pipe(backoff<string>(80, 1000));
-
   }
 
   ngOnDestroy() {

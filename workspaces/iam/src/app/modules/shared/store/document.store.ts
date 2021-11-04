@@ -25,7 +25,7 @@ export class DocumentStore extends EntityCacheStore<number,Document> {
 
   currentDocStatus_IsDbDirty$ = this.currentDocStatus$.map(status => status?.isDbDirty);
 
-  currentDocStatus_IsSyncing$ = this.currentDocStatus$.map(status => status.isSyncing);
+  currentDocStatus_IsSyncing$ = this.currentDocStatus$.map(status => status?.isSyncing);
 
   /**
    *  undefined:initial; Number.MAX_VALUE highest number: no newest

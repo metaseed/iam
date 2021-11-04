@@ -4,3 +4,4 @@ export * from './operators';
 export * from './side-effect';
 export * from './utils';
 export * from './selector';
+export * from './store';

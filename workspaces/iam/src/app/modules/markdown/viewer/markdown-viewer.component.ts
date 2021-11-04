@@ -29,6 +29,7 @@ export class MarkdownViewerComponent extends SubscriptionManager {
 
   @Input()
   set model(value: string) {
+    if(value === null) return;
     this.updateContent$.next(value);
     this.updateToc$.next(value);
   }
