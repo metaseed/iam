@@ -18,7 +18,7 @@ import { DocumentStore } from '../shared/store/document.store';
   templateUrl: './markdown.component.html',
   styleUrls: ['./markdown.component.scss']
 })
-export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
+export class MarkdownComponent implements OnInit, OnDestroy, AfterViewChecked {
   isFullScreen: boolean;
   fixEditButton = false;
   @ViewChild(MarkdownViewerContainerComponent)
@@ -66,9 +66,23 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
   ) { }
 
   ngOnInit() {
-    this.router.routerState.root.firstChild.queryParams.subscribe(e => {
-      console.log(e)
-    })
+    this.router.routerState.root.firstChild.queryParams
+    .pipe(
+      tap(params => {
+        if (this.router.url.startsWith('/doc/new')) {
+          const format = params['f'] as DocFormat;
+          this.documentEffects.createDocument_.next({ format });
+          this.markdownStore.documentMode_.next(DocumentMode.Edit);
+
+        } else {
+          const title = params['title'];
+          const num = +params['id']
+          const format = params['f'];
+          this.documentEffects.readDocument_.next({ id: num, title, format });
+        }
+      })
+    )
+    .subscribe();
   }
 
   ngOnDestroy() {
@@ -77,27 +91,6 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewInit, Afte
 
   ngAfterViewChecked() {
     this.changeDetectorRef.detectChanges();
-  }
-
-  ngAfterViewInit() {
-    this.router.routerState.root.firstChild.queryParams
-      .pipe(
-        tap(params => {
-          if (this.router.url.startsWith('/doc/new')) {
-            const format = params['f'] as DocFormat;
-            this.documentEffects.createDocument_.next({ format });
-            this.markdownStore.documentMode_.next(DocumentMode.Edit);
-
-          } else {
-            const title = params['title'];
-            const num = +params['id']
-            const format = params['f'];
-            this.documentEffects.readDocument_.next({ id: num, title, format });
-          }
-        })
-      )
-      .subscribe();
-    // setTimeout(_ => (this.viewerDiv.nativeElement as HTMLElement).focus(), 1000);
   }
 
   showDemo() {
