@@ -9,14 +9,14 @@ import {
 } from '@angular/core';
 import { MarkdownEditorService } from '.';
 import { CodemirrorComponent } from './codemirror-editor/codemirror-component/codemirror.component';
-import { Observable, fromEvent } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, fromEvent, Subscription } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
-import { NEW_DOC_ID} from 'shared';
+import { NEW_DOC_ID } from 'shared';
 import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from '../model/markdown.model';
-import { ContainerRef, ICanComponentDeactivate } from 'core';
+import { ContainerRef, ICanComponentDeactivate, Utilities } from 'core';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { SubscriptionManager } from 'app/modules/core/utils/subscription-manager';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
@@ -46,7 +46,8 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
     @Inject(HAMMER_GESTURE_CONFIG) private gestureConfig: HammerGestureConfig,
     private editorService: MarkdownEditorService,
     private store: DocumentStore,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private utils: Utilities
   ) {
     super();
 
@@ -91,19 +92,24 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
       )
     );
 
-    const hammer = this.gestureConfig.buildHammer(codeMirrorScrollElement);
-
-    super.addSub(
-      fromEvent(hammer, 'swiperight')
-        .subscribe((res: any) => {
-          this.toViewMode(res);
-        })
-    ).addSub(
-      fromEvent(hammer, 'swipeleft')
-        .subscribe((res: any) => {
-          this.toViewMode(res);
-        })
-    )
+    let hammer = null;
+    super.addSub(this.utils.isWideScreen$.pipe(
+      tap(wide => {
+        if (!wide) { // small
+          if (hammer === null) {
+            hammer = this.gestureConfig.buildHammer(codeMirrorScrollElement);
+            hammer.on('swiperight', this.toViewMode);
+            hammer.on('swipeleft', this.toViewMode);
+          }
+        } else {
+          if (hammer) {
+            hammer.off('swiperight')
+            hammer.off('swipeleft')
+            hammer.destroy();
+            hammer = null;
+          }
+        }
+      })).subscribe())
   }
 
   private toViewMode = event => {

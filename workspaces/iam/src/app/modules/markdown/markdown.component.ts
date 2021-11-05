@@ -7,7 +7,7 @@ import { DocFormat, backoff } from 'core';
 import { ChangeDetectorRef } from '@angular/core';
 import { OnDestroy } from '@angular/core';
 import { MarkdownViewerContainerComponent } from './viewer/markdown-viewer-container.component';
-import { Observable, merge } from 'rxjs';
+import { merge } from 'rxjs';
 import { Utilities } from '../core/utils';
 import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from './model/markdown.model';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from '../shared/store';

@@ -1,16 +1,16 @@
 import { Component, Input, AfterViewInit, Inject, NgZone } from '@angular/core';
 import {
   MSG_DISPLAY_TIMEOUT,
-  NET_COMMU_TIMEOUT,
   ContainerRef,
   ScrollEvent,
   IContainer,
   DocumentRef,
-  SubscriptionManager
+  SubscriptionManager,
+  Utilities
 } from 'core';
 import { ViewChild } from '@angular/core';
 import { ElementRef } from '@angular/core';
-import { merge, asyncScheduler, Observable } from 'rxjs';
+import { merge, asyncScheduler, Observable, Subscription, fromEvent } from 'rxjs';
 
 import { map, observeOn, switchMap, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -18,6 +18,7 @@ import { MARKDOWN_STORE_TOKEN, IMarkdownStore, DocumentMode } from '../model/mar
 import { PlatformLocation } from '@angular/common';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
 import { OperationStep } from 'packages/rx-store/src/effect';
+import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 
 @Component({
   selector: 'markdown-viewer-container',
@@ -34,6 +35,8 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
   hideToolbar: false;
   @ViewChild('viewContainerDiv')
   viewerContainerDiv: ElementRef;
+  @ViewChild('markdownViewer', { read: ElementRef })
+  viewer: ElementRef;
   isLockScrollWithView$;
   isLockScrollWithView;
 
@@ -55,9 +58,11 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
     private snackBar: MatSnackBar,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     @Inject(MARKDOWN_STORE_TOKEN) public markdownStore: IMarkdownStore,
+    @Inject(HAMMER_GESTURE_CONFIG) private gestureConfig: HammerGestureConfig,
     private ngZone: NgZone,
     private _docRef: DocumentRef,
-    private _location: PlatformLocation
+    private _location: PlatformLocation,
+    private utils: Utilities
   ) {
     super();
   }
@@ -122,6 +127,25 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
         this.markdownStore.editIt_.next(e.detail);
       }
     );
+
+    let hammer = null;
+    super.addSub(this.utils.isWideScreen$.pipe(
+      tap(wide => {
+        if (!wide) { // small
+          if (hammer === null) {
+            hammer = this.gestureConfig.buildHammer(this.viewer.nativeElement);
+            hammer.on('swiperight', this.swipe);
+            hammer.on('swipeleft', this.swipe);
+          }
+        } else {
+          if (hammer) {
+            hammer.off('swiperight')
+            hammer.off('swipeleft')
+            hammer.destroy();
+            hammer = null;
+          }
+        }
+      })).subscribe())
   }
 
   private scrollToHashIdElement() {
@@ -134,7 +158,7 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
     }
   }
 
-  public swipe(e) {
+  public swipe = (e) => {
     let element = e.target as HTMLElement;
     let lines = '';
     let i = 0;
