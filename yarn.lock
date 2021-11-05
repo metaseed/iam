@@ -198,12 +198,12 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/cdk-experimental@^12.2.4":
-  version "12.2.6"
-  resolved "https://registry.yarnpkg.com/@angular/cdk-experimental/-/cdk-experimental-12.2.6.tgz#64f17cfde16a6c529ddda83b4c74f16a385853a6"
-  integrity sha512-UPP/V/Ahx68k78MQNrEYF0d8bjUd11eRlT+NyRooQDFlCIRKvfFezxjLKh8IBzwsVaPx9b5+gc5kil5lWmLHAw==
+"@angular/cdk-experimental@^13.0.0":
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/@angular/cdk-experimental/-/cdk-experimental-13.0.0.tgz#027ed7e41bd4d0f83cd1df9634dbd7672d334beb"
+  integrity sha512-jDj9CC2vs3jq8XUEV1b7nTPGQ49vBsd2MV3k9DqAxzE427XwaDS2f8hv3d5co9OW3hrvqHNJsWoosDakNNubKg==
   dependencies:
-    tslib "^2.2.0"
+    tslib "^2.3.0"
 
 "@angular/cdk@^13.0.0":
   version "13.0.0"
@@ -9167,7 +9167,7 @@ tsickle@0.43.0:
   dependencies:
     "@types/minimist" "^1.2.1"
 
-tslib@2.3.1, tslib@^2.0.0, tslib@^2.2.0, tslib@^2.3.0, tslib@^2.3.1:
+tslib@2.3.1, tslib@^2.0.0, tslib@^2.3.0, tslib@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
   integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
