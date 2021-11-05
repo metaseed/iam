@@ -3,7 +3,7 @@ import { subscribeOn, catchError, switchMap, map } from 'rxjs/operators';
 import { ICache, DocContent, DataTables, DocMeta, Document, AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL } from 'core';
 import { Database } from '../database/database-engine';
 import { DirtyDocument } from '../core/model/doc-model/doc-status';
-import { DocumentStateFacade } from '../shared/state/document/document-state.facade';
+import { DocumentStateFacade } from '../shared/store/document-state.facade';
 import { afterUpdateDoc } from './after-update-doc';
 import { DocumentStore } from '../shared/store/document.store';
 

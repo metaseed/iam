@@ -3,7 +3,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { CACHE_FACADE_TOKEN, DocFormat, DocMeta, ICache, NET_COMMU_TIMEOUT } from "core";
 import { forkJoin, map, pipe, switchMap, tap, throwError } from "rxjs";
 import { NEW_DOC_ID } from "shared";
-import { DocEffectsUtil } from "../state/document/document.effects.util";
+import { DocEffectsUtil } from "./document.effects.util";
 import { EffectManager, EffectStateSubject, OperationStatusConsoleReporter } from "@rx-store/effect";
 import { DocumentStore } from "./document.store";
 

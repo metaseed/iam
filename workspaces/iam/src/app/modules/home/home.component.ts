@@ -7,9 +7,6 @@ import { map } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MSG_DISPLAY_TIMEOUT } from 'core';
 
-import {
-  ActionState,
-} from 'shared';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from '../shared/store';
 import { DocumentStore } from '../shared/store/document.store';
 
@@ -29,7 +26,6 @@ export class HomeComponent {
   };
 
   docs$ = this.store.entities$.pipe(map(docs => docs.filter(d => d.id !== 1)));
-  ActionStatus = ActionState;
 
   constructor(
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,

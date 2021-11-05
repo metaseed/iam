@@ -14,8 +14,7 @@ import { map } from 'rxjs/operators';
 import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
-import {
-  NEW_DOC_ID} from 'shared';
+import { NEW_DOC_ID} from 'shared';
 import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from '../model/markdown.model';
 import { ContainerRef, ICanComponentDeactivate } from 'core';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';

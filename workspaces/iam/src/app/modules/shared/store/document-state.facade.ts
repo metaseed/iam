@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DocumentStore } from '../../store/document.store';
+import { DocumentStore } from './document.store';
 
 @Injectable()
 export class DocumentStateFacade {

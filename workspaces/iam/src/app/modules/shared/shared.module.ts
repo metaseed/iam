@@ -8,15 +8,13 @@ import { SplitPaneModule } from './split-pane/ng2-split-pane';
 import { FormsModule } from '@angular/forms';
 import { ScrollHideDirective } from './scroll-hide/scroll-hide.directive';
 import { CoreModule, CACHE_FACADE_TOKEN } from 'core';
-import { StoreModule } from '@ngrx/store';
-import { SharedState, reducers, moduleStateName, DocumentStateFacade } from './state';
-import { DocEffectsUtil } from './state/document/document.effects.util';
+import { DocEffectsUtil } from './store/document.effects.util';
 import { DatabaseModule } from 'database';
 import { NetStorageModule } from 'net-storage';
 import { CacheModule } from '../cache';
 import { CacheFacade } from './cache-facade';
 import { MatInputAutofocusDirective } from './directives/matinput-autofocus.directive';
-import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from './store';
+import { DocumentsEffects, DocumentStateFacade, DOCUMENT_EFFECTS_TOKEN } from './store';
 
 @NgModule({
   imports: [
@@ -28,7 +26,6 @@ import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from './store';
     RouterModule,
     SplitPaneModule,
     CacheModule,
-    StoreModule.forFeature<SharedState>(moduleStateName, reducers),
   ],
   declarations: [ReadingPositionIndicatorComponent, BottomNavigationComponent, ScrollHideDirective, MatInputAutofocusDirective],
   exports: [

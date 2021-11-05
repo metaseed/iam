@@ -11,7 +11,7 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable, of, merge } from 'rxjs';
 import { tap, catchError, map, switchMap, filter } from 'rxjs/operators';
-import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../shared/state/document/const';
+import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../shared/store/const';
 import { StoreSearchService } from './services/store-search.service';
 import { afterUpdateDoc } from './after-update-doc';
 import { DocumentStore } from '../shared/store/document.store';
