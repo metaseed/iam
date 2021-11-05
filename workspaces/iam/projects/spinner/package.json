@@ -10,7 +10,7 @@
   },
   "main": "./src/public_api.ts",
   "peerDependencies": {
-    "@angular/common": "^12.2.7",
-    "@angular/core": "^12.2.7"
+    "@angular/common": "^13.0.0",
+    "@angular/core": "^13.0.0"
   }
 }
