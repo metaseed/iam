@@ -2,7 +2,6 @@ import { Component, Input } from "@angular/core";
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { DataSourceLines } from "../data-source-lines";
-import { State, Store } from "@ngrx/store";
 import { Router } from "@angular/router";
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { debounceTime, Subject, tap } from "rxjs";
@@ -21,8 +20,9 @@ export class TagsComponent extends DataSourceLines {
   private modifyTags = new Subject();
 
   @Input() set tags(value: string) {
-    this.tagList = value.split(',').map(tag=>tag.trim());
+    this.tagList = value.split(',').map(tag=>tag.trim()).filter(t => t !== '');
   }
+
   constructor(private router: Router, private store: DocumentStore) {
     super(store);
     this.modifyTags.pipe(
