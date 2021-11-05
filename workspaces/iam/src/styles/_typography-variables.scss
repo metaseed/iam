@@ -1,4 +1,4 @@
-@import '~@angular/material/theming';
+@import '@angular/material/theming';
 // just replace the material's default one: px to rem;
 $iam-typography-config: mat-typography-config(
         $font-family:   $main-font,
