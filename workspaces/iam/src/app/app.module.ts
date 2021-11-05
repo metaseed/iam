@@ -15,10 +15,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { MaterialModule } from './modules/material/material.module';
 import { SharedModule } from 'shared';
 import { NetStorageModule } from 'net-storage';
-import { DatabaseModule, schema } from 'database';
+import { DatabaseModule } from 'database';
 import { RouteReuseStrategy } from '@angular/router';
 import { CustomRouteReuseStrategy } from './routeReuseStrategy';
 import { MyHammerConfig } from './hammer.config';
+import { enableProdMode } from 'packages/rx-store/src/core/dev-mode-checking';
 /**
  * This function is used internal to get a string instance of the `<base href="" />` value from `index.html`.
  * This is an exported function, instead of a private function or inline lambda, to prevent this error:
@@ -73,4 +74,10 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor(){
+    if(environment.production){
+      enableProdMode();
+    }
+  }
+}

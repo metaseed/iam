@@ -1,5 +1,5 @@
 import { ID, IdGenerator } from "../model/entity-data-service.interface";
-import { isDevMode } from "./dev-mode-checking";
+import { isDevMode } from "../../core/dev-mode-checking";
 
 export function isIdType(id) {
   const type = typeof id;

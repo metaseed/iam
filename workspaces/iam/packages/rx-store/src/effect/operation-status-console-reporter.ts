@@ -2,13 +2,21 @@ import { tap } from "rxjs";
 import { OperationStatusReporter } from "./operation-status-reporter.interface";
 import { OperationState } from "./operation-state";
 import { OperationStep } from "./operation-status";
+import { isDevMode } from "../core/dev-mode-checking";
 
 export class OperationStatusConsoleReporter implements OperationStatusReporter {
+
+  constructor(private enableInProdEnvironment = false) {
+  }
+
   setup(operationStatusStore: OperationState) {
+    if(!isDevMode() && !this.enableInProdEnvironment){
+      return;
+    }
     const icons =
       ['💖', '🧾', '🔖', '📘', '🎉', '😉', '📚', '👻', '👀', '✌',
         '✨', '🎨', '⚽', '🎁', '🎗', '🎞', '🧧', '🎇', '🥼', '🛒',
-        '👙', '👜', '🎭', '🎀', '🎄', '💎', '🧩', '☎', '🎃','🏈']
+        '👙', '👜', '🎭', '🎀', '🎄', '💎', '🧩', '☎', '🎃', '🏈']
 
     operationStatusStore.ofStep(OperationStep.Start).pipe(tap((status) => {
       const icon = icons[status.coId! % icons.length]

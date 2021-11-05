@@ -1,1 +1,1 @@
-export * from './dev-mode-checking';
+export * from './remove-array-item';
