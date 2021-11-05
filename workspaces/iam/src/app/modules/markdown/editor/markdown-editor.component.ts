@@ -37,7 +37,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
 
   docMode$ = this.markdownStore.documentMode_;
 
-  markdown$ = this.store.currentDocContentString$.state;
+  markdown$ = this.store.currentDocContentString$;
 
   constructor(
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
