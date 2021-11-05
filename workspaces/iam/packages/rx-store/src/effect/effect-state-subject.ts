@@ -1,10 +1,10 @@
 import { OperatorFunction } from "rxjs";
 import { SideEffect, StateSubject } from "../core";
-import { MonitoredEffectOption, monitorSideEffect } from "./monitored-effect";
+import { MonitoredEffectInfo, MonitoredEffectOption, monitorSideEffect } from "./monitored-effect";
 import { OperationState } from "./operation-state";
 import { EffectStateObservable } from "./effect-state-observable";
 
-type MonitorEffect<T> = (monitoredEffect: (state: OperationState) => OperatorFunction<T, unknown>, option: MonitoredEffectOption) => EffectStateSubject<T>
+type MonitorEffect<T> = (monitoredEffect: (state: MonitoredEffectInfo) => OperatorFunction<T, unknown>, option: MonitoredEffectOption) => EffectStateSubject<T>
 
 export class EffectStateSubject<T> extends StateSubject<T> implements  Exclude<SideEffect<T>, EffectStateObservable<T>>  {
   operationStatus$ = new OperationState();

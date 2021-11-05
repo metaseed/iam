@@ -14,12 +14,24 @@ export interface MonitoredEffectOption extends EffectOption {
    */
   timeOut?: number;
 
-  timeOutHandler?:(timeOut: OperationStatus) => void
+  timeOutHandler?: (timeOut: OperationStatus) => void
+}
+
+export class MonitoredEffectInfo {
+  constructor(private operationState: OperationState, private startStatus: OperationStatus) {
+  }
+  /**
+   * send `success` step to this OperationState
+   * @param context
+   */
+  success(context?: any) {
+    this.operationState.next(this.startStatus.Success.with(context));
+  }
 }
 
 export function monitorSideEffect<T>(
   source: EffectStateObservable<T>,
-  monitoredEffect: (status: OperationState) => OperatorFunction<T, unknown>,
+  monitoredEffect: (status: MonitoredEffectInfo) => OperatorFunction<T, unknown>,
   option: MonitoredEffectOption) {
   const options = { ...defaultEffectOption, ...option };
   let { type, effectState: effectStatus, timeOut } = options;
@@ -53,7 +65,7 @@ export function monitorSideEffect<T>(
      *
      */
     mergeMap((state: T) => {
-      let startStatus = OperationStatus.Start(type, state);
+      const startStatus = OperationStatus.Start(type, state);
       if (timeOut) {
         const timeoutSubscription = effectStatus!.pipe(
           tap(st => {
@@ -71,7 +83,7 @@ export function monitorSideEffect<T>(
       effectStatus!.next(startStatus);
 
       return of(state).pipe(
-        monitoredEffect(effectStatus!),
+        monitoredEffect(new MonitoredEffectInfo(effectStatus!, startStatus)),
         getDefaultMonitoredEffectErrorOperator((sta, context) => {
           const st = sta === 'Error' ? startStatus.Error :
             sta === 'Retry' ? startStatus.Retry :

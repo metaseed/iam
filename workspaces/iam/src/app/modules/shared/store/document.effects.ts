@@ -24,11 +24,11 @@ export class DocumentsEffects extends EffectManager {
   }
   createDocument_ = new EffectStateSubject<Pick<DocMeta, 'format'>>().addMonitoredEffect(
 
-    effectStatus =>
+    effectInfo =>
       pipe(
         tap<Pick<DocMeta, 'format'>>(state => {
           (this.cacheFacade as any).createDoc(state.format);
-          effectStatus.success(state);
+          effectInfo.success(state);
         })
       ),
     { type: '[DocumentsEffects]createDocument', timeOut: EFFECT_TIMEOUT }
@@ -38,7 +38,7 @@ export class DocumentsEffects extends EffectManager {
    * read extend doc meta fetch in cache isBelowRange=true...(low, high]...isBelowRange=false
    */
   readBulkDocMeta_ = new EffectStateSubject<{ isBelowRange: boolean }>().addMonitoredEffect(
-    effectStatus => pipe(
+    effectInfo => pipe(
       map((state: { isBelowRange: boolean }) => {
         const keyRangeHigh = this.store.idRangHigh_.state;
         const keyRangeLow = this.store.idRangeLow_.state;
@@ -53,7 +53,7 @@ export class DocumentsEffects extends EffectManager {
         return this.cacheFacade
           .readBulkDocMeta(key, isBelowRange)
           .pipe(
-            tap(docMetas => effectStatus.success(docMetas))
+            tap(docMetas => effectInfo.success(docMetas))
           );
       })
     ),
@@ -61,32 +61,32 @@ export class DocumentsEffects extends EffectManager {
   );
 
   readDocMetas_ = new EffectStateSubject<{ ids: number[] }>().addMonitoredEffect(
-    effectStatus => pipe(
+    effectInfo => pipe(
       switchMap(state =>
         forkJoin(
           state.ids.map(id => this.cacheFacade.readDocMeta(id, true))
         )
       ),
-      tap<DocMeta[]>(docMetas => effectStatus.success(docMetas))
+      tap<DocMeta[]>(docMetas => effectInfo.success(docMetas))
     ),
     { type: '[DocumentsEffects]readDocMetas', timeOut: EFFECT_TIMEOUT }
   );
 
   readDocument_ = new EffectStateSubject<{ id: number; title?: string; format?: string }>().addMonitoredEffect(
-    effectStatus =>
+    effectInfo =>
       pipe(
         switchMap(state => {
           this.store.currentId_.next(state.id);
           return this.cacheFacade
             .readDocContent(state.id, state.title, state.format)
         }),
-        tap(result => effectStatus.success(result))
+        tap(result => effectInfo.success(result))
       ),
     { type: '[DocumentsEffects]readDocument', timeOut: EFFECT_TIMEOUT }
   );
 
   saveDocument_ = new EffectStateSubject<{ content: string; format?: DocFormat; forceUpdate?: boolean }>().addMonitoredEffect(
-    effectStatus =>
+    effectInfo =>
       pipe(
         switchMap(state => {
           const doc = this.store.currentDocument$.state;
@@ -119,25 +119,25 @@ export class DocumentsEffects extends EffectManager {
               );
           }
         }),
-        tap(result => effectStatus.success(result))
+        tap(result => effectInfo.success(result))
       ),
     { type: '[DocumentsEffects]saveDocument', timeOut: EFFECT_TIMEOUT }
   );
 
   deleteDocument_ = new EffectStateSubject<{ id: number }>().addMonitoredEffect(
-    effectStatus =>
+    effectInfo =>
       pipe(
         switchMap(state =>
           this.cacheFacade.deleteDoc(state.id)
         ),
-        tap<number>(id => effectStatus.success({ id }))
+        tap<number>(id => effectInfo.success({ id }))
       ),
     { type: '[DocumentsEffects]deleteDocument', timeOut: EFFECT_TIMEOUT }
   );
 
 
   searchDocument_ = new EffectStateSubject<{ query: string; folder?: string; extension?: string }>().addMonitoredEffect(
-    effectStatus =>
+    effectInfo =>
       pipe(
         switchMap(state =>
           this.cacheFacade.search(state.query).pipe(
@@ -153,7 +153,7 @@ export class DocumentsEffects extends EffectManager {
             })
           )
         ),
-        tap(result => effectStatus.success(result))
+        tap(result => effectInfo.success(result))
       ),
     { type: '[DocumentsEffects]searchDocument', timeOut: EFFECT_TIMEOUT }
   );
