@@ -21,7 +21,7 @@ export class OperationStatusConsoleReporter implements OperationStatusReporter {
       const icon = icons[status.coId! % icons.length]
       console.groupCollapsed(`%c${status.id}${icon}->continue`, 'background-color:purple; color: white');
       console.count(`${status.id}->continue`);
-      console.log('result:', status.context);
+      console.log(status);
       console.groupEnd();
     })).subscribe();
 
@@ -40,8 +40,10 @@ export class OperationStatusConsoleReporter implements OperationStatusReporter {
     })).subscribe();
 
     operationStatusStore.ofStep(OperationStep.Fail).pipe(tap((status) => {
-      console.log(`%c${status.id}->fail`, 'background-color:red; color: white');
-      console.error(status.context); // assume it's an Error object
+      console.groupCollapsed(`%c${status.id}->fail`, 'background-color:red; color: white');
+      console.error(status); // assume it's an Error object
+      console.groupEnd();
+
     })).subscribe();
 
     operationStatusStore.ofStep(OperationStep.Success).pipe(tap((status) => {
@@ -49,6 +51,7 @@ export class OperationStatusConsoleReporter implements OperationStatusReporter {
       const id = status.id;
       const msg = `${id}->Success${icon}`;
       console.groupCollapsed(`%c${msg}`, 'background-color:#bada55; color: black');
+      console.log(status);
       console.count(msg);
       console.groupEnd();
     })).subscribe();
