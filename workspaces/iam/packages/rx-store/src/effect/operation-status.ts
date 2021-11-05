@@ -108,7 +108,7 @@ export class OperationStatus {
 
 export function ofType(...allowedType: string[]) {
   return filter((status: OperationStatus) => {
-    return status && allowedType.some(step => step === status.type);
+    return status && allowedType.some(type => type === status.type);
   });
 }
 

@@ -1,5 +1,4 @@
 import {
-  OperatorFunction,
   Observable,
   SchedulerLike,
   asyncScheduler,
@@ -75,7 +74,7 @@ export const timeOutMonitor = <T, R>(
     next(value) {
       if (startSelector(value)) {
         startValue = value;
-        if (!waitFor) {
+        if (waitFor) {
           scheduleTimeout();
         }
       }
