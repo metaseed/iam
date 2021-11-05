@@ -246,12 +246,6 @@
     },
     "@schematics/angular:directive": {
       "prefix": "ms"
-    },
-    "@ngrx/schematics:component": {
-      "styleext": "scss"
     }
-  },
-  "cli": {
-    "defaultCollection": "@ngrx/schematics"
   }
 }

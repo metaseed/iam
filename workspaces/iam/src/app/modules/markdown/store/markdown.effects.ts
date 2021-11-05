@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { StateSubject } from 'packages/rx-store/src/core';
@@ -7,7 +6,7 @@ import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from '../../shared/store';
 
 @Injectable()
 export class MarkdownEffects {
-  constructor(private router: Router, private rxStore: Store<any>,
+  constructor(private router: Router,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     ) { }
 

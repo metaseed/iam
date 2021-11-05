@@ -1,7 +1,6 @@
 import { Component, Input, Output, EventEmitter, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Document, MSG_DISPLAY_TIMEOUT } from 'core';
-import { Store } from '@ngrx/store';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { map } from 'rxjs/operators';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
@@ -23,7 +22,7 @@ export class DocItemComponent {
   @Output()
   show = new EventEmitter<Document>();
 
-  constructor(private router: Router, private store: Store<any>, private snackBar: MatSnackBar,
+  constructor(private router: Router, private snackBar: MatSnackBar,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     ) { }
 

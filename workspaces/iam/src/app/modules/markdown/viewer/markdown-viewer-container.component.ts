@@ -9,7 +9,6 @@ import {
   SubscriptionManager
 } from 'core';
 import { ViewChild } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { ElementRef } from '@angular/core';
 import { merge, asyncScheduler, Observable } from 'rxjs';
 
@@ -53,7 +52,6 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
   )
 
   constructor(
-    private store: Store<any>,
     private snackBar: MatSnackBar,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     @Inject(MARKDOWN_STORE_TOKEN) public markdownStore: IMarkdownStore,

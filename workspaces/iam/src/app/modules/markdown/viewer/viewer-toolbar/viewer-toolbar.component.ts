@@ -1,5 +1,4 @@
 import { Component, ViewChild, Inject } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { MatToolbar } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
 import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from '../../model/markdown.model';
@@ -12,7 +11,7 @@ import { MarkdownEffects } from '../../store/markdown.effects';
 })
 export class ViewerToolbarComponent {
   @ViewChild('toolbar') toolbar: MatToolbar;
-  constructor(private router: Router, private store: Store<any>,
+  constructor(private router: Router,
     @Inject(MARKDOWN_STORE_TOKEN) private markdownStore: IMarkdownStore,
     private markdownEffects: MarkdownEffects
     ) {}

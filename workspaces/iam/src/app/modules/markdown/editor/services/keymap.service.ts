@@ -4,7 +4,6 @@ import 'codemirror/keymap/emacs';
 import { Inject, Injectable } from '@angular/core';
 import { CommandService, Command } from 'core';
 import { MarkdownEditorService } from './markdown-editor.service';
-import { Store } from '@ngrx/store';
 import { DEFAULT_DOC_META } from 'shared';
 import { FileUploadService } from './file-upload.service';
 import * as CodeMirror from 'codemirror';

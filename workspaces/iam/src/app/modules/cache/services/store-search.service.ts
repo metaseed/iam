@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import Fuse from 'fuse.js';
 import { Document, ISearchItem, SearchResultSource } from 'core';
-import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 
 @Injectable()
 export class StoreSearchService {
-  constructor(private _store: Store<any>) {}
 
   private readonly options = {
     shouldSort: true,
