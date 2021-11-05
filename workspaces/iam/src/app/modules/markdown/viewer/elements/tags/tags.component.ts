@@ -27,9 +27,6 @@ export class TagsComponent extends DataSourceLines {
     super(store);
     this.modifyTags.pipe(
       debounceTime(2000),
-      // tap(tags => {
-      //   this.source = `tag: [${tags}]`;
-      // })
     ).subscribe();
   }
 
