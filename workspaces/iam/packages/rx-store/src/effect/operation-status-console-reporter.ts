@@ -1,19 +1,22 @@
 import { tap } from "rxjs";
 import { OperationStatusReporter } from "./operation-status-reporter.interface";
 import { OperationState } from "./operation-state";
-import { OperationStep } from ".";
+import { OperationStep } from "./operation-status";
 
 export class OperationStatusConsoleReporter implements OperationStatusReporter {
   setup(operationStatusStore: OperationState) {
+    const icons = ['💖','🧾','🔖','📘','🎉','😉','📚','👻','👀','✌','✨','🎨','⚽','🎁','🎗','🎞','🧧','🎇','🥼','🛒','👙','👜','🎭','🎀','🎄','💎','🧩','☎']
 
     operationStatusStore.ofStep(OperationStep.Start).pipe(tap((status) => {
-      console.groupCollapsed(`%c${status.id}->start`, 'background-color:#4285f4');
+      const icon = icons[status.coId!%icons.length]
+      console.groupCollapsed(`%c${status.id}->start${icon}`, 'background-color:#abdcfb; color: black');
       console.log(status)
       console.groupEnd();
     })).subscribe();
 
     operationStatusStore.ofStep(OperationStep.Continue).pipe(tap((status) => {
-      console.groupCollapsed(`%c${status.id}->continue`, 'background-color:#4285f4');
+      const icon = icons[status.coId!%icons.length]
+      console.groupCollapsed(`%c${status.id}${icon}->continue`, 'background-color:purple; color: white');
       console.count(`${status.id}->continue`);
       console.log('result:', status.context);
       console.groupEnd();
@@ -21,27 +24,28 @@ export class OperationStatusConsoleReporter implements OperationStatusReporter {
 
     operationStatusStore.ofStep(OperationStep.Retry).pipe(tap((status) => {
 
-      console.groupCollapsed(`%c${status.id}->retry`, 'background-color:#4285f4');
+      console.groupCollapsed(`%c${status.id}->retry`, 'background-color:#ffdc00; color: black');
       console.log(status)
       console.groupEnd();
 
     })).subscribe();
 
     operationStatusStore.ofStep(OperationStep.Timeout).pipe(tap((status) => {
-      console.groupCollapsed(`%c${status.id}->timeout`, 'color:#FF0');
+      console.groupCollapsed(`%c${status.id}->timeout`, 'background-color:darkorange; color: white');
       console.warn(status);
       console.groupEnd();
     })).subscribe();
 
     operationStatusStore.ofStep(OperationStep.Fail).pipe(tap((status) => {
-      console.log(`%c${status.id}->fail`, 'background-color:#F00');
+      console.log(`%c${status.id}->fail`, 'background-color:red; color: white');
       console.error(status.context); // assume it's an Error object
     })).subscribe();
 
     operationStatusStore.ofStep(OperationStep.Success).pipe(tap((status) => {
+      const icon = icons[status.coId!%icons.length]
       const id = status.id;
-      const msg = `${id}->Success`;
-      console.groupCollapsed(`%c${msg}`, 'background-color:#4285f4');
+      const msg = `${id}->Success${icon}`;
+      console.groupCollapsed(`%c${msg}`, 'background-color:#bada55; color: black');
       console.count(msg);
       console.groupEnd();
     })).subscribe();
