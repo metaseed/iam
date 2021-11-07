@@ -4,6 +4,7 @@ import { StateSubject } from "@rx-store/core";
 import { DocMemCacheService } from "app/modules/cache/services/mem-cache.service";
 import { Injectable } from "@angular/core";
 import { DocumentStatus } from "app/modules/core/model/doc-model/doc-status";
+import { map } from "rxjs/operators";
 
 @Injectable({ providedIn: 'root' })
 export class DocumentStore extends EntityCacheStore<number, Document> {
@@ -38,7 +39,10 @@ export class DocumentStore extends EntityCacheStore<number, Document> {
   searchResult_ = new StateSubject<SearchResult>();
 
   document$ = this.entity$;
+
+  docMeta$ = (id: number) => this.document$(id).pipe(map(d => d?.metaData));
   documents$ = this.entitiesOfIds$;
+  docMetas$ = (ids: number[]) => this.documents$(ids).pipe(map(doc => doc.map(d => d?.metaData)));
 
   getAllDocuments() { return Object.values(this.cache.entities) }
 

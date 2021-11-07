@@ -1,7 +1,7 @@
 import { Component, Input, Inject } from '@angular/core';
 import { DocMeta } from 'core';
 import { Router, NavigationExtras } from '@angular/router';
-import { map, filter } from 'rxjs/operators';
+import { map, filter, debounceTime } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { DataSourceLines } from '../data-source-lines';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
@@ -27,11 +27,11 @@ export class SubPageComponent  extends DataSourceLines{
     if (this.hasOpened) return;
 
     this.hasOpened = true;
-    let source = this.source;
 
-    this.pageList$ = of(this.store.getDocMetas(this.ids)).pipe(
+    this.pageList$ = this.store.docMetas$(this.ids).pipe(
       filter(metas => !!metas?.length),
-      map(metas => [...metas.filter(meta => !!meta)])
+      map(metas => [...metas.filter(meta => !!meta)]),
+      debounceTime(300)
     );
     const ids = this.ids;
     this.documentEffects.readDocMetas_.next({ids});
