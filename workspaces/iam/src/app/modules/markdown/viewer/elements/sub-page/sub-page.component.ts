@@ -2,10 +2,11 @@ import { Component, Input, Inject } from '@angular/core';
 import { DocMeta } from 'core';
 import { Router, NavigationExtras } from '@angular/router';
 import { map, filter, debounceTime } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { DataSourceLines } from '../data-source-lines';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
 import { DocumentStore } from 'app/modules/shared/store/document.store';
+import { DocEditorService } from 'app/modules/shared/doc-editor.service';
 
 @Component({
   selector: 'i-subpage',
@@ -17,8 +18,9 @@ export class SubPageComponent  extends DataSourceLines{
   public panelOpenState = false;
   constructor(private router: Router, private store: DocumentStore,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
+    docEditor: DocEditorService,
     ) {
-    super(store);
+    super(store, docEditor);
   }
 
   private hasOpened = false;

@@ -62,7 +62,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
             if (!sourceLine) return;
             this.markdownStore.documentMode_.next(DocumentMode.Edit);
             setTimeout(() => {
-              this.editorService.goToLine(sourceLine[0]);
+              this.editorService.gotoLine(sourceLine[0]);
             }, 0);
           }))
       .addSub(

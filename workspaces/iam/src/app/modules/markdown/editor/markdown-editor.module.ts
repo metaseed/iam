@@ -34,7 +34,15 @@ import { FileUploadComponent } from './codemirror-editor/file-upload/file-upload
     MaterialModule
   ],
   exports: [EditorToolbarComponent, MarkdownEditorComponent, CodemirrorComponent],
-  providers: [KeyMapService, MarkdownEditorService, DocSaveCoordinateService, CanDeactivateGuard],
+  providers: [
+    KeyMapService,
+    MarkdownEditorService,
+    DocSaveCoordinateService,
+    CanDeactivateGuard
+  ],
   entryComponents: [DocDirtyNotifyDialog]
 })
-export class MarkdownEditorModule {}
+export class MarkdownEditorModule {
+  // when module loaded initial the markdown-editor service to set the currentEditor in the DocEditorService in 'root'
+  constructor(private editor: MarkdownEditorService) { }
+}

@@ -1,10 +1,12 @@
-import { Directive, Input } from "@angular/core";
+import { Directive, Inject, Input } from "@angular/core";
+import { DocEditorService } from "app/modules/shared/doc-editor.service";
 import { DocumentStore } from "app/modules/shared/store/document.store";
+import { DocContent } from "core";
 @Directive()
 export class DataSourceLines {
 
-  public sourceLineStart: Number;
-  public sourceLineEnd: Number;
+  public sourceLineStart: number;
+  public sourceLineEnd: number;
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input("data-source-lines")
   public set sourceLines(value) {
@@ -13,7 +15,7 @@ export class DataSourceLines {
     this.sourceLineEnd = +match[2];
   }
 
-  constructor(private _store: DocumentStore) {
+  constructor(private _store: DocumentStore, private docEditor: DocEditorService) {
   }
 
   get source() {
@@ -23,11 +25,20 @@ export class DataSourceLines {
     return source;
   }
   set source(value) {
-    const originalContent = this._store.currentDocContentString$.state;
+    if(this.docEditor.currentEditor) {
+      this.docEditor.currentEditor.replaceRange(value + '\n', this.sourceLineStart,0, this.sourceLineEnd,0 )
+      return;
+    }
+
+    const originalContent = this._store.currentDocContent$.state;
+    const originalContentString = originalContent.content;
     const id = this._store.currentId_.state;
-    const [start, end] = this.getRange(originalContent);
-    const content = splice(originalContent, start, end - start, value);
+    const [start, end] = this.getRange(originalContentString);
+    const contentString = splice(originalContentString, start, end - start, value);
+    const content: DocContent = { ...originalContent, content: contentString }
     this._store.update({ id, changes: { content } });
+    // to workaround the editor load new content and clear dirty flags.
+    setTimeout(()=>this._store.updateCurrentDocStatus({ isEditorDirty: true }));
   }
 
   private getRange(content: string) {
