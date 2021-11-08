@@ -2,11 +2,12 @@ import { Component, Inject, Input } from "@angular/core";
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { DataSourceLines } from "../data-source-lines";
-import { Router } from "@angular/router";
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { debounceTime, Subject, tap } from "rxjs";
 import { DocumentStore } from "app/modules/shared/store/document.store";
 import { DocEditorService } from "app/modules/shared/doc-editor.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { MSG_DISPLAY_TIMEOUT } from "core";
 @Component({
   templateUrl: './tags.component.html',
   styleUrls: ['./tags.component.scss'],
@@ -21,14 +22,14 @@ export class TagsComponent extends DataSourceLines {
   private modifyTags = new Subject<string[]>();
 
   @Input() set tags(value: string) {
-    this.tagList = value.split(',').map(tag=>tag.trim()).filter(t => t !== '');
+    this.tagList = value.split(',').map(tag => tag.trim()).filter(t => t !== '');
   }
 
-  constructor(private router: Router, private store: DocumentStore, docEditor: DocEditorService) {
+  constructor(store: DocumentStore, docEditor: DocEditorService, private snackBar: MatSnackBar) {
     super(store, docEditor);
     this.modifyTags.pipe(
-      debounceTime(2000),
-      tap(tags=> this.source = `tag: [${tags.join(',')}]`)
+      debounceTime(1800),
+      tap(tags => this.source = `tag: [${tags.join(',')}]`)
     ).subscribe();
   }
 
@@ -36,6 +37,10 @@ export class TagsComponent extends DataSourceLines {
     const value = (event.value || '').trim();
 
     if (value) {
+      if(this.tagList.includes(value)){
+        this.snackBar.open(`tag ${value} already exist.`, 'ok', { duration: MSG_DISPLAY_TIMEOUT })
+        return;
+      }
       this.tagList.push(value);
       this.modifyTags.next(this.tagList);
     }
