@@ -15,6 +15,7 @@ import { CacheModule } from '../cache';
 import { CacheFacade } from './cache-facade';
 import { MatInputAutofocusDirective } from './directives/matinput-autofocus.directive';
 import { DocumentsEffects, DocumentStateFacade, DOCUMENT_EFFECTS_TOKEN } from './store';
+import { SearchModule } from './components/search/search.module';
 
 @NgModule({
   imports: [
@@ -26,6 +27,7 @@ import { DocumentsEffects, DocumentStateFacade, DOCUMENT_EFFECTS_TOKEN } from '.
     RouterModule,
     SplitPaneModule,
     CacheModule,
+    SearchModule
   ],
   declarations: [ReadingPositionIndicatorComponent, BottomNavigationComponent, ScrollHideDirective, MatInputAutofocusDirective],
   exports: [
@@ -37,7 +39,8 @@ import { DocumentsEffects, DocumentStateFacade, DOCUMENT_EFFECTS_TOKEN } from '.
     /* re-exporting */
     CommonModule,
     FormsModule,
-    CoreModule
+    CoreModule,
+    SearchModule
   ],
   providers: [
     /*should have no provides in shared module*/
