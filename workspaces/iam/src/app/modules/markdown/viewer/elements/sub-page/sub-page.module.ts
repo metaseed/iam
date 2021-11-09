@@ -8,7 +8,6 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import { WithCustomElementComponent } from '../element-registry';
 import { Type } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
-import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   imports: [CommonModule, MatSnackBarModule, MatIconModule, MatButtonModule, MatExpansionModule, MatInputModule],

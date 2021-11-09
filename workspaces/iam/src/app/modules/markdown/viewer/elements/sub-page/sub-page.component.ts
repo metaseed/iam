@@ -24,6 +24,7 @@ export class SubPageComponent  extends DataSourceLines{
   }
 
   private hasOpened = false;
+
   public onPanelOpen = () => {
     this.panelOpenState = true;
     if (this.hasOpened) return;
@@ -50,7 +51,8 @@ export class SubPageComponent  extends DataSourceLines{
 
   showDelete
   addId(id) {
-console.log(',,,,,,,,', id)
+    this.ids.push(+id);
+    this.source = `subpages: [${this.ids}]`
   }
 
   public pageList$: Observable<DocMeta[]>
