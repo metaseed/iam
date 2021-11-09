@@ -160,10 +160,11 @@ export class MarkdownViewerService {
   }
 
   private updateMeta = (meta) => {
+
     function isDiff(obj: object, withObj: object) {
-      for (const key of Object.keys(obj)) {
-        const value = obj[key];
-        if (!withObj.hasOwnProperty(key)) return true;
+      for (const [key, value] of Object.entries(obj)) {
+        if (!withObj?.hasOwnProperty(key)) return true;
+
         const withValue = withObj[key];
         if (value !== withValue) {
           if (typeof value === "object") {
@@ -177,19 +178,22 @@ export class MarkdownViewerService {
     }
 
     if (!meta) return meta;
+
     const doc = this.store.currentDocument$.state;
-    if (!doc || !doc.metaData) return meta;
+    if (!doc?.metaData) return meta;
+
     if (!isDiff(meta, doc.metaData)) return doc.metaData;
+
     const newMeta = {
       ...doc.metaData,
       ...meta,
     };
     asyncScheduler.schedule(
-      m => {
+      metaData => {
         this.store.update(
           {
             id: doc.id,
-            changes: { metaData: { ...doc.metaData, ...m } },
+            changes: { metaData },
           }
         );
       },
