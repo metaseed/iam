@@ -49,6 +49,9 @@ export class SubPageComponent  extends DataSourceLines{
   }
 
   showDelete
+  addId(id) {
+console.log(',,,,,,,,', id)
+  }
 
   public pageList$: Observable<DocMeta[]>
 

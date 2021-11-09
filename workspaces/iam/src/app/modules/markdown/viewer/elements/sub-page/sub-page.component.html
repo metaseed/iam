@@ -5,10 +5,29 @@
 >
   <mat-expansion-panel-header>
     <mat-panel-title> Subpages({{ ids.length }}) </mat-panel-title>
-    <mat-panel-description> Subpages of document </mat-panel-description>
-    <button mat-button >
-      <mat-icon>add</mat-icon>
-    </button>
+    <!-- <mat-panel-description> Subpages of document </mat-panel-description> -->
+    <div class="action-group" (click)="$event.stopImmediatePropagation()">
+      <div class="id-input-group">
+        <input
+          #input
+          class="id-input"
+          placeholder="add by id"
+          matInput
+          type="number"
+        />
+        <button
+          matSuffix
+          mat-icon-button
+          aria-label="add id"
+          (click)="addId(input.value)"
+        >
+          <mat-icon style="color: #000a">add</mat-icon>
+        </button>
+      </div>
+      <button mat-button>
+        <mat-icon style="color: #000a">zoom_in</mat-icon>
+      </button>
+    </div>
   </mat-expansion-panel-header>
   <div class="card-container">
     <div *ngFor="let meta of pageList$ | async" class="docs-card">

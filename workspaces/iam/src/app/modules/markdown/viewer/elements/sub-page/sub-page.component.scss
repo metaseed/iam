@@ -5,3 +5,34 @@
     top: 1rem;
     color: gray;
 }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.id-input-group {
+  display: flex;
+  border: lightgray solid 0.1rem;
+  padding-left: 1rem;
+  font-size: medium;
+  height: 3rem;
+  align-items: center;
+}
+
+.action-group {
+  display: flex;
+  align-items: center;
+  column-gap: 1rem;
+  margin-right: 1rem;
+}
+
+.id-input {
+  width: 6.5rem;
+  margin-top: 0.02rem;
+}
