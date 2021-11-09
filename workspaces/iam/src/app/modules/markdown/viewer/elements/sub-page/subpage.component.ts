@@ -54,7 +54,7 @@ export class SubPageComponent extends DataSourceLines {
   showDelete
   addId(id) {
     this.ids.push(+id);
-    this.source = `subpages: [${this.ids}]`
+    this.source = `subPage: [${this.ids}]`
   }
 
   addIdBySearch() {
