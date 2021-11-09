@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
   template: `<doc-search-list></doc-search-list>`
 })
 
-export class NameComponent implements OnInit {
+export class SearchPageComponent implements OnInit {
   constructor() { }
 
   ngOnInit() { }

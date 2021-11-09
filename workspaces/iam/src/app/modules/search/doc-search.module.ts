@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from 'shared';
 import { StoreSearchService } from '../cache/services/store-search.service';
-import { SearchRoutingModule } from './search-routing.module';
+import { SearchRoutingModule } from './doc-search-routing.module';
 import { MaterialModule } from 'material';
 
 @NgModule({
