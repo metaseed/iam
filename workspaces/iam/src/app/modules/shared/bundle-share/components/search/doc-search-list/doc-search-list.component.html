@@ -1,7 +1,8 @@
 <iam-doc-search-bar
   clickToggleEnable="false"
-  [scrollHide]="[{ container: search }]"
   ></iam-doc-search-bar>
+  <!--remove to use it in id search dialog, for now, need to find out solution later
+     [scrollHide]="[{ container: search }]" -->
 <div #search class="search-result">
   <doc-search-item
     [item]="searchItem"
