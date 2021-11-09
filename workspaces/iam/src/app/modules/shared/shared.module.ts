@@ -15,7 +15,7 @@ import { CacheModule } from '../cache';
 import { CacheFacade } from './cache-facade';
 import { MatInputAutofocusDirective } from './directives/matinput-autofocus.directive';
 import { DocumentsEffects, DocumentStateFacade, DOCUMENT_EFFECTS_TOKEN } from './store';
-import { SearchModule } from './components/search/search.module';
+import { SearchModule } from './bundle-share/components/search/search.module';
 
 @NgModule({
   imports: [
