@@ -7,19 +7,21 @@ import { DataSourceLines } from '../data-source-lines';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
 import { DocumentStore } from 'app/modules/shared/store/document.store';
 import { DocEditorService } from 'app/modules/shared/doc-editor.service';
+import { MatDialog } from '@angular/material/dialog';
+import { SubPageIdSearchComponent } from './subpage-id-search.component';
 
 @Component({
   selector: 'i-subpage',
   templateUrl: './subpage.component.html',
   styleUrls: ['./subpage.component.scss']
 })
-export class SubPageComponent  extends DataSourceLines{
+export class SubPageComponent extends DataSourceLines {
 
   public panelOpenState = false;
   constructor(private router: Router, private store: DocumentStore,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
-    docEditor: DocEditorService,
-    ) {
+    docEditor: DocEditorService, private dialog: MatDialog
+  ) {
     super(store, docEditor);
   }
 
@@ -37,7 +39,7 @@ export class SubPageComponent  extends DataSourceLines{
       debounceTime(300)
     );
     const ids = this.ids;
-    this.documentEffects.readDocMetas_.next({ids});
+    this.documentEffects.readDocMetas_.next({ ids });
   }
   public ids = [];
   @Input()
@@ -53,6 +55,13 @@ export class SubPageComponent  extends DataSourceLines{
   addId(id) {
     this.ids.push(+id);
     this.source = `subpages: [${this.ids}]`
+  }
+
+  addIdBySearch() {
+    const dialog = this.dialog.open(SubPageIdSearchComponent, {width: '100vw', height: '90vh'});
+    dialog.afterClosed().subscribe(
+      id =>  this.addId(id)
+    )
   }
 
   public pageList$: Observable<DocMeta[]>

@@ -9,10 +9,12 @@ import { WithCustomElementComponent } from '../element-registry';
 import { Type } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { SearchModule } from 'app/modules/shared/components/search/search.module';
+import { MatDialogModule } from '@angular/material/dialog';
+import { SubPageIdSearchComponent } from './subpage-id-search.component';
 
 @NgModule({
-  imports: [CommonModule, MatSnackBarModule, MatIconModule, MatButtonModule, MatExpansionModule, MatInputModule, SearchModule],
-  declarations: [SubPageComponent],
+  imports: [CommonModule, MatSnackBarModule, MatIconModule, MatButtonModule, MatExpansionModule, MatInputModule, SearchModule, MatDialogModule],
+  declarations: [SubPageComponent, SubPageIdSearchComponent],
   entryComponents: [SubPageComponent],
   exports: [SubPageComponent]
 })

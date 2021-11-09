@@ -1,5 +1,4 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'iam-doc-search-bar',
