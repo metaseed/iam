@@ -41,7 +41,7 @@ export class SubPageComponent extends DataSourceLines {
     const ids = this.ids;
     this.documentEffects.readDocMetas_.next({ ids });
   }
-  public ids = [];
+  public ids: number[] = [];
   @Input()
   public set pages(value: string) {
     this.ids = JSON.parse(value);
@@ -51,17 +51,23 @@ export class SubPageComponent extends DataSourceLines {
     }
   }
 
-  showDelete
+  delete(meta: DocMeta) {
+    const index = this.ids.indexOf(meta.id);
+    if (index !== -1) {
+      this.ids.splice(index, 1);
+      this.source = `subPage: [${this.ids}]`
+    }
+  }
   addId(id) {
     this.ids.push(+id);
     this.source = `subPage: [${this.ids}]`
   }
 
   addIdBySearch() {
-    const dialog = this.dialog.open(SubPageIdSearchComponent, {width: '100vw', height: '90vh'});
+    const dialog = this.dialog.open(SubPageIdSearchComponent, { width: '100vw', height: '90vh' });
 
     dialog.afterClosed().subscribe(
-      (r: ISearchItem) =>  this.addId(r.id)
+      (r: ISearchItem) => this.addId(r.id)
     )
   }
 

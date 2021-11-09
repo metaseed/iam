@@ -38,7 +38,7 @@
         <p>{{ meta.summary }}</p>
       </div>
       <p class="meta-version-date card-footer">
-        <button class="delete-button" mat-button (click)="showDelete = true">
+        <button class="delete-button" mat-button (click)="delete(meta)">
           <mat-icon>delete_forever</mat-icon>
         </button>
         <span class="meta-version"> v{{ meta.version }} </span>
