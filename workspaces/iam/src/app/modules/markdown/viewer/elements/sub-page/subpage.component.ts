@@ -1,5 +1,5 @@
 import { Component, Input, Inject } from '@angular/core';
-import { DocMeta } from 'core';
+import { DocMeta, ISearchItem } from 'core';
 import { Router, NavigationExtras } from '@angular/router';
 import { map, filter, debounceTime } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -59,8 +59,9 @@ export class SubPageComponent extends DataSourceLines {
 
   addIdBySearch() {
     const dialog = this.dialog.open(SubPageIdSearchComponent, {width: '100vw', height: '90vh'});
+
     dialog.afterClosed().subscribe(
-      id =>  this.addId(id)
+      (r: ISearchItem) =>  this.addId(r.id)
     )
   }
 
