@@ -6,7 +6,6 @@ import { BottomNavigationComponent } from './bottom-navigation/bottom-navigation
 import { RouterModule } from '@angular/router';
 import { SplitPaneModule } from './split-pane/ng2-split-pane';
 import { FormsModule } from '@angular/forms';
-import { ScrollHideDirective } from './scroll-hide/scroll-hide.directive';
 import { CoreModule, CACHE_FACADE_TOKEN } from 'core';
 import { DocEffectsUtil } from './store/document.effects.util';
 import { DatabaseModule } from 'database';
@@ -16,6 +15,7 @@ import { CacheFacade } from './cache-facade';
 import { MatInputAutofocusDirective } from './directives/matinput-autofocus.directive';
 import { DocumentsEffects, DocumentStateFacade, DOCUMENT_EFFECTS_TOKEN } from './store';
 import { SearchModule } from './bundle-share/components/search/search.module';
+import { ScrollHideModule } from './bundle-share/directives/scroll-hide/scroll-hide.module';
 
 @NgModule({
   imports: [
@@ -27,11 +27,14 @@ import { SearchModule } from './bundle-share/components/search/search.module';
     RouterModule,
     SplitPaneModule,
     CacheModule,
-    SearchModule
+    SearchModule,
+    ScrollHideModule
   ],
-  declarations: [ReadingPositionIndicatorComponent, BottomNavigationComponent, ScrollHideDirective, MatInputAutofocusDirective],
+  declarations: [
+    ReadingPositionIndicatorComponent,
+    BottomNavigationComponent,
+    MatInputAutofocusDirective],
   exports: [
-    ScrollHideDirective,
     MatInputAutofocusDirective,
     ReadingPositionIndicatorComponent,
     BottomNavigationComponent,
@@ -40,7 +43,8 @@ import { SearchModule } from './bundle-share/components/search/search.module';
     CommonModule,
     FormsModule,
     CoreModule,
-    SearchModule
+    SearchModule,
+    ScrollHideModule
   ],
   providers: [
     /*should have no provides in shared module*/
@@ -53,7 +57,7 @@ export class SharedModule {
       providers: [
         DocEffectsUtil,
         { provide: CACHE_FACADE_TOKEN, useClass: CacheFacade },
-        {provide: DOCUMENT_EFFECTS_TOKEN, useClass: DocumentsEffects},
+        { provide: DOCUMENT_EFFECTS_TOKEN, useClass: DocumentsEffects },
         DocumentStateFacade
       ]
     };
