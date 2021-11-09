@@ -11,7 +11,7 @@ export const ELEMENT_MODULE_LOAD_CALLBACKS_AS_ROUTES = [
   },
   {
     selector: 'i-subpage',
-    loadChildren: () => import('./sub-page/sub-page.module').then(m => m.SubPageModule)
+    loadChildren: () => import('./sub-page/subpage.module').then(m => m.SubPageModule)
   },
   {
     selector: 'i-code',

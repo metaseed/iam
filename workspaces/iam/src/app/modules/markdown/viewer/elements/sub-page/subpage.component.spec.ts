@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { SubPageComponent } from './sub-page.component';
+import { SubPageComponent } from './subpage.component';
 
 describe('SubPageComponent', () => {
   let component: SubPageComponent;

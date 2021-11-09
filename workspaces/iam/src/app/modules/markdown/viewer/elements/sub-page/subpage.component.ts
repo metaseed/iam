@@ -10,8 +10,8 @@ import { DocEditorService } from 'app/modules/shared/doc-editor.service';
 
 @Component({
   selector: 'i-subpage',
-  templateUrl: './sub-page.component.html',
-  styleUrls: ['./sub-page.component.scss']
+  templateUrl: './subpage.component.html',
+  styleUrls: ['./subpage.component.scss']
 })
 export class SubPageComponent  extends DataSourceLines{
 
