@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Inject, Output, ViewChild } from '@angular/core';
 import { ISearchItem } from 'core';
 import { DocSearchBarComponent } from '../doc-search-bar/doc-search-bar.component';
 import { tap } from 'rxjs/operators';
@@ -14,6 +14,9 @@ import { DocumentStore } from 'app/modules/shared/store/document.store';
 export class DocSearchListComponent implements AfterViewInit {
   @ViewChild(DocSearchBarComponent)
   docSearchComponent: DocSearchBarComponent;
+
+  @Output()
+  onClick = new EventEmitter();
 
   constructor(private _store: DocumentStore,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,

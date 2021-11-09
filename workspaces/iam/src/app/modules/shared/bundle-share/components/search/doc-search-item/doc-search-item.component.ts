@@ -1,6 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ISearchItem, ITextMatch } from 'core';
-import { Router, NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'doc-search-item',
@@ -10,18 +9,9 @@ import { Router, NavigationExtras } from '@angular/router';
 export class DocSearchItemComponent {
   @Input()
   item: ISearchItem;
-  constructor(private router: Router) {}
 
-  onClick(event) {
-    const navigationExtras: NavigationExtras = {
-      queryParams: {
-        id: this.item.id,
-        title: this.item.title,
-        f: 'md'
-      }
-    };
-    this.router.navigate(['/doc'], navigationExtras);
-  }
+  @Output()
+  onClick = new EventEmitter();
 
   getMatches(textMatch: ITextMatch) {
     const fragment = textMatch.fragment;

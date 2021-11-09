@@ -2,7 +2,7 @@
   <mat-card-header>
     <!--this div is needed to do layout-->
     <div></div>
-    <mat-card-title class="title" (click)="onClick($event)">{{ item.title }}</mat-card-title>
+    <mat-card-title class="title" (click)="onClick.emit({id: item.id, title: item.title})">{{ item.title }}</mat-card-title>
     <mat-card-subtitle> Score: {{ item.score }} Id: {{item.id}}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>

@@ -4,7 +4,7 @@
   <!--remove to use it in id search dialog, for now, need to find out solution later
      [scrollHide]="[{ container: search }]" -->
 <div #search class="search-result">
-  <doc-search-item
+  <doc-search-item (onClick)="onClick.emit($event)"
     [item]="searchItem"
     *ngFor="let searchItem of (searchResult$ | async); trackBy: trackByFunc"
   ></doc-search-item>
