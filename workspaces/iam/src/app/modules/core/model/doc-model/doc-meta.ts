@@ -1,4 +1,3 @@
-import { Observable, of } from 'rxjs';
 import picaLib from 'pica';
 
 const pica = picaLib();
@@ -118,6 +117,7 @@ export class DocMeta {
       meta.updateDate = meta.updateDate && new Date(meta.updateDate);
       return meta;
     } catch (err) {
+      console.log(jsonString)
       console.error(err);
       return null;
     }
