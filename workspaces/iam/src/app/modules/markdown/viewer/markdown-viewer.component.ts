@@ -48,7 +48,7 @@ export class MarkdownViewerComponent extends SubscriptionManager {
     (<any>document).iamMarkdownIsPureViewMode = true;
     this.hostElement = elementRef.nativeElement;
     const container = this.hostElement;
-    this.lozad = lozad('img[data-src]', { container });
+    this.lozad = lozad('img[data-src]', { container, enableAutoReload: true });
 
     super.addSub(
       this.updateContent$.pipe(
