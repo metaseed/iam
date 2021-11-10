@@ -1,6 +1,7 @@
 import { combineLatest, distinctUntilChanged, filter, map, startWith } from "rxjs";
 import { ChangeContent, EntityChangeType } from ".";
 import { StateSubject, state } from "../../core";
+import { isDevMode } from "../../core/dev-mode-checking";
 import { EntityCache } from "../mem-cache/models";
 import { EntityDataService, ID } from "../model/entity-data-service.interface";
 import { EntityDataServiceStore } from "./entity-data-service-store";
@@ -30,14 +31,12 @@ export class EntityCacheStore<I extends ID, T> extends EntityDataServiceStore<T>
   currentEntity$ = state(
     combineLatest([
       this.currentId_.pipe(distinctUntilChanged()),
-      state(this.changes$.pipe(
-        filter(change => {
-          const id = this.currentId_.state;
-          if (id == undefined) return false;
-          return this.isChangeRelatedToId(change, [id]);
-        })
-      ))
+      this.changes$
     ]).pipe(
+      filter(([id, change]) => {
+        if (id == undefined) return false;
+        return this.isChangeRelatedToId(change, [id]);
+      }),
       map(() => {
         const id = this.currentId_.state;
         const entity = id != undefined ? this.cache.entities[id] : undefined;
@@ -65,6 +64,11 @@ export class EntityCacheStore<I extends ID, T> extends EntityDataServiceStore<T>
 
   constructor(protected cache: EntityCacheService<T>) {
     super(cache);
+
+    if (isDevMode()) {
+      if (!globalThis.__RX_STORE__) globalThis.__RX_STORE__ = {};
+      globalThis.__RX_STORE__.MemDataService = this;
+    }
   }
 
 }

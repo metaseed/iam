@@ -43,7 +43,7 @@ export class MemEntityCache<T> extends EntityDataServiceBase<T> implements Entit
 
   delete(id: ID): Observable<ID | undefined> {
     if (this.ids.indexOf(id) === -1) return of(toUndefined(id, `delete: not deleted: ${id.toString()} not exist`));
-    this.delete(id);
+    this.deleteId(id);
     return of(id);
   }
 
