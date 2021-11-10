@@ -162,6 +162,8 @@ export class MarkdownViewerService {
   private updateMeta = (meta) => {
 
     function isDiff(obj: object, withObj: object) {
+      if (obj == null && withObj != null || withObj == null && obj != null) return true;
+
       for (const [key, value] of Object.entries(obj)) {
         if (!withObj?.hasOwnProperty(key)) return true;
 

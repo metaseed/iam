@@ -162,7 +162,7 @@ export class MetaPlugin {
           token.content += '</i-tag>'
         }
         const subPages = meta?.subPage || meta?.subPages || meta?.subpage || meta?.subpages;
-        if (subPages?.length) {
+        if (subPages) { // show subpage even lenth is 0
           // put web component in html block; should not render it directly.
           token = state.push('html_block', '', 0);
           token.content = `<i-subpage data-source-lines="[${subPagesLineStart}, ${subPagesLineEnd}]" pages="[${subPages}]"></i-subpage>`
