@@ -1,4 +1,5 @@
-1. `ctrl+shift+b` to compile and serve
+1. `ctrl+shift+b` to compile and serve or 
+  open a terminal console and run npm start
 1. `F5` to launch 'chrome' and debug
 
 ## start

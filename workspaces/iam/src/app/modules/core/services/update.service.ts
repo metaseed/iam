@@ -2,6 +2,7 @@ import { Component, OnInit, Injectable } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
 import { interval, Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MSG_DISPLAY_TIMEOUT } from 'core';
 
 @Injectable()
 export class UpdateService {
@@ -17,7 +18,7 @@ export class UpdateService {
         event.available
       );
       const snackBarRef = this.snackBar.open('Newer version of the app is available', 'Refresh', {
-        duration: 10
+        duration: MSG_DISPLAY_TIMEOUT
       });
       snackBarRef.onAction().subscribe(() => this.activateUpdate());
     });

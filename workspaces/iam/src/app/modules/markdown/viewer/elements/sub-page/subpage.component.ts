@@ -1,5 +1,5 @@
 import { Component, Input, Inject } from '@angular/core';
-import { DocMeta, ISearchItem, ManageSubscription } from 'core';
+import { DocMeta, ISearchItem, ManageSubscription, MSG_DISPLAY_TIMEOUT } from 'core';
 import { Router, NavigationExtras } from '@angular/router';
 import { map, filter, debounceTime, tap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
@@ -9,6 +9,7 @@ import { DocumentStore } from 'app/modules/shared/store/document.store';
 import { DocEditorService } from 'app/modules/shared/doc-editor.service';
 import { MatDialog } from '@angular/material/dialog';
 import { SubPageIdSearchComponent } from './subpage-id-search.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'i-subpage',
@@ -22,7 +23,8 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
   private metaSub: Subscription;
   constructor(private router: Router, private store: DocumentStore,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
-    docEditor: DocEditorService, private dialog: MatDialog
+    docEditor: DocEditorService, private dialog: MatDialog,
+    private snackbar: MatSnackBar
   ) {
     super(store, docEditor);
     super.addSub(this.subs);
@@ -69,7 +71,14 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
       this.source = `subPage: [${this.ids}]`
     }
   }
+
   addId(id) {
+    if(this.ids.includes(+id)){
+      this.snackbar.open(`id ${id} already included`,'ok', {
+        duration: MSG_DISPLAY_TIMEOUT
+      })
+      return;
+    }
     this.ids.push(+id);
     this.subPagesChanged = true;
     this.source = `subPage: [${this.ids}]`
