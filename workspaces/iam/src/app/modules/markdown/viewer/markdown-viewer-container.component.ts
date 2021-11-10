@@ -67,7 +67,7 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
     super();
   }
 
-  container: IContainer;
+  private container: IContainer;
   scrollDown$: Observable<ScrollEvent>;
 
   ngAfterViewInit() {

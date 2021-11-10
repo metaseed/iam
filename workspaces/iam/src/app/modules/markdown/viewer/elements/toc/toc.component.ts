@@ -10,7 +10,7 @@ import {
 import { startWith, subscribeOn, tap } from 'rxjs/operators';
 import { combineLatest, asapScheduler } from 'rxjs'; // rxjs 6
 import { TocItem, TocService } from '../../services/toc.service';
-import { ScrollService, SubscriptionManager } from 'core';
+import { SubscriptionManager } from 'core';
 import { Title } from '@angular/platform-browser';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Breakpoints } from '@angular/cdk/layout';
@@ -34,9 +34,11 @@ export class TocComponent extends SubscriptionManager implements OnInit, AfterVi
   isSmallScreen: boolean;
   isCollapsed = true;
   isEmbedded = false;
+  h1Count:number;
   @ViewChildren('tocItem')
   private items: QueryList<ElementRef>;
   public primaryMax = 4;
+  private scrollContainer: Element;
   tocList: TocItem[];
 
   static prepareTitleAndToc(
@@ -77,7 +79,6 @@ export class TocComponent extends SubscriptionManager implements OnInit, AfterVi
 
   constructor(
     breakpointObserver: BreakpointObserver,
-    private scrollService: ScrollService,
     public tocService: TocService,
     private elementRef: ElementRef,
     private location: Location
@@ -100,11 +101,11 @@ export class TocComponent extends SubscriptionManager implements OnInit, AfterVi
       this.tocService.tocList.pipe(
         subscribeOn(asapScheduler),
         tap(tocList => {
-          const itemCount = count(tocList, item => item.level !== 'h1');
+          this.h1Count = count(tocList, item => item.level !== 'h1');
           this.type =
-            itemCount > 0
+            this.h1Count > 0
               ? this.isEmbedded
-                ? itemCount > this.primaryMax
+                ? this.h1Count > this.primaryMax
                   ? 'EmbeddedExpandable'
                   : 'EmbeddedSimple'
                 : 'Floating'
@@ -116,6 +117,7 @@ export class TocComponent extends SubscriptionManager implements OnInit, AfterVi
   }
 
   ngAfterViewInit() {
+    this.scrollContainer = document.getElementsByClassName('viewer-container')[0];
     if (!this.isEmbedded) {
       // We use the `asap` scheduler because updates to `activeItemIndex$` are triggered by DOM changes,
       // which, in turn, are caused by the rendering that happened due to a ChangeDetection.
@@ -163,7 +165,7 @@ export class TocComponent extends SubscriptionManager implements OnInit, AfterVi
   }
 
   toTop() {
-    this.scrollService.scrollToTop();
+    this.scrollContainer.scrollTop = 0;
   }
   toggleToc() {
     this.show = !this.show;
