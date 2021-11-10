@@ -1,4 +1,4 @@
-<input style="display: none" type="file" [accept]="accept" (change)="onFileChanged($event)" #imageUpload>
+<input style="display: none" type="file" [accept]="accept" (change)="onFileChanged($event)"  #imageUpload>
 <div>
   <div class="mat-simple-snackbar">
     <span *ngIf="showMessage">{{data.message}}</span>

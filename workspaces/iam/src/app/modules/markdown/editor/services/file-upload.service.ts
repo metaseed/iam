@@ -51,7 +51,7 @@ export class FileUploadService {
                 })
               )
               .subscribe({
-                next(event: HttpEvent<any>) {
+                next:(event: HttpEvent<any>) =>{
                   switch (event.type) {
                     case HttpEventType.UploadProgress:
                       const progress = Math.round(
@@ -68,7 +68,7 @@ export class FileUploadService {
                       break;
                   }
                 },
-                error(err) {
+                error: (err) =>{
                   snackBar.dismiss();
                   this._snackBar.open(err.error.message, "ok", {
                     duration: 2000,

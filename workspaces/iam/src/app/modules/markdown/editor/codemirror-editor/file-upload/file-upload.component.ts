@@ -46,16 +46,19 @@ export class FileUploadComponent {
       this.progressPercent = percent;
     });
   }
+
   get hasAction(): boolean {
     return !!this.data.action;
   }
+
   action() {
     if (this.data.action === "cancel") {
       this.data.cancelAction();
       return;
     }
-    this.data.selectFile();
-    // this.snackBarRef.dismissWithAction();
+
     this.imageUpload.nativeElement.click(); // show file selection dialog;
+    this.data.selectFile();
+    this.data.action = 'cancel';
   }
 }
