@@ -22,8 +22,8 @@ export class DocumentsEffects extends EffectManager {
     super();
     this.addReporter(new OperationStatusConsoleReporter());
   }
-  createDocument_ = new EffectStateSubject<Pick<DocMeta, 'format'>>().addMonitoredEffect(
 
+  createDocument_ = new EffectStateSubject<Pick<DocMeta, 'format'>>().addMonitoredEffect(
     effectInfo =>
       pipe(
         tap<Pick<DocMeta, 'format'>>(state => {

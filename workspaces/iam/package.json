@@ -7,7 +7,7 @@
     "ng": "ng",
     "preinstall": "node ./check-npm.js",
     "start": "ng serve --host=0.0.0.0",
-    "hmr": "ng serve --hmr --host=0.0.0.0",
+    "hmr": "ng serve --configuration hmr --open --host=0.0.0.0",
     "build_raw": "ng build --configuration production --named-chunks --optimization=false",
     "build": "ng build --configuration production --named-chunks",
     "update:monaco": "ncp ../../node_modules/monaco-editor/min/ ./assets/monaco-editor/",
