@@ -1,8 +1,8 @@
 import { Component, Input, Inject } from '@angular/core';
-import { DocMeta, ISearchItem } from 'core';
+import { DocMeta, ISearchItem, ManageSubscription } from 'core';
 import { Router, NavigationExtras } from '@angular/router';
-import { map, filter, debounceTime } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { map, filter, debounceTime, tap } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
 import { DataSourceLines } from '../data-source-lines';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
 import { DocumentStore } from 'app/modules/shared/store/document.store';
@@ -15,38 +15,48 @@ import { SubPageIdSearchComponent } from './subpage-id-search.component';
   templateUrl: './subpage.component.html',
   styleUrls: ['./subpage.component.scss']
 })
-export class SubPageComponent extends DataSourceLines {
+export class SubPageComponent extends ManageSubscription(DataSourceLines) {
 
+  private subs = new Subscription();
   public panelOpenState = false;
+  private metaSub: Subscription;
   constructor(private router: Router, private store: DocumentStore,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     docEditor: DocEditorService, private dialog: MatDialog
   ) {
     super(store, docEditor);
+    super.addSub(this.subs);
   }
 
-  private hasOpened = false;
+  private subPagesChanged = false;
 
   public onPanelOpen = () => {
     this.panelOpenState = true;
-    if (this.hasOpened) return;
+    if (!this.subPagesChanged) return;
 
-    this.hasOpened = true;
+    this.subPagesChanged = false;
 
-    this.pageList$ = this.store.docMetas$(this.ids).pipe(
+    this.subs.remove(this.metaSub);
+    this.metaSub = this.store.docMetas$(this.ids).pipe(
       filter(metas => !!metas?.length),
       map(metas => [...metas.filter(meta => !!meta)]),
-      debounceTime(300)
-    );
+      debounceTime(300),
+      tap(metas=> this.pageList = metas)
+    ).subscribe();
+    this.subs.add(this.metaSub);
+
     const ids = this.ids;
     this.documentEffects.readDocMetas_.next({ ids });
   }
+
   public ids: number[] = [];
+  public pageList: DocMeta[] = [];
+
   @Input()
   public set pages(value: string) {
     this.ids = JSON.parse(value);
+    this.subPagesChanged = true;
     if (this.panelOpenState) {
-      this.hasOpened = false;
       this.onPanelOpen();
     }
   }
@@ -55,11 +65,13 @@ export class SubPageComponent extends DataSourceLines {
     const index = this.ids.indexOf(meta.id);
     if (index !== -1) {
       this.ids.splice(index, 1);
+      this.subPagesChanged = true;
       this.source = `subPage: [${this.ids}]`
     }
   }
   addId(id) {
     this.ids.push(+id);
+    this.subPagesChanged = true;
     this.source = `subPage: [${this.ids}]`
   }
 

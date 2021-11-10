@@ -16,7 +16,7 @@ type Constructor<T> = new (...args: any[]) => T;
  *
  * Note: if the component implements OnDestroy, do remember calling super.ngOnDestroy()
  */
-export function ManageSubscription<T extends Constructor<{ ngOnDestroy?() }>>(Base: T) {
+export function ManageSubscription<T extends Constructor<any>>(Base: T) {
   return class extends Base implements OnDestroy {
     public subscriptions: Subscription[] = [];
 

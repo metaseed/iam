@@ -1,10 +1,10 @@
 import { Document, SearchResult } from "core";
 import { EntityCacheStore, EntityChangeType, ID } from "@rx-store/entity";
-import { StateSubject } from "@rx-store/core";
+import { state, StateSubject } from "@rx-store/core";
 import { DocMemCacheService } from "app/modules/cache/services/mem-cache.service";
 import { Injectable } from "@angular/core";
 import { DocumentStatus } from "app/modules/core/model/doc-model/doc-status";
-import { map } from "rxjs/operators";
+import { distinctUntilChanged, map } from "rxjs/operators";
 
 @Injectable({ providedIn: 'root' })
 export class DocumentStore extends EntityCacheStore<number, Document> {
@@ -14,9 +14,14 @@ export class DocumentStore extends EntityCacheStore<number, Document> {
 
   currentDocument$ = this.currentEntity$;
 
+  // meta update would trigger this too
   currentDocContent$ = this.currentEntity$.map(doc => doc?.content);
 
-  currentDocContentString$ = this.currentDocContent$.map(content => content?.content ?? '');
+  currentDocContentString$ = state(this.currentDocContent$.pipe(
+    map(content => content?.content ?? ''),
+    // meta update would trigger this too, so use distinctUntilChanged to filter out
+    distinctUntilChanged())
+  );
 
   currentDocStatus$ = this.currentEntity$.map(doc => doc?.documentStatus);
 

@@ -30,7 +30,7 @@
     </div>
   </mat-expansion-panel-header>
   <div class="card-container">
-    <div *ngFor="let meta of pageList$ | async" class="docs-card">
+    <div *ngFor="let meta of pageList" class="docs-card">
       <div class="card-body" (click)="onShow(meta)">
         <section>{{ meta.title }}</section>
         <span class="doc-id">{{ meta.id }}</span>

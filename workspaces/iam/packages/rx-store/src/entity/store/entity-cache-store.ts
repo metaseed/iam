@@ -1,4 +1,4 @@
-import { combineLatest, distinctUntilChanged, filter, map } from "rxjs";
+import { combineLatest, distinctUntilChanged, filter, map, startWith } from "rxjs";
 import { ChangeContent, EntityChangeType } from ".";
 import { StateSubject, state } from "../../core";
 import { EntityCache } from "../mem-cache/models";
@@ -14,14 +14,16 @@ export class EntityCacheStore<I extends ID, T> extends EntityDataServiceStore<T>
   entity$(id: I) {
     return this.changes$.pipe(
       filter(change => this.isChangeRelatedToId(change, [id])),
-      map(() => this.cache.entities[id])
+      map(() => this.cache.entities[id]),
+      startWith(this.cache.entities[id])
     );
   }
 
   entitiesOfIds$(ids: I[]) {
     return this.changes$.pipe(
       filter(change => this.isChangeRelatedToId(change, ids)),
-      map(() => ids.map(id => this.cache.entities[id]))
+      map(() => ids.map(id => this.cache.entities[id])),
+      startWith(ids.map(id => this.cache.entities[id]))
     );
   }
 
