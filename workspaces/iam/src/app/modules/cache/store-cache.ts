@@ -99,21 +99,23 @@ export class StoreCache implements ICache {
 
   readDocContent(id: number, title: string, format: string): Observable<DocContent> {
     return this.nextLevelCache.readDocContent(id, title, format).pipe(
-      filter(docContent => {
+      tap(docContent => {
         // no data in next level, but the next level cache should further fetch from its next level. we would receive it.
-        if (!docContent) return false;
+        if (!docContent) {
+          console.warn('doc content from next cache is empty')
+          return;
+        }
 
         if (docContent.isDeleted) {
           this._store.delete(docContent.id);
         }
 
         const document = this._store.getDocument(id);
-        if (document?.content?.sha === docContent.sha)
-          return false; // nothing changed.
+        if (document?.content?.sha === docContent.sha) {
+          console.log('content sha in mem is the same with the sha from next cache')
+          return; // nothing changed.
+        }
 
-        return true;
-      }),
-      tap(docContent =>
         this.nextLevelCache
           .readDocMeta(id)
           .pipe(
@@ -141,7 +143,7 @@ export class StoreCache implements ICache {
               throw err;
             })
           ).subscribe()
-      )
+      })
 
     );
   }

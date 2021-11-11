@@ -31,12 +31,14 @@ export class EntityCacheStore<I extends ID, T> extends EntityDataServiceStore<T>
   currentEntity$ = state(
     combineLatest([
       this.currentId_.pipe(distinctUntilChanged()),
-      this.changes$
+      state(this.changes$.pipe(
+        filter(change => {
+          const id = this.currentId_.state;
+          if (id == undefined) return false;
+          return this.isChangeRelatedToId(change, [id]);
+        })
+      ))
     ]).pipe(
-      filter(([id, change]) => {
-        if (id == undefined) return false;
-        return this.isChangeRelatedToId(change, [id]);
-      }),
       map(() => {
         const id = this.currentId_.state;
         const entity = id != undefined ? this.cache.entities[id] : undefined;
