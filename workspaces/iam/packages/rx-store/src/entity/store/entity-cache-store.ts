@@ -1,4 +1,4 @@
-import { combineLatest, distinctUntilChanged, filter, map, startWith } from "rxjs";
+import { combineLatest, distinctUntilChanged, filter, map, merge, startWith, tap } from "rxjs";
 import { ChangeContent, EntityChangeType } from ".";
 import { StateSubject, state } from "../../core";
 import { isDevMode } from "../../core/dev-mode-checking";
@@ -28,22 +28,26 @@ export class EntityCacheStore<I extends ID, T> extends EntityDataServiceStore<T>
     );
   }
 
+
+  private currentEntity = map(() => {
+    const id = this.currentId_.state;
+    const entity = id != undefined ? this.cache.entities[id] : undefined;
+    return entity;
+  })
   currentEntity$ = state(
-    combineLatest([
-      this.currentId_.pipe(distinctUntilChanged()),
+    merge(
+      this.currentId_.pipe(
+        distinctUntilChanged(),
+        this.currentEntity
+      ),
       state(this.changes$.pipe(
         filter(change => {
           const id = this.currentId_.state;
           if (id == undefined) return false;
           return this.isChangeRelatedToId(change, [id]);
-        })
+        }),
+        this.currentEntity
       ))
-    ]).pipe(
-      map(() => {
-        const id = this.currentId_.state;
-        const entity = id != undefined ? this.cache.entities[id] : undefined;
-        return entity;
-      })
     )
   );
 
