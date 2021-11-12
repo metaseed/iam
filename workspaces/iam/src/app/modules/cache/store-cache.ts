@@ -52,7 +52,7 @@ export class StoreCache implements ICache {
       tap(doc => {
         this._store.document.add(doc.content);
         this._store.docMeta.add(doc.metaData);
-        this._store.currentId_.next(doc.id);
+        this._store.currentId_.next(doc.metaData.id);
       })
     );
   }

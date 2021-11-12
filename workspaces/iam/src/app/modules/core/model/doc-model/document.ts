@@ -3,7 +3,6 @@ import { DocContent } from './doc-content';
 import { DocumentStatus } from './doc-status';
 
 export interface IDocument {
-  id: number;
   metaData: DocMeta;
   content?: DocContent;
 }
@@ -17,10 +16,8 @@ export enum DocFormat {
 
 export class Document implements IDocument, IDocumentTempState {
   constructor(
-    public id: number,
     public metaData: DocMeta,
-    public content?: DocContent,
-    public documentStatus = new DocumentStatus(id)
+    public content?: DocContent
   ) {
   }
 }

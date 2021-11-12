@@ -103,8 +103,8 @@ export class DocumentsEffects extends EffectManager {
           if (meta.id === NEW_DOC_ID) {
             return this.cacheFacade.CreateDocument(content, format).pipe(
               tap(d => {
-                this.deleteDocument_.next({ id: d.id });
-                this.util.modifyUrlAfterSaved(d.id, newTitle, format);
+                this.deleteDocument_.next({ id: d.metaData.id });
+                this.util.modifyUrlAfterSaved(d.metaData.id, newTitle, format);
                 this.snackbar.open('New document saved!', 'OK');
               }),
             );
@@ -113,7 +113,7 @@ export class DocumentsEffects extends EffectManager {
               .updateDocument(meta, content, state.forceUpdate)
               .pipe(
                 tap(d => {
-                  this.util.modifyUrlAfterSaved(d.id, newTitle, format);
+                  this.util.modifyUrlAfterSaved(d.metaData.id, newTitle, format);
                   console.log('Saved!');
                 })
               );

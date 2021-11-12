@@ -48,17 +48,13 @@ export class DatabaseCacheSaver {
       )
     ).pipe(
       map(([content, meta]) => {
-        let status = this.docFacade.getCurrentDocumentStatusState();
-        return new Document(docMeta.id, docMeta, docContent, {
-          ...status,
-          isEditorDirty: false,
-          isDbDirty: true
-        });
+        this.store.updateCurrentDocStatus({isEditorDirty: false, isDbDirty: true});
+        return new Document( docMeta, docContent);
       }),
       switchMap(doc => {
-        const ro = this.db.put<DirtyDocument>(DataTables.DirtyDocs, new DirtyDocument(doc.id));
+        const ro = this.db.put<DirtyDocument>(DataTables.DirtyDocs, new DirtyDocument(doc.metaData.id));
         if (forceSave) {
-          return ro.pipe(switchMap(r => this.saveToNet(doc.id)));
+          return ro.pipe(switchMap(r => this.saveToNet(doc.metaData.id)));
         } else {
           return ro.pipe(map(r => doc));
         }

@@ -84,7 +84,7 @@ export class GithubCache implements ICache {
                 return repo.issue.edit(id, data).pipe(
                   map(() => {
                     const docContent = new DocContent(id, content, file.content.sha);
-                    const doc = new Document(id, meta, docContent);
+                    const doc = new Document(meta, docContent);
                     return doc;
                   })
                 );
@@ -327,7 +327,6 @@ export class GithubCache implements ICache {
                 }),
                 map(() => {
                   const doc = new Document(
-                    meta.id,
                     meta,
                     new DocContent(meta.id, content, file.content.sha)
                   );
