@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import { ElementsLoader } from './elements-loader';
-import { Logger } from 'core';
+import { LogService } from 'core';
 
 @Component({
   selector: 'i-l',
@@ -13,7 +13,7 @@ export class LazyCustomElementComponent implements OnInit {
   constructor(
     private elementRef: ElementRef,
     private elementsLoader: ElementsLoader,
-    private logger: Logger
+    private logger: LogService
   ) {}
 
   ngOnInit() {

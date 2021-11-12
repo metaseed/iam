@@ -4,7 +4,7 @@ import {
   DocContent,
   Document,
   DocFormat,
-  Logger,
+  LogService,
   SearchResult,
   SearchResultSource
 } from 'core';
@@ -23,7 +23,7 @@ export class StoreCache implements ICache {
 
   constructor(
     private _store: DocumentStore,
-    private _logger: Logger,
+    private _logger: LogService,
     private _storeSearchService: StoreSearchService,
   ) { }
 

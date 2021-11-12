@@ -1,4 +1,4 @@
-import { ICache, Logger, NET_CACHE_TOKEN, DB_CACHE_TOKEN, STORE_CACHE_TOKEN } from 'core';
+import { ICache, LogService, NET_CACHE_TOKEN, DB_CACHE_TOKEN, STORE_CACHE_TOKEN } from 'core';
 import { Injectable, Inject } from '@angular/core';
 import { DocumentStore } from './store/document.store';
 @Injectable({
@@ -7,7 +7,7 @@ import { DocumentStore } from './store/document.store';
 export class CacheFacade{
   constructor(
     store: DocumentStore,
-    _logger: Logger,
+    _logger: LogService,
     @Inject(NET_CACHE_TOKEN) githubCache: ICache,
     @Inject(DB_CACHE_TOKEN) dbCache: ICache,
     @Inject(STORE_CACHE_TOKEN) private storeCache: ICache,

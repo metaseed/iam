@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { from as fromPromise, Observable } from 'rxjs';
 import { first, map, share } from 'rxjs/operators';
-import { Logger } from 'core';
+import { LogService } from 'core';
 
 type PrettyPrintOne = (code: string, language?: string, linenums?: number | boolean) => string;
 
@@ -13,7 +13,7 @@ type PrettyPrintOne = (code: string, language?: string, linenums?: number | bool
 export class PrettyPrinter {
   private prettyPrintOne: Observable<PrettyPrintOne>;
 
-  constructor(private logger: Logger) {
+  constructor(private logger: LogService) {
     this.prettyPrintOne = fromPromise(this.getPrettyPrintOne()).pipe(share());
   }
 

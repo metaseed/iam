@@ -7,7 +7,7 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { Logger } from 'core';
+import { LogService } from 'core';
 import { PrettyPrinter } from './pretty-printer.service';
 import { CopierService } from 'packages/copier.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -115,7 +115,7 @@ export class CodeComponent implements OnChanges {
     private snackbar: MatSnackBar,
     private pretty: PrettyPrinter,
     private copier: CopierService,
-    private logger: Logger
+    private logger: LogService
   ) {}
 
   ngOnChanges() {
