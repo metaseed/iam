@@ -47,7 +47,7 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
         )
       );
 
-      const ids = this.ids;
+      const { ids } = this;
       this.documentEffects.readDocMetas_.next({ ids });
     }
   })();
