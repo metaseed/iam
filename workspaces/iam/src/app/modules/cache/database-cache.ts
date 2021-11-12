@@ -139,7 +139,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
     return concat(FromDB$, fromNext$);
   }
 
-  cacheRead<T extends { id: number }>(
+  private syncFromNext<T extends { id: number }>(
     table: DataTables,
     cache$: Observable<T>,
     nextCache$: Observable<T>,
@@ -151,8 +151,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
     const _nextCache$ = nextCache$.pipe(
       filter(fromNext => {
         if (shouldDelete(inCache, fromNext)) {
-          this.db
-            .delete(table, fromNext.id)
+          this.db.delete(table, fromNext.id)
             .pipe(
               subscribeOn(asyncScheduler),
               catchError(err => {
@@ -186,7 +185,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
 
     const nextCache$ = this.nextLevelCache.readDocMeta(id);
 
-    return this.cacheRead<DocMeta>(
+    return this.syncFromNext<DocMeta>(
       DataTables.DocMeta,
       cache$,
       nextCache$,
@@ -204,7 +203,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
     setTimeout(() => {
       this.updateDbDirtyStatus();
     }, 1000);
-    return this.cacheRead<DocContent>(
+    return this.syncFromNext<DocContent>(
       DataTables.DocContent,
       cache$,
       nextCache$,

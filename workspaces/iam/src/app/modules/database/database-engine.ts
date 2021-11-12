@@ -44,12 +44,12 @@ export function getIDBFactory(): IDBFactory {
 export class Database {
   public changes: Subject<any> = new Subject();
 
-  private _idb: IDBFactory;
+  private _dbFactory: IDBFactory;
   private _schema: DBSchema;
 
   constructor(@Inject(DatabaseBackend) idbBackend: any, @Inject(IDB_SCHEMA) schema: any) {
     this._schema = schema;
-    this._idb = idbBackend;
+    this._dbFactory = idbBackend;
   }
 
   private _mapRecord(objectSchema: DBStore) {
@@ -61,15 +61,6 @@ export class Database {
     };
   }
 
-  private _upgradeDB(observer: Observer<IDBDatabase>, db: IDBDatabase) {
-    for (let storeName in this._schema.stores) {
-      if (db.objectStoreNames.contains(storeName)) {
-        db.deleteObjectStore(storeName);
-      }
-      this._createObjectStore(db, storeName, this._schema.stores[storeName]);
-    }
-  }
-
   private _createObjectStore(db: IDBDatabase, storeName: string, schema: DBStore) {
     let objectStore = db.createObjectStore(storeName, {
       autoIncrement: schema.autoIncrement,
@@ -78,8 +69,9 @@ export class Database {
     return objectStore;
   }
 
-  private _open$;
+  private _open$: Observable<IDBDatabase>;
 
+  // lazy open, only when used
   open(
     dbName: string,
     version: number = 1,
@@ -87,13 +79,16 @@ export class Database {
   ): Observable<IDBDatabase> {
     if (this._open$) return this._open$;
 
-    const idb = this._idb;
-    return (this._open$ = Observable.create((observer: Observer<any>) => {
+    const idb = this._dbFactory;
+
+    return this._open$ = new Observable((observer: Observer<any>) => {
       const openReq = idb.open(dbName, this._schema.version);
+      let db: IDBDatabase;
 
       const onSuccess = (event: any) => {
-        observer.next(event.target.result);
-        observer.complete();
+        db = event.target.result;
+        observer.next(db);
+        observer.complete(); // teardown
       };
       const onError = (err: any) => {
         console.log(err);
@@ -101,31 +96,44 @@ export class Database {
       };
 
       const onUpgradeNeeded = (event: any) => {
-        this._upgradeDB(observer, event.target.result);
-      };
+        const db: IDBDatabase = event.target.result;
+
+        for (let storeName in this._schema.stores) {
+          if (db.objectStoreNames.contains(storeName)) {
+            db.deleteObjectStore(storeName);
+          }
+          this._createObjectStore(db, storeName, this._schema.stores[storeName]);
+        }
+      }
 
       openReq.addEventListener(IDB_SUCCESS, onSuccess);
       openReq.addEventListener(IDB_ERROR, onError);
       openReq.addEventListener(IDB_UPGRADE_NEEDED, onUpgradeNeeded);
 
+      // teardown on source complete
       return () => {
         openReq.removeEventListener(IDB_SUCCESS, onSuccess);
         openReq.removeEventListener(IDB_ERROR, onError);
         openReq.removeEventListener(IDB_UPGRADE_NEEDED, onUpgradeNeeded);
+        // db?.close() do not close here, close() it explicitly
       };
-    }).pipe(shareReplay(1))); // may have problem. source complete??
+    }).pipe(shareReplay(1)); // refCount in shareReplay by default is false, so it would not exe tear down of source even if no subscription (refCounter = 0)
   }
 
-  deleteDatabase(dbName: string): Observable<any> {
-    return new Observable((deletionObserver: Observer<any>) => {
-      const deleteRequest = this._idb.deleteDatabase(dbName);
+  close(){
+    this._open$?.subscribe(db => db.close()).unsubscribe();
+  }
 
-      const onSuccess = (event: any) => {
-        deletionObserver.next(null);
-        deletionObserver.complete();
+  deleteDatabase(dbName: string): Observable<null> {
+    return new Observable((observer: Observer<null>) => {
+      const deleteRequest = this._dbFactory.deleteDatabase(dbName);
+
+      const onSuccess = e => {
+        observer.next(null);
+        observer.complete();
       };
 
-      const onError = (err: any) => deletionObserver.error(err);
+      const onError = err => observer.error(err);
 
       deleteRequest.addEventListener(IDB_SUCCESS, onSuccess);
       deleteRequest.addEventListener(IDB_ERROR, onError);
@@ -333,7 +341,6 @@ export class Database {
     records: T[],
     predicate: (T) => boolean
   ): Observable<T> {
-    const changes = this.changes;
     const open$ = this.open(this._schema.name);
 
     return open$.pipe(
@@ -493,6 +500,6 @@ export class Database {
   }
 
   compare(a: any, b: any): number {
-    return this._idb.cmp(a, b);
+    return this._dbFactory.cmp(a, b);
   }
 }
