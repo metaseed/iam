@@ -13,10 +13,22 @@ export class MemEntityCache<T> extends EntityDataServiceBase<T> implements Entit
   ids: ID[] = [];
   entities: Record<ID, T> = Object.create(null); // not use {}, to remove inheritance from Object.prototype.
 
+  get sortedValues() {
+    if (this.sortComparer) {
+      return this.ids.map(id => this.entities[id]);
+    }
+    console.warn('MemEntityCache.sortedValues: try to get sorted values, by "sortComparer" is not configured.');
+    return this.values;
+  }
+
+  get values() {
+    return Object.values(this.entities);
+  }
+
   public idGenerator: IdGenerator<T>;
   public sortComparer?: SortComparer<T>
 
-  constructor(option:{idGenerator: IdGenerator<T>, sortComparer?: SortComparer<T>}) {
+  constructor(option: { idGenerator: IdGenerator<T>, sortComparer?: SortComparer<T> }) {
     super();
     this.idGenerator = idGeneratorWrapper(option.idGenerator);
     if (option.sortComparer) this.sortComparer = sortComparerWrapper(option.sortComparer);
@@ -89,7 +101,7 @@ export class MemEntityCache<T> extends EntityDataServiceBase<T> implements Entit
   getById(id: ID): Observable<T | undefined> {
     return of(this.entities[id]);
   }
-  getMany(ids:ID[]): Observable<(T|undefined)[]>{
+  getMany(ids: ID[]): Observable<(T | undefined)[]> {
     return of(ids.map(id => this.entities[id]))
   }
   getWithQuery(params: string | QueryParams): Observable<T[]> {

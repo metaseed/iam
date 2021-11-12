@@ -24,7 +24,7 @@ export class HomeComponent {
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
-  docMetas$ = this.store.docMeta.entities$.pipe(map(docs => docs.filter(d => d.id !== 1)));
+  docMetas$ = this.store.docMeta.sortedValues$.pipe(map(docs => docs.filter(d => d.id !== 1)));
 
   constructor(
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,

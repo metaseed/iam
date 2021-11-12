@@ -8,12 +8,12 @@ import { pipe } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class DocumentStore {
-constructor(){
-  if (isDevMode()) {
-    if (!globalThis.__RX_STORE__) globalThis.__RX_STORE__ = {};
-    globalThis.__RX_STORE__.store = this;
+  constructor() {
+    if (isDevMode()) {
+      if (!globalThis.__RX_STORE__) globalThis.__RX_STORE__ = {};
+      globalThis.__RX_STORE__.store = this;
+    }
   }
-}
 
   docMeta = new EntityCacheStore<number, DocMeta>(new MemEntityCache({
     idGenerator: e => e.id,
@@ -42,11 +42,8 @@ constructor(){
   currentDocStatus$ = this.docStatus.currentEntity$;
 
   currentDocContentString$ = state(this.currentDocContent$.pipe(
-    map(content => content?.content ?? ''),
-    // todo: remove distinctUntilChanged
-    //old: meta update would trigger this too, so use distinctUntilChanged to filter out
-    distinctUntilChanged())
-  );
+    map(content => content?.content ?? '')
+  ));
 
   currentDocStatus_IsEditorDirty$ = this.currentDocStatus$.map(status => status?.isEditorDirty);
 
@@ -75,7 +72,7 @@ constructor(){
   getAllDocuments() { return Object.values(this.document.cache.entities) }
 
   // only id are sorted, we want sorted
-  getAllDocMetas() { return this.docMeta.cache.ids.map(id=> this.docMeta.cache.entities[id]) }
+  getAllDocMetas() { return this.docMeta.cache.ids.map(id => this.docMeta.cache.entities[id]) }
 
   getDocument(id: number) {
     return this.document.cache.entities[id];

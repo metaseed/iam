@@ -10,7 +10,8 @@ export type EntityCacheService<T> = EntityDataService<T> & EntityCache<T>;
 
 export class EntityCacheStore<I extends ID, T> extends EntityDataServiceStore<T> {
   currentId_ = new StateSubject<I | undefined>();
-  entities$ = this.changes$.map(() => Object.values(this.cache.entities))
+  values$ = this.changes$.map(() => this.cache.values);
+  sortedValues$ = this.changes$.map(()=> this.cache.sortedValues);
 
   entityOfId$ = (id: I) => {
     return this.changes$.pipe(
