@@ -38,13 +38,14 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
       this.subPagesChanged = false;
 
       this.removeSub(metasSub);
-      metasSub = this.store.docMetasOfIds$(this.ids).pipe(
-        filter(metas => !!metas?.length),
-        map(metas => [...metas.filter(meta => !!meta)]),
-        debounceTime(300),
-        tap(metas => this.pageList = metas)
-      ).subscribe();
-      this.addSub(metasSub);
+      metasSub = this.addObs(
+        this.store.docMetasOfIds$(this.ids).pipe(
+          filter(metas => !!metas?.length),
+          map(metas => metas.filter(meta => !!meta)),
+          debounceTime(300),
+          tap(metas => this.pageList = metas)
+        )
+      );
 
       const ids = this.ids;
       this.documentEffects.readDocMetas_.next({ ids });

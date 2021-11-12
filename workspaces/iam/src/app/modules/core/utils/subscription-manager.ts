@@ -33,7 +33,6 @@ export function ManageSubscription<T extends Constructor<any>>(Base: T) {
           this.__subscription.add(
             sub.subscribe({
               error(e) {
-                // eslint-disable-next-line no-console
                 console.error(e);
               },
             }),
@@ -46,8 +45,20 @@ export function ManageSubscription<T extends Constructor<any>>(Base: T) {
       return this;
     }
 
+    public addObs<S>(source: Observable<S>) {
+      const sub = source.subscribe({
+        error(e) {
+          console.error(e);
+        },
+      });
+
+      this.__subscription.add(sub);
+
+      return sub;
+    }
+
     public removeSub(...subs: Exclude<TeardownLogic, void>[]) {
-      for(const sub of subs) {
+      for (const sub of subs) {
         this.__subscription.remove(sub);
       }
     }
