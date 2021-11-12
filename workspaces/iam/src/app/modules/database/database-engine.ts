@@ -10,7 +10,7 @@ const IDB_UPGRADE_NEEDED = 'upgradeneeded';
 const IDB_TXN_READ = 'readonly';
 const IDB_TXN_READWRITE = 'readwrite';
 
-export const DB_INSERT = 'DB_INSERT';
+const DB_INSERT = 'DB_INSERT';
 
 export const DatabaseBackend = new InjectionToken('IndexedDBBackend');
 export const IDB_SCHEMA = new InjectionToken('IDB_SCHEMA');
@@ -176,7 +176,7 @@ export class Database {
 
     return open$.pipe(
       mergeMap((db: IDBDatabase) => {
-        return new Observable((txnObserver: Observer<any>) => {
+        return new Observable((observer: Observer<any>) => {
           const recordSchema = this._schema.stores[storeName];
           const mapper = this._mapRecord(recordSchema);
           const txn = db.transaction([storeName], txnMode);
@@ -184,23 +184,20 @@ export class Database {
 
           const request = action(objectStore);
 
-          const onTxnReqError = (err: any) => txnObserver.error(err);
-          const onTxnComplete = () => txnObserver.complete();
-          const onReqSuccess = onRequestSuccess
-            ? onRequestSuccess(txnObserver)
-            : (ev: any) => txnObserver.next(request.result);
+          const onError = (err: any) => observer.error(err);
+          const onTxnComplete = () => observer.complete();
+          const onReqSuccess = onRequestSuccess?.(observer) ??(e => observer.next(request.result));
 
           txn.addEventListener(IDB_COMPLETE, onTxnComplete);
-          txn.addEventListener(IDB_ERROR, onTxnReqError);
-
+          txn.addEventListener(IDB_ERROR, onError);
           request.addEventListener(IDB_SUCCESS, onReqSuccess);
-          request.addEventListener(IDB_ERROR, onTxnReqError);
+          request.addEventListener(IDB_ERROR, onError);
 
           return () => {
             request.removeEventListener(IDB_SUCCESS, onReqSuccess);
-            request.removeEventListener(IDB_ERROR, onTxnReqError);
+            request.removeEventListener(IDB_ERROR, onError);
             txn.removeEventListener(IDB_COMPLETE, onTxnComplete);
-            txn.removeEventListener(IDB_ERROR, onTxnReqError);
+            txn.removeEventListener(IDB_ERROR, onError);
           };
         });
       })
@@ -403,20 +400,19 @@ export class Database {
     records: T[],
     actionMap: (recordInDB: T, record: T) => ModifyAction
   ): Observable<T> {
-    const changes = this.changes;
     const open$ = this.open(this._schema.name);
 
     return open$.pipe(
       mergeMap(db => {
-        return new Observable((txnObserver: Observer<T>) => {
+        return new Observable((observer: Observer<T>) => {
           const recordSchema = this._schema.stores[storeName];
           const mapper = this._mapRecord(recordSchema);
           const txn = db.transaction([storeName], IDB_TXN_READWRITE);
           const objectStore = txn.objectStore(storeName);
 
-          const onTxnError = (err: any) => txnObserver.error(err);
+          const onTxnError = (err: any) => observer.error(err);
           const onTxnComplete = () => {
-            txnObserver.complete();
+            observer.complete();
           };
 
           txn.addEventListener(IDB_COMPLETE, onTxnComplete);
@@ -487,7 +483,7 @@ export class Database {
               mergeMap(makeRequest)
               // tap(a => console.log(a), err => console.error(err), () => console.warn('aaaabbbb'))
             )
-            .subscribe(txnObserver);
+            .subscribe(observer);
 
           return () => {
             requestSubscriber.unsubscribe();
