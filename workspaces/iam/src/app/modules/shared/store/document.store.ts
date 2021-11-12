@@ -66,14 +66,16 @@ constructor(){
 
   searchResult_ = new StateSubject<SearchResult>();
 
-  document$ = this.document.entity$;
+  documentOfId$ = this.document.entityOfId$;
 
-  docMeta$ = this.docMeta.entity$;
+  docMetaOfId$ = this.docMeta.entityOfId$;
 
-  docMetas$ = this.docMeta.entitiesOfIds$
+  docMetasOfIds$ = this.docMeta.entitiesOfIds$
 
   getAllDocuments() { return Object.values(this.document.cache.entities) }
-  getAllDocMetas() { return Object.values(this.docMeta.cache.entities) }
+
+  // only id are sorted, we want sorted
+  getAllDocMetas() { return this.docMeta.cache.ids.map(id=> this.docMeta.cache.entities[id]) }
 
   getDocument(id: number) {
     return this.document.cache.entities[id];

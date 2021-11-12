@@ -39,7 +39,7 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
     this.subPagesChanged = false;
 
     this.subs.remove(this.metaSub);
-    this.metaSub = this.store.docMetas$(this.ids).pipe(
+    this.metaSub = this.store.docMetasOfIds$(this.ids).pipe(
       filter(metas => !!metas?.length),
       map(metas => [...metas.filter(meta => !!meta)]),
       debounceTime(300),

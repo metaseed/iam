@@ -33,7 +33,7 @@ export class DocTreeDataService {
   }
 
   initialData$(rootId: number) {
-    const data$ = this.store.docMeta$(rootId)
+    const data$ = this.store.docMetaOfId$(rootId)
       .pipe(filter(doc => !!doc),
         map(d => new DocNode(d)),
         switchMap(node => this.getChildren$(node).pipe(map(ns => { node.subPages = ns; return node }))),
@@ -47,7 +47,7 @@ export class DocTreeDataService {
       return EMPTY;
     }
     const ids = node.subPageIds.map(p => +p);
-    const pageList$ = this.store.docMetas$(ids).pipe(
+    const pageList$ = this.store.docMetasOfIds$(ids).pipe(
       map(docMetas => [...docMetas
         .filter(m => !!m)
         .map(d => { const r = new DocNode(d); r.parent = node; return r; })
