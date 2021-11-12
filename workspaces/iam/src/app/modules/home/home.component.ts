@@ -2,7 +2,6 @@ import { Component, ViewChild, ElementRef, Inject } from '@angular/core';
 import { DocService } from './services/doc.service';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { StoreSearchService } from '../cache/services/store-search.service';
-import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MSG_DISPLAY_TIMEOUT } from 'core';
@@ -25,7 +24,7 @@ export class HomeComponent {
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
-  docs$ = this.store.entities$.pipe(map(docs => docs.filter(d => d.id !== 1)));
+  docMetas$ = this.store.docMeta.entities$.pipe(map(docs => docs.filter(d => d.id !== 1)));
 
   constructor(
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,

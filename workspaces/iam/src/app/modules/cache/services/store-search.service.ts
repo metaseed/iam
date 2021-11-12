@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import Fuse from 'fuse.js';
-import { Document, ISearchItem, SearchResultSource } from 'core';
+import { DocContent, DocMeta, Document, ISearchItem, SearchResultSource } from 'core';
 import { of } from 'rxjs';
 
 @Injectable()
@@ -17,12 +17,12 @@ export class StoreSearchService {
     ]
   };
 
-  search(docs: Document[], keyword: string) {
+  search(docs: DocContent[], keyword: string) {
     const fuse = new Fuse(docs, <any>this.options);
     const sr = fuse
       .search(
         // <{
-        //   item: Document;
+        //   item: DocContent;
         //   score: number;
         //   matches: [
         //     {
@@ -39,7 +39,7 @@ export class StoreSearchService {
           ({
             id: d.item.id,
             score: 1 - d.score, // 0-1
-            title: d.item.metaData.title,
+            title: DocMeta.getTitle(d.item.content),
             text_matches: d.matches.map(m => ({
               fragment: m.value,
               matches: m.indices.map(idx => ({ text: keyword, indices: idx }))

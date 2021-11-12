@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ElementRef, Inject } from '@angular/core';
-import { Document, MSG_DISPLAY_TIMEOUT, IContainer, ContainerRef, SubscriptionManager } from 'core';
+import { Document, MSG_DISPLAY_TIMEOUT, IContainer, ContainerRef, SubscriptionManager, DocMeta } from 'core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PAN_TO_REFRESH_MARGIN, PAN_TO_GET_MORE_MARGIN } from '../const';
 import { asyncScheduler, tap } from 'rxjs';
@@ -16,7 +16,7 @@ const REFRESH_AUDIT_TIME = 3000;
   styleUrls: ['./doc-list.component.scss']
 })
 export class DocListComponent extends SubscriptionManager implements OnInit {
-  private docs;
+  private _docMetas:DocMeta[];
 
   private defaultTimeoutHandler(action: string, info?: string) {
     console.warn('action timeout:' + action + (info ? `--${info}` : ''));
@@ -65,11 +65,11 @@ export class DocListComponent extends SubscriptionManager implements OnInit {
   }
 
   @Input()
-  set documents(v) {
-    this.docs = v;
+  set docMetas(v) {
+    this._docMetas = v;
   }
-  get documents() {
-    return this.docs;
+  get docMetas() {
+    return this._docMetas;
   }
 
   ngOnInit() {
@@ -93,18 +93,18 @@ export class DocListComponent extends SubscriptionManager implements OnInit {
 
   trackByFunc = (i, doc) => doc.id;
 
-  onShow(doc: Document) {
+  onShow(doc: DocMeta) {
     const navigationExtras: NavigationExtras = {
       queryParams: {
         id: doc.id,
-        title: doc.metaData.title,
-        f: doc.metaData.format || 'md'
+        title: doc.title,
+        f: doc.format || 'md'
       }
     };
     this.router.navigate(['/doc'], navigationExtras);
   }
 
-  onDelete(doc: Document) {
+  onDelete(doc: DocMeta) {
     this.documentEffects.deleteDocument_.next({ id: doc.id });
   }
 

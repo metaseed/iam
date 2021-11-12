@@ -25,8 +25,8 @@ export class DataSourceLines {
     return source;
   }
   set source(value) {
-    if(this.docEditor.currentEditor) {
-      this.docEditor.currentEditor.replaceRange(value + '\n', this.sourceLineStart,0, this.sourceLineEnd,0 )
+    if (this.docEditor.currentEditor) {
+      this.docEditor.currentEditor.replaceRange(value + '\n', this.sourceLineStart, 0, this.sourceLineEnd, 0)
       return;
     }
 
@@ -34,11 +34,10 @@ export class DataSourceLines {
     const originalContentString = originalContent.content;
     const id = this._store.currentId_.state;
     const [start, end] = this.getRange(originalContentString);
-    const contentString = splice(originalContentString, start, end - start, value);
-    const content: DocContent = { ...originalContent, content: contentString }
-    this._store.update({ id, changes: { content } });
+    const content = splice(originalContentString, start, end - start, value);
+    this._store.document.update({ id, changes: { content } });
     // to workaround the editor load new content and clear dirty flags.
-    setTimeout(()=>this._store.updateCurrentDocStatus({ isEditorDirty: true }));
+    setTimeout(() => this._store.updateCurrentDocStatus({ isEditorDirty: true }));
   }
 
   private getRange(content: string) {

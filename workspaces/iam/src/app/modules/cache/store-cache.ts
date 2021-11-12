@@ -10,10 +10,9 @@ import {
 } from 'core';
 import { Injectable } from '@angular/core';
 import { Observable, of, merge } from 'rxjs';
-import { tap, catchError, map, switchMap, filter } from 'rxjs/operators';
+import { tap, catchError, map } from 'rxjs/operators';
 import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../shared/store/const';
 import { StoreSearchService } from './services/store-search.service';
-import { afterUpdateDoc } from './after-update-doc';
 import { DocumentStore } from '../shared/store/document.store';
 
 @Injectable({ providedIn: 'platform' })
@@ -39,9 +38,9 @@ export class StoreCache implements ICache {
    */
   createDoc(format: DocFormat) {
     const id = NEW_DOC_ID;
-    const doc = new Document(id, undefined, new DocContent(id, DEFAULT_NEW_DOC_CONTENT, undefined));
+    const doc = new DocContent(id, DEFAULT_NEW_DOC_CONTENT, undefined);
 
-    this._store.add(doc);
+    this._store.document.add(doc);
     this._store.currentId_.next(id);
   }
 
@@ -51,7 +50,8 @@ export class StoreCache implements ICache {
   CreateDocument(content: string, format: DocFormat) {
     return this.nextLevelCache.CreateDocument(content, format).pipe(
       tap(doc => {
-        this._store.add(doc);
+        this._store.document.add(doc.content);
+        this._store.docMeta.add(doc.metaData);
         this._store.currentId_.next(doc.id);
       })
     );
@@ -63,18 +63,16 @@ export class StoreCache implements ICache {
         if (metaArray[0]?.isDeleted) {// grouped in next cache
           this._store.deleteMany(metaArray.map(m => m.id));
         } else {
-          const array = new Array<Document>();
+          const array = [];
           metaArray.forEach(meta => {
-            const doc = this._store.getDocument(meta.id);
+            const docMeta = this._store.getDocMeta(meta.id)
+            if (docMeta && docMeta.updateDate.getTime() === meta.updateDate.getTime()) return;
 
-            if (doc && doc.metaData.updateDate.getTime() === meta.updateDate.getTime()) return;
-
-            const content = doc && doc.content;
-            array.push(new Document(meta.id, meta, content));
+            array.push(meta);
           });
 
           if (array.length)
-            this._store.upsertMany(array);
+            this._store.docMeta.upsertMany(array);
         }
       })
     );
@@ -86,11 +84,11 @@ export class StoreCache implements ICache {
       else {
         const metaInStore = this._store.getDocMeta(meta.id);
         if (!metaInStore) {
-          this._store.add(new Document(meta.id, meta));
+          this._store.docMeta.add(meta);
         } else if (metaInStore.updateDate.getTime() < meta.updateDate.getTime()) {
-          this._store.update({
+          this._store.docMeta.update({
             id: meta.id,
-            changes: { metaData: meta }
+            changes: meta
           });
         }
       }
@@ -111,7 +109,7 @@ export class StoreCache implements ICache {
         }
 
         const document = this._store.getDocument(id);
-        if (document?.content?.sha === docContent.sha) {
+        if (document?.sha === docContent.sha) {
           console.log('content sha in mem is the same with the sha from next cache')
           return; // nothing changed.
         }
@@ -130,12 +128,16 @@ export class StoreCache implements ICache {
 
               const document = this._store.getDocument(id);
               if (!document) {
-                const doc = new Document(id, meta, docContent);
-                this._store.add(doc);
+                this._store.docMeta.add(meta);
+                this._store.document.add(docContent);
               } else {
-                this._store.update({
+                this._store.docMeta.update({
                   id: document.id,
-                  changes: { metaData: meta, content: docContent }
+                  changes: meta
+                });
+                this._store.document.update({
+                  id: document.id,
+                  changes: docContent
                 });
               }
             }),
@@ -150,7 +152,10 @@ export class StoreCache implements ICache {
 
   updateDocument(oldDocMeta: DocMeta, content: string, forceUpdate: boolean) {
     return this.nextLevelCache.updateDocument(oldDocMeta, content, forceUpdate).pipe(
-      afterUpdateDoc(this._store)
+      tap((doc: Document) => {
+        this._store.docMeta.upsert(doc.metaData);
+        this._store.document.upsert(doc.content);
+      })
     );
   }
 
@@ -168,6 +173,7 @@ export class StoreCache implements ICache {
 
   search(query: string) {
     const docs = this._store.getAllDocuments();
+
     const fromStoreCache$ = this._storeSearchService.search(docs, query);
 
     const fromNextCache$ = this.nextLevelCache

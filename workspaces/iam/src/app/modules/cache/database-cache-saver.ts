@@ -1,10 +1,9 @@
 import { interval, asyncScheduler, zip, EMPTY, merge } from 'rxjs';
-import { subscribeOn, catchError, switchMap, map } from 'rxjs/operators';
+import { subscribeOn, catchError, switchMap, map, tap } from 'rxjs/operators';
 import { ICache, DocContent, DataTables, DocMeta, Document, AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL } from 'core';
 import { Database } from '../database/database-engine';
 import { DirtyDocument } from '../core/model/doc-model/doc-status';
 import { DocumentStateFacade } from '../shared/store/document-state.facade';
-import { afterUpdateDoc } from './after-update-doc';
 import { DocumentStore } from '../shared/store/document.store';
 
 export class DatabaseCacheSaver {
@@ -21,7 +20,10 @@ export class DatabaseCacheSaver {
     this.autoSave$ = interval(AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL).pipe(
       switchMap(() => this.db.getAllKeys<number[]>(DataTables.DirtyDocs)),
       switchMap(ids => merge(...(ids.map(id => this.saveToNet(id).pipe(
-        afterUpdateDoc(this.store)
+        tap((doc: Document) => {
+          this.store.docMeta.upsert(doc.metaData);
+          this.store.document.upsert(doc.content);
+        })
       ))))),
       catchError(err => { console.error(err); return EMPTY; })
     )

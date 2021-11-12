@@ -89,7 +89,7 @@ export class DocumentsEffects extends EffectManager {
     effectInfo =>
       pipe(
         switchMap(state => {
-          const doc = this.store.currentDocument$.state;
+          const meta = this.store.currentDocMeta$.state;
           const content = state.content;
           const format = state.format;
           const newTitle = DocMeta.getTitle(state.content);
@@ -100,7 +100,7 @@ export class DocumentsEffects extends EffectManager {
             return throwError(() => new Error(msg));
           }
 
-          if (doc.id === NEW_DOC_ID) {
+          if (meta.id === NEW_DOC_ID) {
             return this.cacheFacade.CreateDocument(content, format).pipe(
               tap(d => {
                 this.deleteDocument_.next({ id: d.id });
@@ -110,7 +110,7 @@ export class DocumentsEffects extends EffectManager {
             );
           } else {
             return this.cacheFacade
-              .updateDocument(doc.metaData, content, state.forceUpdate)
+              .updateDocument(meta, content, state.forceUpdate)
               .pipe(
                 tap(d => {
                   this.util.modifyUrlAfterSaved(d.id, newTitle, format);

@@ -181,23 +181,18 @@ export class MarkdownViewerService {
 
     if (!meta) return meta;
 
-    const doc = this.store.currentDocument$.state;
-    if (!doc?.metaData) return meta;
+    const metaData = this.store.currentDocMeta$.state;
+    if (!metaData) return meta;
 
-    if (!isDiff(meta, doc.metaData)) return doc.metaData;
+    if (!isDiff(meta, metaData)) return metaData;
 
     const newMeta = {
-      ...doc.metaData,
+      ...metaData,
       ...meta,
     };
     asyncScheduler.schedule(
-      metaData => {
-        this.store.update(
-          {
-            id: doc.id,
-            changes: { metaData },
-          }
-        );
+      meta=> {
+        this.store.docMeta.set( meta);
       },
       0,
       newMeta

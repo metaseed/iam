@@ -28,9 +28,7 @@ export class DocumentStateFacade {
   getCurrentDocumentStatusState() {
     return this.store.currentDocStatus$.state;
   }
-  getCurrentDocumentState() {
-    return this.store.currentDocument$.state;
-  }
+
   getCurrentDocumentIdState() {
     return this.store.currentId_.state;
   }

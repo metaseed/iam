@@ -1,4 +1,4 @@
-import { combineLatest, distinctUntilChanged, filter, map, merge, startWith, tap } from "rxjs";
+import { distinctUntilChanged, filter, map, merge, startWith } from "rxjs";
 import { ChangeContent, EntityChangeType } from ".";
 import { StateSubject, state } from "../../core";
 import { isDevMode } from "../../core/dev-mode-checking";
@@ -12,7 +12,7 @@ export class EntityCacheStore<I extends ID, T> extends EntityDataServiceStore<T>
   currentId_ = new StateSubject<I | undefined>();
   entities$ = this.changes$.map(() => Object.values(this.cache.entities))
 
-  entity$(id: I) {
+  entity$ = (id: I) => {
     return this.changes$.pipe(
       filter(change => this.isChangeRelatedToId(change, [id])),
       map(() => this.cache.entities[id]),
@@ -20,7 +20,7 @@ export class EntityCacheStore<I extends ID, T> extends EntityDataServiceStore<T>
     );
   }
 
-  entitiesOfIds$(ids: I[]) {
+  entitiesOfIds$ = (ids: I[]) => {
     return this.changes$.pipe(
       filter(change => this.isChangeRelatedToId(change, ids)),
       map(() => ids.map(id => this.cache.entities[id])),
@@ -68,7 +68,7 @@ export class EntityCacheStore<I extends ID, T> extends EntityDataServiceStore<T>
     return true; // changes = undefined: delete all
   }
 
-  constructor(protected cache: EntityCacheService<T>) {
+  constructor(public cache: EntityCacheService<T>) {
     super(cache);
 
     if (isDevMode()) {

@@ -38,7 +38,7 @@ export interface EntityDataService<T> {
   deleteAll(): Observable<undefined>;
 
   /**
-   * merge mew changes if id is there, if not there `undefined`
+   * merge mew changes only if id is there, if not there `undefined`
    * @param update
    */
   update(update: Update<T>): Observable<T | undefined>;
