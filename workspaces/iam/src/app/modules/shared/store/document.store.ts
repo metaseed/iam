@@ -1,13 +1,19 @@
 import { DocContent, DocMeta, SearchResult } from "core";
 import { EntityCacheStore, MemEntityCache } from "@rx-store/entity";
 import { state, StateSubject } from "@rx-store/core";
-import { Injectable } from "@angular/core";
+import { Injectable, isDevMode } from "@angular/core";
 import { DocumentStatus } from "app/modules/core/model/doc-model/doc-status";
 import { distinctUntilChanged, map, tap } from "rxjs/operators";
 import { pipe } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class DocumentStore {
+constructor(){
+  if (isDevMode()) {
+    if (!globalThis.__RX_STORE__) globalThis.__RX_STORE__ = {};
+    globalThis.__RX_STORE__.store = this;
+  }
+}
 
   docMeta = new EntityCacheStore<number, DocMeta>(new MemEntityCache({
     idGenerator: e => e.id,
