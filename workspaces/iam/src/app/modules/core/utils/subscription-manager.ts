@@ -1,4 +1,6 @@
 import { OnDestroy } from "@angular/core";
+import { isObservable } from "rxjs";
+import { TeardownLogic } from "rxjs";
 import { Observable, Subscription } from "rxjs";
 
 type Constructor<T> = new (...args: any[]) => T;
@@ -18,19 +20,17 @@ type Constructor<T> = new (...args: any[]) => T;
  */
 export function ManageSubscription<T extends Constructor<any>>(Base: T) {
   return class extends Base implements OnDestroy {
-    public subscriptions: Subscription[] = [];
+    private __subscription = new Subscription();
 
     public ngOnDestroy(): void {
       super.ngOnDestroy?.();
       this.unsubscribe();
     }
 
-    public addSub<S>(...subs: (Subscription | Observable<S>)[]) {
+    public addSub<S>(...subs: (TeardownLogic | Observable<S>)[]) {
       for (const sub of subs) {
-        if (sub instanceof Subscription) {
-          this.subscriptions.push(sub);
-        } else {
-          this.subscriptions.push(
+        if (isObservable(sub)) {
+          this.__subscription.add(
             sub.subscribe({
               error(e) {
                 // eslint-disable-next-line no-console
@@ -38,18 +38,22 @@ export function ManageSubscription<T extends Constructor<any>>(Base: T) {
               },
             }),
           );
+        } else {
+          this.__subscription.add(sub);
         }
       }
 
       return this;
     }
 
-    public unsubscribe() {
-      for (const sub of this.subscriptions) {
-        sub.unsubscribe();
+    public removeSub(...subs: Exclude<TeardownLogic, void>[]) {
+      for(const sub of subs) {
+        this.__subscription.remove(sub);
       }
+    }
 
-      this.subscriptions = [];
+    public unsubscribe() {
+      this.__subscription.unsubscribe();
     }
   };
 }

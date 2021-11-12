@@ -18,38 +18,38 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class SubPageComponent extends ManageSubscription(DataSourceLines) {
 
-  private subs = new Subscription();
   public panelOpenState = false;
-  private metaSub: Subscription;
   constructor(private router: Router, private store: DocumentStore,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     docEditor: DocEditorService, private dialog: MatDialog,
     private snackbar: MatSnackBar
   ) {
     super(store, docEditor);
-    super.addSub(this.subs);
   }
 
   private subPagesChanged = false;
 
-  public onPanelOpen = () => {
-    this.panelOpenState = true;
-    if (!this.subPagesChanged) return;
+  public onPanelOpen = (() => {
+    let metasSub: Subscription;
+    return () => {
+      this.panelOpenState = true;
+      if (!this.subPagesChanged) return;
 
-    this.subPagesChanged = false;
+      this.subPagesChanged = false;
 
-    this.subs.remove(this.metaSub);
-    this.metaSub = this.store.docMetasOfIds$(this.ids).pipe(
-      filter(metas => !!metas?.length),
-      map(metas => [...metas.filter(meta => !!meta)]),
-      debounceTime(300),
-      tap(metas=> this.pageList = metas)
-    ).subscribe();
-    this.subs.add(this.metaSub);
+      this.removeSub(metasSub);
+      metasSub = this.store.docMetasOfIds$(this.ids).pipe(
+        filter(metas => !!metas?.length),
+        map(metas => [...metas.filter(meta => !!meta)]),
+        debounceTime(300),
+        tap(metas => this.pageList = metas)
+      ).subscribe();
+      this.addSub(metasSub);
 
-    const ids = this.ids;
-    this.documentEffects.readDocMetas_.next({ ids });
-  }
+      const ids = this.ids;
+      this.documentEffects.readDocMetas_.next({ ids });
+    }
+  })();
 
   public ids: number[] = [];
   public pageList: DocMeta[] = [];
@@ -73,8 +73,8 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
   }
 
   addId(id) {
-    if(this.ids.includes(+id)){
-      this.snackbar.open(`id ${id} already included`,'ok', {
+    if (this.ids.includes(+id)) {
+      this.snackbar.open(`id ${id} already included`, 'ok', {
         duration: MSG_DISPLAY_TIMEOUT
       })
       return;
