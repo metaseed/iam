@@ -76,8 +76,11 @@ export class DocSaveCoordinateService extends SubscriptionManager {
   }
 
   private checkDirty(editor: CodeMirror.Editor) {
-    const statusInStore = this.store.currentDocStatus$.state;
-    if (!statusInStore) return;
+    let statusInStore = this.store.currentDocStatus$.state;
+    if (!statusInStore) {
+      statusInStore = {id: this.store.docStatus.currentId_.state};
+      this.store.docStatus.set(statusInStore)
+    }
 
     if (!this.contentGeneration) return; // initial content load
 
