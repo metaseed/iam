@@ -7,7 +7,6 @@ import { DocumentStore } from './store/document.store';
 export class CacheFacade{
   constructor(
     store: DocumentStore,
-    _logger: LogService,
     @Inject(NET_CACHE_TOKEN) githubCache: ICache,
     @Inject(DB_CACHE_TOKEN) dbCache: ICache,
     @Inject(STORE_CACHE_TOKEN) private storeCache: ICache,

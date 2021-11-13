@@ -1,5 +1,5 @@
 import { Component, Input, Inject } from '@angular/core';
-import { DocMeta, ISearchItem, ManageSubscription, MSG_DISPLAY_TIMEOUT } from 'core';
+import { DocMeta, ISearchItem, LogService, ManageSubscription, MSG_DISPLAY_TIMEOUT } from 'core';
 import { Router, NavigationExtras } from '@angular/router';
 import { map, filter, debounceTime, tap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
@@ -17,9 +17,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./subpage.component.scss']
 })
 export class SubPageComponent extends ManageSubscription(DataSourceLines) {
+  public isPanelOpen = false;
 
-  public panelOpenState = false;
-  constructor(private router: Router, private store: DocumentStore,
+  constructor(private router: Router, private store: DocumentStore, private logger: LogService,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     docEditor: DocEditorService, private dialog: MatDialog,
     private snackbar: MatSnackBar
@@ -32,7 +32,7 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
   public onPanelOpen = (() => {
     let metasSub: Subscription;
     return () => {
-      this.panelOpenState = true;
+      this.isPanelOpen = true;
       if (!this.subPagesChanged) return;
 
       this.subPagesChanged = false;
@@ -59,7 +59,7 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
   public set pages(value: string) {
     this.ids = JSON.parse(value);
     this.subPagesChanged = true;
-    if (this.panelOpenState) {
+    if (this.isPanelOpen) {
       this.onPanelOpen();
     }
   }
@@ -70,7 +70,9 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
       this.ids.splice(index, 1);
       this.subPagesChanged = true;
       this.source = `subPage: [${this.ids}]`
+      return;
     }
+    this.logger.debug('SubPageComponent.delete: id not found')
   }
 
   addId(id) {
