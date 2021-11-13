@@ -86,7 +86,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
     const FromDB$ = this.db.query<DocMeta>(DataTables.DocMeta, keyRange, dir, DB_PAGE_SIZE).pipe(
       toArray(),
       filter(a => a.length > 0),
-      tap(a => (cacheRecords = a))
+      tap(a => cacheRecords = a)
     );
 
     const docMetaUpsert = new Array<DocMeta>();

@@ -41,6 +41,14 @@ export class OperationStatusConsoleReporter implements OperationStatusReporter {
 
     })).subscribe();
 
+    operationStatusStore.ofStep(OperationStep.Error).pipe(tap((status) => {
+      const icon = icons[status.coId! % icons.length]
+      console.groupCollapsed(`%c${status.id}${icon}->error`, 'background-color:#ff0000; color: black');
+      console.log(status)
+      console.groupEnd();
+
+    })).subscribe();
+
     operationStatusStore.ofStep(OperationStep.Timeout).pipe(tap((status) => {
       const icon = icons[status.coId! % icons.length]
       console.groupCollapsed(`%c${status.id}${icon}->timeout`, 'background-color:darkorange; color: white');

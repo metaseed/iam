@@ -55,7 +55,7 @@ export function backoff<T>(maxTriesOrConfig: any, interval?: number | ((i: numbe
       return err$.pipe(
         map(err => [errors++, err]),
         complete(o => errors >= config.maxTries),
-        map(([i, err]) => [typeof interval === 'function' ? interval(i) : interval, err]),
+        map(([i, err]) => [typeof config.interval === 'function' ? config.interval(i) : config.interval, err]),
         mergeMap(([i, err]) => {
           config.stateReporter?.('Error', err);
           if (config.failIfConsecutiveErrors != null && consecutiveErrors < config.failIfConsecutiveErrors) {
@@ -122,13 +122,13 @@ export function consecutiveStatus<T>(
 }
 
 export function complete<T>(condition: (o: T) => boolean) {
-  return (source:Observable<T>) => new Observable<T>(subscriber => {
+  return (source:Observable<T>) => new Observable<T>(observer => {
     source.pipe(
       tap(o => {
         if (condition(o)) {
-          subscriber.complete();
+          observer.complete();
         }
       })
-    ).subscribe(subscriber);
+    ).subscribe(observer);
   });
 }
