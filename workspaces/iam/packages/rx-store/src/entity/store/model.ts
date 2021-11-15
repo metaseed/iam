@@ -3,7 +3,7 @@ import { EntityCache } from "../cache/mem-cache/models";
 import { ID } from "../cache/model/entity-data-service.interface";
 
 
-export enum EntityChangeType { Add, Delete, Update, Set, Upsert }
+export enum EntityChangeType { Add='add', Delete='delete', Update='update', Set='set', Upsert='upsert' }
 export type ChangeContent<T> = {
   changeType: EntityChangeType,
   /**

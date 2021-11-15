@@ -66,8 +66,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
             }, 0);
           }))
       .addSub(
-        this.editorService.docContentModified$.subscribe(this
-          .markdownStore.editorContentChanged_))
+        this.editorService.docContentModified$.subscribe(this.markdownStore.editorContentChanged_))
       .addSub(
         this.docMode$.subscribe(mode => {
           switch (mode) {
