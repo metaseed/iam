@@ -70,6 +70,9 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
       this.ids.splice(index, 1);
       this.subPagesChanged = true;
       this.source = `subPage: [${this.ids}]`
+      if (this.isPanelOpen) {
+        this.onPanelOpen();
+      }
       return;
     }
     this.logger.debug('SubPageComponent.delete: id not found')
