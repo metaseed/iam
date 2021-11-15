@@ -79,6 +79,7 @@ export const timeOutMonitor = <T, R>(
           scheduleTimeout();
         }
       }
+
       if (stopSelector(startValue, value)) {
         if (timeoutAction) {
           timeoutAction.unsubscribe();

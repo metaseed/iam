@@ -1,6 +1,6 @@
 import { Observable, OperatorFunction } from "rxjs";
-import { timeOutMonitor } from "../../core";
 import { ofType, OperationStatus, OperationStep } from "../operation-status";
+import { timeOutMonitor } from "./timeout-monitor";
 
 export function operationTimeout(
   type: string,
