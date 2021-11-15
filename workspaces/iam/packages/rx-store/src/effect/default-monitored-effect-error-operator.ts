@@ -23,7 +23,7 @@ export const getDefaultMonitoredEffectErrorOperator =
       }
 
       stateReporter(startStatus.Fail.with(status.error));
-      const reason = status.consecutiveErrors > failIfConsecutiveErrors ? `consecutiveError: ${status.consecutiveErrors}>=${failIfConsecutiveErrors}\n` : `errors: ${status.errors}>=${failIfErrors}`;
-      console.warn(`backoff: skip item process because of consecutive errors happened: ${reason} error:`, status.error);
+      const reason = status.consecutiveErrors >= failIfConsecutiveErrors ? `consecutiveError: ${status.consecutiveErrors}>=${failIfConsecutiveErrors}\n` : `errors: ${status.errors}>=${failIfErrors}`;
+      console.warn(`monitored effect observable: skip item process because of errors happened: ${reason} error status:\n `, status);
       return EMPTY; // fail and  not throw, it's swallowed. we just stop retry and report fail status
     });

@@ -1,10 +1,10 @@
-import { Injectable, isDevMode } from "@angular/core";
+import { Inject, Injectable, InjectionToken, isDevMode, Optional } from "@angular/core";
+
+export const LOG_SERVICE_PRD_FUNCTION_SCREEN_TOKEN = new InjectionToken<string[]>('LOG_SERVICE_FUNCTION_SCREEN_TOKEN');
 
 @Injectable({ providedIn: 'root' })
 export class LogService {
   private _prdScreen = [console.assert.name, console.debug.name, console.trace.name, console.log.name]
-  public get prdScreen() { return this._prdScreen; }
-  public set prdScreen(v) { this._prdScreen = v; this.initialize(); }
 
   public assert: typeof console.assert;
   public debug: typeof console.debug;
@@ -15,7 +15,8 @@ export class LogService {
   public warn: typeof console.warn;
   public error: typeof console.error;
 
-  constructor() {
+  constructor(@Inject(LOG_SERVICE_PRD_FUNCTION_SCREEN_TOKEN) @Optional() prdScreen: string[]) {
+    this._prdScreen = prdScreen ?? this._prdScreen;
     this.initialize();
   }
 
