@@ -1,10 +1,18 @@
 import { Inject, Injectable, InjectionToken, isDevMode, Optional } from "@angular/core";
 
-export const LOG_SERVICE_PRD_FUNCTION_SCREEN_TOKEN = new InjectionToken<string[]>('LOG_SERVICE_FUNCTION_SCREEN_TOKEN');
+export let defaultLogFunctionPrdScreen = [console.assert.name, console.debug.name, console.trace.name, console.log.name];
 
+export function screenConsoleLog() {
+  for (const funcName in defaultLogFunctionPrdScreen) {
+    console[funcName] = () => undefined;
+  }
+}
+
+
+export const LOG_SERVICE_PRD_FUNCTION_SCREEN_TOKEN = new InjectionToken<string[]>('LOG_SERVICE_FUNCTION_SCREEN_TOKEN');
 @Injectable({ providedIn: 'root' })
 export class LogService {
-  private _prdScreen = [console.assert.name, console.debug.name, console.trace.name, console.log.name]
+  private _prdScreen = defaultLogFunctionPrdScreen;
 
   public assert: typeof console.assert;
   public debug: typeof console.debug;
@@ -32,7 +40,7 @@ export class LogService {
 
   private envCheck(func: (...args) => any, funcName?: string) {
     if (!isDevMode() && this._prdScreen.includes(funcName ?? func.name)) {
-      return () => { };
+      return () => undefined;
     }
     return func;
   }

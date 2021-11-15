@@ -2,9 +2,9 @@ import { BrowserModule, HammerModule, HAMMER_GESTURE_CONFIG } from '@angular/pla
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { HotkeyModule } from '@metaseed/angular-hotkey';
-import { CoreModule } from 'core';
+import { CoreModule, screenConsoleLog } from 'core';
 import { HttpClientModule } from '@angular/common/http';
 import { HomeModule } from 'home';
 import { NotFoundComponent } from './not-found/not-found.component';
@@ -78,6 +78,7 @@ export class AppModule {
   constructor(){
     if(environment.production){
       enableProdMode();
+      screenConsoleLog()
     }
   }
 }
