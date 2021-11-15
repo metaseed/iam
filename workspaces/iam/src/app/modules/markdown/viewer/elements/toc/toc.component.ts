@@ -34,7 +34,7 @@ export class TocComponent extends SubscriptionManager implements OnInit, AfterVi
   isSmallScreen: boolean;
   isCollapsed = true;
   isEmbedded = false;
-  h1Count:number;
+  h1Count: number;
   @ViewChildren('tocItem')
   private items: QueryList<ElementRef>;
   public primaryMax = 4;
@@ -165,8 +165,16 @@ export class TocComponent extends SubscriptionManager implements OnInit, AfterVi
   }
 
   toTop() {
-    this.scrollContainer.scrollTop = 0;
+    const element = this.scrollContainer;
+    (function smoothscroll() {
+      var currentScroll = element.scrollTop;
+      if (currentScroll > 0) {
+        window.requestAnimationFrame(smoothscroll);
+        element.scrollTop = currentScroll - (currentScroll / 5);
+      }
+    })();
   }
+
   toggleToc() {
     this.show = !this.show;
   }

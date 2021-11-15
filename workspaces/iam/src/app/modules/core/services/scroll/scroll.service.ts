@@ -51,6 +51,16 @@ export class ScrollService {
     this.scrollToElement(<HTMLElement>this.topOfPageElement);
   }
 
+  smoothscroll(element:HTMLElement) {
+    (function smoothscroll() {
+      var currentScroll = element.scrollTop;
+      if (currentScroll > 0) {
+        window.requestAnimationFrame(smoothscroll);
+        element.scrollTop = currentScroll - (currentScroll / 5);
+      }
+    })();
+  }
+
   /**
    * Return the hash fragment from the `PlatformLocation`, minus the leading `#`.
    */
