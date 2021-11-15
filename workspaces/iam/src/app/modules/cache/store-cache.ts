@@ -138,11 +138,11 @@ export class StoreCache implements ICache {
 
               const document = this._store.getDocument(id);
               if (!document) {
-                console.debug(`@storeCache.readDocContent: id(${id}), add dotMeta and content to store.`, meta, docContent)
+                console.debug(`@storeCache.readDocContent: received id(${id}) from far-cache, add dotMeta and content to store.`, meta, docContent)
                 this._store.docMeta.add(meta);
                 this._store.document.add(docContent);
               } else {
-                console.debug(`@storeCache.readDocContent: id(${id}), update dotMeta and content to store.`, meta, docContent)
+                console.debug(`@storeCache.readDocContent: received id(${id}) from far-cache, update dotMeta and content to store.`, meta, docContent)
 
                 this._store.docMeta.update({
                   id: document.id,
