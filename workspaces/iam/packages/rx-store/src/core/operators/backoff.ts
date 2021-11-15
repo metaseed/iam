@@ -1,5 +1,5 @@
 import { EMPTY, Observable, pipe, timer } from 'rxjs';
-import { retryWhen, map, mergeMap, tap } from 'rxjs/operators';
+import { retryWhen, mergeMap, tap } from 'rxjs/operators';
 /**
  * backoff from error happens again
  *
@@ -35,52 +35,29 @@ import { retryWhen, map, mergeMap, tap } from 'rxjs/operators';
  *  backoff(Infinity,  i => {const t = (i - 1) % 8; return 40*t * t});
  *
  * @example retry at a pace:  0, 40, 160, 360, 640, 1000 ms; repeat... and skip the item from source that triggers error if 5 consecutive errors happens
- * backoff({maxTries:Infinity,  interval: i => {const t = (i - 1) % 6; return 40*t * t}, skipIfConsecutiveErrors: 5});
+ * backoff(Infinity,  i => {const t = (i - 1) % 6; return 40*t * t, 5});
  */
-export function backoff<T>(config: BackoffConfig, interval?: number | ((i: number) => number));
-export function backoff<T>(maxTriesOrConfig: number, interval: number | ((i: number) => number));
-export function backoff<T>(maxTriesOrConfig: any, interval?: number | ((i: number) => number)) {
-  let config: BackoffConfig;
-  if (typeof maxTriesOrConfig === 'object') {
-    config = maxTriesOrConfig as BackoffConfig;
-    config.interval ??= interval as (number | ((i: number) => number));
-  } else {
-    config = { maxTries: maxTriesOrConfig, interval: interval as (number | ((i: number) => number)) }
-  }
-  let consecutiveErrors = 0;
-  return pipe(
-    consecutiveStatus([config.failIfConsecutiveErrors??1, Infinity], errors => consecutiveErrors = errors),
-    retryWhen<T>(err$ => {
-      let errors = 0;
-      return err$.pipe(
-        map(err => [errors++, err]),
-        complete(o => errors >= config.maxTries),
-        map(([i, err]) => [typeof config.interval === 'function' ? config.interval(i) : config.interval, err]),
-        mergeMap(([i, err]) => {
-          config.stateReporter?.('Error', err);
-          if (config.failIfConsecutiveErrors != null && consecutiveErrors < config.failIfConsecutiveErrors) {
-            return timer(i).pipe(tap(() => config.stateReporter?.('Retry'))); // retry after timer emit.
-          }
-          config.stateReporter?.('Fail');
-          console.warn(`backoff: skip item process because of consecutive errors happened: consecutiveError: ${consecutiveErrors}>=${config.failIfConsecutiveErrors}\n error: ${err}`);
-          return EMPTY;
-        })
-      )
+export function backoff<T>(maxTries: number, interval: number | ((i: number) => number), failIfConsecutiveErrors?: number) {
+  return error(status => {
+    if (status.errors >= maxTries) return null; // stop
+
+    if (failIfConsecutiveErrors && status.consecutiveErrors < failIfConsecutiveErrors) {
+      const intervalTime = typeof interval === 'function' ? interval(status.errors) : interval;
+      return timer(intervalTime); // retry after timer emit.
     }
-    )
-  );
+
+    return EMPTY; // skip the item, and not throw, it's swallowed. we just stop retry
+  });
+
+  // below code not work for maxTries = Infinity
+  // retryWhen<T>(err$ =>
+  //   range(1, maxTries).pipe(
+  //     zipWith(err$), // attach number sequence to the errors observable
+  //     map(([i]) => typeof interval === 'function'? interval(i): interval), // every error correspond to a squared result of number
+  //     mergeMap(i => timer(i))
+  //   ))
 }
 
-export type BackoffStateReporter = (state: 'Error' | 'Retry' | 'Fail', context?: any) => void;
-export interface BackoffConfig {
-  maxTries: number;
-  interval: number | ((i: number) => number);
-  /**
-   * to skip the item from source that triggers error if consecutive errors happens.(no successful emit in between)
-   */
-  failIfConsecutiveErrors?: number;
-  stateReporter?: BackoffStateReporter
-}
 
 export function consecutiveStatus<T>(
   errors: [number, number], consecutiveErrorStatus: (errors: number) => void,
@@ -121,8 +98,54 @@ export function consecutiveStatus<T>(
   })
 }
 
+
+export interface ErrorStatus {
+  errors: number;
+  consecutiveErrors: number;
+  consecutiveSuccesses: number;
+  error: any;
+}
+
+export function error<T>(
+  /**
+   * return:
+   * null: stop
+   * EMPTY: continue
+   * Observable<any>: when emit would retry. i.e. return timer(2000) would retry 2s later.
+   */
+  errorHandler: (status: ErrorStatus) => Observable<any> | null) {
+  const status: ErrorStatus = {
+    errors: 0,
+    consecutiveErrors: 0,
+    consecutiveSuccesses: 0,
+    error: undefined
+  }
+  let stop = false;
+
+  return pipe(
+    consecutiveStatus([1, Infinity], errors => status.consecutiveErrors = errors,
+      [1, Infinity], successes => status.consecutiveSuccesses = successes),
+    retryWhen<T>(err$ => {
+      return err$.pipe(
+        mergeMap(err => {
+          status.errors++
+          status.error = err;
+          const result = errorHandler(status);
+          if (result === null) {
+            stop = true;
+            return EMPTY;
+          }
+
+          return result;
+        }),
+        complete(o => stop),
+      )
+    })
+  );
+}
+
 export function complete<T>(condition: (o: T) => boolean) {
-  return (source:Observable<T>) => new Observable<T>(observer => {
+  return (source: Observable<T>) => new Observable<T>(observer => {
     source.pipe(
       tap(o => {
         if (condition(o)) {

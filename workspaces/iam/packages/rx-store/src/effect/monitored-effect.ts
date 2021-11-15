@@ -1,5 +1,5 @@
 import { filter, mergeMap, of, OperatorFunction, pipe, tap } from "rxjs";
-import { defaultEffectOption, EffectOption, sideEffect } from "../core";
+import { defaultEffectOption, EffectOption, error, sideEffect } from "../core";
 import { OperationState } from "./operation-state";
 import { OperationStatus, OperationStep } from "./operation-status";
 import { EffectStateObservable } from "./effect-state-observable";
@@ -85,15 +85,7 @@ export function monitorSideEffect<T>(
 
       return of(state).pipe(
         monitoredEffect(new MonitoredEffectInfo(effectStatus!, startStatus)),
-        getDefaultMonitoredEffectErrorOperator((sta, context) => {
-          const st = sta === 'Error' ? startStatus.Error :
-            sta === 'Retry' ? startStatus.Retry :
-              sta === 'Fail' ? startStatus.Fail :
-                undefined;
-          if (st === undefined)
-            throw Error('unexpected state reported from error handler of monitored side effect.');
-          effectStatus!.next(st.with(context));
-        }),
+        getDefaultMonitoredEffectErrorOperator(startStatus, st => effectStatus!.next(st)),
       );
 
     })
