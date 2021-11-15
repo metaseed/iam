@@ -1,7 +1,7 @@
 import { firstValueFrom } from "rxjs";
 import { tap } from 'rxjs/operators';
 import { StateSubject } from "../../core";
-import { AsyncEntityService, EntityDataService, ID, QueryParams, Update } from "../model/entity-data-service.interface";
+import { AsyncEntityService, EntityDataService, ID, QueryParams, Update } from "../cache/model/entity-data-service.interface";
 import { ChangeContent, EntityChangeType } from "./model";
 
 export class EntityDataServiceStore<T> implements AsyncEntityService<T> {

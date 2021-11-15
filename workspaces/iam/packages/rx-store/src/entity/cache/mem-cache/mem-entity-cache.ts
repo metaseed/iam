@@ -1,10 +1,10 @@
 import { map, Observable, of } from "rxjs";
-import { isDevMode } from "../../core/dev-mode-checking";
+import { isDevMode } from "../../../core/dev-mode-checking";
 import { EntityDataServiceBase } from "../model/entity-data-service-base";
 import { ID, IdGenerator, QueryParams, SortComparer, Update } from "../model/entity-data-service.interface";
-import { idGeneratorWrapper } from "../utils/id-generator-wrapper";
-import { removeItem } from "../utils/remove-array-item";
-import { sortComparerWrapper } from "../utils/sort-comparer-wrapper";
+import { idGeneratorWrapper } from "../../utils/id-generator-wrapper";
+import { removeItem } from "../../utils/remove-array-item";
+import { sortComparerWrapper } from "../../utils/sort-comparer-wrapper";
 import { EntityCache } from "./models";
 
 type IdEntityPair<T> = { id: ID; entity: T }

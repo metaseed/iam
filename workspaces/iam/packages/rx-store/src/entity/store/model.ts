@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
-import { EntityCache } from "../mem-cache/models";
-import { ID } from "../model/entity-data-service.interface";
+import { EntityCache } from "../cache/mem-cache/models";
+import { ID } from "../cache/model/entity-data-service.interface";
 
 
 export enum EntityChangeType { Add, Delete, Update, Set, Upsert }

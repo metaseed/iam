@@ -2,6 +2,9 @@ import { Inject, Injectable, InjectionToken, isDevMode, Optional } from "@angula
 
 export let defaultLogFunctionPrdScreen = [console.assert.name, console.debug.name, console.trace.name, console.log.name];
 
+/**
+ * in function we can not use LogService, so have to patch the console global object.
+ */
 export function screenConsoleLog() {
   for (const funcName in defaultLogFunctionPrdScreen) {
     console[funcName] = () => undefined;

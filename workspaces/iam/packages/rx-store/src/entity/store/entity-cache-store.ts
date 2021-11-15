@@ -2,8 +2,8 @@ import { distinctUntilChanged, filter, map, merge, startWith } from "rxjs";
 import { ChangeContent, EntityChangeType } from ".";
 import { StateSubject, state } from "../../core";
 import { isDevMode } from "../../core/dev-mode-checking";
-import { EntityCache } from "../mem-cache/models";
-import { EntityDataService, ID } from "../model/entity-data-service.interface";
+import { EntityCache } from "../cache/mem-cache/models";
+import { EntityDataService, ID } from "../cache/model/entity-data-service.interface";
 import { EntityDataServiceStore } from "./entity-data-service-store";
 
 export type EntityCacheService<T> = EntityDataService<T> & EntityCache<T>;
