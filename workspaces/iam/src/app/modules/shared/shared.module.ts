@@ -12,10 +12,8 @@ import { DatabaseModule } from 'database';
 import { NetStorageModule } from 'net-storage';
 import { CacheModule } from '../cache';
 import { CacheFacade } from './cache-facade';
-import { MatInputAutofocusDirective } from './directives/matinput-autofocus.directive';
 import { DocumentsEffects, DocumentStateFacade, DOCUMENT_EFFECTS_TOKEN } from './store';
-import { SearchModule } from './bundle-share/components/search/search.module';
-import { ScrollHideModule } from './bundle-share/directives/scroll-hide/scroll-hide.module';
+import { BundleShareModule } from './bundle-share/bundle-share.module';
 
 @NgModule({
   imports: [
@@ -27,15 +25,13 @@ import { ScrollHideModule } from './bundle-share/directives/scroll-hide/scroll-h
     RouterModule,
     SplitPaneModule,
     CacheModule,
-    SearchModule,
-    ScrollHideModule
+    BundleShareModule,
   ],
   declarations: [
     ReadingPositionIndicatorComponent,
     BottomNavigationComponent,
-    MatInputAutofocusDirective],
+    ],
   exports: [
-    MatInputAutofocusDirective,
     ReadingPositionIndicatorComponent,
     BottomNavigationComponent,
     SplitPaneModule,
@@ -43,8 +39,7 @@ import { ScrollHideModule } from './bundle-share/directives/scroll-hide/scroll-h
     CommonModule,
     FormsModule,
     CoreModule,
-    SearchModule,
-    ScrollHideModule
+    BundleShareModule,
   ],
   providers: [
     /*should have no provides in shared module*/
