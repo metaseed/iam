@@ -3,6 +3,15 @@ export function isDevMode() {
   return _devMode;
 }
 
-export function enableProdMode(){
+/**
+ export class AppModule {
+  constructor(){
+    if(environment.production){
+      enableProdMode();
+    }
+  }
+}
+ */
+export function enableProdMode() {
   _devMode = false;
 }
