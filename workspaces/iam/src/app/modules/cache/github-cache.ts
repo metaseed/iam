@@ -243,11 +243,15 @@ export class GithubCache implements ICache {
       isDeleted = false
     ): Observable<DocContent> => {
       if (!title) throw new Error('title is empty!');
+
       const sanitizedTitle = DocMeta.sanitizeTitle(title);
       let uri = `${DOCUMENTS_FOLDER_NAME}/${sanitizedTitle}_${id}`;
       if (format) uri = `${uri}.${format}`;
 
-      if (isDeleted) return of(new DocContent(id, undefined, undefined, isDeleted));
+      if (isDeleted) {
+        console.log(`@github-cache.readDocContent: this doc is deleted: {id:${id}, title: ${title}, format: ${format}}`)
+        return of(new DocContent(id, undefined, undefined, isDeleted));
+      }
 
       return (<Observable<Content>>repo.getContents(uri)).pipe(
         // directly get DocContent
@@ -258,15 +262,17 @@ export class GithubCache implements ICache {
               state = 1;
               return this.readDocMeta(id).pipe(
                 switchMap(meta => {
+                  console.log(`@github-cache.readDocContent: could not get content of id: ${id}, title: ${title}, format:${format}\ntry again with remote meta: {title: ${meta.title}, format: ${meta.format}, isDeleted: ${meta.isDeleted}}`);
                   // using the parameters from net via key; means title, format or format is modified.
                   return getContent(repo, id, meta.title, meta.format, state, meta.isDeleted);
                 })
               );
             } else if (format && state === 1) {
               state = 2; // stop
+              console.log(`@github-cache.readDocContent: could not get content of id: ${id}, title: ${title}, format:${format}\ntry to use get without file format`);
               return getContent(repo, id, title, '', state); // try to getting DocContent saved without format suffix;
             } else {
-              return throwError('getContents should stop!');
+              return throwError(()=> new Error(`@github-cache.readDocContent: could not get content of id: ${id}, title: ${title}, format:${format}`));
             }
           } else {
             throw err;
@@ -274,6 +280,7 @@ export class GithubCache implements ICache {
         })
       );
     };
+
     return this.githubStorage.init().pipe(
       switchMap(repo => {
         return getContent(repo, id, title, format);

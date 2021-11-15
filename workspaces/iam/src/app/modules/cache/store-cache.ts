@@ -79,58 +79,71 @@ export class StoreCache implements ICache {
   }
 
   readDocMeta(id: number, checkNextCache?: boolean): Observable<DocMeta> {
-    return this.nextLevelCache.readDocMeta(id, checkNextCache).pipe(tap(meta => {
-      if (meta.isDeleted) this._store.delete(meta.id);
-      else {
-        const metaInStore = this._store.getDocMeta(meta.id);
-        if (!metaInStore) {
-          this._store.docMeta.add(meta);
-        } else if (metaInStore.updateDate.getTime() < meta.updateDate.getTime()) {
-          this._store.docMeta.update({
-            id: meta.id,
-            changes: meta
-          });
+    return this.nextLevelCache.readDocMeta(id, checkNextCache).pipe(
+      tap(meta => {
+        if (meta.isDeleted)
+          this._store.delete(meta.id);
+        else {
+          const metaInStore = this._store.getDocMeta(meta.id);
+          if (!metaInStore) {
+            console.debug(`@storeCache.readDocMeta: add doc meta to store`, meta);
+            this._store.docMeta.add(meta);
+          } else if (metaInStore.updateDate.getTime() < meta.updateDate.getTime()) {
+            console.debug(`@storeCache.readDocMeta: update doc meta to store`, meta);
+            this._store.docMeta.update({
+              id: meta.id,
+              changes: meta
+            });
+          }
+          else {
+              console.debug(`@storeCache.readDocMeta: meta in store is the same as far-cache. no process for it in store`, meta)
+          }
         }
-      }
-    }));
+      })
+    );
   }
 
   readDocContent(id: number, title: string, format: string): Observable<DocContent> {
     return this.nextLevelCache.readDocContent(id, title, format).pipe(
       tap(docContent => {
         // no data in next level, but the next level cache should further fetch from its next level. we would receive it.
+        // actually this code would never executed. because far-cache only return none empty item.
         if (!docContent) {
-          console.warn('doc content from next cache is empty')
+          console.warn(`@storeCache.readDocContent: doc(id: ${id}) content from far-cache is empty`)
           return;
         }
 
         if (docContent.isDeleted) {
-          this._store.delete(docContent.id);
+          console.warn(`@storeCache.readDocContent: id: ${id} is deleted from far-cache, so delete is from store`)
+          this._store.delete(docContent.id); // delete dotContent, meta and status.
+          return;
         }
 
+        // update it in store
         const document = this._store.getDocument(id);
         if (document?.sha === docContent.sha) {
-          console.log('content sha in mem is the same with the sha from next cache')
+          console.debug(`@storeCache.readDocContent: id: ${id}, content sha in mem is the same with the sha from next cache, so no need to update it in store.`)
           return; // nothing changed.
         }
 
         this.nextLevelCache
+          // why need to read docMeta?
           .readDocMeta(id)
           .pipe(
             tap(meta => {
               if (meta.contentSha !== docContent.sha) {
-                this._logger.warn(
-                  `metaData.contentSha:${meta.contentSha} is different with document sha: ${docContent.sha
-                  }, force using document sha`
-                );
+                this._logger.warn(`@storeCache.readDocContent: id(${id}, metaData.contentSha:${meta.contentSha} is different with document sha: ${docContent.sha}, force using document sha`);
                 meta.contentSha = docContent.sha;
               }
 
               const document = this._store.getDocument(id);
               if (!document) {
+                console.debug(`@storeCache.readDocContent: id(${id}), add dotMeta and content to store.`, meta, docContent)
                 this._store.docMeta.add(meta);
                 this._store.document.add(docContent);
               } else {
+                console.debug(`@storeCache.readDocContent: id(${id}), update dotMeta and content to store.`, meta, docContent)
+
                 this._store.docMeta.update({
                   id: document.id,
                   changes: meta

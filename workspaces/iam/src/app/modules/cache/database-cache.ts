@@ -151,6 +151,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
     const _nextCache$ = nextCache$.pipe(
       filter(fromNext => {
         if (shouldDelete(inCache, fromNext)) {
+          console.debug(`@IndexDB.syncFromNext: delete ${fromNext.id} from indexDB, and forward to near-cache, because it's deleted from far-cache`, inCache, fromNext)
           this.db.delete(table, fromNext.id)
             .pipe(
               subscribeOn(asyncScheduler),
@@ -160,9 +161,9 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
             )
             .subscribe();
 
-          return true;
-        } else
-          if (shouldUpdate(inCache, fromNext)) {
+          return true; // further delete in near-cache
+        } else if (shouldUpdate(inCache, fromNext)) {
+          console.debug(`@IndexDB.syncFromNext: update ${fromNext.id} from indexDB, and forward to near-cache, because far-cache have updated content`,inCache, fromNext)
             this.db.put(table, fromNext)
               .pipe(
                 subscribeOn(asyncScheduler),
@@ -171,10 +172,12 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
                 })
               )
               .subscribe();
-            return true;
+            return true; // further update in near cache
           }
-          else
+          else {
+            console.debug(`@IndexDB.syncFromNext: no need to process(delete or update) received id(${fromNext.id}) from far-cache, item will not forward to near-cache(it would use item from IndexDB)`, fromNext)
             return false;
+          }
       })
     );
     return concat(_cache$, _nextCache$).pipe(filter(t => !!t));

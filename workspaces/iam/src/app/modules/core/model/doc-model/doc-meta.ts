@@ -18,12 +18,24 @@ export class DocMeta {
   private constructor(
     public id: number,
     public title: string,
-    public contentSha: string, // sha of file; used to update the content, to make sure remote is no edited by other app instance, set with the latest reading from remote.
-    public createDate: Date, // utc time
-    public updateDate: Date, // utc time
+    /**
+     * sha of file; used to update the content, to make sure remote is no edited by other app instance, set with the latest doc content reading from remote.
+     */
+    public contentSha: string,
+    /**
+     * utc time
+     */
+    public createDate: Date,
+    /**
+     * utc time
+     */
+    public updateDate: Date,
     public summary: string,
     public imageData: string,
-    public format = 'md', // suffix
+    /**
+     *  suffix
+     */
+    public format = 'md',
     public isDeleted = false
   ) { }
 
