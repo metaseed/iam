@@ -163,6 +163,11 @@ export class MarkdownViewerService {
 
     function isDiff(obj: object, withObj: object) {
       if (obj == null && withObj != null || withObj == null && obj != null) return true;
+      if(Array.isArray(obj)){
+        if(!Array.isArray(withObj)) return true;
+
+        if(obj.length !== withObj.length) return true;
+      }
 
       for (const [key, value] of Object.entries(obj)) {
         if (!withObj?.hasOwnProperty(key)) return true;
@@ -181,13 +186,13 @@ export class MarkdownViewerService {
 
     if (!meta) return meta;
 
-    const metaData = this.store.currentDocMeta$.state;
-    if (!metaData) return meta;
+    const metaDataInStore = this.store.currentDocMeta$.state;
+    if (!metaDataInStore) return meta;
 
-    if (!isDiff(meta, metaData)) return metaData;
+    if (!isDiff(meta, metaDataInStore)) return metaDataInStore;
 
     const newMeta = {
-      ...metaData,
+      ...metaDataInStore,
       ...meta,
     };
     asyncScheduler.schedule(
