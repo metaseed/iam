@@ -1,9 +1,11 @@
 import * as MarkdownIt from 'markdown-it';
 import { uid } from 'core';
+
 export class MermaidPlugin {
   constructor(private markdownIt: MarkdownIt) {
     this.markdownIt.use(this.mermaidPlugin, 'mermaid');
   }
+
   mermaidChart = code => {
     try {
       const id = 'id' + uid();
@@ -49,21 +51,24 @@ export class MermaidPlugin {
   };
 
   private _mermaid;
-  async mermaid() {
+  mermaid = async () => {
     if (!this._mermaid) {
-      this._mermaid = await import('mermaid');
-      this.loadPreferences(this._mermaid, {
-        get: key => {
-          // if (key === 'mermaid-theme') {
-          //   return 'forest'
-          // } else if (key === 'gantt-axis-format') {
-          //   return '%Y/%m/%d'
-          // } else {
-          //   return undefined
-          // }
-          return undefined;
-        }
-      });
+      const m = (await import('mermaid')).default;
+      if (!this._mermaid) {
+        this._mermaid = m;
+        this.loadPreferences(this._mermaid, {
+          get: key => {
+            // if (key === 'mermaid-theme') {
+            //   return 'forest'
+            // } else if (key === 'gantt-axis-format') {
+            //   return '%Y/%m/%d'
+            // } else {
+            //   return undefined
+            // }
+            return undefined;
+          }
+        });
+      }
     }
     return this._mermaid;
   }
