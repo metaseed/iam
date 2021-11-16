@@ -12,7 +12,7 @@ import { DatabaseModule } from 'database';
 import { NetStorageModule } from 'net-storage';
 import { CacheModule } from '../cache';
 import { CacheFacade } from './cache-facade';
-import { DocumentsEffects, DocumentStateFacade, DOCUMENT_EFFECTS_TOKEN } from './store';
+import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from './store';
 import { BundleShareModule } from './bundle-share/bundle-share.module';
 
 @NgModule({
@@ -53,7 +53,6 @@ export class SharedModule {
         DocEffectsUtil,
         { provide: CACHE_FACADE_TOKEN, useClass: CacheFacade },
         { provide: DOCUMENT_EFFECTS_TOKEN, useClass: DocumentsEffects },
-        DocumentStateFacade
       ]
     };
   }

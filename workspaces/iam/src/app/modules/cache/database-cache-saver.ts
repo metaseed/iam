@@ -3,12 +3,10 @@ import { subscribeOn, catchError, switchMap, map, tap } from 'rxjs/operators';
 import { ICache, DocContent, DataTables, DocMeta, Document, AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL } from 'core';
 import { Database } from '../database/database-engine';
 import { DirtyDocument } from '../core/model/doc-model/doc-status';
-import { DocumentStateFacade } from '../shared/store/document-state.facade';
 import { DocumentStore } from '../shared/store/document.store';
 
 export class DatabaseCacheSaver {
 
-  private docFacade: DocumentStateFacade;
 
   public autoSave$;
   constructor(
@@ -16,7 +14,6 @@ export class DatabaseCacheSaver {
     private nextLevelCache: ICache,
     private store: DocumentStore
   ) {
-    this.docFacade = new DocumentStateFacade(this.store);
     this.autoSave$ = interval(AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL).pipe(
       switchMap(() => this.db.getAllKeys<number[]>(DataTables.DirtyDocs)),
       switchMap(ids => merge(...(ids.map(id => this.saveToNet(id).pipe(
@@ -48,8 +45,8 @@ export class DatabaseCacheSaver {
       )
     ).pipe(
       map(([content, meta]) => {
-        this.store.updateCurrentDocStatus({isEditorDirty: false, isDbDirty: true});
-        return new Document( docMeta, docContent);
+        this.store.updateCurrentDocStatus({ isEditorDirty: false, isDbDirty: true });
+        return new Document(docMeta, docContent);
       }),
       switchMap(doc => {
         const ro = this.db.put<DirtyDocument>(DataTables.DirtyDocs, new DirtyDocument(doc.metaData.id));
@@ -80,10 +77,12 @@ export class DatabaseCacheSaver {
       )
     ).pipe(
       switchMap(([content, docMeta]) => {
-        this.docFacade.setCurrentDocumentSavingToNetStatus();
+        // saving to net
+        this.store.updateCurrentDocStatus({ isSyncing: true });
         return this.nextLevelCache.updateDocument(docMeta, content.content, false).pipe(
           switchMap(doc => {
-            this.docFacade.setCurrentDocumentSavedToNetStatus();
+            // saved to net
+            this.store.updateCurrentDocStatus({ isDbDirty: false, isSyncing: false })
             return this.db.delete<DirtyDocument>(DataTables.DirtyDocs, id).pipe(
               map(r => doc)
             );
