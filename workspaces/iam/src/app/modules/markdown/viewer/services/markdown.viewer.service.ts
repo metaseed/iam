@@ -60,7 +60,7 @@ import { getAddr } from "../utils/getUri";
 import { Utilities } from "core";
 import { LispPlugin } from "./markdown-it-plugins/lisp";
 import { sourceLine } from "./markdown-it-plugins/source-line";
-import MarkdownItIncrementalDom from "markdown-it-incremental-dom";
+import { markdownitIncrementalDOM } from "./markdown-it-plugins/incremental-dom";
 import * as IncrementalDom from "incremental-dom";
 import { MetaPlugin } from "./markdown-it-plugins/meta";
 import { DocumentStore } from "app/modules/shared/store/document.store";
@@ -81,7 +81,7 @@ export class MarkdownViewerService {
   };
 
   mediaChangeSubscription: Subscription;
-  private markdown: MarkdownIt;
+  private markdownIt: MarkdownIt;
   private containerPlugin: ContainerPlugin;
   private mermaidPlugin: MermaidPlugin;
   private lispPlugin: LispPlugin;
@@ -103,11 +103,11 @@ export class MarkdownViewerService {
       config.markdownIt.highlight = this.DEFAULT_HIGHLIGHT_FUNCTION;
     }
 
-    this.markdown = new MarkdownIt(config.markdownIt);
-    this.metaPlugin = new MetaPlugin(this.markdown, this.updateMeta);
-    this.lispPlugin = new LispPlugin(this.markdown);
-    this.markdown
-      .use(MarkdownItIncrementalDom, IncrementalDom, {
+    this.markdownIt = new MarkdownIt(config.markdownIt);
+    this.metaPlugin = new MetaPlugin(this.markdownIt, this.updateMeta);
+    this.lispPlugin = new LispPlugin(this.markdownIt);
+    this.markdownIt
+      .use(markdownitIncrementalDOM, IncrementalDom, {
         incrementalizeDefaultRules: true,
       })
       .use(
@@ -152,9 +152,9 @@ export class MarkdownViewerService {
       .use(latex)
       .use(html(IncrementalDom, enableIDOM));
 
-    this.mermaidPlugin = new MermaidPlugin(this.markdown);
+    this.mermaidPlugin = new MermaidPlugin(this.markdownIt);
 
-    this.containerPlugin = new ContainerPlugin(this.markdown, "warning");
+    this.containerPlugin = new ContainerPlugin(this.markdownIt, "warning");
 
     this.docRef.document["copier"] = new CopierService();
   }
@@ -163,10 +163,10 @@ export class MarkdownViewerService {
 
     function isDiff(obj: object, withObj: object) {
       if (obj == null && withObj != null || withObj == null && obj != null) return true;
-      if(Array.isArray(obj)){
-        if(!Array.isArray(withObj)) return true;
+      if (Array.isArray(obj)) {
+        if (!Array.isArray(withObj)) return true;
 
-        if(obj.length !== withObj.length) return true;
+        if (obj.length !== withObj.length) return true;
       }
 
       for (const [key, value] of Object.entries(obj)) {
@@ -196,8 +196,8 @@ export class MarkdownViewerService {
       ...meta,
     };
     asyncScheduler.schedule(
-      meta=> {
-        this.store.docMeta.set( meta);
+      meta => {
+        this.store.docMeta.set(meta);
       },
       0,
       newMeta
@@ -211,28 +211,26 @@ export class MarkdownViewerService {
     this.target = target;
     if (enableIDOM) {
       try {
-        const code_inline_before: any =
-          this.markdown.renderer.rules.code_inline; // latex code_inline rule or default
-        const { elementClose, elementOpen, elementVoid, text, skipNode, skip } =
-          IncrementalDom;
+        const code_inline_original: any = this.markdownIt.renderer.rules.code_inline; // latex code_inline rule or default
+        const { elementClose, elementOpen, elementVoid, text, skipNode, skip } = IncrementalDom;
 
-        const md = this.markdown;
-        const irender = md["IncrementalDOMRenderer"];
-        const irender_code_inline_rule = irender.rules.code_inline;
+        const mdIt = this.markdownIt;
+        const incrementalDomRenderer = mdIt["IncrementalDOMRenderer"];
+        const irender_code_inline_rule = incrementalDomRenderer.rules.code_inline;
         // override the irender rules
-        irender.rules.code_inline = (...args) => {
+        incrementalDomRenderer.rules.code_inline = (...args) => {
           const [tokens, idx, options, env, slf] = args;
           const content = tokens[idx].content;
           if (content.startsWith("$") || content.startsWith("@")) {
             // latex
-            return code_inline_before(...args);
+            return code_inline_original(...args);
           }
           return irender_code_inline_rule(...args);
         };
 
         const r = IncrementalDom.patch(
           target,
-          irender.render(md.parse(raw, this.env), md["options"], this.env)
+          (mdIt as any).renderToIncrementalDOM(raw, this.env)
         );
 
         return r.textContent;
@@ -241,7 +239,7 @@ export class MarkdownViewerService {
         return e;
       }
     } else {
-      const r = (target.innerHTML = this.markdown.render(raw, this.env));
+      const r = (target.innerHTML = this.markdownIt.render(raw, this.env));
       return r;
     }
   }
@@ -295,7 +293,7 @@ onclick="document.copier.copyText(this.attributes.originalstr.value,true)">
         console.error(e);
       }
     }
-    return `<pre class="highlight"><code>${this.markdown.utils.escapeHtml(
+    return `<pre class="highlight"><code>${this.markdownIt.utils.escapeHtml(
       str
     )} </code></pre>`;
   };
