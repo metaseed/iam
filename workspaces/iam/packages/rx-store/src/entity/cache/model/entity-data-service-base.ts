@@ -1,52 +1,51 @@
-import { Observable, zip } from "rxjs";
 import { Update, QueryParams, ID, EntityDataService } from "./entity-data-service.interface";
 
 export abstract class EntityDataServiceBase<T> implements EntityDataService<T> {
 
-  add(entity: T): Observable<T|undefined> {
+  add(entity: T): Promise<T|undefined> {
     throw new Error("Method not implemented.");
   }
-  addMany(entities: T[]): Observable<(T|undefined)[]> {
-    return zip(entities.map(e => this.add(e)))
+  addMany(entities: T[]): Promise<(T|undefined)[]> {
+    return Promise.all(entities.map(e => this.add(e)))
   }
-  delete(id: ID): Observable<ID | undefined> {
+  delete(id: ID): Promise<ID | undefined> {
     throw new Error("Method not implemented.");
   }
-  deleteMany(ids: ID[]): Observable<(ID|undefined)[]> {
-    return zip(ids.map(id => this.delete(id)));
+  deleteMany(ids: ID[]): Promise<(ID|undefined)[]> {
+    return Promise.all(ids.map(id => this.delete(id)));
   }
-  deleteAll():Observable<undefined> {
+  deleteAll():Promise<undefined> {
     throw new Error("Method not implemented.");
   }
-  update(update: Update<T>): Observable<T|undefined> {
+  update(update: Update<T>): Promise<T|undefined> {
     throw new Error("Method not implemented.");
   }
-  updateMany(updates: Update<T>[]): Observable<(T|undefined)[]> {
-    return zip(updates.map(e => this.update(e)))
+  updateMany(updates: Update<T>[]): Promise<(T|undefined)[]> {
+    return Promise.all(updates.map(e => this.update(e)))
   }
-  set(entity:T): Observable<T> {
+  set(entity:T): Promise<T> {
     throw new Error("Method not implemented.");
   }
-  setMany(entities: T[]): Observable<T[]>{
-    return zip(entities.map(e => this.set(e)));
+  setMany(entities: T[]): Promise<T[]>{
+    return Promise.all(entities.map(e => this.set(e)));
   }
-  upsert(entity: T): Observable<T> {
+  upsert(entity: T): Promise<T> {
     throw new Error("Method not implemented.");
   }
-  upsertMany(updates: T[]): Observable<T[]> {
-    return zip(updates.map(e => this.upsert(e)));
+  upsertMany(updates: T[]): Promise<T[]> {
+    return Promise.all(updates.map(e => this.upsert(e)));
   }
-  getAll(): Observable<T[]> {
+  getAll(): Promise<T[]> {
     throw new Error("Method not implemented.");
   }
-  getById(id: ID): Observable<T|undefined> {
+  getById(id: ID): Promise<T|undefined> {
     throw new Error("Method not implemented.");
   }
-  getMany(ids:ID[]): Observable<(T|undefined)[]>{
+  getMany(ids:ID[]): Promise<(T|undefined)[]>{
     throw new Error("Method not implemented.");
   }
 
-  getWithQuery(params: string | QueryParams): Observable<T[]> {
+  getWithQuery(params: string | QueryParams): Promise<T[]> {
     throw new Error("Method not implemented.");
   }
 

@@ -1,107 +1,109 @@
 import { firstValueFrom } from "rxjs";
 import { tap } from 'rxjs/operators';
 import { StateSubject } from "../../core";
-import { AsyncEntityService, EntityDataService, ID, QueryParams, Update } from "../cache/model/entity-data-service.interface";
+import { EntityDataService, ID, QueryParams, Update } from "../cache/model/entity-data-service.interface";
 import { ChangeContent, EntityChangeType } from "./model";
 
-export class EntityDataServiceStore<T> implements AsyncEntityService<T> {
+export class EntityDataServiceStore<T> implements EntityDataService<T> {
   changes$ = new StateSubject<ChangeContent<T>>();
 
   constructor(protected dataService: EntityDataService<T>) { }
 
   async add(entity: T) {
-    return firstValueFrom(this.dataService.add(entity).pipe(
-      tap(v => {
+    return this.dataService.add(entity).then(
+      v => {
         if (v) this.changes$.next({ changeType: EntityChangeType.Add, changes: [v] });
-      })
-    ));
+        return v;
+      });
   }
   async addMany(entities: T[]) {
-    return firstValueFrom(this.dataService.addMany(entities).pipe(
-      tap(v => {
-        v = v.filter(e => e);
+    return this.dataService.addMany(entities).then(
+      r => {
+        const v = r.filter(e => e);
         if (v.length) this.changes$.next({ changeType: EntityChangeType.Add, changes: v as T[] });
-      })
-    ));
+        return r;
+      }
+    );
   }
   async delete(id: ID) {
-    return firstValueFrom(this.dataService.delete(id).pipe(
-      tap(v => {
+    return this.dataService.delete(id).then(
+      v => {
         if (v) this.changes$.next({ changeType: EntityChangeType.Delete, changes: [id] });
+        return v;
       })
-    ));
   }
   async deleteMany(ids: ID[]) {
-    return firstValueFrom(this.dataService.deleteMany(ids).pipe(
-      tap(v => {
-        v = v.filter(e => e);
+    return this.dataService.deleteMany(ids).then(
+      r => {
+        const v = r.filter(e => e);
         if (v) this.changes$.next({ changeType: EntityChangeType.Delete, changes: v as ID[] });
+        return r;
       })
-    ));
   }
   async deleteAll() {
-    return firstValueFrom(this.dataService.deleteAll().pipe(
-      tap(() => {
+    return this.dataService.deleteAll().then(
+      r => {
         this.changes$.next({ changeType: EntityChangeType.Delete, changes: undefined });
-      })
-    ));
+        return r;
+      }
+    );
   }
   async update(update: Update<T>) {
-    return firstValueFrom(this.dataService.update(update).pipe(
-      tap(v => {
+    return this.dataService.update(update).then(
+      v => {
         if (v) this.changes$.next({ changeType: EntityChangeType.Update, changes: [v] });
+        return v;
       })
-    ));
   }
   async updateMany(updates: Update<T>[]) {
-    return firstValueFrom(this.dataService.updateMany(updates).pipe(
-      tap(v => {
-        v = v.filter(e => e);
+    return this.dataService.updateMany(updates).then(
+      r => {
+        const v = r.filter(e => e);
         if (v.length) this.changes$.next({ changeType: EntityChangeType.Update, changes: v as T[] });
+        return r;
       })
-    ));
   }
   async set(entity: T) {
-    return firstValueFrom(this.dataService.set(entity).pipe(
-      tap(v => {
+    return this.dataService.set(entity).then(
+      v => {
         this.changes$.next({ changeType: EntityChangeType.Set, changes: [v] });
+        return v;
       })
-    ));
   }
   async setMany(entities: T[]) {
-    return firstValueFrom(this.dataService.setMany(entities).pipe(
-      tap(v => {
+    return this.dataService.setMany(entities).then(
+      v => {
         if (v.length) this.changes$.next({ changeType: EntityChangeType.Set, changes: v });
+        return v;
       })
-    ));
   }
   async upsert(entity: T) {
-    return firstValueFrom(this.dataService.upsert(entity).pipe(
-      tap(v => {
+    return this.dataService.upsert(entity).then(
+      v => {
         this.changes$.next({ changeType: EntityChangeType.Upsert, changes: [v] });
+        return v;
       })
-    ));
   }
   async upsertMany(updates: T[]) {
-    return firstValueFrom(this.dataService.upsertMany(updates).pipe(
-      tap(v => {
+    return this.dataService.upsertMany(updates).then(
+      v => {
         if (v.length) this.changes$.next({ changeType: EntityChangeType.Upsert, changes: v });
+        return v;
       })
-    ));
   }
 
   async getAll() {
-    return firstValueFrom(this.dataService.getAll());
+    return this.dataService.getAll();
   }
   async getById(id: ID) {
-    return firstValueFrom(this.dataService.getById(id));
+    return this.dataService.getById(id);
   }
   async getMany(ids: ID[]) {
-    return firstValueFrom(this.dataService.getMany(ids));
+    return this.dataService.getMany(ids);
   }
 
   async getWithQuery(params: string | QueryParams) {
-    return firstValueFrom(this.getWithQuery(params));
+    return this.getWithQuery(params);
   }
 
 }

@@ -1,10 +1,8 @@
-import { Observable } from "rxjs";
-
 export type ID = string | number;
 
 type PromiseFunc<F> = F extends (...args: infer P) => infer R ? (...args: P) => Promise<any> : any
-
-export type AsyncEntityService<T> = {
+// type modify the member function's return type from Observable to promise.
+type AsyncEntityService<T> = {
   [P in keyof EntityDataService<T>]: PromiseFunc<EntityDataService<T>[P]>
 }
 
@@ -17,50 +15,50 @@ export interface EntityDataService<T> {
    * @param entity
    * @returns of(undefined), if generated id already there, then not added.
    */
-  add(entity: T): Observable<T | undefined>;
+  add(entity: T): Promise<T | undefined>;
   /**
    * @param entities
    * @returns entities that added, filtered out entities that already there.
    */
-  addMany(entities: T[]): Observable<(T | undefined)[]>;
+  addMany(entities: T[]): Promise<(T | undefined)[]>;
   /**
    * @param id
    *
    * @returns of(undefined): if can not find id to delete
    */
-  delete(id: ID): Observable<ID | undefined>;
+  delete(id: ID): Promise<ID | undefined>;
   /**
    * @param ids
    *
    * @returns ids that are deleted, filtered out ids not in there.
    */
-  deleteMany(ids: ID[]): Observable<(ID | undefined)[]>
-  deleteAll(): Observable<undefined>;
+  deleteMany(ids: ID[]): Promise<(ID | undefined)[]>
+  deleteAll(): Promise<undefined>;
 
   /**
    * merge mew changes only if id is there, if not there `undefined`
    * @param update
    */
-  update(update: Update<T>): Observable<T | undefined>;
-  updateMany(updates: Update<T>[]): Observable<(T | undefined)[]>;
+  update(update: Update<T>): Promise<T | undefined>;
+  updateMany(updates: Update<T>[]): Promise<(T | undefined)[]>;
   /**
  * replace or insert
  * @param entity
  */
-  set(entity: T): Observable<T>;
-  setMany(entities: T[]): Observable<T[]>;
+  set(entity: T): Promise<T>;
+  setMany(entities: T[]): Promise<T[]>;
   /**
    * update or insert
    * here we pass T not Partial<T>, because we want generate id from entity, if we want to pass just partial T,
    * we can make the id irrelevant properties of T optional. (add ? after property name)
    * @param entity
    */
-  upsert(entity: T): Observable<T>;
-  upsertMany(updates: T[]): Observable<T[]>;
-  getAll(): Observable<T[]>;
-  getById(id: ID): Observable<T | undefined>;
-  getMany(ids: ID[]): Observable<(T | undefined)[]>;
-  getWithQuery(params: QueryParams | string): Observable<T[]>;
+  upsert(entity: T): Promise<T>;
+  upsertMany(updates: T[]): Promise<T[]>;
+  getAll(): Promise<T[]>;
+  getById(id: ID): Promise<T | undefined>;
+  getMany(ids: ID[]): Promise<(T | undefined)[]>;
+  getWithQuery(params: QueryParams | string): Promise<T[]>;
 }
 
 export interface QueryParams {

@@ -1,4 +1,3 @@
-import { map, Observable, of } from "rxjs";
 import { isDevMode } from "../../../core/dev-mode-checking";
 import { EntityDataServiceBase } from "../model/entity-data-service-base";
 import { ID, IdGenerator, QueryParams, SortComparer, Update } from "../model/entity-data-service.interface";
@@ -38,11 +37,11 @@ export class MemEntityCache<T> extends EntityDataServiceBase<T> implements Entit
     }
   }
 
-  add(entity: T): Observable<T | undefined> {
-    return this.addMany([entity]).pipe(map(a => a[0]));
+  add(entity: T): Promise<T | undefined> {
+    return this.addMany([entity]).then(a => a[0]);
   }
 
-  addMany(entities: T[]): Observable<(T | undefined)[]> {
+  addMany(entities: T[]): Promise<(T | undefined)[]> {
     const result: (T | undefined)[] = [];
     const toAdd = entities.map(e => ({ id: this.idGenerator(e), entity: e })).filter(ep => {
       const notIn = this.ids.indexOf(ep.id) === -1;
@@ -50,61 +49,61 @@ export class MemEntityCache<T> extends EntityDataServiceBase<T> implements Entit
       return notIn
     });
     insert(toAdd, this, this.sortComparer);
-    return of(result);
+    return Promise.resolve(result);
   }
 
-  delete(id: ID): Observable<ID | undefined> {
-    if (this.ids.indexOf(id) === -1) return of(toUndefined(id, `delete: not deleted: ${id.toString()} not exist`));
+  delete(id: ID): Promise<ID | undefined> {
+    if (this.ids.indexOf(id) === -1) return Promise.resolve(toUndefined(id, `delete: not deleted: ${id.toString()} not exist`));
     this.deleteId(id);
-    return of(id);
+    return Promise.resolve(id);
   }
 
-  deleteAll(): Observable<undefined> {
+  deleteAll(): Promise<undefined> {
     this.ids = [];
     this.entities = {};
-    return of(undefined);
+    return Promise.resolve(undefined);
   }
 
-  update(update: Update<T>): Observable<T | undefined> {
-    return this.updateMany([update]).pipe(map(a => a[0]));
+  update(update: Update<T>): Promise<T | undefined> {
+    return this.updateMany([update]).then(a => a[0]);
   }
 
-  updateMany(updates: Update<T>[]): Observable<(T | undefined)[]> {
+  updateMany(updates: Update<T>[]): Promise<(T | undefined)[]> {
     return this.changeOrInsert(updates, { insert: false, update: true });
   }
 
-  set(entity: T): Observable<T> {
-    return this.setMany([entity]).pipe(map(es => es[0]));
+  set(entity: T): Promise<T> {
+    return this.setMany([entity]).then(es => es[0]);
   }
 
-  setMany(entities: T[]): Observable<T[]> {
+  setMany(entities: T[]): Promise<T[]> {
     // replace or insert
     const changes = entities.map(e => ({ id: this.idGenerator(e), changes: e }));
-    return this.changeOrInsert(changes, { insert: true, update: false }) as Observable<T[]>
+    return this.changeOrInsert(changes, { insert: true, update: false }) as Promise<T[]>
   }
 
-  upsert(entity: T): Observable<T> {
-    return this.upsertMany([entity]).pipe(map(es => es[0]));
+  upsert(entity: T): Promise<T> {
+    return this.upsertMany([entity]).then(es => es[0]);
   }
 
-  upsertMany(entities: T[]): Observable<T[]> {
+  upsertMany(entities: T[]): Promise<T[]> {
     const changes = entities.map(e => ({ id: this.idGenerator(e), changes: e }));
-    return this.changeOrInsert(changes, { insert: true, update: true }) as Observable<T[]>
+    return this.changeOrInsert(changes, { insert: true, update: true }) as Promise<T[]>
   }
 
-  getAll(): Observable<T[]> {
+  getAll(): Promise<T[]> {
     if (this.sortComparer)
-      return of(this.ids.map(id => this.entities[id]));
+      return Promise.resolve(this.ids.map(id => this.entities[id]));
     else
-      return of(Object.values(this.entities));
+      return Promise.resolve(Object.values(this.entities));
   }
-  getById(id: ID): Observable<T | undefined> {
-    return of(this.entities[id]);
+  getById(id: ID): Promise<T | undefined> {
+    return Promise.resolve(this.entities[id]);
   }
-  getMany(ids: ID[]): Observable<(T | undefined)[]> {
-    return of(ids.map(id => this.entities[id]))
+  getMany(ids: ID[]): Promise<(T | undefined)[]> {
+    return Promise.resolve(ids.map(id => this.entities[id]))
   }
-  getWithQuery(params: string | QueryParams): Observable<T[]> {
+  getWithQuery(params: string | QueryParams): Promise<T[]> {
     throw new Error("Method not implemented.");
   }
 
@@ -119,7 +118,7 @@ export class MemEntityCache<T> extends EntityDataServiceBase<T> implements Entit
       insert: boolean,
       /**update(merge new) or replace */
       update: boolean
-    }): Observable<(T | undefined)[]> {
+    }): Promise<(T | undefined)[]> {
     const result: (T | undefined)[] = [];
     const idEntityPairToAdd: IdEntityPair<T>[] = [];
 
@@ -145,7 +144,7 @@ export class MemEntityCache<T> extends EntityDataServiceBase<T> implements Entit
       }
     }
     insert(idEntityPairToAdd, this, this.sortComparer);
-    return of(result);
+    return Promise.resolve(result);
   }
 }
 
