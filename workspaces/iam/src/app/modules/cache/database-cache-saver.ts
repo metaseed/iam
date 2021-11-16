@@ -6,9 +6,8 @@ import { DirtyDocument } from '../core/model/doc-model/doc-status';
 import { DocumentStore } from '../shared/store/document.store';
 
 export class DatabaseCacheSaver {
-
-
   public autoSave$;
+
   constructor(
     private db: Database,
     private nextLevelCache: ICache,
