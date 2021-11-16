@@ -63,7 +63,7 @@ module.exports = function (md, options) {
   }
 
   md.renderer.rules.toc_open = function (tokens, index) {
-    return '<div class="' + options.containerClass + '">';
+    return `<div class="${options.containerClass}">`;
   };
 
   md.renderer.rules.toc_close = function (tokens, index) {
@@ -71,16 +71,17 @@ module.exports = function (md, options) {
   };
 
   md.renderer.rules.toc_body = function (tokens, index) {
-    return renderChildsTokens(0, gstate.tokens)[1];
+    return renderChildrenTokens(0, gstate.tokens)[1];
   };
 
-  function renderChildsTokens(pos, tokens) {
-    var headings = [],
-      buffer = '',
+  function renderChildrenTokens(pos, tokens) {
+    const headings = [];
+    let  buffer = '',
       currentLevel,
       subHeadings,
       size = tokens.length,
       i = pos;
+
     while (i < size) {
       var token = tokens[i];
       var heading = tokens[i - 1];
@@ -97,7 +98,7 @@ module.exports = function (md, options) {
         currentLevel = level; // We init with the first found level
       } else {
         if (level > currentLevel) {
-          subHeadings = renderChildsTokens(i, tokens);
+          subHeadings = renderChildrenTokens(i, tokens);
           buffer += subHeadings[1];
           i = subHeadings[0];
           continue;
@@ -108,7 +109,7 @@ module.exports = function (md, options) {
           headings.push(buffer);
           return [
             i,
-            '<' + options.listType + '>' + headings.join('') + '</' + options.listType + '>'
+            `<${options.listType}>${headings.join('')}</${options.listType}>`
           ];
         }
         if (level == currentLevel) {

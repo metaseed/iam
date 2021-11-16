@@ -68,7 +68,7 @@ const anchor = (md, opts) => {
 
     tokens
       .filter(token => token.type === 'heading_open')
-      .filter(token => isLevelSelected(Number(token.tag.substr(1))))
+      .filter(token => isLevelSelected(+token.tag.substr(1)))
       .forEach(token => {
         // Aggregate the next token children text.
         const title = tokens[tokens.indexOf(token) + 1].children
