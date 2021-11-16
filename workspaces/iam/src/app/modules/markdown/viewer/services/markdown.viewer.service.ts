@@ -211,10 +211,10 @@ export class MarkdownViewerService {
     this.target = target;
     if (enableIDOM) {
       try {
+        const mdIt = this.markdownIt;
         const code_inline_original: any = this.markdownIt.renderer.rules.code_inline; // latex code_inline rule or default
         const { elementClose, elementOpen, elementVoid, text, skipNode, skip } = IncrementalDom;
 
-        const mdIt = this.markdownIt;
         const incrementalDomRenderer = mdIt["IncrementalDOMRenderer"];
         const irender_code_inline_rule = incrementalDomRenderer.rules.code_inline;
         // override the irender rules
@@ -230,7 +230,9 @@ export class MarkdownViewerService {
 
         const r = IncrementalDom.patch(
           target,
-          (mdIt as any).renderToIncrementalDOM(raw, this.env)
+          // should not use: (mdIt as any).renderToIncrementalDOM(raw, this.env),
+          // because the rules changed again when it get the IncrementalDOMRenderer
+          incrementalDomRenderer.render(mdIt.parse(raw, this.env), mdIt["options"], this.env)
         );
 
         return r.textContent;
