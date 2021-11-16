@@ -8,17 +8,17 @@ export function markdownitIncrementalDOM(md, target, opts = {}) {
 
   Object.defineProperty(md, 'IncrementalDOMRenderer', {
     get() {
-      const extended = Object.assign(
+      const extendedRenderer = Object.assign(
         Object.create(Object.getPrototypeOf(md.renderer)),
         md.renderer,
         mixin
       )
 
       if (options.incrementalizeDefaultRules) {
-        extended.rules = { ...extended.rules, ...rules(incrementalDOM) }
+        extendedRenderer.rules = { ...extendedRenderer.rules, ...rules(incrementalDOM) }
       }
 
-      return extended
+      return extendedRenderer
     },
   })
 

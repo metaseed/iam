@@ -1,7 +1,9 @@
 const htmlparser2 = require("htmlparser2");
 
 module.exports = (incrementalDom, enableIDOM) => md => {
-  const originalRule = md.renderer.rules.html_block;
+  const originalHtmlBlockRule = md.renderer.rules.html_block;
+  const originalHtmlInlineRule = md.renderer.rules.html_inline;
+
   const { elementClose,elementOpenStart, attr, elementOpenEnd, elementOpen, elementVoid, text, skipNode, skip } = incrementalDom;
   const sanitizeName = name => name.replace(/[^-:\w]/g, '');
 
@@ -33,9 +35,10 @@ module.exports = (incrementalDom, enableIDOM) => md => {
             lowerCaseTags: false,
           }
         )
+
         iDOMParser.write(content);
         iDOMParser.end();
-        // return function to bypass
+        // return function to bypass markdown-idom
         if (tag) {
           return () => {
             elementOpen(tag,'',undefined,...attr);
@@ -43,10 +46,10 @@ module.exports = (incrementalDom, enableIDOM) => md => {
             elementClose(tag);
           };
         }
-        
+
       }
     }
-    return originalRule(...args);
+    return originalHtmlBlockRule(...args);
   };
 
   md.renderer.rules.html_inline = function(...args) {
@@ -68,6 +71,6 @@ module.exports = (incrementalDom, enableIDOM) => md => {
         }
       }
     }
-    return originalRule(...args);
+    return originalHtmlInlineRule(...args);
   };
 };
