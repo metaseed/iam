@@ -52,6 +52,9 @@ export class GithubCache implements ICache {
     this._setIdRangeHigh = setIdRangeHigh;
     return this;
   }
+  private commitMessage(title: string, version: string, change: string) {
+    return `${title}, ver: ${version}, change: ${change}`;
+  }
 
   CreateDocument(content: string, format: DocFormat) {
     const title = DocMeta.getTitle(content);
@@ -63,9 +66,10 @@ export class GithubCache implements ICache {
             const id = issue.number;
             // save docContent;
             const sanitizedTitle = DocMeta.sanitizeTitle(title);
-            return repo.newFile(`${DOCUMENTS_FOLDER_NAME}/${sanitizedTitle}_${id}.${format}`, content).pipe(
-              switchMap((file: Document) => {
-                const url = this.util.getContentUrl(id, title);
+            const commitMsg = this.commitMessage(title, '1.0.0', 'create file')
+            return repo.newFile(`${DOCUMENTS_FOLDER_NAME}/${sanitizedTitle}_${id}.${format}`, content, commitMsg).pipe(
+              switchMap(file => {
+                const url = this.util.getContentUrl(id, title, format);
 
                 const { meta, metaStr } = DocMeta.serializeContent(
                   id,
@@ -74,6 +78,7 @@ export class GithubCache implements ICache {
                   url,
                   format,
                   new Date(issue.created_at),
+                  new Date(issue.updated_at),
                   undefined
                 );
                 const data: EditIssueParams = {
@@ -245,12 +250,12 @@ export class GithubCache implements ICache {
       if (!title) throw new Error('title is empty!');
 
       const sanitizedTitle = DocMeta.sanitizeTitle(title);
-      let uri = `${DOCUMENTS_FOLDER_NAME}/${sanitizedTitle}_${id}`;
+      let uri = `${DOCUMENTS_FOLDER_NAME}/${id}`;
       if (format) uri = `${uri}.${format}`;
 
       if (isDeleted) {
         console.debug(`@github-cache.readDocContent: this doc is deleted: {id:${id}, title: ${title}, format: ${format}}`)
-        return of(new DocContent(id, undefined, undefined, isDeleted));
+        return of(new DocContent(id, undefined, undefined, format, isDeleted));
       }
 
       return (<Observable<Content>>repo.getContents(uri)).pipe(
@@ -272,7 +277,7 @@ export class GithubCache implements ICache {
               console.debug(`@github-cache.readDocContent: could not get content of id: ${id}, title: ${title}, format:${format}\ntry to use get without file format`);
               return getContent(repo, id, title, '', state); // try to getting DocContent saved without format suffix;
             } else {
-              return throwError(()=> new Error(`@github-cache.readDocContent: could not get content of id: ${id}, title: ${title}, format:${format}`));
+              return throwError(() => new Error(`@github-cache.readDocContent: could not get content of id: ${id}, title: ${title}, format:${format}`));
             }
           } else {
             throw err;
@@ -290,20 +295,24 @@ export class GithubCache implements ICache {
 
   updateDocument(docMeta: DocMeta, content: string, forceUpdate: boolean) {
     const title = DocMeta.getTitle(content);
-    const sanitizedTitle = DocMeta.sanitizeTitle(title);
+    const headMeta = DocMeta.getHeadMeta(content);
+
+    // todo: add change message to api.
+    const commitMsg = this.commitMessage(title, headMeta.version, 'update file')
 
     return this.githubStorage.init().pipe(
       switchMap(repo =>
         repo
           // save docContent
           .updateFile(
-            `${DOCUMENTS_FOLDER_NAME}/${sanitizedTitle}_${docMeta.id}.${docMeta.format}`,
+            `${DOCUMENTS_FOLDER_NAME}/${docMeta.id}.${docMeta.format}`,
             content,
-            docMeta.contentSha
+            docMeta.contentSha,
+            commitMsg
           )
           .pipe(
-            switchMap((file: Document) => {
-              const url = this.util.getContentUrl(docMeta.id, sanitizedTitle);
+            switchMap(file => {
+              const url = this.util.getContentUrl(docMeta.id, title, docMeta.format);
               const { meta, metaStr } = DocMeta.serializeContent(
                 docMeta.id,
                 content,
@@ -311,6 +320,7 @@ export class GithubCache implements ICache {
                 url,
                 docMeta.format,
                 docMeta.createDate,
+                new Date(file.commit.committer.date),
                 docMeta
               );
               const data: EditIssueParams = {
@@ -322,15 +332,15 @@ export class GithubCache implements ICache {
               return repo.issue.edit(meta.id, data).pipe(
                 tap(() => {
                   const sanitizedTitleOld = DocMeta.sanitizeTitle(docMeta.title)
-                  if (sanitizedTitle !== sanitizedTitleOld) {
-                    // delete old docContent, if title changed.
-                    repo.delFileViaSha(
-                        `${DOCUMENTS_FOLDER_NAME}/${sanitizedTitleOld}_${docMeta.id}.${docMeta.format}`,
-                        docMeta.contentSha
-                      )
-                      .pipe(take(1))
-                      .subscribe();
-                  }
+                  // if (sanitizedTitle !== sanitizedTitleOld) {
+                  // delete old docContent, if title changed.
+                  repo.delFileViaSha(
+                    `${DOCUMENTS_FOLDER_NAME}/${sanitizedTitleOld}_${docMeta.id}.${docMeta.format}`,
+                    docMeta.contentSha
+                  )
+                    .pipe(take(1))
+                    .subscribe();
+                  // }
                 }),
                 map(() => {
                   const doc = new Document(

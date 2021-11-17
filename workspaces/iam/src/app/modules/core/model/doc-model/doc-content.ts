@@ -18,6 +18,7 @@ export class DocContent implements IDocContent {
      * if same wit remote: sync with remote.
      */
     public sha: string,
+    public format = 'md',
     public isDeleted = false
   ) {}
 }

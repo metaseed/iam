@@ -96,13 +96,17 @@ export class MetaPlugin {
     };
   };
 
-  getLine = (state, line) => {
+  private getLine = (state: StateBlock,
+    /**
+     * start from 0
+     */
+    line: number) => {
     const pos = state.bMarks[line];
     const max = state.eMarks[line];
     return state.src.substr(pos, max - pos);
   };
 
-  metaParser = (state: StateBlock, startLine: number, endLine: number, silent: boolean) => {
+  private metaParser = (state: StateBlock, startLine: number, endLine: number, silent: boolean) => {
     if (startLine > 5 || state.blkIndent !== 0) {
       return false;
     }
@@ -143,7 +147,6 @@ export class MetaPlugin {
     try {
       const rawYAML = YAML.load(data.join('\n'), { json: true });
 
-      state.line = line + 1;
       if (rawYAML) {
         let token = state.push('meta_open', 'meta', 1);
         token.markup = '---';
@@ -174,6 +177,7 @@ export class MetaPlugin {
       console.log(e);
       return false;
     }
+    state.line = line + 1;
     // (this.markdownIt as any).meta = Object.assign({}, (this.markdownIt as any).meta, d);
     return true;
   };

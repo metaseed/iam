@@ -23,27 +23,27 @@ export class Repository extends Requestable {
   }
 
   // https://developer.github.com/v3/repos/contents/
-  file(path: string, contents: string, branch: string = 'master') {
+  file(path: string, contents: string, message: string, branch: string = 'master') {
     let getShaSuccess = false;
     return this.getSha(path, branch).pipe(
       tap(x => console.log('getSha' + x), e => console.error('getSha' + e)),
       flatMap(resp => {
         getShaSuccess = true;
-        return this.updateFile(path, contents, resp['sha']);
+        return this.updateFile(path, contents, resp['sha'], message);
       }),
       catchError((error, ca) => {
         if (getShaSuccess) {
           throw error;
         }
         const err = error;
-        return this.newFile(path, contents);
+        return this.newFile(path, contents, message);
       })
     );
   }
   // https://docs.github.com/en/rest/reference/repos#create-or-update-file-contents
-  updateFile(path, contents, sha, branch = 'master') {
+  updateFile(path, contents, sha, message: string, branch = 'master') {
     return this.request('PUT', `/repos/${this.fullName}/contents/${path}`, {
-      message: 'update file',
+      message,
       committer: {
         name: this._userInfo.name,
         email: this._userInfo.email
@@ -53,21 +53,21 @@ export class Repository extends Requestable {
       branch
     }).pipe(
       tap({ next: x => console.log(x), error: e => console.log(e) })
-    );
+    ) as Observable<File>;
   }
 
-  // https://developer.github.com/v3/repos/contents/#create-a-file
-  newFile(path: string, content: string, isBase64 = false) {
+  // https://docs.github.com/en/rest/reference/repos#create-or-update-file-contents
+  newFile(path: string, content: string, message: string) {
     return this.request('PUT', `/repos/${this.fullName}/contents/${path}`, {
-      message: 'create file',
+      message,
       committer: {
         name: this._userInfo.name,
         email: this._userInfo.email
       },
-      content: isBase64 ? content : base64Encode(content)
+      content: base64Encode(content)
     }, undefined).pipe(
       tap(x => console.log('newFile', x), e => console.log('newFile', e))
-    );
+    ) as Observable<File>;
   }
 
   newFileReportProgress(path: string, content: string, isBase64 = false) {
@@ -254,9 +254,9 @@ export class Repository extends Requestable {
 
     let oldSha;
     return this.getRef(`heads/${branch}`).pipe(
-      tap(obj=>console.debug(`@github.move: getRef of branch ${branch}->{sha: ${obj.data.object.sha}}`)),
+      tap(obj => console.debug(`@github.move: getRef of branch ${branch}->{sha: ${obj.data.object.sha}}`)),
       switchMap(({ data: { object } }): Observable<any> => this.getTree(`${object.sha}?recursive=true`)),
-      tap(obj=>console.debug(`github.move: getTree of sha`, obj)),
+      tap(obj => console.debug(`github.move: getTree of sha`, obj)),
       switchMap(({ data: { tree, sha } }): Observable<any> => {
         oldSha = sha;
         let newTree = tree.map(ref => {
@@ -270,9 +270,9 @@ export class Repository extends Requestable {
         });
         return this.createTree(newTree);
       }),
-      tap(obj=> console.debug(`@github.move: create new tree:`, obj)),
+      tap(obj => console.debug(`@github.move: create new tree:`, obj)),
       switchMap(({ data: tree }): Observable<any> => this.commit(oldSha, tree.sha, `Renamed '${oldPath}' to '${newPath}'`)),
-      tap(obj=>console.debug(`@github.move: new commit:`, obj)),
+      tap(obj => console.debug(`@github.move: new commit:`, obj)),
       switchMap(({ data: commit }) => this.updateHead(`heads/${branch}`, commit.sha, true)),
       tap(obj => console.debug(`@github.move: updateHead`, obj))
     )

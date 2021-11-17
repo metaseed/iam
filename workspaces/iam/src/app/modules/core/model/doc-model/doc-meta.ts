@@ -1,11 +1,20 @@
 import picaLib from 'pica';
+import YAML from 'js-yaml';
 
 const pica = picaLib();
 
 export class Version {
   major: number;
   minor: number;
-  revison: number;
+  reversion: number;
+}
+
+export interface HeadMeta {
+  author: string;
+  version: string;
+  tag: string[];
+  subPage: number[];
+  enable: string[];
 }
 
 export class DocMeta {
@@ -44,6 +53,41 @@ export class DocMeta {
     return { sanitizedTitle: r[1], id: +r[2], ext: r[3] };
   }
 
+  static getHeadMeta(content: string):HeadMeta {
+    let startPos = 0;
+    let endPos = content.indexOf('\n');
+    if (endPos === -1) return undefined;
+
+    let metaStartPos;
+    let metaEndPos;
+
+    while (metaStartPos === undefined || metaEndPos === undefined) {
+      let line = content.substring(startPos, endPos)
+      const regex = /^---\s*$/;
+      if (regex.test(line)) {
+        if (metaStartPos === undefined) metaStartPos = endPos + 1;
+        else if (metaEndPos === undefined) {
+          metaEndPos = startPos;
+          const metaContent = content.substring(metaStartPos, metaEndPos);
+          const headMeta = YAML.load(metaContent, { json: true });
+          return headMeta;
+
+        }
+        else throw Error('we never come here');
+      }
+
+      startPos = endPos + 1;
+
+      // not find in whole content
+      if (startPos >= content.length) return undefined;
+
+      endPos = content.indexOf('\n', startPos);
+
+      // if end of file without \n
+      if (endPos === -1) endPos = content.length
+    }
+  }
+
   static serialize(meta: DocMeta, contentUrl: string) {
     return `
 <!-- type:iam
@@ -62,13 +106,14 @@ export class DocMeta {
     return text.substring(0, index);
   }
   static getTitle(content: string) {
-    const re = /\s*#\s(.*)/g;
+    const re = /\s*#\s(.*)\s*/g;
     const r = re.exec(content);
     if (r) return r[1];
     return '';
   }
 
   // sync the regex with the one in title.js markdown-it plugin
+  // although we remove title from filename, we could use it to give download file a meaningful name
   static sanitizeTitle = (title: string) => title.replace(/[<>:"/\\|?*]/g, '~'); // on windows these chars is invalid for file name.;
 
   static getSummary(content: string) {
@@ -94,6 +139,7 @@ export class DocMeta {
     contentUrl: string,
     format: string,
     createDate: Date,
+    updateDate: Date,
     oldMeta: DocMeta
   ) {
     const title = DocMeta.getTitle(content);
@@ -104,7 +150,7 @@ export class DocMeta {
       title,
       contentSha,
       createDate,
-      new Date(),
+      updateDate ?? new Date(),
       summary,
       picUrl,
       format
