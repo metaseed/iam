@@ -1,6 +1,6 @@
 import { Inject, Injectable, InjectionToken } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { CACHE_FACADE_TOKEN, DocFormat, DocMeta, ICache, NET_COMMU_TIMEOUT } from "core";
+import { CACHE_FACADE_TOKEN, DocContent, DocFormat, DocMeta, ICache, NET_COMMU_TIMEOUT } from "core";
 import { forkJoin, map, pipe, switchMap, tap, throwError } from "rxjs";
 import { NEW_DOC_ID } from "shared";
 import { DocEffectsUtil } from "./document.effects.util";
@@ -78,18 +78,19 @@ export class DocumentsEffects extends EffectManager {
         switchMap(state => {
           this.store.currentId_.next(state.id);
           return this.cacheFacade
-            .readDocContent(state.id, state.title, state.format)
+            .readDocContent(state.id, state.format)
         }),
         tap(result => effectInfo.success(result))
       ),
     { type: '[DocumentsEffects]readDocument', timeOut: EFFECT_TIMEOUT }
   );
 
-  saveDocument_ = new EffectStateSubject<{ content: string; format?: DocFormat; forceUpdate?: boolean }>().addMonitoredEffect(
+  saveDocument_ = new EffectStateSubject<{ content: string; /** for new doc */ format?: DocFormat; forceUpdate?: boolean }>().addMonitoredEffect(
     effectInfo =>
       pipe(
         switchMap(state => {
           const meta = this.store.currentDocMeta$.state;
+          const docContent = this.store.currentDocContent$.state;
           const content = state.content;
           const format = state.format;
           const newTitle = DocMeta.getTitle(state.content);
@@ -110,7 +111,7 @@ export class DocumentsEffects extends EffectManager {
             );
           } else {
             return this.cacheFacade
-              .updateDocument(meta, content, state.forceUpdate)
+              .updateDocument(meta, docContent, state.forceUpdate)
               .pipe(
                 tap(d => {
                   this.util.modifyUrlAfterSaved(d.metaData.id, newTitle, format);

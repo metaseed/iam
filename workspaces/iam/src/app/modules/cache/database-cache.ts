@@ -199,9 +199,9 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
     );
   }
 
-  readDocContent(id: number, title: string, format: string): Observable<DocContent> {
+  readDocContent(id: number,  format: string): Observable<DocContent> {
     const cache$ = this.db.get<DocContent>(DataTables.DocContent, id);
-    const nextCache$ = this.nextLevelCache.readDocContent(id, title, format);
+    const nextCache$ = this.nextLevelCache.readDocContent(id, format);
     // do it 1s later to wait the read data has saved to store (wait 0s not work)
     setTimeout(() => {
       this.updateDbDirtyStatus();
@@ -222,7 +222,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
     );
   }
 
-  updateDocument(oldDocMeta: DocMeta, content: string, forceUpdate: boolean) {
+  updateDocument(oldDocMeta: DocMeta, content: DocContent, forceUpdate: boolean) {
     return this.dbSaver.saveToDb(oldDocMeta, content, forceUpdate);
   }
 

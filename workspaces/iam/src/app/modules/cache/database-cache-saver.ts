@@ -25,8 +25,8 @@ export class DatabaseCacheSaver {
     )
   }
 
-  public saveToDb(docMeta: DocMeta, content: string, forceSave = false) {
-    const docContent = new DocContent(docMeta.id, content, docMeta.contentSha);
+  public saveToDb(docMeta: DocMeta, content: DocContent, forceSave = false) {
+    const docContent = new DocContent(docMeta.id, content.content, docMeta.contentSha);
     return zip(
       this.db.put<DocContent>(DataTables.DocContent, docContent).pipe(
         subscribeOn(asyncScheduler),
@@ -78,7 +78,7 @@ export class DatabaseCacheSaver {
       switchMap(([content, docMeta]) => {
         // saving to net
         this.store.updateCurrentDocStatus({ isSyncing: true });
-        return this.nextLevelCache.updateDocument(docMeta, content.content, false).pipe(
+        return this.nextLevelCache.updateDocument(docMeta, content, false).pipe(
           switchMap(doc => {
             // saved to net
             this.store.updateCurrentDocStatus({ isDbDirty: false, isSyncing: false })

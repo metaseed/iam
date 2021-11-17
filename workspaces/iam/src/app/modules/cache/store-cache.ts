@@ -103,8 +103,8 @@ export class StoreCache implements ICache {
     );
   }
 
-  readDocContent(id: number, title: string, format: string): Observable<DocContent> {
-    return this.nextLevelCache.readDocContent(id, title, format).pipe(
+  readDocContent(id: number, format: string): Observable<DocContent> {
+    return this.nextLevelCache.readDocContent(id, format).pipe(
       tap(docContent => {
         // no data in next level, but the next level cache should further fetch from its next level. we would receive it.
         // actually this code would never executed. because far-cache only return none empty item.
@@ -163,7 +163,7 @@ export class StoreCache implements ICache {
     );
   }
 
-  updateDocument(oldDocMeta: DocMeta, content: string, forceUpdate: boolean) {
+  updateDocument(oldDocMeta: DocMeta, content: DocContent, forceUpdate: boolean) {
     return this.nextLevelCache.updateDocument(oldDocMeta, content, forceUpdate).pipe(
       tap((doc: Document) => {
         this._store.docMeta.upsert(doc.metaData);

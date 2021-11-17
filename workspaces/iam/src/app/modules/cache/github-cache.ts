@@ -238,46 +238,43 @@ export class GithubCache implements ICache {
     );
   }
 
-  readDocContent(id: number, title: string, format: string): Observable<DocContent> {
+  readDocContent(id: number, format: string): Observable<DocContent> {
     const getContent = (
       repo: Repository,
       id: number,
-      title: string,
       format: string,
       state = 0,
       isDeleted = false
     ): Observable<DocContent> => {
-      if (!title) throw new Error('title is empty!');
 
-      const sanitizedTitle = DocMeta.sanitizeTitle(title);
       let uri = `${DOCUMENTS_FOLDER_NAME}/${id}`;
       if (format) uri = `${uri}.${format}`;
 
       if (isDeleted) {
-        console.debug(`@github-cache.readDocContent: this doc is deleted: {id:${id}, title: ${title}, format: ${format}}`)
+        console.debug(`@github-cache.readDocContent: this doc is deleted: {id:${id}, format: ${format}}`)
         return of(new DocContent(id, undefined, undefined, format, isDeleted));
       }
 
       return (<Observable<Content>>repo.getContents(uri)).pipe(
         // directly get DocContent
-        map(content => new DocContent(id, content.content, content.sha)),
+        map(content => new DocContent(id, content.content, content.sha, format)),
         catchError(err => {
           if (err.status === 404) {
             if (state === 0) {
               state = 1;
               return this.readDocMeta(id).pipe(
                 switchMap(meta => {
-                  console.debug(`@github-cache.readDocContent: could not get content of id: ${id}, title: ${title}, format:${format}\ntry again with remote meta: {title: ${meta.title}, format: ${meta.format}, isDeleted: ${meta.isDeleted}}`);
+                  console.debug(`@github-cache.readDocContent: could not get content of id: ${id}, title: ${meta.title}, format:${format}\ntry again with remote meta: {title: ${meta.title}, format: ${meta.format}, isDeleted: ${meta.isDeleted}}`);
                   // using the parameters from net via key; means title, format or format is modified.
-                  return getContent(repo, id, meta.title, meta.format, state, meta.isDeleted);
+                  return getContent(repo, id, meta.format, state, meta.isDeleted);
                 })
               );
             } else if (format && state === 1) {
               state = 2; // stop
-              console.debug(`@github-cache.readDocContent: could not get content of id: ${id}, title: ${title}, format:${format}\ntry to use get without file format`);
-              return getContent(repo, id, title, '', state); // try to getting DocContent saved without format suffix;
+              console.debug(`@github-cache.readDocContent: could not get content of id: ${id}, format:${format}\ntry to use get without file format`);
+              return getContent(repo, id,  '', state); // try to getting DocContent saved without format suffix;
             } else {
-              return throwError(() => new Error(`@github-cache.readDocContent: could not get content of id: ${id}, title: ${title}, format:${format}`));
+              return throwError(() => new Error(`@github-cache.readDocContent: could not get content of id: ${id}, format:${format}`));
             }
           } else {
             throw err;
@@ -288,26 +285,26 @@ export class GithubCache implements ICache {
 
     return this.githubStorage.init().pipe(
       switchMap(repo => {
-        return getContent(repo, id, title, format);
+        return getContent(repo, id, format);
       })
     );
   }
 
-  updateDocument(docMeta: DocMeta, content: string, forceUpdate: boolean) {
-    const title = DocMeta.getTitle(content);
-    const headMeta = DocMeta.getHeadMeta(content);
+  updateDocument(docMeta: DocMeta, docContent: DocContent, forceUpdate: boolean) {
+    const title = DocMeta.getTitle(docContent.content);
+    const headMeta = DocMeta.getHeadMeta(docContent.content);
 
     // todo: add change message to api.
-    const commitMsg = this.commitMessage(title, headMeta.version, 'update file')
+    const commitMsg = this.commitMessage(title, headMeta.version, '')
 
     return this.githubStorage.init().pipe(
       switchMap(repo =>
         repo
           // save docContent
           .updateFile(
-            `${DOCUMENTS_FOLDER_NAME}/${docMeta.id}.${docMeta.format}`,
-            content,
-            docMeta.contentSha,
+            `${DOCUMENTS_FOLDER_NAME}/${docContent.id}.${docContent.format}`,
+            docContent,
+            docContent.sha,
             commitMsg
           )
           .pipe(
@@ -315,7 +312,7 @@ export class GithubCache implements ICache {
               const url = this.util.getContentUrl(docMeta.id, title, docMeta.format);
               const { meta, metaStr } = DocMeta.serializeContent(
                 docMeta.id,
-                content,
+                docContent.content,
                 file.content.sha,
                 url,
                 docMeta.format,
@@ -345,7 +342,7 @@ export class GithubCache implements ICache {
                 map(() => {
                   const doc = new Document(
                     meta,
-                    new DocContent(meta.id, content, file.content.sha)
+                    new DocContent(meta.id, docContent.content, file.content.sha)
                   );
                   return doc;
                 })
