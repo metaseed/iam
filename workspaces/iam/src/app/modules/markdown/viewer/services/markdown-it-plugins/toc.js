@@ -121,14 +121,14 @@ module.exports = function (md, options) {
       var title = heading.children
         .filter(token => token.type === 'text' || token.type === 'code_inline')
         .reduce((acc, t) => acc + t.content, '');
-      buffer = '<li><a href="' + options.getHref(options.slugify(title)) + '">';
-      buffer += typeof options.format === 'function' ? options.format(heading.content) : title;
-      buffer += '</a>';
+      buffer = `<li><a href="${options.getHref(options.slugify(title))}">
+      ${typeof options.format === 'function' ? options.format(heading.content) : title}
+        </a>'`;
       i++;
     }
     buffer += buffer === '' ? '' : '</li>';
     headings.push(buffer);
-    return [i, '<' + options.listType + '>' + headings.join('') + '</' + options.listType + '>'];
+    return [i, `<${options.listType}>${headings.join('')}</${options.listType}>`];
   }
 
   // Catch all the tokens for iteration later

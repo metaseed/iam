@@ -68,6 +68,7 @@ export class DocMeta {
     return '';
   }
 
+  // sync the regex with the one in title.js markdown-it plugin
   static sanitizeTitle = (title: string) => title.replace(/[<>:"/\\|?*]/g, '~'); // on windows these chars is invalid for file name.;
 
   static getSummary(content: string) {
