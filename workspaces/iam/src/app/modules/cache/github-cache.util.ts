@@ -1,12 +1,14 @@
-import { Router } from '@angular/router';
-import { Location } from '@angular/common';
-import { Injectable } from "@angular/core";
+import { APP_BASE_HREF } from "@angular/common";
+import { Inject, Injectable, isDevMode } from "@angular/core";
 
 @Injectable()
 export class gitHubCacheUtil {
-  constructor() {}
+
+    constructor(@Inject(APP_BASE_HREF) private baseHref) {
+    }
 
   getContentUrl(issueNum, sanitizedTitle) {
-    return `https://metaseed.github.io/iam/doc?id=${issueNum}&title=${encodeURIComponent(sanitizedTitle)}`;
+    const baseUrl = isDevMode() ?'https://metaseed.github.io/iam/': `${location.origin}${this.baseHref}`
+    return `${baseUrl}doc?id=${issueNum}&title=${encodeURIComponent(sanitizedTitle)}`;
   }
 }

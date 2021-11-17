@@ -1,14 +1,12 @@
-import { Const } from './model/const';
 import { UserInfo } from './user-info';
 import { Requestable } from './requestable';
-import { Injectable } from '@angular/core';
 import { Content } from './model/content';
 import { File } from './model/file';
 import { HttpClient } from '@angular/common/http';
 import { Issue } from './issues/issue';
-import { from, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { base64Encode, base64Decode } from 'core';
-import { map, flatMap, tap, catchError, observeOn } from 'rxjs/operators';
+import { map, flatMap, tap, catchError, switchMap } from 'rxjs/operators';
 // @Injectable()
 export class Repository extends Requestable {
   // remoteRepo: any;
@@ -175,5 +173,108 @@ export class Repository extends Requestable {
     return this.request('GET', `/repos/${this.fullName}/contents/${path}${branch}`, {
       ref: branch
     });
+  }
+
+  /**
+ * Get a reference
+ * @see https://developer.github.com/v3/git/refs/#get-a-reference
+ * @param {string} ref - the reference to get
+ */
+  getRef(ref): Observable<any> {
+    return this.request('GET', `/repos/${this.fullName}/git/refs/${ref}`);
+  }
+  /**
+ * Get a description of a git tree
+ * @see https://developer.github.com/v3/git/trees/#get-a-tree
+ * @param {string} treeSHA - the SHA of the tree to fetch
+ */
+  getTree(treeSHA) {
+    return this.request('GET', `/repos/${this.fullName}/git/trees/${treeSHA}`);
+  }
+  /**
+ * Create a new tree in git
+ * @see https://developer.github.com/v3/git/trees/#create-a-tree
+ * @param {Object} tree - the tree to create
+ * @param {string} baseSHA - the root sha of the tree
+ */
+  createTree(tree, baseSHA?) {
+    return this.request('POST', `/repos/${this.fullName}/git/trees`, {
+      tree,
+      base_tree: baseSHA, // eslint-disable-line camelcase
+    });
+  }
+
+  /**
+ * Add a commit to the repository
+ * @see https://developer.github.com/v3/git/commits/#create-a-commit
+ * @param {string} parent - the SHA of the parent commit
+ * @param {string} tree - the SHA of the tree for this commit
+ * @param {string} message - the commit message
+ * @param {Object} [options] - commit options
+ * @param {Object} [options.author] - the author of the commit
+ * @param {Object} [options.commiter] - the committer
+ */
+  commit(parent, tree, message, options?) {
+    if (typeof options === 'function') {
+      options = {};
+    }
+
+    let data = {
+      message,
+      tree,
+      parents: [parent],
+    };
+
+    data = Object.assign({}, options, data);
+
+    return this.request('POST', `/repos/${this.fullName}/git/commits`, data)
+  }
+
+  /**
+ * Update a ref
+ * @see https://developer.github.com/v3/git/refs/#update-a-reference
+ * @param {string} ref - the ref to update
+ * @param {string} commitSHA - the SHA to point the reference to
+ * @param {boolean} force - indicates whether to force or ensure a fast-forward update
+ */
+  updateHead(ref, commitSHA, force) {
+    return this.request('PATCH', `/repos/${this.fullName}/git/refs/${ref}`, {
+      sha: commitSHA,
+      force: force,
+    });
+  }
+  /**
+   * Change all references in a repo from oldPath to new_path
+   * @param {string} branch - the branch to carry out the reference change, or the default branch if not specified
+   * @param {string} oldPath - original path
+   * @param {string} newPath - new reference path
+   */
+  move(oldPath: string, newPath: string, branch = 'master') {
+    console.debug(`@github.move: {oldPath:${oldPath}, newPath: ${newPath}}`);
+
+    let oldSha;
+    return this.getRef(`heads/${branch}`).pipe(
+      tap(obj=>console.debug(`@github.move: getRef of branch ${branch}->{sha: ${obj.data.object.sha}}`)),
+      switchMap(({ data: { object } }): Observable<any> => this.getTree(`${object.sha}?recursive=true`)),
+      tap(obj=>console.debug(`github.move: getTree of sha`, obj)),
+      switchMap(({ data: { tree, sha } }): Observable<any> => {
+        oldSha = sha;
+        let newTree = tree.map(ref => {
+          if (ref.path === oldPath) {
+            ref.path = newPath;
+          }
+          if (ref.type === 'tree') {
+            delete ref.sha;
+          }
+          return ref;
+        });
+        return this.createTree(newTree);
+      }),
+      tap(obj=> console.debug(`@github.move: create new tree:`, obj)),
+      switchMap(({ data: tree }): Observable<any> => this.commit(oldSha, tree.sha, `Renamed '${oldPath}' to '${newPath}'`)),
+      tap(obj=>console.debug(`@github.move: new commit:`, obj)),
+      switchMap(({ data: commit }) => this.updateHead(`heads/${branch}`, commit.sha, true)),
+      tap(obj => console.debug(`@github.move: updateHead`, obj))
+    )
   }
 }
