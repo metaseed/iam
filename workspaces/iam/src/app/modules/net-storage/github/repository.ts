@@ -180,7 +180,7 @@ export class Repository extends Requestable {
  * @see https://developer.github.com/v3/git/refs/#get-a-reference
  * @param {string} ref - the reference to get
  */
-  getRef(ref): Observable<any> {
+  private getRef(ref): Observable<any> {
     return this.request('GET', `/repos/${this.fullName}/git/refs/${ref}`);
   }
   /**
@@ -188,7 +188,7 @@ export class Repository extends Requestable {
  * @see https://developer.github.com/v3/git/trees/#get-a-tree
  * @param {string} treeSHA - the SHA of the tree to fetch
  */
-  getTree(treeSHA) {
+  private getTree(treeSHA) {
     return this.request('GET', `/repos/${this.fullName}/git/trees/${treeSHA}`);
   }
   /**
@@ -197,7 +197,7 @@ export class Repository extends Requestable {
  * @param {Object} tree - the tree to create
  * @param {string} baseSHA - the root sha of the tree
  */
-  createTree(tree, baseSHA?) {
+  private createTree(tree, baseSHA?) {
     return this.request('POST', `/repos/${this.fullName}/git/trees`, {
       tree,
       base_tree: baseSHA, // eslint-disable-line camelcase
@@ -214,7 +214,7 @@ export class Repository extends Requestable {
  * @param {Object} [options.author] - the author of the commit
  * @param {Object} [options.commiter] - the committer
  */
-  commit(parent, tree, message, options?) {
+  private commit(parent, tree, message, options?) {
     if (typeof options === 'function') {
       options = {};
     }
@@ -237,7 +237,7 @@ export class Repository extends Requestable {
  * @param {string} commitSHA - the SHA to point the reference to
  * @param {boolean} force - indicates whether to force or ensure a fast-forward update
  */
-  updateHead(ref, commitSHA, force) {
+  private updateHead(ref, commitSHA, force) {
     return this.request('PATCH', `/repos/${this.fullName}/git/refs/${ref}`, {
       sha: commitSHA,
       force: force,
@@ -249,7 +249,7 @@ export class Repository extends Requestable {
    * @param {string} oldPath - original path
    * @param {string} newPath - new reference path
    */
-  move(oldPath: string, newPath: string, branch = 'master') {
+  private move(oldPath: string, newPath: string, branch = 'master') {
     console.debug(`@github.move: {oldPath:${oldPath}, newPath: ${newPath}}`);
 
     let oldSha;
