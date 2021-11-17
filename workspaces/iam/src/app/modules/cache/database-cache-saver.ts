@@ -25,8 +25,7 @@ export class DatabaseCacheSaver {
     )
   }
 
-  public saveToDb(docMeta: DocMeta, content: DocContent, forceSave = false) {
-    const docContent = new DocContent(docMeta.id, content.content, docMeta.contentSha);
+  public saveToDb(docMeta: DocMeta, docContent: DocContent, forceSave = false) {
     return zip(
       this.db.put<DocContent>(DataTables.DocContent, docContent).pipe(
         subscribeOn(asyncScheduler),

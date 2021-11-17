@@ -52,8 +52,10 @@ export class GithubCache implements ICache {
     this._setIdRangeHigh = setIdRangeHigh;
     return this;
   }
-  private commitMessage(title: string, version: string, change: string) {
-    return `${title}, ver: ${version}, change: ${change}`;
+  private commitMessage(title: string, version: string, change?: string) {
+    let msg = `${title}, ver: ${version}`;
+    if (change) msg += `, change: ${change}`;
+    return msg;
   }
 
   CreateDocument(content: string, format: DocFormat) {
@@ -74,7 +76,6 @@ export class GithubCache implements ICache {
                 const { meta, metaStr } = DocMeta.serializeContent(
                   id,
                   content,
-                  file.content.sha, // update sha
                   url,
                   format,
                   new Date(issue.created_at),
@@ -265,14 +266,15 @@ export class GithubCache implements ICache {
               return this.readDocMeta(id).pipe(
                 switchMap(meta => {
                   console.debug(`@github-cache.readDocContent: could not get content of id: ${id}, title: ${meta.title}, format:${format}\ntry again with remote meta: {title: ${meta.title}, format: ${meta.format}, isDeleted: ${meta.isDeleted}}`);
-                  // using the parameters from net via key; means title, format or format is modified.
+                  // using the parameters from net via key; means title, or format is modified.
+                  // todo: this may not needed, since not rely on title, and format not change after create.
                   return getContent(repo, id, meta.format, state, meta.isDeleted);
                 })
               );
             } else if (format && state === 1) {
               state = 2; // stop
               console.debug(`@github-cache.readDocContent: could not get content of id: ${id}, format:${format}\ntry to use get without file format`);
-              return getContent(repo, id,  '', state); // try to getting DocContent saved without format suffix;
+              return getContent(repo, id, '', state); // try to getting DocContent saved without format suffix;
             } else {
               return throwError(() => new Error(`@github-cache.readDocContent: could not get content of id: ${id}, format:${format}`));
             }
@@ -291,29 +293,27 @@ export class GithubCache implements ICache {
   }
 
   updateDocument(docMeta: DocMeta, docContent: DocContent, forceUpdate: boolean) {
-    const title = DocMeta.getTitle(docContent.content);
-    const headMeta = DocMeta.getHeadMeta(docContent.content);
+    const { id, content, format, sha } = docContent;
+    const title = DocMeta.getTitle(content);
+    const headMeta = DocMeta.getHeadMeta(content);
 
     // todo: add change message to api.
-    const commitMsg = this.commitMessage(title, headMeta.version, '')
+    const commitMessage = this.commitMessage(title, headMeta.version)
 
     return this.githubStorage.init().pipe(
       switchMap(repo =>
-        repo
-          // save docContent
-          .updateFile(
-            `${DOCUMENTS_FOLDER_NAME}/${docContent.id}.${docContent.format}`,
-            docContent,
-            docContent.sha,
-            commitMsg
+        repo.updateFile(
+            `${DOCUMENTS_FOLDER_NAME}/${id}.${format}`,
+            content,
+            sha,
+            commitMessage
           )
           .pipe(
             switchMap(file => {
-              const url = this.util.getContentUrl(docMeta.id, title, docMeta.format);
+              const url = this.util.getContentUrl(id, title, format);
               const { meta, metaStr } = DocMeta.serializeContent(
-                docMeta.id,
-                docContent.content,
-                file.content.sha,
+                id,
+                content,
                 url,
                 docMeta.format,
                 docMeta.createDate,
@@ -333,7 +333,7 @@ export class GithubCache implements ICache {
                   // delete old docContent, if title changed.
                   repo.delFileViaSha(
                     `${DOCUMENTS_FOLDER_NAME}/${sanitizedTitleOld}_${docMeta.id}.${docMeta.format}`,
-                    docMeta.contentSha
+                    docContent.sha
                   )
                     .pipe(take(1))
                     .subscribe();

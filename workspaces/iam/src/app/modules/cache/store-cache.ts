@@ -131,11 +131,6 @@ export class StoreCache implements ICache {
           .readDocMeta(id)
           .pipe(
             tap(meta => {
-              if (meta.contentSha !== docContent.sha) {
-                this._logger.warn(`@storeCache.readDocContent: id(${id}, metaData.contentSha:${meta.contentSha} is different with document sha: ${docContent.sha}, force using document sha`);
-                meta.contentSha = docContent.sha;
-              }
-
               const document = this._store.getDocument(id);
               if (!document) {
                 console.debug(`@storeCache.readDocContent: received id(${id}) from far-cache, add dotMeta and content to store.`, meta, docContent)

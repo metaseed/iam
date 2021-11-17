@@ -22,15 +22,12 @@ export class DocMeta {
 
   public _context: any; // issue obj;
   public version: string;
-  public subPage: Array<string>;
+  public subPage: string[];
 
   private constructor(
     public id: number,
     public title: string,
-    /**
-     * sha of file; used to update the content, to make sure remote is no edited by other app instance, set with the latest doc content reading from remote.
-     */
-    public contentSha: string,
+
     /**
      * utc time
      */
@@ -45,6 +42,7 @@ export class DocMeta {
      *  suffix
      */
     public format = 'md',
+    // remove this?
     public isDeleted = false
   ) { }
 
@@ -135,7 +133,6 @@ export class DocMeta {
   static serializeContent(
     id: number,
     content: string,
-    contentSha: string,
     contentUrl: string,
     format: string,
     createDate: Date,
@@ -148,7 +145,6 @@ export class DocMeta {
     const newMeta = new DocMeta(
       id,
       title,
-      contentSha,
       createDate,
       updateDate ?? new Date(),
       summary,
@@ -166,11 +162,6 @@ export class DocMeta {
     if (!jsonString) return null;
     try {
       const meta = <DocMeta>JSON.parse(jsonString[1]);
-      if (!meta.contentSha) {
-        // old name is contentId
-        const sha = meta['contentId'];
-        if (sha) meta.contentSha = sha;
-      }
 
       meta.createDate = meta.createDate && new Date(meta.createDate);
       meta.updateDate = meta.updateDate && new Date(meta.updateDate);
