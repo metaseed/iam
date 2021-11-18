@@ -21,7 +21,7 @@ export class DocContent implements IDocContent {
      */
     public sha: string,
     /**
-     * only set on create, not modifiable
+     * only set on document create, not modifiable in document lifetime
      */
     public format = 'md',
     /**

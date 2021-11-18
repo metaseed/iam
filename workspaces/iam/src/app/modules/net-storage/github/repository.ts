@@ -52,7 +52,7 @@ export class Repository extends Requestable {
       sha,
       branch
     }).pipe(
-      tap({ next: x => console.log(x), error: e => console.log(e) })
+      tap({ next: x => console.debug('@github.repo.updateFile result:', x), error: e => console.debug('@github.repo.updateFile error:', e) })
     ) as Observable<File>;
   }
 
@@ -66,7 +66,7 @@ export class Repository extends Requestable {
       },
       content: base64Encode(content)
     }, undefined).pipe(
-      tap(x => console.log('newFile', x), e => console.log('newFile', e))
+      tap({ next: x => console.debug('@github.repo.newFile:', x), error: e => console.debug('@github.repo.newFile ERROR:', e) })
     ) as Observable<File>;
   }
 
@@ -79,7 +79,7 @@ export class Repository extends Requestable {
       },
       content: isBase64 ? content : base64Encode(content)
     }, undefined).pipe(
-      tap(x => console.log('newFile', x), e => console.log('newFile', e))
+      tap({ next: x => console.debug('@github.repo.newFileReportProgress:', x), error: e => console.debug('@github.repo.newFileReportProgress ERROR:', e) })
     );
   }
 
@@ -101,7 +101,7 @@ export class Repository extends Requestable {
           }
         });
       }),
-      tap(x => console.log(x), e => console.log(e)),
+      tap({ next: x => console.debug('@github.repo.deleteFile:', x), error: e => console.debug('@github.repo.deleteFile ERROR:', e) }),
       map(x => <File>x)
     );
   }
@@ -116,7 +116,9 @@ export class Repository extends Requestable {
           branch
         }
       })
-      .pipe(tap({ next: x => console.log(x), error: e => console.log(e) }));
+      .pipe(
+        tap({ next: x => console.debug('@github.repo.delFileViaSha:', x), error: e => console.debug('@github.repo.delFileViaSha ERROR:', e) })
+        );
   }
 
   searchIssue(query: string) {
@@ -155,7 +157,8 @@ export class Repository extends Requestable {
   getContents(path: string, branch: string = 'master') {
     path = path ? encodeURI(path) : '';
     return this.request('GET', `/repos/${this.fullName}/contents/${path}`).pipe(
-      map(x => this.decodeContent(<Content | Array<Content>>x))
+      map(x => this.decodeContent(<Content | Array<Content>>x)),
+      tap({ next: x => console.debug('@github.repo.getContents:', x), error: e => console.debug('@github.repo.getContents ERROR:', e) })
     );
   }
 

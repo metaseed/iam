@@ -8,3 +8,8 @@
 6. if save explicitly, let user input note of the changes and save it in commit msg, we could list file history for that with change note by default.
     test file location, ver: 1.2.3, change: change note
 7. keep file name in url, but do not use it to locate file
+
+## relationship between DocMeta and DocContent
+1. DocContent do not rely on DocMeta
+1. part of DocMeta's content come from DocContent
+1. DocContent could be accessed via url or from click on DocMeta, the parameter: id and format

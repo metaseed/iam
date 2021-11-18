@@ -67,9 +67,8 @@ export class GithubCache implements ICache {
           switchMap(issue => {
             const id = issue.number;
             // save docContent;
-            const sanitizedTitle = DocMeta.sanitizeTitle(title);
-            const commitMsg = this.commitMessage(title, '1.0.0', 'create file')
-            return repo.newFile(`${DOCUMENTS_FOLDER_NAME}/${sanitizedTitle}_${id}.${format}`, content, commitMsg).pipe(
+            const commitMsg = this.commitMessage(title, '1.0.0', 'create document')
+            return repo.newFile(`${DOCUMENTS_FOLDER_NAME}/${id}.${format}`, content, commitMsg).pipe(
               switchMap(file => {
                 const url = this.util.getContentUrl(id, title, format);
 
@@ -266,15 +265,14 @@ export class GithubCache implements ICache {
               return this.readDocMeta(id).pipe(
                 switchMap(meta => {
                   console.debug(`@github-cache.readDocContent: could not get content of id: ${id}, title: ${meta.title}, format:${format}\ntry again with remote meta: {title: ${meta.title}, format: ${meta.format}, isDeleted: ${meta.isDeleted}}`);
-                  // using the parameters from net via key; means title, or format is modified.
-                  // todo: this may not needed, since not rely on title, and format not change after create.
+                  // using the meta from net via id, someone may has deleted it.
                   return getContent(repo, id, meta.format, state, meta.isDeleted);
                 })
               );
             } else if (format && state === 1) {
               state = 2; // stop
               console.debug(`@github-cache.readDocContent: could not get content of id: ${id}, format:${format}\ntry to use get without file format`);
-              return getContent(repo, id, '', state); // try to getting DocContent saved without format suffix;
+              return getContent(repo, id, '', state);
             } else {
               return throwError(() => new Error(`@github-cache.readDocContent: could not get content of id: ${id}, format:${format}`));
             }
@@ -315,7 +313,7 @@ export class GithubCache implements ICache {
                 id,
                 content,
                 url,
-                docMeta.format,
+                docContent.format,
                 docMeta.createDate,
                 new Date(file.commit.committer.date),
                 docMeta
@@ -327,18 +325,6 @@ export class GithubCache implements ICache {
 
               // save docMeta
               return repo.issue.edit(meta.id, data).pipe(
-                tap(() => {
-                  const sanitizedTitleOld = DocMeta.sanitizeTitle(docMeta.title)
-                  // if (sanitizedTitle !== sanitizedTitleOld) {
-                  // delete old docContent, if title changed.
-                  repo.delFileViaSha(
-                    `${DOCUMENTS_FOLDER_NAME}/${sanitizedTitleOld}_${docMeta.id}.${docMeta.format}`,
-                    docContent.sha
-                  )
-                    .pipe(take(1))
-                    .subscribe();
-                  // }
-                }),
                 map(() => {
                   const doc = new Document(
                     meta,
@@ -358,9 +344,8 @@ export class GithubCache implements ICache {
       switchMap(repo => {
         return repo.issue.edit(id, { state: 'closed' }).pipe(
           switchMap(issue => {
-            const sanitizedTitle = DocMeta.sanitizeTitle(issue.title);
             const docMeta = this._issueToDocMeta(issue);
-            return repo.delFile(`${DOCUMENTS_FOLDER_NAME}/${sanitizedTitle}_${id}.${docMeta.format}`).pipe(
+            return repo.delFile(`${DOCUMENTS_FOLDER_NAME}/${id}.${docMeta.format}`).pipe(
               catchError(err => {
                 if (err.status === 404) {
                   // already deleted on other computer.
@@ -369,7 +354,7 @@ export class GithubCache implements ICache {
                 throw err;
               }),
               map(_ => {
-                return id; // fault is processed by error of observable
+                return id;
               })
             );
           })
