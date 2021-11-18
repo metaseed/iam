@@ -20,7 +20,7 @@ export class DatabaseCacheSaver {
       switchMap(ids => merge(...(ids.map(({ id, changeLog }) => this.saveToNet(id, changeLog).pipe(
         tap((doc: Document) => {
           this.store.docMeta.upsert(doc.metaData);
-          this.store.document.upsert(doc.content);
+          this.store.docContent.upsert(doc.content);
         })
       ))))),
       catchError(err => { console.error(err); return EMPTY; })

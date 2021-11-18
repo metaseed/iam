@@ -35,7 +35,7 @@ export class DataSourceLines {
     const id = this._store.currentId_.state;
     const [start, end] = this.getRange(originalContentString);
     const content = splice(originalContentString, start, end - start, value);
-    this._store.document.update({ id, changes: { content } });
+    this._store.docContent.update({ id, changes: { content } });
     // to workaround the editor load new content and clear dirty flags.
     setTimeout(() => this._store.updateCurrentDocStatus({ isEditorDirty: true }));
   }

@@ -43,7 +43,7 @@ export class StoreCache implements ICache {
     const id = NEW_DOC_ID;
     const doc = new DocContent(id, DEFAULT_NEW_DOC_CONTENT, undefined);
 
-    this._store.document.add(doc);
+    this._store.docContent.add(doc);
     this._store.currentId_.next(id);
   }
 
@@ -53,7 +53,7 @@ export class StoreCache implements ICache {
   CreateDocument(content: string, format: DocFormat) {
     return this.nextLevelCache.CreateDocument(content, format).pipe(
       tap(doc => {
-        this._store.document.add(doc.content);
+        this._store.docContent.add(doc.content);
         this._store.docMeta.add(doc.metaData);
         this._store.currentId_.next(doc.metaData.id);
       })
@@ -131,11 +131,11 @@ export class StoreCache implements ICache {
 
         if (!docContentInStore) {
           this.logger.debug(`readDocContent: received docContent id(${id}) from far-cache, add content to store.`, docContent)
-          this._store.document.add(docContent);
+          this._store.docContent.add(docContent);
         } else {
           this.logger.debug(`readDocContent: received docContent id(${id}) from far-cache, update content to store.`, docContent)
 
-          this._store.document.update({
+          this._store.docContent.update({
             id: docContentInStore.id,
             changes: docContent
           });
@@ -177,7 +177,7 @@ export class StoreCache implements ICache {
     return this.nextLevelCache.updateDocument(oldDocMeta, content, forceUpdate, changeLog).pipe(
       tap((doc: Document) => {
         this._store.docMeta.upsert(doc.metaData);
-        this._store.document.upsert(doc.content);
+        this._store.docContent.upsert(doc.content);
       })
     );
   }

@@ -1,6 +1,6 @@
 import { Inject, Injectable, InjectionToken } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { CACHE_FACADE_TOKEN, DocContent, DocFormat, DocMeta, ICache, NET_COMMU_TIMEOUT } from "core";
+import { CACHE_FACADE_TOKEN, DocContent, DocFormat, DocMeta, ICache, NET_COMMU_TIMEOUT, scope } from "core";
 import { forkJoin, map, pipe, switchMap, tap, throwError } from "rxjs";
 import { NEW_DOC_ID } from "shared";
 import { DocEffectsUtil } from "./document.effects.util";
@@ -12,6 +12,8 @@ const EFFECT_TIMEOUT = NET_COMMU_TIMEOUT;
 
 @Injectable({ providedIn: 'root' })
 export class DocumentsEffects extends EffectManager {
+  private logger = scope(console, '@DocumentsEffects');
+
   constructor(
     @Inject(CACHE_FACADE_TOKEN)
     private cacheFacade: ICache,
@@ -85,14 +87,15 @@ export class DocumentsEffects extends EffectManager {
     { type: '[DocumentsEffects]readDocument', timeOut: EFFECT_TIMEOUT }
   );
 
-  saveDocument_ = new EffectStateSubject<{ content: string; /*if user force save, show changeLog input box*/changeLog?: string; /** for new doc */format?: DocFormat; forceUpdate?: boolean }>().addMonitoredEffect(
+  saveDocument_ = new EffectStateSubject<
+  { content: string; /*if user force save, show changeLog input box*/changeLog?: string; /** for new doc */format?: DocFormat; forceUpdate?: boolean }
+  >().addMonitoredEffect(
     effectInfo =>
       pipe(
         switchMap(state => {
-          const meta = this.store.currentDocMeta$.state;
           const { content, format, forceUpdate, changeLog } = state;
-          const docCont = this.store.currentDocContent$.state;
-          const docContent = DocContent.with(docCont, content);
+          const meta = this.store.currentDocMeta$.state;
+          const docContent = DocContent.with(this.store.currentDocContent$.state, content);
           const newTitle = DocMeta.getTitle(content);
 
           if (!newTitle) {
@@ -115,7 +118,7 @@ export class DocumentsEffects extends EffectManager {
               .pipe(
                 tap(d => {
                   this.util.modifyUrlAfterSaved(d.metaData.id, newTitle, format);
-                  console.log('Saved!');
+                  this.logger.log('Saved!');
                 })
               );
           }

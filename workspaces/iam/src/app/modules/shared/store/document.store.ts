@@ -23,21 +23,21 @@ export class DocumentStore {
         : -1
   }));
 
-  document = new EntityCacheStore<number, DocContent>(new MemEntityCache({ idGenerator: e => e.id }));
+  docContent = new EntityCacheStore<number, DocContent>(new MemEntityCache({ idGenerator: e => e.id }));
 
   docStatus = new EntityCacheStore<number, DocumentStatus>(new MemEntityCache({ idGenerator: e => e.id }));
 
   currentId_ = new StateSubject<number>().addEffect(pipe(
     tap((id: number) => {
       this.docMeta.currentId_.next(id);
-      this.document.currentId_.next(id);
+      this.docContent.currentId_.next(id);
       this.docStatus.currentId_.next(id);
     })
   ));
 
   currentDocMeta$ = this.docMeta.currentEntity$;
 
-  currentDocContent$ = this.document.currentEntity$;
+  currentDocContent$ = this.docContent.currentEntity$;
 
   currentDocStatus$ = this.docStatus.currentEntity$;
 
@@ -63,19 +63,19 @@ export class DocumentStore {
 
   searchResult_ = new StateSubject<SearchResult>();
 
-  documentOfId$ = this.document.entityOfId$;
+  documentOfId$ = this.docContent.entityOfId$;
 
   docMetaOfId$ = this.docMeta.entityOfId$;
 
   docMetasOfIds$ = this.docMeta.entitiesOfIds$
 
-  getAllDocuments() { return Object.values(this.document.cache.entities) }
+  getAllDocuments() { return Object.values(this.docContent.cache.entities) }
 
   // only id are sorted, we want sorted
   getAllDocMetas() { return this.docMeta.cache.ids.map(id => this.docMeta.cache.entities[id]) }
 
   getDocContent(id: number) {
-    return this.document.cache.entities[id];
+    return this.docContent.cache.entities[id];
   }
 
   getDocMeta(id: number) {
@@ -83,7 +83,7 @@ export class DocumentStore {
   }
 
   getDocuments(ids: number[]) {
-    return ids.map(id => this.document.cache.entities[id]);
+    return ids.map(id => this.docContent.cache.entities[id]);
   }
 
   getDocMetas(ids: number[]) {
@@ -99,12 +99,12 @@ export class DocumentStore {
 
   delete(id: number) {
     this.docMeta.delete(id);
-    this.document.delete(id);
+    this.docContent.delete(id);
     this.docStatus.delete(id);
   }
   deleteMany(ids: number[]) {
     this.docMeta.deleteMany(ids);
-    this.document.deleteMany(ids);
+    this.docContent.deleteMany(ids);
     this.docStatus.deleteMany(ids);
   }
 }
