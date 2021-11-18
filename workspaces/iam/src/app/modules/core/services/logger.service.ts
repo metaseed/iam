@@ -1,12 +1,13 @@
 import { Inject, Injectable, InjectionToken, isDevMode, Optional } from "@angular/core";
 
 export let defaultLogFunctionPrdScreen = [console.assert.name, console.debug.name, console.trace.name, console.log.name];
-
+let logFunctionPrdScreen: string[] = [];
 /**
  * in function we can not use LogService, so have to patch the console global object.
  */
-export function screenConsoleLog() {
-  for (const funcName in defaultLogFunctionPrdScreen) {
+export function screenConsoleLog(screeLogFunctions?: string[]) {
+  logFunctionPrdScreen= screeLogFunctions??defaultLogFunctionPrdScreen;
+  for (const funcName in logFunctionPrdScreen) {
     console[funcName] = () => undefined;
   }
 }
@@ -19,11 +20,14 @@ export function scope(cons: Console, prefix: string) {
 
   return new Proxy(cons, {
     get(target, propKey, receiver) {
+      if (logFunctionPrdScreen.includes(propKey as string))
+        return () => undefined;
+
       const origMethod = target[propKey];
       if (!scopedConsoleFunctions.includes(propKey as string))
         return origMethod;
 
-      const proxyFunc = function (...args) {
+      return function (...args) {
         if (origMethod === cons.assert) {
           const [arg0, ...argRest] = args;
 
@@ -33,7 +37,6 @@ export function scope(cons: Console, prefix: string) {
         return origMethod.apply(cons, [prefix + '>', ...args]);
       };
 
-      return proxyFunc;
     }
   });
 }
@@ -48,6 +51,7 @@ export class LogService {
   public debug: typeof console.debug;
   public trace: typeof console.trace;
   public log: typeof console.log;
+  public count: typeof console.count;
   // above are screened out in prd env
   public info: typeof console.info;
   public warn: typeof console.warn;
@@ -63,6 +67,7 @@ export class LogService {
     this.debug = this.envCheck(console.debug);
     this.trace = this.envCheck(console.trace);
     this.log = this.envCheck(console.log);
+    this.count = this.envCheck(console.count);
     this.info = this.envCheck(console.info);
     this.warn = this.envCheck(console.warn);
     this.error = this.envCheck(console.error);

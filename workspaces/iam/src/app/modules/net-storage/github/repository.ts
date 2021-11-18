@@ -5,11 +5,12 @@ import { File } from './model/file';
 import { HttpClient } from '@angular/common/http';
 import { Issue } from './issues/issue';
 import { Observable } from 'rxjs';
-import { base64Encode, base64Decode } from 'core';
+import { base64Encode, base64Decode, scope } from 'core';
 import { map, flatMap, tap, catchError, switchMap } from 'rxjs/operators';
-// @Injectable()
+
 export class Repository extends Requestable {
-  // remoteRepo: any;
+
+  private logger = scope(console, '@githubRepository');
   public fullName: string;
 
   constructor(http: HttpClient, userInfo: UserInfo, private _name: string) {
@@ -26,7 +27,7 @@ export class Repository extends Requestable {
   file(path: string, contents: string, message: string, branch: string = 'master') {
     let getShaSuccess = false;
     return this.getSha(path, branch).pipe(
-      tap(x => console.log('getSha' + x), e => console.error('getSha' + e)),
+      tap(x => this.logger.log('getSha' + x), e => this.logger.error('getSha' + e)),
       flatMap(resp => {
         getShaSuccess = true;
         return this.updateFile(path, contents, resp['sha'], message);
@@ -52,7 +53,7 @@ export class Repository extends Requestable {
       sha,
       branch
     }).pipe(
-      tap({ next: x => console.debug('@github.repo.updateFile success:', x), error: e => console.debug('@github.repo.updateFile error:', e) })
+      tap({ next: x => this.logger.debug('updateFile success:', x), error: e => this.logger.error('updateFile error:', e) })
     ) as Observable<File>;
   }
 
@@ -66,7 +67,7 @@ export class Repository extends Requestable {
       },
       content: base64Encode(content)
     }, undefined).pipe(
-      tap({ next: x => console.debug('@github.repo.newFile success:', x), error: e => console.debug('@github.repo.newFile ERROR:', e) })
+      tap({ next: x => this.logger.debug('newFile success:', x), error: e => this.logger.error('newFile ERROR:', e) })
     ) as Observable<File>;
   }
 
@@ -79,7 +80,7 @@ export class Repository extends Requestable {
       },
       content: isBase64 ? content : base64Encode(content)
     }, undefined).pipe(
-      tap({ next: x => console.debug('@github.repo.newFileReportProgress:', x), error: e => console.debug('@github.repo.newFileReportProgress ERROR:', e) })
+      tap({ next: x => this.logger.debug('newFileReportProgress:', x), error: e => this.logger.error('newFileReportProgress ERROR:', e) })
     );
   }
 
@@ -91,7 +92,7 @@ export class Repository extends Requestable {
   delFile(path: string, branch: string = 'master') {
     const filePath = path ? encodeURI(path) : '';
     return this.getSha(path, branch).pipe(
-      tap(x => console.log(x), e => console.log(e)),
+      tap(x => this.logger.log(x), e => this.logger.log(e)),
       flatMap(response => {
         return this._http.delete(`githubapi/repos/${this.fullName}/contents/${filePath}`, {
           params: {
@@ -101,7 +102,7 @@ export class Repository extends Requestable {
           }
         });
       }),
-      tap({ next: x => console.debug('@github.repo.deleteFile success:', x), error: e => console.debug('@github.repo.deleteFile ERROR:', e) }),
+      tap({ next: x => this.logger.debug('deleteFile success:', x), error: e => this.logger.error('deleteFile ERROR:', e) }),
       map(x => <File>x)
     );
   }
@@ -117,7 +118,7 @@ export class Repository extends Requestable {
         }
       })
       .pipe(
-        tap({ next: x => console.debug('@github.repo.delFileViaSha success:', x), error: e => console.debug('@github.repo.delFileViaSha ERROR:', e) })
+        tap({ next: x => this.logger.debug('delFileViaSha success:', x), error: e => this.logger.error('delFileViaSha ERROR:', e) })
         );
   }
 
@@ -158,7 +159,7 @@ export class Repository extends Requestable {
     path = path ? encodeURI(path) : '';
     return this.request('GET', `/repos/${this.fullName}/contents/${path}`).pipe(
       map(x => this.decodeContent(<Content | Array<Content>>x)),
-      tap({ next: x => console.debug('@github.repo.getContents:', x), error: e => console.debug('@github.repo.getContents ERROR:', e) })
+      tap({ next: x => this.logger.debug('getContents:', x), error: e => this.logger.error('getContents ERROR:', e) })
     );
   }
 
@@ -253,13 +254,13 @@ export class Repository extends Requestable {
    * @param {string} newPath - new reference path
    */
   private move(oldPath: string, newPath: string, branch = 'master') {
-    console.debug(`@github.move: {oldPath:${oldPath}, newPath: ${newPath}}`);
+    this.logger.debug(`@github.move: {oldPath:${oldPath}, newPath: ${newPath}}`);
 
     let oldSha;
     return this.getRef(`heads/${branch}`).pipe(
-      tap(obj => console.debug(`@github.move: getRef of branch ${branch}->{sha: ${obj.data.object.sha}}`)),
+      tap(obj => this.logger.debug(`@github.move: getRef of branch ${branch}->{sha: ${obj.data.object.sha}}`)),
       switchMap(({ data: { object } }): Observable<any> => this.getTree(`${object.sha}?recursive=true`)),
-      tap(obj => console.debug(`github.move: getTree of sha`, obj)),
+      tap(obj => this.logger.debug(`github.move: getTree of sha`, obj)),
       switchMap(({ data: { tree, sha } }): Observable<any> => {
         oldSha = sha;
         let newTree = tree.map(ref => {
@@ -273,11 +274,11 @@ export class Repository extends Requestable {
         });
         return this.createTree(newTree);
       }),
-      tap(obj => console.debug(`@github.move: create new tree:`, obj)),
+      tap(obj => this.logger.debug(`@github.move: create new tree:`, obj)),
       switchMap(({ data: tree }): Observable<any> => this.commit(oldSha, tree.sha, `Renamed '${oldPath}' to '${newPath}'`)),
-      tap(obj => console.debug(`@github.move: new commit:`, obj)),
+      tap(obj => this.logger.debug(`@github.move: new commit:`, obj)),
       switchMap(({ data: commit }) => this.updateHead(`heads/${branch}`, commit.sha, true)),
-      tap(obj => console.debug(`@github.move: updateHead`, obj))
+      tap(obj => this.logger.debug(`@github.move: updateHead`, obj))
     )
   }
 }
