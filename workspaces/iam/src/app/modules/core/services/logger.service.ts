@@ -1,5 +1,4 @@
 import { Inject, Injectable, InjectionToken, isDevMode, Optional } from "@angular/core";
-import { TupleType } from "typescript/lib/tsserverlibrary";
 
 export let defaultLogFunctionPrdScreen = [console.assert.name, console.debug.name, console.trace.name, console.log.name];
 
