@@ -1,6 +1,6 @@
 import { Database, ModifyAction } from '../database/database-engine';
 import { Injectable } from '@angular/core';
-import { Document, DocMeta, DocContent, DocFormat, SubscriptionManager } from 'core';
+import { Document, DocMeta, DocContent, DocFormat, SubscriptionManager, scope } from 'core';
 import { Observable, from, concat, asyncScheduler } from 'rxjs';
 import {
   toArray,
@@ -24,6 +24,7 @@ export interface IterableDocuments extends IterableIterator<Observable<Document>
 export class DatabaseCache extends SubscriptionManager implements ICache {
   public nextLevelCache: ICache;
   private dbSaver: DatabaseCacheSaver;
+  private logger = scope(console, '@IndexDbCache');
 
   constructor(private db: Database, private store: DocumentStore) {
     super();
@@ -93,7 +94,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
     const docMetaDelete = new Array<DocMeta>();
     // only notify the change in the later array: add, remove, modify
     const fromNext$ = this.nextLevelCache.readBulkDocMeta(key, isBelowTheKey).pipe(
-      // tap(a=>console.log(a),err=>console.error(err),()=>console.warn('aaaa')),
+      // tap(a=>this.logger.log(a),err=>this.logger.error(err),()=>this.logger.warn('aaaa')),
       switchMap(records => {
         return this.db.executeModify(DataTables.DocMeta, records, (dbRecord, record) => {
           if (record.isDeleted) {
@@ -151,7 +152,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
     const _nextCache$ = nextCache$.pipe(
       filter(fromNext => {
         if (shouldDelete(inCache, fromNext)) {
-          console.debug(`@IndexDB.syncFromNext: delete ${fromNext.id} from indexDB, and forward to near-cache, because it's deleted from far-cache`, inCache, fromNext)
+          this.logger.debug(`syncFromNext: delete ${fromNext.id} from indexDB, and forward to near-cache, because it's deleted from far-cache`, inCache, fromNext)
           this.db.delete(table, fromNext.id)
             .pipe(
               subscribeOn(asyncScheduler),
@@ -163,7 +164,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
 
           return true; // further delete in near-cache
         } else if (shouldUpdate(inCache, fromNext)) {
-          console.debug(`@IndexDB.syncFromNext: update ${fromNext.id} from indexDB, and forward to near-cache, because far-cache have updated content`,inCache, fromNext)
+          this.logger.debug(`syncFromNext: update ${fromNext.id} from indexDB, and forward to near-cache, because far-cache have updated content`,inCache, fromNext)
             this.db.put(table, fromNext)
               .pipe(
                 subscribeOn(asyncScheduler),
@@ -175,7 +176,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
             return true; // further update in near cache
           }
           else {
-            console.debug(`@IndexDB.syncFromNext: no need to process(delete or update) received id(${fromNext.id}) from far-cache, item will not forward to near-cache(it would use item from IndexDB)`, fromNext)
+            this.logger.debug(`syncFromNext: no need to process(delete or update) received id(${fromNext.id}) from far-cache, item will not forward to near-cache(it would use item from IndexDB)`, fromNext)
             return false;
           }
       })

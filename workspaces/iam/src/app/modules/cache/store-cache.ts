@@ -6,7 +6,8 @@ import {
   DocFormat,
   LogService,
   SearchResult,
-  SearchResultSource
+  SearchResultSource,
+  scope
 } from 'core';
 import { Injectable } from '@angular/core';
 import { Observable, of, merge } from 'rxjs';
@@ -20,6 +21,8 @@ export class StoreCache implements ICache {
   docMetaData: { hightKey: number; lowKey: number };
 
   public nextLevelCache: ICache;
+  private logger = scope(console, '@StoreCache');
+
 
   constructor(
     private _store: DocumentStore,
@@ -86,17 +89,17 @@ export class StoreCache implements ICache {
         else {
           const metaInStore = this._store.getDocMeta(meta.id);
           if (!metaInStore) {
-            console.debug(`@storeCache.readDocMeta: add doc meta(${meta.id}) to store`, meta);
+            this.logger.debug(`readDocMeta: add doc meta(${meta.id}) to store`, meta);
             this._store.docMeta.add(meta);
           } else if (metaInStore.updateDate.getTime() < meta.updateDate.getTime()) {
-            console.debug(`@storeCache.readDocMeta: update doc meta(${meta.id}) to store`, meta);
+            this.logger.debug(`readDocMeta: update doc meta(${meta.id}) to store`, meta);
             this._store.docMeta.update({
               id: meta.id,
               changes: meta
             });
           }
           else {
-            console.debug(`@storeCache.readDocMeta: meta(${meta.id}) in store is the same as far-cache. no process for it in store`, meta)
+            this.logger.debug(`readDocMeta: meta(${meta.id}) in store is the same as far-cache. no process for it in store`, meta)
           }
         }
       })
@@ -109,12 +112,12 @@ export class StoreCache implements ICache {
         // no data in next level, but the next level cache should further fetch from its next level. we would receive it.
         // actually this code would never executed. because far-cache only return none empty item.
         if (!docContent) {
-          console.warn(`@storeCache.readDocContent: doc(id: ${id}) content from far-cache is empty`)
+          this.logger.warn(`readDocContent: doc(id: ${id}) content from far-cache is empty`)
           return;
         }
 
         if (docContent.isDeleted) {
-          console.warn(`@storeCache.readDocContent: id: ${id} is deleted from far-cache, so delete is from store`)
+          this.logger.warn(`readDocContent: id: ${id} is deleted from far-cache, so delete is from store`)
           this._store.delete(docContent.id); // delete dotContent, meta and status.
           return;
         }
@@ -122,15 +125,15 @@ export class StoreCache implements ICache {
         // update it in store
         const docContentInStore = this._store.getDocContent(id);
         if (docContentInStore?.sha === docContent.sha) {
-          console.debug(`@storeCache.readDocContent:  received docContent id(${id}) from far-cache, but content sha in mem is the same with the sha from next cache, so no need to update it in store.`)
+          this.logger.debug(`readDocContent:  received docContent id(${id}) from far-cache, but content sha in mem is the same with the sha from next cache, so no need to update it in store.`)
           return; // nothing changed.
         }
 
         if (!docContentInStore) {
-          console.debug(`@storeCache.readDocContent: received docContent id(${id}) from far-cache, add dotMeta and content to store.`, docContent)
+          this.logger.debug(`readDocContent: received docContent id(${id}) from far-cache, add content to store.`, docContent)
           this._store.document.add(docContent);
         } else {
-          console.debug(`@storeCache.readDocContent: received docContent id(${id}) from far-cache, update dotMeta and content to store.`, docContent)
+          this.logger.debug(`readDocContent: received docContent id(${id}) from far-cache, update content to store.`, docContent)
 
           this._store.document.update({
             id: docContentInStore.id,
@@ -148,10 +151,10 @@ export class StoreCache implements ICache {
           tap(meta => {
             const metaInStore = this._store.getDocMeta(id);
             if (!metaInStore) {
-              console.debug(`@storeCache.readDocContent: received docMeta id(${id}) from far-cache, add dotMeta and content to store.`, meta)
+              this.logger.debug(`readDocContent: received docMeta id(${id}) from far-cache, add dotMeta to store.`, meta)
               this._store.docMeta.add(meta);
             } else {
-              console.debug(`@storeCache.readDocContent: received docMeta id(${id}) from far-cache, update dotMeta and content to store.`, meta)
+              this.logger.debug(`readDocContent: received docMeta id(${id}) from far-cache, update dotMeta to store.`, meta)
 
               this._store.docMeta.update({
                 id: metaInStore.id,

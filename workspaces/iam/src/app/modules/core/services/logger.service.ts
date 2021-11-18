@@ -1,4 +1,5 @@
 import { Inject, Injectable, InjectionToken, isDevMode, Optional } from "@angular/core";
+import { TupleType } from "typescript/lib/tsserverlibrary";
 
 export let defaultLogFunctionPrdScreen = [console.assert.name, console.debug.name, console.trace.name, console.log.name];
 
@@ -9,6 +10,33 @@ export function screenConsoleLog() {
   for (const funcName in defaultLogFunctionPrdScreen) {
     console[funcName] = () => undefined;
   }
+}
+
+const scopedConsoleFunctions = [
+  console.debug.name, console.log.name, console.info.name, console.warn.name,
+  console.error.name, console.count.name, console.assert.name, console.trace.name
+];
+export function scope(cons: Console, prefix: string) {
+
+  return new Proxy(cons, {
+    get(target, propKey, receiver) {
+      const origMethod = target[propKey];
+      if (!scopedConsoleFunctions.includes(propKey as string))
+        return origMethod;
+
+      const proxyFunc = function (...args) {
+        if (origMethod === cons.assert) {
+          const [arg0, ...argRest] = args;
+
+          return origMethod.apply(cons, [arg0, prefix, ...argRest]);
+        }
+
+        return origMethod.apply(cons, [prefix + '>', ...args]);
+      };
+
+      return proxyFunc;
+    }
+  });
 }
 
 
