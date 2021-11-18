@@ -227,7 +227,7 @@ export class Database {
       return store.getAllKeys();
     });
   }
-  getAll<T>(storeName: string): Observable<T> {
+  getAll<T>(storeName: string): Observable<T[]> {
     return this.request(storeName, IDB_TXN_READ, store => {
       return store.getAll();
     });

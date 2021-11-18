@@ -290,13 +290,13 @@ export class GithubCache implements ICache {
     );
   }
 
-  updateDocument(docMeta: DocMeta, docContent: DocContent, forceUpdate: boolean) {
+  updateDocument(docMeta: DocMeta, docContent: DocContent, forceUpdate: boolean, changeLog: string) {
     const { id, content, format, sha } = docContent;
     const title = DocMeta.getTitle(content);
     const headMeta = DocMeta.getHeadMeta(content);
 
     // todo: add change message to api.
-    const commitMessage = this.commitMessage(title, headMeta.version)
+    const commitMessage = this.commitMessage(title, headMeta.version, changeLog)
 
     return this.githubStorage.init().pipe(
       switchMap(repo =>

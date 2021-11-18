@@ -85,15 +85,14 @@ export class DocumentsEffects extends EffectManager {
     { type: '[DocumentsEffects]readDocument', timeOut: EFFECT_TIMEOUT }
   );
 
-  saveDocument_ = new EffectStateSubject<{ content: string; /** for new doc */ format?: DocFormat; forceUpdate?: boolean }>().addMonitoredEffect(
+  saveDocument_ = new EffectStateSubject<{ content: string; /*if user force save, show changeLog input box*/changeLog?: string; /** for new doc */format?: DocFormat; forceUpdate?: boolean }>().addMonitoredEffect(
     effectInfo =>
       pipe(
         switchMap(state => {
           const meta = this.store.currentDocMeta$.state;
           const docContent = this.store.currentDocContent$.state;
-          const content = state.content;
-          const format = state.format;
-          const newTitle = DocMeta.getTitle(state.content);
+          const { content, format, forceUpdate, changeLog } = state;
+          const newTitle = DocMeta.getTitle(content);
 
           if (!newTitle) {
             const msg = 'Must define a title!';
@@ -111,7 +110,7 @@ export class DocumentsEffects extends EffectManager {
             );
           } else {
             return this.cacheFacade
-              .updateDocument(meta, docContent, state.forceUpdate)
+              .updateDocument(meta, docContent, forceUpdate, changeLog)
               .pipe(
                 tap(d => {
                   this.util.modifyUrlAfterSaved(d.metaData.id, newTitle, format);

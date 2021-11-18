@@ -222,8 +222,8 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
     );
   }
 
-  updateDocument(oldDocMeta: DocMeta, content: DocContent, forceUpdate: boolean) {
-    return this.dbSaver.saveToDb(oldDocMeta, content, forceUpdate);
+  updateDocument(oldDocMeta: DocMeta, content: DocContent, forceUpdate: boolean, changeLog: string) {
+    return this.dbSaver.saveToDb(oldDocMeta, content, forceUpdate, changeLog);
   }
 
   deleteDoc(id: number) {

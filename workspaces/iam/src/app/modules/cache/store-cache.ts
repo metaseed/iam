@@ -158,8 +158,8 @@ export class StoreCache implements ICache {
     );
   }
 
-  updateDocument(oldDocMeta: DocMeta, content: DocContent, forceUpdate: boolean) {
-    return this.nextLevelCache.updateDocument(oldDocMeta, content, forceUpdate).pipe(
+  updateDocument(oldDocMeta: DocMeta, content: DocContent, forceUpdate: boolean, changeLog: string) {
+    return this.nextLevelCache.updateDocument(oldDocMeta, content, forceUpdate, changeLog).pipe(
       tap((doc: Document) => {
         this._store.docMeta.upsert(doc.metaData);
         this._store.document.upsert(doc.content);

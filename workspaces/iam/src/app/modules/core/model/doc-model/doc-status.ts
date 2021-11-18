@@ -9,5 +9,5 @@ export class DocumentStatus {
 }
 
 export class DirtyDocument {
-  constructor(public id: number) {}
+  constructor(public id: number, public changeLog: string) {}
 }

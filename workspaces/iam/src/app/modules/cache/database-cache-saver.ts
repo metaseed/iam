@@ -14,8 +14,8 @@ export class DatabaseCacheSaver {
     private store: DocumentStore
   ) {
     this.autoSave$ = interval(AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL).pipe(
-      switchMap(() => this.db.getAllKeys<number[]>(DataTables.DirtyDocs)),
-      switchMap(ids => merge(...(ids.map(id => this.saveToNet(id).pipe(
+      switchMap(() => this.db.getAll<DirtyDocument>(DataTables.DirtyDocs)),
+      switchMap(ids => merge(...(ids.map(({id,changeLog}) => this.saveToNet(id, changeLog).pipe(
         tap((doc: Document) => {
           this.store.docMeta.upsert(doc.metaData);
           this.store.document.upsert(doc.content);
@@ -25,7 +25,7 @@ export class DatabaseCacheSaver {
     )
   }
 
-  public saveToDb(docMeta: DocMeta, docContent: DocContent, forceSave = false) {
+  public saveToDb(docMeta: DocMeta, docContent: DocContent, forceSave = false, changeLog: string) {
     return zip(
       this.db.put<DocContent>(DataTables.DocContent, docContent).pipe(
         subscribeOn(asyncScheduler),
@@ -47,9 +47,9 @@ export class DatabaseCacheSaver {
         return new Document(docMeta, docContent);
       }),
       switchMap(doc => {
-        const ro = this.db.put<DirtyDocument>(DataTables.DirtyDocs, new DirtyDocument(doc.metaData.id));
+        const ro = this.db.put<DirtyDocument>(DataTables.DirtyDocs, new DirtyDocument(doc.metaData.id, changeLog));
         if (forceSave) {
-          return ro.pipe(switchMap(r => this.saveToNet(doc.metaData.id)));
+          return ro.pipe(switchMap(r => this.saveToNet(doc.metaData.id, changeLog)));
         } else {
           return ro.pipe(map(r => doc));
         }
@@ -57,7 +57,7 @@ export class DatabaseCacheSaver {
     );
   }
 
-  private saveToNet(id: number) {
+  private saveToNet(id: number, changeLog: string) {
     return zip(
       this.db.get<DocContent>(DataTables.DocContent, id).pipe(
         subscribeOn(asyncScheduler),
@@ -77,7 +77,7 @@ export class DatabaseCacheSaver {
       switchMap(([content, docMeta]) => {
         // saving to net
         this.store.updateCurrentDocStatus({ isSyncing: true });
-        return this.nextLevelCache.updateDocument(docMeta, content, false).pipe(
+        return this.nextLevelCache.updateDocument(docMeta, content, false, changeLog).pipe(
           switchMap(doc => {
             // saved to net
             this.store.updateCurrentDocStatus({ isDbDirty: false, isSyncing: false })

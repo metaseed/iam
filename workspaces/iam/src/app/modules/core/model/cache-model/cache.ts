@@ -31,7 +31,7 @@ export interface ICache {
 
   readDocContent(id: number,  format: string): Observable<DocContent>;
 
-  updateDocument(oldDocMeta: DocMeta, content: DocContent, forceUpdate: boolean): Observable<Document>;
+  updateDocument(oldDocMeta: DocMeta, content: DocContent, forceUpdate: boolean, changeLog: string): Observable<Document>;
 
   // return the id;  fault would be processed by observable error handler
   deleteDoc(id: number): Observable<number>;
