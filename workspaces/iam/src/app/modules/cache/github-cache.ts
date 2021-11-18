@@ -244,10 +244,11 @@ export class GithubCache implements ICache {
       id: number,
       format: string,
       state = 0,
-      isDeleted = false
+      isDeleted = false,
+      title?:string
     ): Observable<DocContent> => {
 
-      let uri = `${DOCUMENTS_FOLDER_NAME}/${id}`;
+      let uri = `${DOCUMENTS_FOLDER_NAME}/${title?DocMeta.sanitizeTitle(title)+'_':''}${id}`;
       if (format) uri = `${uri}.${format}`;
 
       if (isDeleted) {
@@ -266,7 +267,7 @@ export class GithubCache implements ICache {
                 switchMap(meta => {
                   console.debug(`@github-cache.readDocContent: could not get content of id: ${id}, title: ${meta.title}, format:${format}\ntry again with remote meta: {title: ${meta.title}, format: ${meta.format}, isDeleted: ${meta.isDeleted}}`);
                   // using the meta from net via id, someone may has deleted it.
-                  return getContent(repo, id, meta.format, state, meta.isDeleted);
+                  return getContent(repo, id, meta.format, state, meta.isDeleted, meta.title);
                 })
               );
             } else if (format && state === 1) {

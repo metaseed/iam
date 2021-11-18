@@ -42,7 +42,6 @@ export class DocMeta {
      *  suffix
      */
     public format = 'md',
-    // remove this?
     public isDeleted = false
   ) { }
 

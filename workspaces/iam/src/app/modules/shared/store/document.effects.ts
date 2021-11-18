@@ -90,8 +90,9 @@ export class DocumentsEffects extends EffectManager {
       pipe(
         switchMap(state => {
           const meta = this.store.currentDocMeta$.state;
-          const docContent = this.store.currentDocContent$.state;
           const { content, format, forceUpdate, changeLog } = state;
+          const docCont = this.store.currentDocContent$.state;
+          const docContent = DocContent.with(docCont, content);
           const newTitle = DocMeta.getTitle(content);
 
           if (!newTitle) {
@@ -119,7 +120,14 @@ export class DocumentsEffects extends EffectManager {
               );
           }
         }),
-        tap(result => effectInfo.success(result))
+        tap({
+          next: result => {
+            effectInfo.success(result);
+            this.snackbar.open('saved success!')
+          }, error: err => {
+            this.snackbar.open('error, not saved!')
+          }
+        })
       ),
     { type: '[DocumentsEffects]saveDocument', timeOut: EFFECT_TIMEOUT }
   );

@@ -28,5 +28,9 @@ export class DocContent implements IDocContent {
      * set when find remote cache has deleted, to let near-cache delete this id
      */
     public isDeleted = false
-  ) {}
+  ) { }
+
+  static with(docContent:DocContent, content: string){
+    return new DocContent(docContent.id, content, docContent.sha, docContent.format, docContent.isDeleted);
+  }
 }
