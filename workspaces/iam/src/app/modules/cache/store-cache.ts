@@ -96,7 +96,7 @@ export class StoreCache implements ICache {
             });
           }
           else {
-              console.debug(`@storeCache.readDocMeta: meta in store is the same as far-cache. no process for it in store`, meta)
+            console.debug(`@storeCache.readDocMeta: meta in store is the same as far-cache. no process for it in store`, meta)
           }
         }
       })
@@ -120,42 +120,54 @@ export class StoreCache implements ICache {
         }
 
         // update it in store
-        const document = this._store.getDocument(id);
-        if (document?.sha === docContent.sha) {
-          console.debug(`@storeCache.readDocContent: id: ${id}, content sha in mem is the same with the sha from next cache, so no need to update it in store.`)
+        const docContentInStore = this._store.getDocContent(id);
+        if (docContentInStore?.sha === docContent.sha) {
+          console.debug(`@storeCache.readDocContent:  received docContent id(${id}) from far-cache, but content sha in mem is the same with the sha from next cache, so no need to update it in store.`)
           return; // nothing changed.
         }
 
+        if (!docContentInStore) {
+          console.debug(`@storeCache.readDocContent: received docContent id(${id}) from far-cache, add dotMeta and content to store.`, docContent)
+          this._store.document.add(docContent);
+        } else {
+          console.debug(`@storeCache.readDocContent: received docContent id(${id}) from far-cache, update dotMeta and content to store.`, docContent)
+
+          this._store.document.update({
+            id: docContentInStore.id,
+            changes: docContent
+          });
+        }
+
+        // why need to read docMeta?
+        // because: when save docContent, we need to update docMeta
+        // docMeta can has additional content not from docContent. (now no. for future)
+        // we need to merge oldMeta with new content from docContent
         this.nextLevelCache
-          // why need to read docMeta?
-          .readDocMeta(id)
-          .pipe(
-            tap(meta => {
-              const document = this._store.getDocument(id);
-              if (!document) {
-                console.debug(`@storeCache.readDocContent: received id(${id}) from far-cache, add dotMeta and content to store.`, meta, docContent)
-                this._store.docMeta.add(meta);
-                this._store.document.add(docContent);
-              } else {
-                console.debug(`@storeCache.readDocContent: received id(${id}) from far-cache, update dotMeta and content to store.`, meta, docContent)
+        .readDocMeta(id)
+        .pipe(
+          tap(meta => {
+            const metaInStore = this._store.getDocMeta(id);
+            if (!metaInStore) {
+              console.debug(`@storeCache.readDocContent: received docMeta id(${id}) from far-cache, add dotMeta and content to store.`, meta)
+              this._store.docMeta.add(meta);
+            } else {
+              console.debug(`@storeCache.readDocContent: received docMeta id(${id}) from far-cache, update dotMeta and content to store.`, meta)
 
-                this._store.docMeta.update({
-                  id: document.id,
-                  changes: meta
-                });
-                this._store.document.update({
-                  id: document.id,
-                  changes: docContent
-                });
-              }
-            }),
-            catchError(err => {
-              throw err;
-            })
-          ).subscribe()
+              this._store.docMeta.update({
+                id: metaInStore.id,
+                changes: meta
+              });
+
+            }
+          }),
+          catchError(err => {
+            throw err;
+          })
+        ).subscribe()
       })
-
     );
+
+
   }
 
   updateDocument(oldDocMeta: DocMeta, content: DocContent, forceUpdate: boolean, changeLog: string) {

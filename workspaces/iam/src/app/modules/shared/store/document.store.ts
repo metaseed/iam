@@ -74,7 +74,7 @@ export class DocumentStore {
   // only id are sorted, we want sorted
   getAllDocMetas() { return this.docMeta.cache.ids.map(id => this.docMeta.cache.entities[id]) }
 
-  getDocument(id: number) {
+  getDocContent(id: number) {
     return this.document.cache.entities[id];
   }
 

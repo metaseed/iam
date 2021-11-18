@@ -52,7 +52,7 @@ export class Repository extends Requestable {
       sha,
       branch
     }).pipe(
-      tap({ next: x => console.debug('@github.repo.updateFile result:', x), error: e => console.debug('@github.repo.updateFile error:', e) })
+      tap({ next: x => console.debug('@github.repo.updateFile success:', x), error: e => console.debug('@github.repo.updateFile error:', e) })
     ) as Observable<File>;
   }
 
@@ -66,7 +66,7 @@ export class Repository extends Requestable {
       },
       content: base64Encode(content)
     }, undefined).pipe(
-      tap({ next: x => console.debug('@github.repo.newFile:', x), error: e => console.debug('@github.repo.newFile ERROR:', e) })
+      tap({ next: x => console.debug('@github.repo.newFile success:', x), error: e => console.debug('@github.repo.newFile ERROR:', e) })
     ) as Observable<File>;
   }
 
@@ -101,7 +101,7 @@ export class Repository extends Requestable {
           }
         });
       }),
-      tap({ next: x => console.debug('@github.repo.deleteFile:', x), error: e => console.debug('@github.repo.deleteFile ERROR:', e) }),
+      tap({ next: x => console.debug('@github.repo.deleteFile success:', x), error: e => console.debug('@github.repo.deleteFile ERROR:', e) }),
       map(x => <File>x)
     );
   }
@@ -117,7 +117,7 @@ export class Repository extends Requestable {
         }
       })
       .pipe(
-        tap({ next: x => console.debug('@github.repo.delFileViaSha:', x), error: e => console.debug('@github.repo.delFileViaSha ERROR:', e) })
+        tap({ next: x => console.debug('@github.repo.delFileViaSha success:', x), error: e => console.debug('@github.repo.delFileViaSha ERROR:', e) })
         );
   }
 

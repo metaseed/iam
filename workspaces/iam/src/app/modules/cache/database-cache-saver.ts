@@ -1,5 +1,5 @@
 import { interval, asyncScheduler, zip, EMPTY, merge } from 'rxjs';
-import { subscribeOn, catchError, switchMap, map, tap } from 'rxjs/operators';
+import { subscribeOn, catchError, switchMap, map, tap, filter } from 'rxjs/operators';
 import { ICache, DocContent, DataTables, DocMeta, Document, AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL } from 'core';
 import { Database } from '../database/database-engine';
 import { DirtyDocument } from '../core/model/doc-model/doc-status';
@@ -15,7 +15,9 @@ export class DatabaseCacheSaver {
   ) {
     this.autoSave$ = interval(AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL).pipe(
       switchMap(() => this.db.getAll<DirtyDocument>(DataTables.DirtyDocs)),
-      switchMap(ids => merge(...(ids.map(({id,changeLog}) => this.saveToNet(id, changeLog).pipe(
+      filter(docs=> docs.length > 0),
+      tap(dirtyDocs =>  console.debug(`@IndexDBCache.autoSaver: save dirty docs every ${AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL / 1000 / 60}min`, dirtyDocs) ),
+      switchMap(ids => merge(...(ids.map(({ id, changeLog }) => this.saveToNet(id, changeLog).pipe(
         tap((doc: Document) => {
           this.store.docMeta.upsert(doc.metaData);
           this.store.document.upsert(doc.content);
