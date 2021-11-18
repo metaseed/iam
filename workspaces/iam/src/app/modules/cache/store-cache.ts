@@ -86,17 +86,17 @@ export class StoreCache implements ICache {
         else {
           const metaInStore = this._store.getDocMeta(meta.id);
           if (!metaInStore) {
-            console.debug(`@storeCache.readDocMeta: add doc meta to store`, meta);
+            console.debug(`@storeCache.readDocMeta: add doc meta(${meta.id}) to store`, meta);
             this._store.docMeta.add(meta);
           } else if (metaInStore.updateDate.getTime() < meta.updateDate.getTime()) {
-            console.debug(`@storeCache.readDocMeta: update doc meta to store`, meta);
+            console.debug(`@storeCache.readDocMeta: update doc meta(${meta.id}) to store`, meta);
             this._store.docMeta.update({
               id: meta.id,
               changes: meta
             });
           }
           else {
-            console.debug(`@storeCache.readDocMeta: meta in store is the same as far-cache. no process for it in store`, meta)
+            console.debug(`@storeCache.readDocMeta: meta(${meta.id}) in store is the same as far-cache. no process for it in store`, meta)
           }
         }
       })
