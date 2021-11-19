@@ -82,10 +82,6 @@ export class MarkdownViewerService {
 
   mediaChangeSubscription: Subscription;
   private markdownIt: MarkdownIt;
-  private containerPlugin: ContainerPlugin;
-  private mermaidPlugin: MermaidPlugin;
-  private lispPlugin: LispPlugin;
-  private metaPlugin: MetaPlugin;
 
   private showCodeLineNumber: boolean;
   constructor(
@@ -104,8 +100,8 @@ export class MarkdownViewerService {
     }
 
     this.markdownIt = new MarkdownIt(config.markdownIt);
-    this.metaPlugin = new MetaPlugin(this.markdownIt, this.updateMeta);
-    this.lispPlugin = new LispPlugin(this.markdownIt);
+    new MetaPlugin(this.markdownIt, this.updateMeta);
+    new LispPlugin(this.markdownIt);
     this.markdownIt
       .use(markdownitIncrementalDOM, IncrementalDom, {
         incrementalizeDefaultRules: true,
@@ -152,9 +148,8 @@ export class MarkdownViewerService {
       .use(latex)
       .use(html(IncrementalDom, enableIDOM));
 
-    this.mermaidPlugin = new MermaidPlugin(this.markdownIt);
-
-    this.containerPlugin = new ContainerPlugin(this.markdownIt, "warning");
+    new MermaidPlugin(this.markdownIt);
+    new ContainerPlugin(this.markdownIt, "warning");
 
     this.docRef.document["copier"] = new CopierService();
   }
@@ -270,7 +265,7 @@ export class MarkdownViewerService {
         preNode.style.visibility = "visible";
         this.target.removeChild(preNode);
         const r =
-`<div class="markdown-code">
+          `<div class="markdown-code">
 <div class="markdown-code__lang">${lang}</div>
 <div class="code-buttons">
 
