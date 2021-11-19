@@ -1,5 +1,6 @@
 // https://github.com/mermaid-js/mermaid
 // https://github.com/tylingsoft/markdown-it-mermaid
+// https://github.com/liradb2000/markdown-it-mermaid/blob/master/src/index.js
 
 import MarkdownIt from 'markdown-it';
 import { uid } from 'core';
@@ -14,7 +15,8 @@ export class MermaidPlugin {
     try {
       const id = 'id' + uid();
       if (this._mermaid) {
-        this._mermaid.render(id, code, sc=>code = sc)
+        this._mermaid.render(id, code, sc => code = sc);
+        return `<div class="mermaid">${code}</div>`;;
       } else {
         this.mermaid().then(mermaid => {
           mermaid.parse(code);
@@ -27,7 +29,7 @@ export class MermaidPlugin {
     }
   };
 
-  loadPreferences = (mermaid:Mermaid, preferenceStore) => {
+  loadPreferences = (mermaid: Mermaid, preferenceStore) => {
     let mermaidTheme = preferenceStore.get('mermaid-theme');
     if (mermaidTheme === undefined) {
       mermaidTheme = 'default';
