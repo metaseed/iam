@@ -1,4 +1,7 @@
 // const string = require("string");
+// https://github.com/valeriangalliat/markdown-it-anchor
+import * as MarkdownIt from "markdown-it";
+import * as StateCore from "markdown-it/lib/rules_core/state_core";
 
 // const slugify = s =>
 //   string(s)
@@ -7,16 +10,9 @@
 
 const slugify = s => s;
 
-const position = {
-  false: 'push',
-  true: 'unshift'
-};
-
-const hasProp = {}.hasOwnProperty;
-
 const permalinkHref = slug => `#${slug}`;
 
-const renderPermalink = (slug, opts, state, idx) => {
+const renderPermalink = (slug, opts, state: StateCore, idx) => {
   const space = () => Object.assign(new state.Token('text', '', 0), { content: ' ' });
 
   const linkTokens = [
@@ -35,13 +31,19 @@ const renderPermalink = (slug, opts, state, idx) => {
 
   // `push` or `unshift` according to position option.
   // Space is at the opposite side.
-  linkTokens[position[!opts.permalinkBefore]](space());
-  state.tokens[idx + 1].children[position[opts.permalinkBefore]](...linkTokens);
+  if (opts.permalinkBefore) {
+    linkTokens.push(space());
+    state.tokens[idx + 1].children.unshift(...linkTokens);
+  } else {
+    linkTokens.unshift(space());
+    state.tokens[idx + 1].children.push(...linkTokens);
+  }
+
 };
 
-const uniqueSlug = (slug, slugs) => {
+const uniqueSlug = (slug, slugs: object) => {
   // Mark this slug as used in the environment.
-  slugs[slug] = (hasProp.call(slugs, slug) ? slugs[slug] : 0) + 1;
+  slugs[slug] = (slugs.hasOwnProperty(slug) ? slugs[slug] : 0) + 1;
 
   // First slug, return as is.
   if (slugs[slug] === 1) {
@@ -55,7 +57,18 @@ const uniqueSlug = (slug, slugs) => {
 const isLevelSelectedNumber = selection => level => level >= selection;
 const isLevelSelectedArray = selection => level => selection.includes(level);
 
-const anchor = (md, opts) => {
+anchor.defaults = {
+  level: 1,
+  slugify,
+  permalink: false,
+  renderPermalink,
+  permalinkClass: 'header-anchor',
+  permalinkSymbol: '¶', // 🔗
+  permalinkBefore: false,
+  permalinkHref
+};
+
+export default function anchor(md: MarkdownIt, opts) {
   opts = Object.assign({}, anchor.defaults, opts);
 
   md.core.ruler.push('anchor', state => {
@@ -90,18 +103,7 @@ const anchor = (md, opts) => {
           opts.callback(token, { slug, title });
         }
       });
+
+    return false;
   });
 };
-
-anchor.defaults = {
-  level: 1,
-  slugify,
-  permalink: false,
-  renderPermalink,
-  permalinkClass: 'header-anchor',
-  permalinkSymbol: '¶',
-  permalinkBefore: false,
-  permalinkHref
-};
-
-module.exports = anchor;

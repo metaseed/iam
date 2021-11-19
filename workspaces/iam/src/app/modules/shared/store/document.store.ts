@@ -3,7 +3,7 @@ import { EntityCacheStore, MemEntityCache } from "@rx-store/entity";
 import { state, StateSubject } from "@rx-store/core";
 import { Injectable, isDevMode } from "@angular/core";
 import { DocumentStatus } from "app/modules/core/model/doc-model/doc-status";
-import { distinctUntilChanged, map, tap } from "rxjs/operators";
+import { map, tap } from "rxjs/operators";
 import { pipe } from "rxjs";
 
 @Injectable({ providedIn: 'root' })

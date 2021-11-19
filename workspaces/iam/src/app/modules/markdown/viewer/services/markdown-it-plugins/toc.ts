@@ -1,7 +1,9 @@
+import * as MarkdownIt from "markdown-it";
+import * as ParserInline from 'markdown-it/lib/parser_inline';
 'use strict';
 // reference this to implement popup toc: https://codepad.co/snippet/
 // var string = require("string");
-var defaultOptions = {
+let defaultOptions = {
   includeLevel: [1, 2],
   containerClass: 'table-of-contents',
   slugify: s => s,
@@ -16,12 +18,12 @@ var defaultOptions = {
   format: undefined
 };
 
-module.exports = function (md, options) {
-  var options = { ...defaultOptions, ...options };
-  var tocRegexp = options.markerPattern;
-  var gstate;
+export default function toc(md: MarkdownIt, option) {
+  let options = { ...defaultOptions, ...option };
+  let tocRegexp = options.markerPattern;
+  let grabbedState;
 
-  function toc(state, silent) {
+  const tocInlineRule: ParserInline.RuleInline = (state, silent) => {
     var token;
     var match;
 
@@ -71,12 +73,12 @@ module.exports = function (md, options) {
   };
 
   md.renderer.rules.toc_body = function (tokens, index) {
-    return renderChildrenTokens(0, gstate.tokens)[1];
+    return renderChildrenTokens(0, grabbedState.tokens)[1];
   };
 
   function renderChildrenTokens(pos, tokens) {
     const headings = [];
-    let  buffer = '',
+    let buffer = '',
       currentLevel,
       subHeadings,
       size = tokens.length,
@@ -133,9 +135,10 @@ module.exports = function (md, options) {
 
   // Catch all the tokens for iteration later
   md.core.ruler.push('grab_state', function (state) {
-    gstate = state;
+    grabbedState = state;
+    return false;
   });
 
   // Insert TOC
-  md.inline.ruler.after('emphasis', 'toc', toc);
+  md.inline.ruler.after('emphasis', 'toc', tocInlineRule);
 };
