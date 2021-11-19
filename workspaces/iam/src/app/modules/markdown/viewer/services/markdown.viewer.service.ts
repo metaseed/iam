@@ -47,7 +47,7 @@ import * as html from "./markdown-it-plugins/html";
 import * as footnote from "./markdown-it-plugins/footnote";
 import * as imsize from "./markdown-it-plugins/imsize";
 import anchor from "./markdown-it-plugins/anchor";
-import { fence } from "./markdown-it-plugins/fence";
+import fence from "./markdown-it-plugins/fence";
 import toc from "./markdown-it-plugins/toc";
 import { ContainerPlugin } from "./markdown-it-plugins/container";
 import { MarkdownConfig } from "../markdown.config";
@@ -269,7 +269,8 @@ export class MarkdownViewerService {
         prismjs.highlightElement(codeNode);
         preNode.style.visibility = "visible";
         this.target.removeChild(preNode);
-        const r = `<div class="markdown-code">
+        const r =
+`<div class="markdown-code">
 <div class="markdown-code__lang">${lang}</div>
 <div class="code-buttons">
 
