@@ -1,4 +1,4 @@
-import * as MarkdownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
 import { uid } from 'core';
 
 export class MermaidPlugin {
@@ -9,10 +9,14 @@ export class MermaidPlugin {
   mermaidChart = code => {
     try {
       const id = 'id' + uid();
-      this.mermaid().then(mermaid => {
-        mermaid.parse(code);
-        mermaid.init(undefined, `#${id}`);
-      });
+      if (this._mermaid) {
+        this._mermaid.render(id, code, sc=>code = sc)
+      } else {
+        this.mermaid().then(mermaid => {
+          mermaid.parse(code);
+          mermaid.init(undefined, `#${id}`);
+        });
+      }
       return `<div class="mermaid" id="${id}">${code}</div>`;
     } catch (e) {
       return `<pre>${e}</pre>`;
@@ -53,9 +57,9 @@ export class MermaidPlugin {
   private _mermaid;
   mermaid = async () => {
     if (!this._mermaid) {
-      const m = (await import('mermaid')).default;
+      const mermaidModule = (await import('mermaid')).default;
       if (!this._mermaid) {
-        this._mermaid = m;
+        this._mermaid = mermaidModule;
         this.loadPreferences(this._mermaid, {
           get: key => {
             // if (key === 'mermaid-theme') {
@@ -74,7 +78,7 @@ export class MermaidPlugin {
   }
 
   mermaidPlugin = (markdown: MarkdownIt) => {
-    const temp = markdown.renderer.rules.fence.bind(markdown.renderer.rules);
+    const originalFenceRule = markdown.renderer.rules.fence.bind(markdown.renderer.rules);
 
     markdown.renderer.rules.fence = (tokens, idx, options, env, slf) => {
       const token = tokens[idx];
@@ -90,7 +94,7 @@ export class MermaidPlugin {
       ) {
         return this.mermaidChart(code);
       }
-      return temp(tokens, idx, options, env, slf);
+      return originalFenceRule(tokens, idx, options, env, slf);
     };
   };
 }

@@ -126,7 +126,7 @@ export class DocumentsEffects extends EffectManager {
         tap({
           next: result => {
             effectInfo.success(result);
-            this.snackbar.open('saved success!')
+            // this.snackbar.open('saved success!')
           }, error: err => {
             this.snackbar.open('error, not saved!')
           }
