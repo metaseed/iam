@@ -1,5 +1,9 @@
+// https://github.com/mermaid-js/mermaid
+// https://github.com/tylingsoft/markdown-it-mermaid
+
 import MarkdownIt from 'markdown-it';
 import { uid } from 'core';
+import { Mermaid } from 'mermaid';
 
 export class MermaidPlugin {
   constructor(private markdownIt: MarkdownIt) {
@@ -23,7 +27,7 @@ export class MermaidPlugin {
     }
   };
 
-  loadPreferences = (mermaid, preferenceStore) => {
+  loadPreferences = (mermaid:Mermaid, preferenceStore) => {
     let mermaidTheme = preferenceStore.get('mermaid-theme');
     if (mermaidTheme === undefined) {
       mermaidTheme = 'default';
@@ -47,7 +51,7 @@ export class MermaidPlugin {
       startOnLoad: false
       // logLevel: 1
     };
-    mermaid.initialize(option);
+    mermaid.initialize(option as any);
     return {
       'mermaid-theme': mermaidTheme,
       'gantt-axis-format': ganttAxisFormat
