@@ -1,6 +1,6 @@
 'use strict';
 
-function render_footnote_anchor_name(tokens, idx, options, env /*, slf*/) {
+function render_footnote_anchor_name(tokens, idx, options, env , slf) {
   var n = Number(tokens[idx].meta.id + 1).toString();
   var prefix = '';
 
@@ -11,7 +11,7 @@ function render_footnote_anchor_name(tokens, idx, options, env /*, slf*/) {
   return prefix + n;
 }
 
-function render_footnote_caption(tokens, idx /*, options, env, slf*/) {
+function render_footnote_caption(tokens, idx , options, env, slf) {
   var n = Number(tokens[idx].meta.id + 1).toString();
 
   if (tokens[idx].meta.subId > 0) {

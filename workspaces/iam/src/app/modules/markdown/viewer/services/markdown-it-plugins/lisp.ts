@@ -1,5 +1,6 @@
 import MarkdownIt from 'markdown-it';
 import { littleLisp } from 'lispjs';
+
 export class LispPlugin {
   config = {
     markerPattern: /\*\([\s\S]*?\)\*/gm
@@ -23,7 +24,7 @@ export class LispPlugin {
 
     md.renderer.rules.lisp_body = (tokens, index) => {
       try {
-        const r = littleLisp.execute(tokens[index].content); // this.gState.tokens
+        const r = littleLisp.execute(tokens[index].content);
         return r;
       } catch (e) {
         console.error(e);
@@ -33,7 +34,7 @@ export class LispPlugin {
 
     md.core.ruler.push('grab_state', function(state) {
       this.gState = state;
-      return null;//null is ok for core ruler
+      return false;
     });
 
     md.inline.ruler.before('emphasis', 'lisp', this.parse);
@@ -60,8 +61,6 @@ export class LispPlugin {
     }
 
     start = pos;
-
-    // while(pos < max && )
 
     // Detect lisp markdown
     const regex = this.config.markerPattern;
