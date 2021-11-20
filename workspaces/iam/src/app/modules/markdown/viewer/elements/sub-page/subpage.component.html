@@ -35,7 +35,7 @@
   </mat-expansion-panel-header>
   <div class="card-container">
     <div *ngFor="let meta of pageList" class="docs-card">
-      <div class="card-body" (click)="onShow(meta)">
+      <div class="card-body" (click)="onShowDoc(meta)">
         <section>{{ meta.title }}</section>
         <span class="doc-id">{{ meta.id }}</span>
 

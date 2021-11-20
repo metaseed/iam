@@ -100,7 +100,7 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
 
   public pageList$: Observable<DocMeta[]>
 
-  onShow(doc: DocMeta) {
+  onShowDoc(doc: DocMeta) {
     const navigationExtras: NavigationExtras = {
       queryParams: {
         id: doc.id,
