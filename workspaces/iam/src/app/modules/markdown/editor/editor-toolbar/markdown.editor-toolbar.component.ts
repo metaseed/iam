@@ -4,7 +4,7 @@ import { MarkdownComponent } from '../../markdown.component';
 import { combineLatest } from 'rxjs';
 import { DocService } from 'home';
 import { ICodeMirrorEditor, MarkdownEditorService } from '..';
-import { DocFormat } from 'core';
+import { DocFormat, scope } from 'core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';
 import { map, startWith } from 'rxjs/operators';
@@ -14,6 +14,8 @@ import { Router } from '@angular/router';
 import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from '../../model/markdown.model';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
 import { DocumentStore } from 'app/modules/shared/store/document.store';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { ChangeNoteInputComponent } from './change-note-input.component';
 
 @Component({
   selector: 'editor-toolbar',
@@ -70,6 +72,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   )
 
   showPreview$ = this.markdownStore.editWithPreview_;
+  logger = scope(console, '@MarkdownEditorToolbar');
 
   constructor(
     private router: Router,
@@ -78,6 +81,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
     private _editorService: MarkdownEditorService,
     public docService: DocService,
     private store: DocumentStore,
+    private bottomSheet: MatBottomSheet,
     public docSaver: DocSaveCoordinateService,
     private _breakpointObserver: BreakpointObserver,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
@@ -93,7 +97,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
     );
 
     const commands = this._editorService.commands;
-    commands.save = this.save;
+    commands.save = this.onSave;
     commands.scrollLineUp = function (cm) {
       const info = cm.getScrollInfo();
       if (!cm.somethingSelected()) {
@@ -119,10 +123,20 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
     this.router.navigateByUrl('/home');
   }
 
-  save = () => {
+  onSave = () => {
     const content = this.editor.getValue();
-    // this.store.dispatch(new edit.Save(content));
-    this.documentEffects.saveDocument_.next({ content, format: DocFormat.md, forceUpdate: true });
+    if (this.store.currentDocStatus_IsEditorDirty$.state) {
+      // if is not dirty, remote side would not take the commit msg.
+      // todo: update last commit msg.
+      const changeNoteInput = this.bottomSheet.open(ChangeNoteInputComponent)
+      changeNoteInput.afterDismissed().subscribe(o => {
+        const msg = changeNoteInput.instance.changeNote;
+        this.documentEffects.saveDocument_.next({ content, format: DocFormat.md, forceUpdate: true, changeLog: msg });
+      })
+    } else {
+      this.logger.debug('it seems the document is not dirty.');
+      this.documentEffects.saveDocument_.next({ content, format: DocFormat.md, forceUpdate: true, changeLog: '' });
+    }
   };
 
   undo = () => {
@@ -154,7 +168,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   };
 
   new = () => {
-    this.documentEffects.createDocument_.next({format: DocFormat.md});
+    this.documentEffects.createDocument_.next({ format: DocFormat.md });
   };
 
   previewPanelClick(event: Event) {
