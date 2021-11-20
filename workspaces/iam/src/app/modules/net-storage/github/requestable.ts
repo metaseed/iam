@@ -80,7 +80,7 @@ export class Requestable {
     } else if (method === 'POST') {
       return this._http.post<Object>(url, data, { headers: headers, responseType: 'json' });
     } else if (method === 'GET') {
-      return this._http.get<Object>(url, { headers: headers, responseType: 'json' });
+      return this._http.get<Object>(url, { headers: headers,params: data, responseType: 'json' });
     } else if (method === 'PATCH') {
       return this._http.patch<Object>(url, data, { headers: headers, responseType: 'json' });
     } else if (method === 'DELETE') {

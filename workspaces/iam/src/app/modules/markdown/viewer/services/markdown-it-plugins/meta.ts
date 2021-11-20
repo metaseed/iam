@@ -63,6 +63,7 @@ export class MetaPlugin {
         if (meta.version) {
           content += `<span class="meta-version">&nbsp; v${meta.version} </span>`;
         }
+
         if (meta.updateDate) {
           if (meta.createDate) {
             const createDate = meta.createDate;
@@ -153,6 +154,11 @@ export class MetaPlugin {
         token = state.push('meta_body', '', 0);
         const meta = this.updateMeta(rawYAML);
         token.meta = meta;
+
+        if (meta.version) {
+          token = state.push('html_block', '', 0);
+          token.content = `<i-version version="${meta.version}"></i-version>`
+        }
 
         if (meta?.enable.includes('toc')) {
           // put web component in html block; and  use default render. should not render it directly.

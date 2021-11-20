@@ -119,7 +119,7 @@ export class Repository extends Requestable {
       })
       .pipe(
         tap({ next: x => this.logger.debug('delFileViaSha success:', x), error: e => this.logger.error('delFileViaSha ERROR:', e) })
-        );
+      );
   }
 
   searchIssue(query: string) {
@@ -155,9 +155,9 @@ export class Repository extends Requestable {
   }
 
   // https://developer.github.com/v3/repos/contents/#get-contents
-  getContents(path: string, branch: string = 'master') {
+  getContents(path: string, ref: string = 'master') {
     path = path ? encodeURI(path) : '';
-    return this.request('GET', `/repos/${this.fullName}/contents/${path}`).pipe(
+    return this.request('GET', `/repos/${this.fullName}/contents/${path}`, { ref }).pipe(
       map(x => this.decodeContent(<Content | Array<Content>>x)),
       tap({ next: x => this.logger.debug('getContents:', x), error: e => this.logger.error('getContents ERROR:', e) })
     );
@@ -280,5 +280,25 @@ export class Repository extends Requestable {
       switchMap(({ data: commit }) => this.updateHead(`heads/${branch}`, commit.sha, true)),
       tap(obj => this.logger.debug(`@github.move: updateHead`, obj))
     )
+  }
+
+  // https://stackoverflow.com/questions/16700297/using-github-api-to-retrieve-all-versions-of-a-specific-file
+  // https://docs.github.com/en/rest/reference/repos#commits
+  /**
+ * List the commits on a repository, optionally filtering by path, author or time range
+ * @see https://developer.github.com/v3/repos/commits/#list-commits-on-a-repository
+ * @param {Object} [options] - the filtering options for commits
+ * @param {string} [options.sha] - the SHA or branch to start from
+ * @param {string} [options.path] - the path to search on
+ * @param {string} [options.author] - the commit author
+ * @param {(Date|string)} [options.since] - only commits after this date will be returned
+ * @param {(Date|string)} [options.until] - only commits before this date will be returned
+ * @return for the http request
+ */
+  listCommits(options) {
+    options.since = new Date(options.since).toISOString();
+    options.until = new Date(options.until).toISOString();
+
+    return this.request('GET', `/repos/${this.fullName}/commits`, options);
   }
 }
