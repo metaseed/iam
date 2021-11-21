@@ -1,21 +1,33 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { DocumentHistoryListComponent } from './document-history-list.component';
 
 @Component({
   selector: 'i-version',
+  encapsulation: ViewEncapsulation.None,
   template: `
-  <span class="meta-version">&nbsp; v{{version}} </span>
-  <button mat-icon-button disabled aria-label="show document history versions" (click)="onShowVersions()">
-        <mat-icon>open_in_new</mat-icon>
-  </button>
-  `
+  <div class="meta-version-date">
+    <a *ngIf="version" class="meta-version" aria-label="show document history versions" (click)="onShowVersions()">
+      <span >&nbsp;v{{version}}</span>
+      <mat-icon style="font-size: small;">open_in_new</mat-icon>
+    </a>
+    <span *ngIf="createDate" class="meta-date">{{createDate}}</span>
+    <span *ngIf="updateDate" class="meta-date"> - {{updateDate}}</span>
+    <span *ngIf="id" class="meta-id">&nbsp; (id:{{id}})</span>
+  </div>
+  `,
 })
 export class VersionComponent implements OnInit {
   constructor(private bottomSheet: MatBottomSheet) { }
 
   @Input()
   version = '';
+  @Input()
+   createDate ='';
+  @Input()
+  updateDate = '';
+  @Input()
+  id = ''
 
   ngOnInit() { }
 

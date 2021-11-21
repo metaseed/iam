@@ -57,29 +57,6 @@ export class MetaPlugin {
         content += cont;
       }
 
-      if (meta.version || meta.updateDate) {
-        content += `<div class="meta-version-date">`;
-
-        if (meta.version) {
-          content += `<span class="meta-version">&nbsp; v${meta.version} </span>`;
-        }
-
-        if (meta.updateDate) {
-          if (meta.createDate) {
-            const createDate = meta.createDate;
-            content += `<span style="margin-left:10px" class="meta-date">${createDate.toLocaleDateString()} - </span>`;
-          }
-          content += `<span class="meta-date">  ${meta.updateDate.toLocaleDateString()}</span>`;
-        }
-
-        const idMatch = document.URL.match(/id=(\d+)/);
-        if (idMatch) {
-          content += `<span class="meta-version">&nbsp; (id:${idMatch[1]})</span>`;
-        }
-
-        content += `</div>`;
-      }
-
       if (meta.enable && meta.enable.length > 0) {
       }
       return content;
@@ -155,9 +132,10 @@ export class MetaPlugin {
         const meta = this.updateMeta(rawYAML);
         token.meta = meta;
 
-        if (meta.version) {
+        if (meta.version || meta.updateDate) {
           token = state.push('html_block', '', 0);
-          token.content = `<i-version version="${meta.version}"></i-version>`
+          const idMatch = document.URL.match(/id=(\d+)/);
+          token.content = `<i-version version="${meta.version}" create-date="${meta.createDate.toLocaleDateString()}" update-date="${meta.updateDate.toLocaleDateString()}" id="${idMatch[1]}"></i-version>`
         }
 
         if (meta?.enable.includes('toc')) {
