@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { Router } from '@angular/router';
 import { DocumentHistoryListComponent } from './document-history-list.component';
 
 @Component({
@@ -18,23 +19,26 @@ import { DocumentHistoryListComponent } from './document-history-list.component'
   `,
 })
 export class VersionComponent implements OnInit {
-  constructor(private bottomSheet: MatBottomSheet) { }
+  constructor(private bottomSheet: MatBottomSheet, private router: Router) { }
 
   @Input()
   version = '';
   @Input()
-   createDate ='';
+  createDate = '';
   @Input()
   updateDate = '';
-  @Input()
   id = ''
-
-  ngOnInit() { }
+  format = ''
+  ngOnInit() {
+    const params = this.router.parseUrl(this.router.url).queryParams;
+    // const title = params['title'];
+    this.id = params['id'];
+    this.format = params['f'];
+  }
 
   onShowVersions() {
-    const historyList = this.bottomSheet.open(DocumentHistoryListComponent);
-    historyList.afterDismissed().subscribe(o => {
-      // historyList.instance.
-    })
+
+    const historyList = this.bottomSheet.open(DocumentHistoryListComponent, { data: { id: this.id, format: this.format } });
+    historyList.afterDismissed().subscribe();
   }
 }

@@ -7,6 +7,7 @@ import { Issue } from './issues/issue';
 import { Observable } from 'rxjs';
 import { base64Encode, base64Decode, scope } from 'core';
 import { map, flatMap, tap, catchError, switchMap } from 'rxjs/operators';
+import { Commit } from './model/commit';
 
 export class Repository extends Requestable {
 
@@ -295,10 +296,12 @@ export class Repository extends Requestable {
  * @param {(Date|string)} [options.until] - only commits before this date will be returned
  * @return for the http request
  */
-  listCommits(options) {
-    options.since = new Date(options.since).toISOString();
-    options.until = new Date(options.until).toISOString();
+  listCommits(options: { path?: string, sha?: string, author?: string, since?: Date | string, until?: Date | string }) {
+    if (options.since)
+      options.since = new Date(options.since).toISOString();
+    if (options.until)
+      options.until = new Date(options.until).toISOString();
 
-    return this.request('GET', `/repos/${this.fullName}/commits`, options);
+    return this.request('GET', `/repos/${this.fullName}/commits`, options) as Observable<Commit>;
   }
 }

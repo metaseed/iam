@@ -2,7 +2,7 @@ import { Inject, Injectable, InjectionToken } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { CACHE_FACADE_TOKEN, DocContent, DocFormat, DocMeta, ICache, NET_COMMU_TIMEOUT, scope } from "core";
 import { forkJoin, map, pipe, switchMap, tap, throwError } from "rxjs";
-import { NEW_DOC_ID } from "shared";
+import { DOC_HISTORY_VERSION_ID, NEW_DOC_ID } from "shared";
 import { DocEffectsUtil } from "./document.effects.util";
 import { EffectManager, EffectStateSubject, OperationStatusConsoleReporter } from "@rx-store/effect";
 import { DocumentStore } from "./document.store";
@@ -79,6 +79,11 @@ export class DocumentsEffects extends EffectManager {
       pipe(
         switchMap(state => {
           this.store.currentId_.next(state.id);
+
+          // history version doc only lives in store
+          if(state.id === DOC_HISTORY_VERSION_ID) {
+            return this.store.currentDocContent$;
+          }
           return this.cacheFacade
             .readDocContent(state.id, state.format)
         }),

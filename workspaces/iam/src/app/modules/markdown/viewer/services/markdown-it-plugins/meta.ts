@@ -134,8 +134,8 @@ export class MetaPlugin {
 
         if (meta.version || meta.updateDate) {
           token = state.push('html_block', '', 0);
-          const idMatch = document.URL.match(/id=(\d+)/);
-          token.content = `<i-version version="${meta.version}" create-date="${meta.createDate.toLocaleDateString()}" update-date="${meta.updateDate.toLocaleDateString()}" id="${idMatch[1]}"></i-version>`
+          // const idMatch = document.URL.match(/id=(\d+)/)[1];
+          token.content = `<i-version version="${meta.version}" create-date="${meta.createDate?.toLocaleDateString()??''}" update-date="${meta.updateDate?.toLocaleDateString()??''}"></i-version>`
         }
 
         if (meta?.enable.includes('toc')) {

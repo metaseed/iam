@@ -10,7 +10,7 @@ import { MarkdownViewerContainerComponent } from './viewer/markdown-viewer-conta
 import { merge } from 'rxjs';
 import { Utilities } from '../core/utils';
 import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from './model/markdown.model';
-import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from '../shared/store';
+import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN, DOC_HISTORY_VERSION_ID } from '../shared/store';
 import { DocumentStore } from '../shared/store/document.store';
 
 @Component({
@@ -76,9 +76,13 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewChecked {
 
         } else {
           const title = params['title'];
-          const num = +params['id']
+          const id = +params['id']
           const format = params['f'];
-          this.documentEffects.readDocument_.next({ id: num, title, format });
+          if(id === DOC_HISTORY_VERSION_ID && !this.store.currentDocContent$.state) {
+            // if no content in store cache, means user F5 refresh the page with the history doc(id === -1) url.
+            this.router.navigate(['home']);
+          }
+          this.documentEffects.readDocument_.next({ id, title, format });
         }
       })
     )
