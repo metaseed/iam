@@ -78,7 +78,7 @@ export class DocSaveCoordinateService extends SubscriptionManager {
   private checkDirty(editor: CodeMirror.Editor) {
     let statusInStore = this.store.currentDocStatus$.state;
     if (!statusInStore) {
-      statusInStore = {id: this.store.docStatus.currentId_.state};
+      statusInStore = {id: this.store.docStatus.currentId_.state, isEditable: true};
       this.store.docStatus.set(statusInStore)
     }
 

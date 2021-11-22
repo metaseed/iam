@@ -4,7 +4,8 @@ export class DocumentStatus {
     // editor content changed and not save to store and local db.
     public isEditorDirty?,
     public isDbDirty?,
-    public isSyncing?
+    public isSyncing?,
+    public isEditable?
   ) {}
 }
 

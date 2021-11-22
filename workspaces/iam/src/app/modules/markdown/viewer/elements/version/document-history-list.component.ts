@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 import { NavigationExtras, Router } from '@angular/router';
+import { DocumentStatus } from 'app/modules/core/model/doc-model/doc-status';
 import { Content } from 'app/modules/net-storage/github';
 import { Commit } from 'app/modules/net-storage/github/model/commit';
 import { DocumentStore } from 'app/modules/shared/store/document.store';
@@ -66,9 +67,13 @@ export class DocumentHistoryListComponent {
       (content: Content) => {
         const docContent = new DocContent(DOC_HISTORY_VERSION_ID, content.content, sha);
         this.docStore.docContent.upsert(docContent);
+
         const docMeta = { ...this.docStore.docMeta.currentEntity$.state };
         docMeta.id = DOC_HISTORY_VERSION_ID;
         this.docStore.docMeta.upsert(docMeta);
+
+        const docStatus: DocumentStatus = {id:DOC_HISTORY_VERSION_ID, isEditable: false}
+        this.docStore.docStatus.upsert(docStatus);
 
         const navigationExtras: NavigationExtras = {
           queryParams: {
