@@ -7,7 +7,7 @@ import { ICodeMirrorEditor, MarkdownEditorService } from '..';
 import { DocFormat, scope } from 'core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, tap } from 'rxjs/operators';
 import { SubscriptionManager, Utilities } from '../../../core/utils';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Router } from '@angular/router';
@@ -74,6 +74,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   showPreview$ = this.markdownStore.editWithPreview_;
   logger = scope(console, '@MarkdownEditorToolbar');
 
+
   constructor(
     private router: Router,
     private utils: Utilities,
@@ -94,6 +95,13 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
       this._editorService.docEditorLoaded$.subscribe(editor => {
         this.editor = editor;
       })
+    ).addSub(
+      // switch to view mode if user view an history version with editor open
+      this.store.currentDocStatus_IsEditable$.pipe(tap(
+        isEditable => {
+          if(!isEditable) this.toViewMode();
+        }
+      ))
     );
 
     const commands = this._editorService.commands;
@@ -163,7 +171,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
     this.hideHeight = (this.toolbar.nativeElement as HTMLElement).offsetHeight;
   }
 
-  toViewMode = event => {
+  toViewMode = () => {
     this.markdownStore.documentMode_.next(DocumentMode.View)
   };
 
