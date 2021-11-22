@@ -43,12 +43,16 @@ function md_footnote_tooltip() {
   const id = event.target.getAttribute('data-id');
   const has = event.target.getElementsByClassName('tooltip');
   if (!has.length) {
-    const e = document.getElementById(id).firstElementChild.cloneNode(true);
-    while (e.lastElementChild && e.lastElementChild.tagName === 'A') {
-      e.removeChild(e.lastElementChild);
+    const tooltip = document.createElement('div');
+    tooltip.classList.add('tooltip');
+    event.target.appendChild(tooltip)
+    for (const node of document.getElementById(id).children) {
+      const e = node.cloneNode(true);
+      while (e.lastElementChild && e.lastElementChild.tagName === 'A') {
+        e.removeChild(e.lastElementChild);
+      }
+      e.removeAttribute('id');
+      tooltip.appendChild(e);
     }
-    e.removeAttribute('id');
-    e.classList.add('tooltip');
-    event.target.appendChild(e);
   }
 }
