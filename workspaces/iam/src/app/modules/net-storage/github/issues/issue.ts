@@ -7,6 +7,7 @@ import { Label } from '../model/label';
 import { Milestone } from '../model/milestone';
 import { PullRequest } from '../model/pull-request';
 import { Observable } from 'rxjs';
+import { Labels } from './labels';
 
 export interface IssueData {
   title?: string;
@@ -18,7 +19,7 @@ export interface IssueData {
 export interface EditIssueParams extends IssueData {
   state?: 'open' | 'closed';
 }
-export class Issue extends Requestable {
+export class Issue extends Labels {
   public id: string;
   public url: string;
   public repository_url: string;
@@ -42,7 +43,7 @@ export class Issue extends Requestable {
   updated_at: string;
   closed_by: User;
 
-  constructor(private http: HttpClient, private repository: string, userInfo: UserInfo) {
+  constructor(http: HttpClient,  repository: string, userInfo: UserInfo) {
     super(http, userInfo);
   }
 
