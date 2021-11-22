@@ -53,7 +53,8 @@ export class GithubCache implements ICache {
     return this;
   }
   private commitMessage(title: string, version: string, change?: string) {
-    let msg = `${title}, ver: ${version}`;
+    let msg = `${title}`;
+    if (version) msg += `, ver: ${version}`;
     if (change) msg += `, change: ${change}`;
     return msg;
   }
@@ -245,10 +246,10 @@ export class GithubCache implements ICache {
       format: string,
       state = 0,
       isDeleted = false,
-      title?:string
+      title?: string
     ): Observable<DocContent> => {
 
-      let uri = `${DOCUMENTS_FOLDER_NAME}/${title?DocMeta.sanitizeTitle(title)+'_':''}${id}`;
+      let uri = `${DOCUMENTS_FOLDER_NAME}/${title ? DocMeta.sanitizeTitle(title) + '_' : ''}${id}`;
       if (format) uri = `${uri}.${format}`;
 
       if (isDeleted) {
@@ -294,19 +295,20 @@ export class GithubCache implements ICache {
   updateDocument(docMeta: DocMeta, docContent: DocContent, forceUpdate: boolean, changeLog: string) {
     const { id, content, format, sha } = docContent;
     const title = DocMeta.getTitle(content);
+    // undefined if not has doc head meta
     const headMeta = DocMeta.getHeadMeta(content);
 
     // todo: add change message to api.
-    const commitMessage = this.commitMessage(title, headMeta.version, changeLog)
+    const commitMessage = this.commitMessage(title, headMeta?.version, changeLog)
 
     return this.githubStorage.init().pipe(
       switchMap(repo =>
         repo.updateFile(
-            `${DOCUMENTS_FOLDER_NAME}/${id}.${format}`,
-            content,
-            sha,
-            commitMessage
-          )
+          `${DOCUMENTS_FOLDER_NAME}/${id}.${format}`,
+          content,
+          sha,
+          commitMessage
+        )
           .pipe(
             switchMap(file => {
               const url = this.util.getContentUrl(id, title, format);
