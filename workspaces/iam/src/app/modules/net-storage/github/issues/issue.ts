@@ -44,7 +44,7 @@ export class Issue extends Labels {
   closed_by: User;
 
   constructor(http: HttpClient,  repository: string, userInfo: UserInfo) {
-    super(http, userInfo);
+    super(http,repository, userInfo);
   }
 
   // https://developer.github.com/v3/issues/#create-an-issue
