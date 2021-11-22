@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CodeComponent } from './code.component';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { PrettyPrinter } from './pretty-printer.service';
 import { CopierService } from 'packages/copier.service';
+import { MaterialModule } from 'material';
 @NgModule({
-  imports: [CommonModule, MatSnackBarModule],
+  imports: [CommonModule, MaterialModule],
   declarations: [CodeComponent],
   entryComponents: [CodeComponent],
   exports: [CodeComponent],

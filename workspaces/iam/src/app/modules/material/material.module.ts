@@ -12,7 +12,13 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {MatInputModule} from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatListModule } from '@angular/material/list'
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatChipsModule } from '@angular/material/chips';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 export const MatModules = [
   MatProgressSpinnerModule,
@@ -22,14 +28,19 @@ export const MatModules = [
   MatButtonModule,
   MatCheckboxModule,
   MatCardModule,
-  MatSnackBarModule,
   MatProgressBarModule,
   MatToolbarModule,
   MatDialogModule,
-  MatIconModule,
   MatTreeModule,
   MatSidenavModule,
   MatInputModule,
+  MatBottomSheetModule,
+  MatListModule,
+  MatSlideToggleModule,
+  MatSnackBarModule,
+  MatChipsModule,
+  DragDropModule,
+  MatExpansionModule
 ];
 
 @NgModule({
