@@ -302,6 +302,6 @@ export class Repository extends Requestable {
     if (options.until)
       options.until = new Date(options.until).toISOString();
 
-    return this.request('GET', `/repos/${this.fullName}/commits`, options) as Observable<Commit>;
+    return this.request('GET', `/repos/${this.fullName}/commits`, options) as Observable<Commit[]>;
   }
 }
