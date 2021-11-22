@@ -22,7 +22,7 @@
         (showPreview$ | async) ? 'chrome_reader_mode' : 'chrome_reader_mode'
       }}</mat-icon>
     </button>
-    <button mat-icon-button (click)="toViewMode($event)"><mat-icon> visibility </mat-icon></button>
+    <button mat-icon-button (click)="toViewMode()"><mat-icon> visibility </mat-icon></button>
     <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon> more_vert </mat-icon></button>
     <mat-menu #menu>
       <button mat-menu-item (click)="more($event)" *ngIf="(isScreenWide$ | async)">
