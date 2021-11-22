@@ -13,6 +13,9 @@ export class DocumentStore {
       if (!globalThis.__RX_STORE__) globalThis.__RX_STORE__ = {};
       globalThis.__RX_STORE__.store = this;
     }
+    this.currentDocStatus_IsEditable$.subscribe(v => {
+      globalThis.document.documentElement.style.setProperty('--edit-it-visible', v ? 'visible' : 'hidden');
+    })
   }
 
   docMeta = new EntityCacheStore<number, DocMeta>(new MemEntityCache({
@@ -46,6 +49,8 @@ export class DocumentStore {
   ));
 
   currentDocStatus_IsEditorDirty$ = this.currentDocStatus$.map(status => status?.isEditorDirty);
+  currentDocStatus_IsEditable$ = this.currentDocStatus$.map(status => status?.isEditable);
+
 
   currentDocStatus_IsDbDirty$ = this.currentDocStatus$.map(status => status?.isDbDirty);
 

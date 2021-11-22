@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MSG_DISPLAY_TIMEOUT } from 'core';
 
-import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from '../shared/store';
+import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN, DOC_HISTORY_VERSION_ID, ROOT_DOC_ID } from '../shared/store';
 import { DocumentStore } from '../shared/store/document.store';
 
 @Component({
@@ -24,7 +24,9 @@ export class HomeComponent {
     this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
   };
 
-  docMetas$ = this.store.docMeta.sortedValues$.pipe(map(docs => docs.filter(d => d.id !== 1)));
+  docMetas$ = this.store.docMeta.sortedValues$.pipe(
+    map(docs => docs.filter(d => d.id !== ROOT_DOC_ID && d.id !== DOC_HISTORY_VERSION_ID))
+  );
 
   constructor(
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,

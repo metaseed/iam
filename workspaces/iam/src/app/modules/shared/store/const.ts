@@ -1,5 +1,6 @@
 export const NEW_DOC_ID = Number.POSITIVE_INFINITY;
 export const DOC_HISTORY_VERSION_ID = -1;
+export const ROOT_DOC_ID = 1;
 
 export const DEFAULT_DOC_META = `---
 author: Jason Song <metaseed@gmail.com>

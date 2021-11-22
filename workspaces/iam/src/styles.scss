@@ -27,11 +27,15 @@ body {
   }
 }
 
+:root {
+  --edit-it-visible: visible
+}
+
 .markdown-viewer {
   .edit-it-content:hover {
     > .edit-it {
       > .edit-it-icon {
-        visibility: visible;
+        visibility: var(--edit-it-visible);
         cursor: pointer;
       }
     }
