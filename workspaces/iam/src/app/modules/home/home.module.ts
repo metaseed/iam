@@ -11,8 +11,9 @@ import { SharedModule } from 'shared';
 import { ScrollingModule } from '@angular/cdk-experimental/scrolling';
 import { HomeTopBarComponent } from './home-top-bar/home-top-bar.component';
 import { DocTreeComponent } from './doc-tree/doc-tree.component';
+import { TagsCloudModule } from './tags-cloud/tags-cloud.module';
 @NgModule({
-  imports: [SharedModule, ScrollingModule, MaterialModule, SpinnerModule],
+  imports: [SharedModule, ScrollingModule, MaterialModule, SpinnerModule,TagsCloudModule],
   declarations: [
     DeleteAlertDialogComponent,
     HomeComponent,

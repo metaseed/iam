@@ -8,6 +8,8 @@ import { MSG_DISPLAY_TIMEOUT } from 'core';
 
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN, DOC_HISTORY_VERSION_ID, ROOT_DOC_ID } from '../shared/store';
 import { DocumentStore } from '../shared/store/document.store';
+import { MatDialog } from '@angular/material/dialog';
+import { TagsCloudComponent } from './tags-cloud/tags-cloud.component';
 
 @Component({
   selector: 'home',
@@ -34,7 +36,9 @@ export class HomeComponent {
     public docService: DocService,
     private docSearchService: StoreSearchService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
+
   ) { }
 
   private _scrollTop;
@@ -52,6 +56,12 @@ export class HomeComponent {
     });
   }
 
+  showTags(){
+    const dialog= this.dialog.open(TagsCloudComponent, { width: '100vw', height: '90vh' });
+    dialog.afterClosed().subscribe(
+      // (r: ISearchItem) => this.addId(r.id)
+    )
+  }
   ngOnInit() {
     this._rememberScrollPosition();
     this.documentEffects.readBulkDocMeta_.next({ isBelowRange: false });

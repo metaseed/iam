@@ -1,4 +1,4 @@
-<home-top-bar [scrollHide]="[{ container: docList.container }]" (showTree)="drawer.toggle()"></home-top-bar>
+<home-top-bar [scrollHide]="[{ container: docList.container }]" (showTree)="drawer.toggle()" (showTags)="showTags()"></home-top-bar>
 <mat-drawer-container class="example-container" autosize>
     <mat-drawer #drawer mode="over">
         <ms-doc-tree [rootId]="1" style="display: block;margin-top: 64px; margin-right: 10px;"></ms-doc-tree>

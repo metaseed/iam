@@ -33,7 +33,7 @@ export class Labels extends Requestable {
    * @see https://docs.github.com/en/rest/reference/issues#list-labels-for-a-repository
    * @param {Object} options - filtering options
    */
-  listRepoLabels(options: {
+  listRepoLabels(options?: {
     /**
      * default 30, max 100
      */
@@ -98,7 +98,7 @@ export class Labels extends Requestable {
    * @see https://docs.github.com/en/rest/reference/issues#delete-a-label
    * @param {string} label - the name of the label to delete
    */
-  deleteLabel(label,) {
+  deleteLabel(label: string) {
     return this.request('DELETE', `/repos/${this.fullName}/labels/${label}`);
   }
 }

@@ -9,9 +9,8 @@ import {
 } from '@angular/core';
 import { MarkdownEditorService } from '.';
 import { CodemirrorComponent } from './codemirror-editor/codemirror-component/codemirror.component';
-import { Observable, fromEvent, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { NEW_DOC_ID } from 'shared';
@@ -21,6 +20,7 @@ import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-br
 import { SubscriptionManager } from 'app/modules/core/utils/subscription-manager';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
 import { DocumentStore } from 'app/modules/shared/store/document.store';
+import { DialogData, MessageDialog } from 'app/modules/shared/message-dialog';
 
 @Component({
   selector: 'ms-markdown-editor',
@@ -125,10 +125,11 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
       }
     };
 
+    const dialogData:DialogData = {title:'Save?', message:'Document modified, are you want to save?', defaultAction:'Yes', additionalAction: 'No'}
     const status = this.store.currentDocStatus$.state;
     if (status?.isEditorDirty) {
       return this.dialog
-        .open(DocDirtyNotifyDialog)
+        .open(MessageDialog, {width:'300px', data:dialogData})
         .afterClosed()
         .pipe(
           map(value => {

@@ -1,0 +1,38 @@
+<ul class="cloud" data-show-value role="navigation" aria-label="tag cloud">
+  <li *ngFor="let tag of tags" [title]="tag.description??''">
+    <a (click)="selectedTag=tag" [class.selected]="tag===selectedTag" [style.color]="'#'+tag.color" tabindex="-1" data-weight="5">{{tag.nameOriginal}}</a></li>
+</ul>
+
+<section class="tag-edit">
+  <mat-form-field appearance="standard">
+    <mat-label>Name</mat-label>
+    <input required matInput placeholder="tag name" [(ngModel)]="selectedTag.name" #name="ngModel"/>
+    <!-- <mat-hint>Hint</mat-hint> -->
+  </mat-form-field>
+  <mat-form-field appearance="standard">
+    <mat-label>Description</mat-label>
+    <input matInput placeholder="tag description" [(ngModel)]="selectedTag.description" #description="ngModel" />
+    <!-- <mat-hint>Hint</mat-hint> -->
+  </mat-form-field>
+  <mat-form-field appearance="standard">
+    <mat-label>Color</mat-label>
+    <span matPrefix>#&nbsp;</span>
+    <input matInput placeholder="tag color"[style.color]="'#'+selectedTag.color" pattern="[a-fA-F0-9]{6}" #color="ngModel" [(ngModel)]="selectedTag.color" />
+    <mat-icon matSuffix title="generate new color" (click)="newColor()">refresh</mat-icon>
+    <mat-hint *ngIf="color.invalid">input 6 hex number</mat-hint>
+
+  </mat-form-field>
+  <div>
+    <button mat-icon-button aria-label="apply tag modification" (click)="apply(selectedTag)"  *ngIf="selectedTag.id && selectedTag.name && selectedTagChanged()" title="apply tag modification">
+      <mat-icon>done</mat-icon>
+    </button>
+    <button mat-icon-button aria-label="add new tag" *ngIf="canAdd(selectedTag)" title="add new tag">
+      <mat-icon>add</mat-icon>
+    </button>
+    <button mat-icon-button aria-label="delete tag" *ngIf="selectedTag.id" (click)="delete(selectedTag)" title="delete selected tag">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+
+
+</section>

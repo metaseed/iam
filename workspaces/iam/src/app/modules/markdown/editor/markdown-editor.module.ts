@@ -9,7 +9,6 @@ import { MaterialModule } from '../../material/material.module';
 import { CodemirrorComponent } from './codemirror-editor/codemirror-component/codemirror.component';
 import { DocSaveCoordinateService } from './services/doc-save-coordinate-service';
 import { CanDeactivateGuard } from '../../core/services/can-deactive-guard.service';
-import { DocDirtyNotifyDialog } from './doc-dirty-notify-dialog';
 import { SharedModule } from 'shared';
 import { KeyMapService } from './services/keymap.service';
 import { FileUploadComponent } from './codemirror-editor/file-upload/file-upload.component';
@@ -19,7 +18,6 @@ import { EditorToolbarModule } from './editor-toolbar/editor-toolbar.module';
   declarations: [
     CodemirrorComponent,
     MarkdownEditorComponent,
-    DocDirtyNotifyDialog,
     FileUploadComponent
   ],
   imports: [
@@ -38,7 +36,7 @@ import { EditorToolbarModule } from './editor-toolbar/editor-toolbar.module';
     DocSaveCoordinateService,
     CanDeactivateGuard
   ],
-  entryComponents: [DocDirtyNotifyDialog]
+  entryComponents: []
 })
 export class MarkdownEditorModule {
   // when module loaded initial the markdown-editor service to set the currentEditor in the DocEditorService in 'root'

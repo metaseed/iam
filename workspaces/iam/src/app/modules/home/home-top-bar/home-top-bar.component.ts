@@ -18,6 +18,12 @@ export class HomeTopBarComponent implements OnInit {
   onShowTree() {
     this.showTree.next(true);
   }
+
+  onShowTags(){
+    this.showTags.next(true);
+  }
   @Output()
   showTree = new EventEmitter<boolean>();
+  @Output()
+  showTags = new EventEmitter<boolean>();
 }
