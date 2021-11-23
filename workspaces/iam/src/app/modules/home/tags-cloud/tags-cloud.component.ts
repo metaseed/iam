@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SubscriptionManager } from 'core';
 import { EMPTY } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { DialogData, MessageDialog } from 'shared';
@@ -8,7 +9,7 @@ import { Tag, TagsCloudService } from './tags-cloud.service';
 
 // https://dev.to/alvaromontoro/create-a-tag-cloud-with-html-and-css-1e90
 
-type BackupTag = Tag & { nameOriginal?: string; descriptionOriginal?: string; colorOriginal?: string }
+type BackupTag = Tag & { id?: string, nameOriginal?: string; descriptionOriginal?: string; colorOriginal?: string }
 
 @Component({
   selector: 'tags-cloud',
@@ -17,22 +18,19 @@ type BackupTag = Tag & { nameOriginal?: string; descriptionOriginal?: string; co
   providers: [TagsCloudService]
 })
 
-export class TagsCloudComponent implements OnInit {
+export class TagsCloudComponent {
   tags: BackupTag[] = [];
   selectedTag: BackupTag & { id?: string } = { name: undefined }
   constructor(private service: TagsCloudService, private dialog: MatDialog, private snackBar: MatSnackBar) {
     this.service.getAllTags().subscribe(tags => {
       this.tags = tags;
       tags.forEach((t: BackupTag) => {
-        t.nameOriginal = t.name;
-        t.descriptionOriginal = t.description;
-        t.colorOriginal = t.color;
+        this.backup(t);
       })
     });
 
   }
 
-  ngOnInit() { }
   newColor() {
     this.selectedTag.color = Math.floor(Math.random() * 16777215/*0xffffff */).toString(16).padStart(6, '0');
   }
@@ -56,18 +54,39 @@ export class TagsCloudComponent implements OnInit {
       ).subscribe();
   }
   selectedTagChanged() {
-    if(this.selectedTag.description === '') this.selectedTag.description = null;
+    if (this.selectedTag.description === '') this.selectedTag.description = null;
     return this.selectedTag.name !== this.selectedTag.nameOriginal || this.selectedTag.description !== this.selectedTag.descriptionOriginal || this.selectedTag.color !== this.selectedTag.colorOriginal;
   }
   apply(tag: BackupTag) {
-    // success
-    tag.nameOriginal = tag.name;
+    this.service.updateTag(tag.nameOriginal, tag).subscribe(
+      (t:Tag)=>{
+        tag.nameOriginal = t.name;
+      }
+    );
+
   }
+
+  addTag(tag: Tag) {
+    this.service.addTag(tag).pipe(
+      tap((t: Tag) => {
+        this.backup(t);
+        this.tags.push(t)
+      })
+    ).subscribe();
+  }
+
   canAdd(tag: BackupTag) {
     return this.selectedTag.name && (
-      !this.selectedTag.id && !this.tags.some(t => t.name === tag.name) ||
-      this.selectedTag.id && this.selectedTag.name !== this.selectedTag.nameOriginal
+      this.selectedTag.id && this.selectedTag.name !== this.selectedTag.nameOriginal ||
+      !this.selectedTag.id && tag.name && !this.tags.some(t => t.name === tag.name)
     );
+  }
+
+
+  private backup(t: BackupTag) {
+    t.nameOriginal = t.name;
+    t.descriptionOriginal = t.description;
+    t.colorOriginal = t.color;
   }
 }
 

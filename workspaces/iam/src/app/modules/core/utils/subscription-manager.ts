@@ -22,6 +22,8 @@ export function ManageSubscription<T extends Constructor<any>>(Base: T) {
   return class extends Base implements OnDestroy {
     private __subscription = new Subscription();
 
+    protected errorReporter: (e:any)=>void = console.error
+
     public ngOnDestroy(): void {
       super.ngOnDestroy?.();
       this.unsubscribe();
@@ -33,7 +35,7 @@ export function ManageSubscription<T extends Constructor<any>>(Base: T) {
           this.__subscription.add(
             sub.subscribe({
               error(e) {
-                console.error(e);
+                this.errorReporter.error(e);
               },
             }),
           );
@@ -48,7 +50,7 @@ export function ManageSubscription<T extends Constructor<any>>(Base: T) {
     public addObs<S>(source: Observable<S>) {
       const sub = source.subscribe({
         error(e) {
-          console.error(e);
+          this.errorReporter.error(e);
         },
       });
 

@@ -7,7 +7,7 @@
   <mat-form-field appearance="standard">
     <mat-label>Name</mat-label>
     <input required matInput placeholder="tag name" [(ngModel)]="selectedTag.name" #name="ngModel"/>
-    <!-- <mat-hint>Hint</mat-hint> -->
+    <mat-hint *ngIf="name.invalid">name is required</mat-hint>
   </mat-form-field>
   <mat-form-field appearance="standard">
     <mat-label>Description</mat-label>
@@ -26,7 +26,7 @@
     <button mat-icon-button aria-label="apply tag modification" (click)="apply(selectedTag)"  *ngIf="selectedTag.id && selectedTag.name && selectedTagChanged()" title="apply tag modification">
       <mat-icon>done</mat-icon>
     </button>
-    <button mat-icon-button aria-label="add new tag" *ngIf="canAdd(selectedTag)" title="add new tag">
+    <button mat-icon-button aria-label="add new tag" *ngIf="canAdd(selectedTag)" (click)="addTag(selectedTag)" title="add new tag">
       <mat-icon>add</mat-icon>
     </button>
     <button mat-icon-button aria-label="delete tag" *ngIf="selectedTag.id" (click)="delete(selectedTag)" title="delete selected tag">
