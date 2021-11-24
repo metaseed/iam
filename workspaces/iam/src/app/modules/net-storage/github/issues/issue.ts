@@ -6,19 +6,11 @@ import { User } from '../model/user';
 import { Label } from '../model/label';
 import { Milestone } from '../model/milestone';
 import { PullRequest } from '../model/pull-request';
-import { Observable } from 'rxjs';
+import { concat, map, Observable, of, range, switchMap } from 'rxjs';
 import { Labels } from './labels';
+import { EditIssueParams, IssueData, IssueListOption } from '../model/issue';
 
-export interface IssueData {
-  title?: string;
-  body?: string;
-  milestone?: number; // only user with push access can set
-  labels?: string[]; // only user with push access
-  assignees?: User[]; // only user with push access
-}
-export interface EditIssueParams extends IssueData {
-  state?: 'open' | 'closed';
-}
+
 export class Issue extends Labels {
   public id: string;
   public url: string;
@@ -43,8 +35,8 @@ export class Issue extends Labels {
   updated_at: string;
   closed_by: User;
 
-  constructor(http: HttpClient,  repository: string, userInfo: UserInfo) {
-    super(http,repository, userInfo);
+  constructor(http: HttpClient, repository: string, userInfo: UserInfo) {
+    super(http, repository, userInfo);
   }
 
   // https://developer.github.com/v3/issues/#create-an-issue
@@ -53,30 +45,46 @@ export class Issue extends Labels {
       this.request('POST', `/repos/${this._userInfo.name}/${this.repository}/issues`, data)
     );
   }
-  // https://developer.github.com/v3/issues/#list-issues-for-a-repository
-  listWithResponse(
-    state: 'open' | 'closed' | 'all' = 'open',
-    pageNumber: number = 1,
-    pageSize: number = 30
-  ) {
+
+
+  listIssues(options: IssueListOption) {
+    return <Observable<Issue[]>><unknown>this.request('GET',
+      `/repos/${this._userInfo.name}/${this.repository}/issues`,
+      options
+    );
+  }
+  listWithResponse(option: IssueListOption) {
     return this.http.get(`githubapi/repos/${this._userInfo.name}/${this.repository}/issues`, {
-      params: { state: state, page: pageNumber.toString(), per_page: pageSize.toString() },
+      params: option as any,
       observe: 'response'
     });
   }
-  list(
-    state: 'open' | 'closed' | 'all' = 'open',
-    pageNumber: number = 1,
-    pageSize: number = 30,
-    sortByUpdated = false
-  ): Observable<Issue[]> {
-    return <Observable<Issue[]>>this.http.get(
-      `githubapi/repos/${this._userInfo.name}/${this.repository}/issues`,
-      {
-        params: { state: state, page: pageNumber.toString(), per_page: pageSize.toString(), sort: sortByUpdated ? 'updated' : 'created' }
+
+  listAllIssues(option: IssueListOption) {
+    return this.listWithResponse(option).pipe(switchMap(
+      issues => {
+        // <https://api.github.com/repositories/104841386/issues?state=all&page=2&per_page=50&sort=created>; rel="next", <https://api.github.com/repositories/104841386/issues?state=all&page=7&per_page=50&sort=created>; rel="last"
+        // <https://api.github.com/repositories/104841386/issues?state=all&page=4&per_page=50&sort=created>; rel="prev", <https://api.github.com/repositories/104841386/issues?state=all&page=6&per_page=50&sort=created>; rel="next", <https://api.github.com/repositories/104841386/issues?state=all&page=7&per_page=50&sort=created>; rel="last", <https://api.github.com/repositories/104841386/issues?state=all&page=1&per_page=50&sort=created>; rel="first"
+        // <https://api.github.com/repositories/104841386/issues?state=all&page=6&per_page=50&sort=created>; rel="prev", <https://api.github.com/repositories/104841386/issues?state=all&page=1&per_page=50&sort=created>; rel="first"
+        const link = issues.headers.get('link');
+        if (link) {
+          const lastPage = /page=(\d+)&[^<]+; rel="last"/.exec(link)?.[1];
+          if (lastPage)
+            return concat(
+              of(issues.body),
+              range(2, +lastPage - 1).pipe(
+                map(page => {
+                  option.page = page;
+                  return this.listWithResponse(option).pipe(map(r => r.body))
+                })
+              )
+            )
+        }
+        return of(issues.body);
       }
-    );
+    ));
   }
+
   listMore(url) {
     return this.http.get(url, {
       observe: 'response'

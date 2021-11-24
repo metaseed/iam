@@ -12,7 +12,7 @@ export class TagsCloudService {
   getAllTags() {
     return this.githubStorage.init().pipe(
       switchMap(repo => {
-        return repo.issue.listRepoLabels() as Observable<Tag[]>
+        return repo.issue.listAllRepoLabels() as Observable<Tag[]>
       })
     )
   }
@@ -43,6 +43,13 @@ export class TagsCloudService {
     return this.githubStorage.init().pipe(
       switchMap(repo=>{
         return repo.issue.editLabel(originalName, {new_name:tag.name, color: tag.color, description: tag.description});
+      })
+    )
+  }
+  listDocuments(tag){
+    return this.githubStorage.init().pipe(
+      switchMap(repo=>{
+        return repo.issue.listAllIssues({labels:tag.name});
       })
     )
   }

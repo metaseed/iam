@@ -68,26 +68,26 @@ export class Requestable {
     return this._http.request(request)
   }
 
-  request<T>(method: string, path: string, data: any = null, media?: string) {
+  request<T>(method: string, path: string, data: any = null,option?:{ media?: string}) {
     method = method.toUpperCase();
     const url = this.getURL(path);
-    const headers = this.getRequestHeader(media);
+    const headers = this.getRequestHeader(option?.media);
     const shouldUseDataAsParams = data && typeof data === 'object' && this.methodHasNoBody(method);
-    const respType = media && media.toLowerCase().includes('raw') ? 'text' : 'json';
+    const respType = option?.media?.toLowerCase().includes('raw') ? 'text' : 'json';
 
     if (method === 'PUT') {
       return this._http.put<Object>(url, data, { headers: headers, responseType: 'json' });
     } else if (method === 'POST') {
       return this._http.post<Object>(url, data, { headers: headers, responseType: 'json' });
     } else if (method === 'GET') {
-      return this._http.get<Object>(url, { headers: headers,params: data, responseType: 'json' });
+      return this._http.get<Object>(url, { headers: headers,params: data, responseType: 'json'});
     } else if (method === 'PATCH') {
       return this._http.patch<Object>(url, data, { headers: headers, responseType: 'json' });
     } else if (method === 'DELETE') {
       return this._http.delete<Object>(url, {
         headers: headers,
         params: data,
-        responseType: 'json'
+        responseType: 'json',
       });
     }
 

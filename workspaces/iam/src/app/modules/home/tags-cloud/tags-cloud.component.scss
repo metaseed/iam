@@ -15,12 +15,12 @@ ul.cloud a {
   Not supported by any browser at the moment :(
   --size: attr(data-weight number);
   */
-  --size: 5;
+  --size: 6;
   --color: #a33;
   color: var(--color);
   font-size: calc(var(--size) * 0.25rem + 0.5rem);
   display: block;
-  padding: 0.125rem 0.25rem;
+  padding: 0.25rem;
   position: relative;
   text-decoration: none;
   /*
@@ -29,6 +29,7 @@ ul.cloud a {
   opacity: calc((60 - (16 - var(--size))) / 60);
 }
 
+ul.cloud a[data-weight="0"] { --size: 1; }
 ul.cloud a[data-weight="1"] { --size: 1; }
 ul.cloud a[data-weight="2"] { --size: 2; }
 ul.cloud a[data-weight="3"] { --size: 3; }
@@ -79,5 +80,8 @@ ul.cloud a:hover::before {
   display: flex;
   gap: 2rem;
   align-items: center;
+}
+.color-input {
+  -webkit-text-stroke: 0.08px black;
 }
 

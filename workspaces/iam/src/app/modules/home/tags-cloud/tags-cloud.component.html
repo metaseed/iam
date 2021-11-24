@@ -1,6 +1,6 @@
 <ul class="cloud" data-show-value role="navigation" aria-label="tag cloud">
   <li *ngFor="let tag of tags" [title]="tag.description??''">
-    <a (click)="selectedTag=tag" [class.selected]="tag===selectedTag" [style.color]="'#'+tag.color" tabindex="-1" data-weight="5">{{tag.nameOriginal}}</a></li>
+    <a (click)="select(tag)" [class.selected]="tag===selectedTag" [style.color]="'#'+tag.color" tabindex="-1" data-weight="5">{{tag.nameOriginal}}</a></li>
 </ul>
 
 <section class="tag-edit">
@@ -17,7 +17,7 @@
   <mat-form-field appearance="standard">
     <mat-label>Color</mat-label>
     <span matPrefix>#&nbsp;</span>
-    <input matInput placeholder="tag color"[style.color]="'#'+selectedTag.color" pattern="[a-fA-F0-9]{6}" #color="ngModel" [(ngModel)]="selectedTag.color" />
+    <input class="color-input" matInput placeholder="tag color"[style.color]="'#'+selectedTag.color" pattern="[a-fA-F0-9]{6}" #color="ngModel" [(ngModel)]="selectedTag.color" />
     <mat-icon matSuffix title="generate new color" (click)="newColor()">refresh</mat-icon>
     <mat-hint *ngIf="color.invalid">input 6 hex number</mat-hint>
 
@@ -33,6 +33,14 @@
       <mat-icon>delete</mat-icon>
     </button>
   </div>
-
+  <div *ngFor="let doc of selectedTagDocs">
+    <label>doc.title</label>
+  </div>
+<!--
+  <div class="doc-card-container">
+    <ng-container *ngFor="let meta of docMetas; let i = index; trackBy:trackByFunc">
+      <doc-item [docMeta]="meta" (delete)="onDelete(meta)" (show)="onShow(meta)"></doc-item>
+    </ng-container>
+  </div> -->
 
 </section>

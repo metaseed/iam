@@ -1,14 +1,15 @@
 import { ICache, DocMeta, DocContent, DocFormat, SearchResult, SearchResultSource } from 'core';
-import { Observable, throwError, concat, asyncScheduler, of, merge, BehaviorSubject } from 'rxjs';
+import { Observable, throwError, concat, asyncScheduler, of, merge } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { GithubStorage } from '../net-storage/github/github';
 import { switchMap, map, startWith, tap, catchError, take } from 'rxjs/operators';
 import { Document } from 'core';
-import { Issue, EditIssueParams } from '../net-storage/github/issues/issue';
+import { Issue } from '../net-storage/github/issues/issue';
 import { Repository } from '../net-storage/github/repository';
 import { Content } from 'net-storage';
 import { DOCUMENTS_FOLDER_NAME } from '../home/const';
 import { gitHubCacheUtil } from './github-cache.util';
+import { EditIssueParams } from '../net-storage/github/model/issue';
 
 const GITHUB_PAGE_SIZE = 50;
 const FIRST_PAGE_READY_TO_REFRESH = 5 * 60 * 1000;
@@ -128,7 +129,8 @@ export class GithubCache implements ICache {
       const getPageData = page =>
         this.githubStorage.init().pipe(
           switchMap(repo => {
-            return repo.issue.list('all', page, GITHUB_PAGE_SIZE);
+            // need to get the closed one to mark deleted
+            return repo.issue.listIssues({state: 'all', page, per_page:GITHUB_PAGE_SIZE, sort: 'created'})
           }),
           map(mapIssueToMeta)
         );

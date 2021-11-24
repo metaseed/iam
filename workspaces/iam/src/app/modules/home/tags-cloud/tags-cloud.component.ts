@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Issue } from 'app/modules/net-storage/github';
 import { SubscriptionManager } from 'core';
 import { EMPTY } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
@@ -65,6 +66,14 @@ export class TagsCloudComponent {
     );
 
   }
+  selectedTagDocs: Issue[];
+  select(tag:Tag){
+    this.selectedTag=tag;
+    this.service.listDocuments(tag).subscribe(issues=>{
+      this.selectedTagDocs = issues as Issue[];
+    })
+  }
+
 
   addTag(tag: Tag) {
     this.service.addTag(tag).pipe(
