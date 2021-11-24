@@ -10,11 +10,6 @@
     <mat-hint *ngIf="name.invalid">name is required</mat-hint>
   </mat-form-field>
   <mat-form-field appearance="standard">
-    <mat-label>Description</mat-label>
-    <input matInput placeholder="tag description" [(ngModel)]="selectedTag.description" #description="ngModel" />
-    <!-- <mat-hint>Hint</mat-hint> -->
-  </mat-form-field>
-  <mat-form-field appearance="standard">
     <mat-label>Color</mat-label>
     <span matPrefix>#&nbsp;</span>
     <input class="color-input" matInput placeholder="tag color"[style.color]="'#'+selectedTag.color" pattern="[a-fA-F0-9]{6}" #color="ngModel" [(ngModel)]="selectedTag.color" />
@@ -22,6 +17,12 @@
     <mat-hint *ngIf="color.invalid">input 6 hex number</mat-hint>
 
   </mat-form-field>
+  <mat-form-field appearance="standard">
+    <mat-label>Description</mat-label>
+    <input matInput placeholder="tag description" [(ngModel)]="selectedTag.description" #description="ngModel" />
+    <!-- <mat-hint>Hint</mat-hint> -->
+  </mat-form-field>
+
   <div>
     <button mat-icon-button aria-label="apply tag modification" (click)="apply(selectedTag)"  *ngIf="selectedTag.id && selectedTag.name && selectedTagChanged()" title="apply tag modification">
       <mat-icon>done</mat-icon>
