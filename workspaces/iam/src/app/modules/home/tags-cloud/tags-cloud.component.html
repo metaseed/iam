@@ -6,7 +6,7 @@
 <section class="tag-edit">
   <mat-form-field appearance="standard">
     <mat-label>Name</mat-label>
-    <input required matInput placeholder="tag name" [(ngModel)]="selectedTag.name" #name="ngModel"/>
+    <input required matInput placeholder="tag name" [style.color]="'#'+selectedTag.color" [(ngModel)]="selectedTag.name" #name="ngModel"/>
     <mat-hint *ngIf="name.invalid">name is required</mat-hint>
   </mat-form-field>
   <mat-form-field appearance="standard">
