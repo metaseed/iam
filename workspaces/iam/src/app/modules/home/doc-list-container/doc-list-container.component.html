@@ -1,8 +1,4 @@
 <sk-wave [isRunning]="(isLoadDone$ | async) === false"></sk-wave>
-<div class="doc-card-container">
-  <ng-container *ngFor="let meta of docMetas; let i = index; trackBy:trackByFunc">
-    <doc-item [docMeta]="meta" (delete)="onDelete(meta)" (show)="onShow(meta)"></doc-item>
-  </ng-container>
-</div>
+<doc-list [docMetas]="docMetas"></doc-list>
 <sk-wave style="margin-bottom: 60px;display: block;" [isRunning]="(isLoadMoreDone$ | async) === false"></sk-wave>
 <button mat-button style="display: block;margin: auto;" *ngIf="showGetMore$|async" (click)="onGetMore()">get more...</button>

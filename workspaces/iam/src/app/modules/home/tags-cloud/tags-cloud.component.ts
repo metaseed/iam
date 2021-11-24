@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Issue } from 'app/modules/net-storage/github';
-import { SubscriptionManager } from 'core';
+import { DocMeta, issueToDocMeta, SubscriptionManager } from 'core';
 import { EMPTY } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { DialogData, MessageDialog } from 'shared';
@@ -22,7 +22,7 @@ type BackupTag = Tag & { id?: string, nameOriginal?: string; descriptionOriginal
 export class TagsCloudComponent {
   tags: BackupTag[] = [];
   selectedTag: BackupTag & { id?: string } = { name: undefined }
-  constructor(private service: TagsCloudService, private dialog: MatDialog, private snackBar: MatSnackBar) {
+  constructor(private service: TagsCloudService, private dialog: MatDialog, private snackBar: MatSnackBar, private dialogRef: MatDialogRef<TagsCloudComponent>) {
     this.service.getAllTags().subscribe(tags => {
       this.tags = tags;
       tags.forEach((t: BackupTag) => {
@@ -54,23 +54,20 @@ export class TagsCloudComponent {
         })
       ).subscribe();
   }
-  selectedTagChanged() {
-    if (this.selectedTag.description === '') this.selectedTag.description = null;
-    return this.selectedTag.name !== this.selectedTag.nameOriginal || this.selectedTag.description !== this.selectedTag.descriptionOriginal || this.selectedTag.color !== this.selectedTag.colorOriginal;
-  }
+
   apply(tag: BackupTag) {
     this.service.updateTag(tag.nameOriginal, tag).subscribe(
-      (t:Tag)=>{
+      (t: Tag) => {
         tag.nameOriginal = t.name;
       }
     );
 
   }
-  selectedTagDocs: Issue[];
-  select(tag:Tag){
-    this.selectedTag=tag;
-    this.service.listDocuments(tag).subscribe(issues=>{
-      this.selectedTagDocs = issues as Issue[];
+  selectedTagDocs: DocMeta[];
+  select(tag: Tag) {
+    this.selectedTag = tag;
+    this.service.listDocuments(tag).subscribe(issues => {
+      this.selectedTagDocs = (issues as Issue[]).map(issueToDocMeta)
     })
   }
 
@@ -91,7 +88,24 @@ export class TagsCloudComponent {
     );
   }
 
+  private selectedTagChanged(tag: BackupTag) {
+    if (tag.description === ''&& tag.descriptionOriginal === null) return false;
+    return tag.name !== tag.nameOriginal || tag.description !== tag.descriptionOriginal || tag.color !== tag.colorOriginal;
+  }
 
+  canApply(tag: BackupTag) {
+    const selectedTag = this.selectedTag;
+    return !!(selectedTag.id && selectedTag.name && this.selectedTagChanged(selectedTag))
+  }
+
+  onOpen(tag: Tag) {
+    this.close();
+  }
+
+  close(){
+    this.dialogRef.close();
+
+  }
   private backup(t: BackupTag) {
     t.nameOriginal = t.name;
     t.descriptionOriginal = t.description;

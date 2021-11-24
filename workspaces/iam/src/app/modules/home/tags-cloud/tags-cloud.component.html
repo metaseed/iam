@@ -1,3 +1,6 @@
+<button mat-icon-button style="float: right;top:-18px;right: -18px;" (click)="close()" color="primary" aria-label="close the tags popup">
+  <mat-icon>close</mat-icon>
+</button>
 <ul class="cloud" data-show-value role="navigation" aria-label="tag cloud">
   <li *ngFor="let tag of tags" [title]="tag.description??''">
     <a (click)="select(tag)" [class.selected]="tag===selectedTag" [style.color]="'#'+tag.color" tabindex="-1" data-weight="5">{{tag.nameOriginal}}</a></li>
@@ -24,7 +27,7 @@
   </mat-form-field>
 
   <div>
-    <button mat-icon-button aria-label="apply tag modification" (click)="apply(selectedTag)"  *ngIf="selectedTag.id && selectedTag.name && selectedTagChanged()" title="apply tag modification">
+    <button mat-icon-button aria-label="apply tag modification" (click)="apply(selectedTag)"  *ngIf="canApply(selectedTag)" title="apply tag modification">
       <mat-icon>done</mat-icon>
     </button>
     <button mat-icon-button aria-label="add new tag" *ngIf="canAdd(selectedTag)" (click)="addTag(selectedTag)" title="add new tag">
@@ -34,14 +37,8 @@
       <mat-icon>delete</mat-icon>
     </button>
   </div>
-  <div *ngFor="let doc of selectedTagDocs">
-    <label>{{doc.title}}</label>
-  </div>
-<!--
-  <div class="doc-card-container">
-    <ng-container *ngFor="let meta of docMetas; let i = index; trackBy:trackByFunc">
-      <doc-item [docMeta]="meta" (delete)="onDelete(meta)" (show)="onShow(meta)"></doc-item>
-    </ng-container>
-  </div> -->
 
 </section>
+
+<doc-list [docMetas]="selectedTagDocs" (show)="onOpen($event)"></doc-list>
+

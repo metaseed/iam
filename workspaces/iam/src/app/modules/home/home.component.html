@@ -4,6 +4,6 @@
         <ms-doc-tree [rootId]="1" style="display: block;margin-top: 64px; margin-right: 10px;"></ms-doc-tree>
     </mat-drawer>
 
-    <doc-list #docList [docMetas]="docMetas$ | async"></doc-list>
+    <doc-list-container #docList [docMetas]="docMetas$ | async"></doc-list-container>
 
 </mat-drawer-container>

@@ -1,5 +1,6 @@
 import picaLib from 'pica';
 import YAML from 'js-yaml';
+import { Issue } from 'app/modules/net-storage/github/issues/issue';
 
 const pica = picaLib();
 
@@ -16,6 +17,19 @@ export interface HeadMeta {
   subPage: number[];
   enable: string[];
 }
+
+export function issueToDocMeta(issue: Issue){
+  let meta = DocMeta.deSerialize(issue.body);
+  if (!meta) meta = {} as DocMeta;
+  meta.id = meta.id || issue.number;
+  // meta.tags = issue.labels;
+  meta.updateDate = meta.updateDate || new Date(issue.updated_at);
+  meta.createDate = meta.createDate || new Date(issue.created_at);
+  meta.format = meta.format || 'md';
+  meta.isDeleted = !!issue.closed_at;
+  meta._context = issue;
+  return meta;
+};
 
 export class DocMeta {
   static width: 400;

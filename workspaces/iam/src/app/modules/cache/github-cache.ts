@@ -1,4 +1,4 @@
-import { ICache, DocMeta, DocContent, DocFormat, SearchResult, SearchResultSource } from 'core';
+import { ICache, DocMeta, DocContent, DocFormat, SearchResult, SearchResultSource, issueToDocMeta } from 'core';
 import { Observable, throwError, concat, asyncScheduler, of, merge } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { GithubStorage } from '../net-storage/github/github';
@@ -28,20 +28,6 @@ export class GithubCache implements ICache {
 
   private _setIdRangeLow?: (id: number) => void;
   private _setIdRangeHigh?: (id: number) => void;
-
-  private _issueToDocMeta = (issue: Issue) => {
-    let meta: DocMeta;
-    meta = DocMeta.deSerialize(issue.body);
-    if (!meta) meta = {} as DocMeta;
-    meta.id = meta.id || issue.number;
-    // meta.tags = issue.labels;
-    meta.updateDate = meta.updateDate || new Date(issue.updated_at);
-    meta.createDate = meta.createDate || new Date(issue.created_at);
-    meta.format = meta.format || 'md';
-    meta.isDeleted = !!issue.closed_at;
-    meta._context = issue;
-    return meta;
-  };
 
   init(
     nextLevelCache: ICache,
@@ -123,7 +109,7 @@ export class GithubCache implements ICache {
         if (issues.length > 0 && page === 1) {
           this.highestId = issues[0].number;
         }
-        return issues.map(this._issueToDocMeta)
+        return issues.map(issueToDocMeta)
       };
 
       const getPageData = page =>
@@ -237,7 +223,7 @@ export class GithubCache implements ICache {
   readDocMeta(id: number, checkNextCache = false) {
     return this.githubStorage.init().pipe(
       switchMap(repo => repo.issue.get(id)),
-      map(issue => this._issueToDocMeta(issue))
+      map(issue => issueToDocMeta(issue))
     );
   }
 
@@ -349,7 +335,7 @@ export class GithubCache implements ICache {
       switchMap(repo => {
         return repo.issue.edit(id, { state: 'closed' }).pipe(
           switchMap(issue => {
-            const docMeta = this._issueToDocMeta(issue);
+            const docMeta = issueToDocMeta(issue);
             return repo.delFile(`${DOCUMENTS_FOLDER_NAME}/${id}.${docMeta.format}`).pipe(
               catchError(err => {
                 if (err.status === 404) {
