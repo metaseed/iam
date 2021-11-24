@@ -4,9 +4,10 @@ import { WithCustomElementComponent } from '../element-registry';
 import { Type } from '@angular/core';
 import { TagsComponent } from './tags.component';
 import { MatModules } from 'material';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  imports: [CommonModule,MatModules],
+  imports: [CommonModule,MatModules,ReactiveFormsModule],
   declarations: [TagsComponent],
   entryComponents: [TagsComponent],
   exports: [TagsComponent]

@@ -16,7 +16,6 @@ type BackupTag = Tag & { id?: string, nameOriginal?: string; descriptionOriginal
   selector: 'tags-cloud',
   templateUrl: './tags-cloud.component.html',
   styleUrls: ['./tags-cloud.component.scss'],
-  providers: [TagsCloudService]
 })
 
 export class TagsCloudComponent {

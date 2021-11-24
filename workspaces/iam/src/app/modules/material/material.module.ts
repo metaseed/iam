@@ -19,8 +19,10 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatChipsModule } from '@angular/material/chips';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatExpansionModule } from '@angular/material/expansion';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 export const MatModules = [
+  MatAutocompleteModule,
   MatProgressSpinnerModule,
   MatIconModule,
   MatMenuModule,

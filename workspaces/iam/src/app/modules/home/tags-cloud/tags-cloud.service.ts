@@ -3,7 +3,7 @@ import { GithubStorage } from 'net-storage';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-@Injectable()
+@Injectable({providedIn:'root'})
 export class TagsCloudService {
   constructor(private githubStorage: GithubStorage) {
 

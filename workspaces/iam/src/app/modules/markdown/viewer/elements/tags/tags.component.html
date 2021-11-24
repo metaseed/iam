@@ -1,19 +1,43 @@
 <mat-form-field class="tags-list" appearance="none">
   <mat-label>tags</mat-label>
-  <mat-chip-list #chipList aria-label="tags" cdkDropList
-  cdkDropListOrientation="horizontal"
-  (cdkDropListDropped)="drop($event)">
-    <mat-chip class="tag" *ngFor="let tag of tagList" [selectable]="selectable" cdkDrag
-             [removable]="removable" (removed)="remove(tag)">
-      {{tag}}
+  <mat-chip-list
+    #chipList
+    aria-label="tags"
+    cdkDropList
+    cdkDropListOrientation="horizontal"
+    (cdkDropListDropped)="drop($event)"
+  >
+    <mat-chip
+      class="tag"
+      *ngFor="let tag of tagList"
+      cdkDrag
+      [selectable]="selectable"
+      [removable]="removable"
+      (removed)="remove(tag)"
+    >
+      {{ tag }}
       <button matChipRemove class="hide-button" title="delete this tag">
         <mat-icon>cancel</mat-icon>
       </button>
     </mat-chip>
-    <input placeholder="New tag..."
-           [matChipInputFor]="chipList"
-           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-           [matChipInputAddOnBlur]="addOnBlur"
-           (matChipInputTokenEnd)="add($event)">
+    <input #autoCompleteTrigger="matAutocompleteTrigger"
+      placeholder="New tag..."
+      [formControl]="tagInputFormControl"
+      (focus)="tagInputFocus()"
+      [matAutocomplete]="auto"
+      #tagInput
+      [matChipInputFor]="chipList"
+      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      [matChipInputAddOnBlur]="addOnBlur"
+      (matChipInputTokenEnd)="add($event)"
+    />
   </mat-chip-list>
+  <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="selected($event)">
+    <mat-option
+      *ngFor="let tag of filteredOptions"
+      [value]="tag"
+    >
+      {{ tag.name }}
+    </mat-option>
+  </mat-autocomplete>
 </mat-form-field>
