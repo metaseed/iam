@@ -21,58 +21,37 @@ export class TagsComponent extends DataSourceLines {
   removable = true;
   addOnBlur = false;
   tagList: string[];
-  tagInputFormControl: FormControl;
+  tagInputFormControl = new FormControl()
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
   private modifyTags = new Subject<string[]>();
 
-  allTags: Tag[];
-  filteredOptions: Tag[] = [];
+  allRepoTags: Tag[];
+  filteredRepoTags: Tag[] = [];
   @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement>;
   @ViewChild('autoCompleteTrigger') autoPanel: MatAutocompleteTrigger;
   @Input() set tags(value: string) {
     this.tagList = value.split(',').map(tag => tag.trim()).filter(t => t !== '');
   }
 
-  constructor(store: DocumentStore, docEditor: DocEditorService, private snackBar: MatSnackBar,
+  constructor(store: DocumentStore,
+    docEditor: DocEditorService,
+    private snackBar: MatSnackBar,
     private tagService: TagsCloudService) {
     super(store, docEditor);
+
     this.modifyTags.pipe(
       debounceTime(1800),
       tap(tags => this.source = `tag: [${tags.join(',')}]`)
     ).subscribe();
 
-    this.tagInputFormControl  = new FormControl()
     this.tagInputFormControl.valueChanges.pipe(tap(value => {
-      if(!value) return;
+      // when value is finally selected the value is type of Tag.
+      if (!value || typeof value !== 'string') return;
 
       const v = value.toLocaleLowerCase();
-      this.filteredOptions =this.allTags.filter(tag => tag.name.toLocaleLowerCase().includes(v))
+      this.filteredRepoTags = this.allRepoTags.filter(tag => tag.name.toLocaleLowerCase().includes(v))
     })).subscribe()
 
-  }
-
-  add(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-
-    if (this.filteredOptions.length !== 1) {
-      this.snackBar.open(`tag ${value} does not exist, please select from tags list`, 'ok', { duration: MSG_DISPLAY_TIMEOUT })
-      this.tagInput.nativeElement.value = '';
-      this.filteredOptions = this.allTags;
-      this.autoPanel.openPanel();
-      return;
-    }
-
-    if (value) {
-      if (this.tagList.includes(value)) {
-        this.snackBar.open(`tag ${value} already exist.`, 'ok', { duration: MSG_DISPLAY_TIMEOUT })
-        return;
-      }
-      this.tagList.push(value);
-      this.modifyTags.next(this.tagList);
-    }
-
-    event.chipInput!.clear();
-    this.filteredOptions = [];
   }
 
   remove(tag: string): void {
@@ -94,15 +73,42 @@ export class TagsComponent extends DataSourceLines {
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    this.tagList.push(event.option.viewValue);
+    const value = event.option.viewValue;
+    if (this.tagList.includes(value)) {
+      this.snackBar.open(`tag ${value} already exist.`, 'ok', { duration: MSG_DISPLAY_TIMEOUT })
+    } else {
+      this.tagList.push(value);
+      this.modifyTags.next(this.tagList);
+    }
+
+    // the following add() call's value = '';
     this.tagInput.nativeElement.value = '';
     this.tagInputFormControl.setValue(null);
   }
+
+ /**
+ * triggered when user input and hit enter.
+ */
+  add(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    if (value) {
+      if (!this.allRepoTags.some(v => v.name === value)) {
+        this.snackBar.open(`tag ${value} does not exist, please select from tags list`, 'ok', { duration: MSG_DISPLAY_TIMEOUT })
+        this.tagInput.nativeElement.value = '';
+        this.filteredRepoTags = this.allRepoTags;
+        this.autoPanel.openPanel();
+        return;
+      }
+    }
+
+  }
+
   tagInputFocus() {
-    if (!this.allTags) {
+    if (!this.allRepoTags) {
       this.tagService.getAllTags().subscribe(tags => {
-        this.allTags = tags;
-        this.filteredOptions = tags;
+        this.allRepoTags = tags;
+        this.filteredRepoTags = tags;
         this.autoPanel.openPanel();
       });
 

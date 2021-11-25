@@ -34,7 +34,7 @@
   </mat-chip-list>
   <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="selected($event)">
     <mat-option
-      *ngFor="let tag of filteredOptions"
+      *ngFor="let tag of filteredRepoTags"
       [value]="tag"
     >
       {{ tag.name }}
