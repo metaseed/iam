@@ -4,6 +4,7 @@ import * as MarkdownIt from 'markdown-it';
 import YAML from 'js-yaml';
 import * as StateBlock from 'markdown-it/lib/rules_block/state_block';
 import Renderer from 'markdown-it/lib/renderer';
+import { DocMeta } from 'core';
 
 export class DocYamlMeta {
   author: string; // name <email>
@@ -21,7 +22,7 @@ export class DocYamlMeta {
 }
 
 export class MetaPlugin {
-  constructor(private markdownIt: MarkdownIt, private updateMeta: (obj: object) => DocYamlMeta) {
+  constructor(private markdownIt: MarkdownIt, private updateMeta: (obj: object) => DocMeta) {
     this.markdownIt.use(this.metaPlugin);
   }
 
@@ -129,6 +130,7 @@ export class MetaPlugin {
         token.markup = '---';
 
         token = state.push('meta_body', '', 0);
+
         const meta = this.updateMeta(rawYAML);
         token.meta = meta;
 
@@ -144,14 +146,15 @@ export class MetaPlugin {
           token.content = '<i-toc></i-toc>';
         }
 
-        const tag = meta.tags || meta.tag;
+        const tag = meta.tag;
         if (tag) {
+          const tags = tag.map(t=>t.name);
           token = state.push('html_block', '', 0);
-          token.content += `<i-tag data-source-lines="[${tagsStart}, ${tagsEnd}]" tags="${tag}">`
+          token.content += `<i-tag data-source-lines="[${tagsStart}, ${tagsEnd}]" tags="${tags}">`
           token.content += '</i-tag>'
         }
 
-        const subPages = meta?.subPage || meta?.subPages || meta?.subpage || meta?.subpages;
+        const subPages = meta?.subPage;
         if (subPages) { // show subpage even lenth is 0 to add
           // put web component in html block; should not render it directly.
           token = state.push('html_block', '', 0);

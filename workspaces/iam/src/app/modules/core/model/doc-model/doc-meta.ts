@@ -24,7 +24,7 @@ export function issueToDocMeta(issue: Issue){
   let meta = DocMeta.deSerialize(issue.body);
   if (!meta) meta = {} as DocMeta;
   meta.id = meta.id || issue.number;
-  meta.tag = issue.labels;
+  meta.tag = issue.labels.map(l=> ({name: l.name, color: l.color, description:l.description, default:l.default}));
   meta.updateDate = meta.updateDate || new Date(issue.updated_at);
   meta.createDate = meta.createDate || new Date(issue.created_at);
   meta.format = meta.format || 'md';
@@ -39,6 +39,7 @@ export class DocMeta {
   public _context: any; // issue obj;
   public version: string;
   public subPage: string[];
+  public enable: string[];
   public tag: Tag[];
 
   private constructor(

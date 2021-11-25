@@ -3,5 +3,6 @@ export interface Label {
     url: string;
     name: string;
     color: string; // f29513
+    description: string;
     default: boolean;
 }

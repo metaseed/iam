@@ -180,7 +180,10 @@ export class MarkdownViewerService {
     }
 
     if (!yamlMeta) return yamlMeta;
-
+    let tags = undefined
+    if(yamlMeta.tag){
+     tags = {tag:yamlMeta.tag.map(t=>({name:t}))}
+    }
     const metaDataInStore = this.store.currentDocMeta$.state;
     if (!metaDataInStore) return yamlMeta;
 
@@ -189,6 +192,7 @@ export class MarkdownViewerService {
     const newMeta = {
       ...metaDataInStore,
       ...yamlMeta,
+      ...tags
     };
     asyncScheduler.schedule(
       meta => {
