@@ -7,8 +7,8 @@ import { debounceTime, Observable, of, shareReplay, Subject, tap } from "rxjs";
 import { DocumentStore } from "app/modules/shared/store/document.store";
 import { DocEditorService } from "app/modules/shared/doc-editor.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { MSG_DISPLAY_TIMEOUT } from "core";
-import { Tag, TagsCloudService } from "app/modules/home/tags-cloud/tags-cloud.service";
+import { MSG_DISPLAY_TIMEOUT, Tag } from "core";
+import { TagsCloudService } from "app/modules/home/tags-cloud/tags-cloud.service";
 import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { FormControl } from "@angular/forms";
 @Component({
@@ -75,6 +75,8 @@ export class TagsComponent extends DataSourceLines {
   selected(event: MatAutocompleteSelectedEvent): void {
     const value = event.option.viewValue;
     if (this.tagList.includes(value)) {
+      this.filteredRepoTags = this.allRepoTags;
+      this.autoPanel.openPanel();
       this.snackBar.open(`tag ${value} already exist.`, 'ok', { duration: MSG_DISPLAY_TIMEOUT })
     } else {
       this.tagList.push(value);

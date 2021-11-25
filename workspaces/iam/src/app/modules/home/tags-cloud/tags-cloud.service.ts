@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Tag } from 'core';
 import { GithubStorage } from 'net-storage';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -55,5 +56,3 @@ export class TagsCloudService {
   }
 
 }
-
-export interface Tag {name: string, description?: string, color? :string}

@@ -7,7 +7,8 @@ import {
   LogService,
   SearchResult,
   SearchResultSource,
-  scope
+  scope,
+  Tag
 } from 'core';
 import { Injectable } from '@angular/core';
 import { Observable, of, merge } from 'rxjs';
@@ -107,6 +108,30 @@ export class StoreCache implements ICache {
   }
 
   readDocContent(id: number, format: string): Observable<DocContent> {
+    const updateContentTags = (tags: Tag[], store: DocumentStore, id: number) =>{
+      if (tags && tags.length > 0) {
+        const tagContent = `tag: [${tags.map(t => t.name).join(',')}]`;
+        const docContent = store.currentDocContent$.state;
+        const docContentString = docContent.content;
+        if (docContentString) {
+          const regex = /(?<=\n---.*\n)tag:\s*\[\s*.*?\s*\](?=\s*\n.*\n---)/s;
+          const r = regex.exec(docContentString);
+          if (r) {
+            const content = r[0];
+            if (content !== tagContent) {
+              const newContent = docContentString.replace(regex, tagContent);
+              this.logger.debug(`readDocContent.updateContentTags: update doc content with tags from docMeta`,content, tagContent)
+              docContent.content = newContent;
+              this._store.docContent.update({
+                id,
+                changes: docContent
+              });
+            }
+          }
+        }
+
+      }
+    }
     return this.nextLevelCache.readDocContent(id, format).pipe(
       tap(docContent => {
         // no data in next level, but the next level cache should further fetch from its next level. we would receive it.
@@ -146,30 +171,31 @@ export class StoreCache implements ICache {
         // docMeta can has additional content not from docContent. (now no. for future)
         // we need to merge oldMeta with new content from docContent
         this.nextLevelCache
-        .readDocMeta(id)
-        .pipe(
-          tap(meta => {
-            const metaInStore = this._store.getDocMeta(id);
-            if (!metaInStore) {
-              this.logger.debug(`readDocContent: received docMeta id(${id}) from far-cache, add dotMeta to store.`, meta)
-              this._store.docMeta.add(meta);
-            } else {
-              this.logger.debug(`readDocContent: received docMeta id(${id}) from far-cache, update dotMeta to store.`, meta)
+          .readDocMeta(id)
+          .pipe(
+            tap(meta => {
+              updateContentTags(meta.tag, this._store, id);
 
-              this._store.docMeta.update({
-                id: metaInStore.id,
-                changes: meta
-              });
+              const metaInStore = this._store.getDocMeta(id);
+              if (!metaInStore) {
+                this.logger.debug(`readDocContent: received docMeta id(${id}) from far-cache, add dotMeta to store.`, meta)
+                this._store.docMeta.add(meta);
+              } else {
+                this.logger.debug(`readDocContent: received docMeta id(${id}) from far-cache, update dotMeta to store.`, meta)
 
-            }
-          }),
-          catchError(err => {
-            throw err;
-          })
-        ).subscribe()
+                this._store.docMeta.update({
+                  id: metaInStore.id,
+                  changes: meta
+                });
+
+              }
+            }),
+            catchError(err => {
+              throw err;
+            })
+          ).subscribe()
       })
     );
-
 
   }
 

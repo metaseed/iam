@@ -2,6 +2,8 @@ import picaLib from 'pica';
 import YAML from 'js-yaml';
 import { Issue } from 'app/modules/net-storage/github/issues/issue';
 
+export interface Tag {name: string, description?: string, color? :string}
+
 const pica = picaLib();
 
 export class Version {
@@ -22,7 +24,7 @@ export function issueToDocMeta(issue: Issue){
   let meta = DocMeta.deSerialize(issue.body);
   if (!meta) meta = {} as DocMeta;
   meta.id = meta.id || issue.number;
-  // meta.tags = issue.labels;
+  meta.tag = issue.labels;
   meta.updateDate = meta.updateDate || new Date(issue.updated_at);
   meta.createDate = meta.createDate || new Date(issue.created_at);
   meta.format = meta.format || 'md';
@@ -37,6 +39,7 @@ export class DocMeta {
   public _context: any; // issue obj;
   public version: string;
   public subPage: string[];
+  public tag: Tag[];
 
   private constructor(
     public id: number,
@@ -57,6 +60,7 @@ export class DocMeta {
      */
     public format = 'md',
     public isDeleted = false
+
   ) { }
 
   static parseDocumentName(name: string) {

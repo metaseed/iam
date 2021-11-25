@@ -154,7 +154,7 @@ export class MarkdownViewerService {
     this.docRef.document["copier"] = new CopierService();
   }
 
-  private updateMeta = (meta) => {
+  private updateMeta = (yamlMeta) => {
 
     function isDiff(obj: object, withObj: object) {
       if (obj == null && withObj != null || withObj == null && obj != null) return true;
@@ -179,16 +179,16 @@ export class MarkdownViewerService {
       return false;
     }
 
-    if (!meta) return meta;
+    if (!yamlMeta) return yamlMeta;
 
     const metaDataInStore = this.store.currentDocMeta$.state;
-    if (!metaDataInStore) return meta;
+    if (!metaDataInStore) return yamlMeta;
 
-    if (!isDiff(meta, metaDataInStore)) return metaDataInStore;
+    if (!isDiff(yamlMeta, metaDataInStore)) return metaDataInStore;
 
     const newMeta = {
       ...metaDataInStore,
-      ...meta,
+      ...yamlMeta,
     };
     asyncScheduler.schedule(
       meta => {

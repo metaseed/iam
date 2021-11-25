@@ -24,7 +24,7 @@ export class Issue extends Labels {
   title: string;
   body: string;
   user: User;
-  labels: Label;
+  labels: Label[];
   assignee: User;
   milestone: Milestone;
   locked: boolean;

@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Issue } from 'app/modules/net-storage/github';
-import { DocMeta, issueToDocMeta, SubscriptionManager } from 'core';
+import { DocMeta, issueToDocMeta, SubscriptionManager, Tag } from 'core';
 import { EMPTY } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { DialogData, MessageDialog } from 'shared';
-import { Tag, TagsCloudService } from './tags-cloud.service';
+import { TagsCloudService } from './tags-cloud.service';
 
 // https://dev.to/alvaromontoro/create-a-tag-cloud-with-html-and-css-1e90
 
@@ -88,7 +88,7 @@ export class TagsCloudComponent {
   }
 
   private selectedTagChanged(tag: BackupTag) {
-    if (tag.description === ''&& tag.descriptionOriginal === null) return false;
+    if (tag.description === '' && tag.descriptionOriginal === null) return false;
     return tag.name !== tag.nameOriginal || tag.description !== tag.descriptionOriginal || tag.color !== tag.colorOriginal;
   }
 
@@ -101,7 +101,7 @@ export class TagsCloudComponent {
     this.close();
   }
 
-  close(){
+  close() {
     this.dialogRef.close();
 
   }
