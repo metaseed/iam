@@ -21,7 +21,7 @@ export class TagsComponent extends DataSourceLines {
   removable = true;
   addOnBlur = false;
   tagList: string[];
-  tagInputFormControl = new FormControl()
+  tagInputFormControl: FormControl;
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
   private modifyTags = new Subject<string[]>();
 
@@ -41,12 +41,13 @@ export class TagsComponent extends DataSourceLines {
       tap(tags => this.source = `tag: [${tags.join(',')}]`)
     ).subscribe();
 
-    this.tagInputFormControl.valueChanges.subscribe(value => {
-      if(!v) return;
+    this.tagInputFormControl  = new FormControl()
+    this.tagInputFormControl.valueChanges.pipe(tap(value => {
+      if(!value) return;
 
       const v = value.toLocaleLowerCase();
       this.filteredOptions =this.allTags.filter(tag => tag.name.toLocaleLowerCase().includes(v))
-    })
+    })).subscribe()
 
   }
 
