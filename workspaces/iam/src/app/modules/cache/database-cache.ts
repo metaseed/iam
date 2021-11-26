@@ -195,7 +195,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
       nextCache$,
       // shouldUpdate: another app instance changed remote data
       // Note: local DB may have modified data, but the updateDate is the same, means I'm the only one edit the doc, so we do not update local db
-      (inCache, fromNext) => !inCache || inCache.updateDate < fromNext.updateDate,
+      (inCache, fromNext) => !inCache || inCache.updateDate !== fromNext.updateDate,
       (inCache, fromNext) => fromNext.isDeleted
     );
   }

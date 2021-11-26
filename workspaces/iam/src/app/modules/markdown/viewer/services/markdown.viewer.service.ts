@@ -180,20 +180,27 @@ export class MarkdownViewerService {
     }
 
     if (!yamlMeta) return yamlMeta;
-    let tags = undefined
-    if(yamlMeta.tag){
-     tags = {tag:yamlMeta.tag.map(t=>({name:t}))}
-    }
+
     const metaDataInStore = this.store.currentDocMeta$.state;
     if (!metaDataInStore) return yamlMeta;
 
     if (!isDiff(yamlMeta, metaDataInStore)) return metaDataInStore;
 
+    let tags = [];
+    if (yamlMeta.tag) {
+      for (const t of yamlMeta.tag) {
+        const tg = metaDataInStore.tag.find(o => o.name === t.name);
+        if (tg) tags.push(tg);
+        else tags.push({ name: t })
+      }
+    }
+
     const newMeta = {
       ...metaDataInStore,
       ...yamlMeta,
-      ...tags
+      ...{ tag: tags }
     };
+
     asyncScheduler.schedule(
       meta => {
         this.store.docMeta.set(meta);
