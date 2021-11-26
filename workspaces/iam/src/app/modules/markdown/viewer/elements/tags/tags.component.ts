@@ -20,7 +20,7 @@ export class TagsComponent extends DataSourceLines {
   selectable = false;
   removable = true;
   addOnBlur = false;
-  tagList: Tag[]=[];
+  tagList: Tag[];
   tagInputFormControl = new FormControl()
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
   private modifyTags = new Subject<Tag[]>();
@@ -31,6 +31,7 @@ export class TagsComponent extends DataSourceLines {
   @ViewChild('autoCompleteTrigger') autoPanel: MatAutocompleteTrigger;
 
   @Input() set tags(value: string) {
+    this.tagList = [];
     value.split(',').map(tag => tag.trim()).filter(t => t !== '').forEach(
       name => this.store.tags.getById(name).then(t => {
         if (t) this.tagList.push(t);
@@ -59,8 +60,8 @@ export class TagsComponent extends DataSourceLines {
 
   }
 
-  remove(tag: string): void {
-    const index = this.tagList.findIndex(t => t.name === tag);
+  remove(tag: Tag): void {
+    const index = this.tagList.findIndex(t => t.name === tag.name);
 
     if (index >= 0) {
       this.tagList.splice(index, 1);

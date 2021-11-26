@@ -164,21 +164,21 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
 
           return true; // further delete in near-cache
         } else if (shouldUpdate(inCache, fromNext)) {
-          this.logger.debug(`syncFromNext: update ${fromNext.id} from indexDB, and forward to near-cache, because far-cache have updated content`,inCache, fromNext)
-            this.db.put(table, fromNext)
-              .pipe(
-                subscribeOn(asyncScheduler),
-                catchError(err => {
-                  throw err;
-                })
-              )
-              .subscribe();
-            return true; // further update in near cache
-          }
-          else {
-            this.logger.debug(`syncFromNext: no need to process(delete or update) received id(${fromNext.id}) from far-cache, item will not forward to near-cache(it would use item from IndexDB)`, fromNext)
-            return false;
-          }
+          this.logger.debug(`syncFromNext: update ${fromNext.id} from indexDB, and forward to near-cache, because far-cache have updated content`, inCache, fromNext)
+          this.db.put(table, fromNext)
+            .pipe(
+              subscribeOn(asyncScheduler),
+              catchError(err => {
+                throw err;
+              })
+            )
+            .subscribe();
+          return true; // further update in near cache
+        }
+        else {
+          this.logger.debug(`syncFromNext: no need to process(delete or update) received id(${fromNext.id}) from far-cache, item will not forward to near-cache(it would use item from IndexDB)`, fromNext)
+          return false;
+        }
       })
     );
     return concat(_cache$, _nextCache$).pipe(filter(t => !!t));
@@ -195,12 +195,12 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
       nextCache$,
       // shouldUpdate: another app instance changed remote data
       // Note: local DB may have modified data, but the updateDate is the same, means I'm the only one edit the doc, so we do not update local db
-      (inCache, fromNext) => !inCache || inCache.updateDate !== fromNext.updateDate,
+      (inCache, fromNext) => !inCache || inCache.updateDate.getTime() !== fromNext.updateDate.getTime(),
       (inCache, fromNext) => fromNext.isDeleted
     );
   }
 
-  readDocContent(id: number,  format: string): Observable<DocContent> {
+  readDocContent(id: number, format: string): Observable<DocContent> {
     const cache$ = this.db.get<DocContent>(DataTables.DocContent, id);
     const nextCache$ = this.nextLevelCache.readDocContent(id, format);
     // do it 1s later to wait the read data has saved to store (wait 0s not work)
