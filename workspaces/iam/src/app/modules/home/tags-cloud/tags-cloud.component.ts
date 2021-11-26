@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Issue } from 'app/modules/net-storage/github';
+import { DocumentStore } from 'app/modules/shared/store/document.store';
 import { DocMeta, issueToDocMeta, SubscriptionManager, Tag } from 'core';
 import { EMPTY } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
@@ -21,7 +22,11 @@ type BackupTag = Tag & { id?: string, nameOriginal?: string; descriptionOriginal
 export class TagsCloudComponent {
   tags: BackupTag[] = [];
   selectedTag: BackupTag & { id?: string } = { name: undefined }
-  constructor(private service: TagsCloudService, private dialog: MatDialog, private snackBar: MatSnackBar, private dialogRef: MatDialogRef<TagsCloudComponent>) {
+  constructor(private service: TagsCloudService,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private dialogRef: MatDialogRef<TagsCloudComponent>,
+    private store: DocumentStore) {
     this.service.getAllTags().subscribe(tags => {
       this.tags = tags;
       tags.forEach((t: BackupTag) => {
@@ -66,7 +71,7 @@ export class TagsCloudComponent {
   select(tag: Tag) {
     this.selectedTag = tag;
     this.service.listDocuments(tag).subscribe(issues => {
-      this.selectedTagDocs = (issues as Issue[]).map(issueToDocMeta)
+      this.selectedTagDocs = (issues as Issue[]).map(i => issueToDocMeta(i, this.store.tags))
     })
   }
 

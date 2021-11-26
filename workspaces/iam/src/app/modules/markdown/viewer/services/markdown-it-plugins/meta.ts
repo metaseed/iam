@@ -148,9 +148,8 @@ export class MetaPlugin {
 
         const tag = meta.tag;
         if (tag) {
-          const tags = tag.map(t=>t.name);
           token = state.push('html_block', '', 0);
-          token.content += `<i-tag data-source-lines="[${tagsStart}, ${tagsEnd}]" tags="${tags}">`
+          token.content += `<i-tag data-source-lines="[${tagsStart}, ${tagsEnd}]" tags="${tag}">`
           token.content += '</i-tag>'
         }
 

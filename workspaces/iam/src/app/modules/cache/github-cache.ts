@@ -1,4 +1,4 @@
-import { ICache, DocMeta, DocContent, DocFormat, SearchResult, SearchResultSource, issueToDocMeta } from 'core';
+import { ICache, DocMeta, DocContent, DocFormat, SearchResult, SearchResultSource, issueToDocMeta, Tag } from 'core';
 import { Observable, throwError, concat, asyncScheduler, of, merge } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { GithubStorage } from '../net-storage/github/github';
@@ -10,6 +10,7 @@ import { Content } from 'net-storage';
 import { DOCUMENTS_FOLDER_NAME } from '../home/const';
 import { gitHubCacheUtil } from './github-cache.util';
 import { EditIssueParams } from '../net-storage/github/model/issue';
+import { EntityCacheStore } from '@rx-store/entity';
 
 const GITHUB_PAGE_SIZE = 50;
 const FIRST_PAGE_READY_TO_REFRESH = 5 * 60 * 1000;
@@ -28,13 +29,16 @@ export class GithubCache implements ICache {
 
   private _setIdRangeLow?: (id: number) => void;
   private _setIdRangeHigh?: (id: number) => void;
+  private _tagCache: EntityCacheStore<string, Tag>;
 
   init(
     nextLevelCache: ICache,
+    tagCache: EntityCacheStore<string, Tag>,
     setIdRangeLow?: (id: number) => void,
-    setIdRangeHigh?: (id: number) => void
+    setIdRangeHigh?: (id: number) => void,
   ) {
     this.nextLevelCache = nextLevelCache;
+    this._tagCache = tagCache;
     this._setIdRangeLow = setIdRangeLow;
     this._setIdRangeHigh = setIdRangeHigh;
     return this;
@@ -109,7 +113,7 @@ export class GithubCache implements ICache {
         if (issues.length > 0 && page === 1) {
           this.highestId = issues[0].number;
         }
-        return issues.map(issueToDocMeta)
+        return issues.map(i=>issueToDocMeta(i,this._tagCache))
       };
 
       const getPageData = page =>
@@ -223,7 +227,7 @@ export class GithubCache implements ICache {
   readDocMeta(id: number, checkNextCache = false) {
     return this.githubStorage.init().pipe(
       switchMap(repo => repo.issue.get(id)),
-      map(issue => issueToDocMeta(issue))
+      map(issue => issueToDocMeta(issue,this._tagCache))
     );
   }
 
@@ -311,7 +315,7 @@ export class GithubCache implements ICache {
               const data: EditIssueParams = {
                 title,
                 body: metaStr,
-                labels: meta.tag.map(t=>t.name)
+                labels: meta.tag
               };
 
               // save docMeta
@@ -335,7 +339,7 @@ export class GithubCache implements ICache {
       switchMap(repo => {
         return repo.issue.edit(id, { state: 'closed' }).pipe(
           switchMap(issue => {
-            const docMeta = issueToDocMeta(issue);
+            const docMeta = issueToDocMeta(issue,this._tagCache);
             return repo.delFile(`${DOCUMENTS_FOLDER_NAME}/${id}.${docMeta.format}`).pipe(
               catchError(err => {
                 if (err.status === 404) {

@@ -1,6 +1,7 @@
 import picaLib from 'pica';
 import YAML from 'js-yaml';
 import { Issue } from 'app/modules/net-storage/github/issues/issue';
+import { EntityCacheStore } from '@rx-store/entity';
 
 export interface Tag { name: string, description?: string, color?: string }
 
@@ -20,16 +21,23 @@ export interface HeadMeta {
   enable: string[];
 }
 
-export function issueToDocMeta(issue: Issue) {
+export function issueToDocMeta(
+  issue: Issue,
+  tagCache: EntityCacheStore<string, Tag>) {
   let meta = DocMeta.deSerialize(issue.body);
   if (!meta) meta = {} as DocMeta;
   meta.id = meta.id || issue.number;
-  meta.tag = issue.labels.map(l => ({ name: l.name, color: l.color, description: l.description, default: l.default }));
+  meta.tag = issue.labels.map(l => l.name);
   meta.updateDate = issue.updated_at ? new Date(issue.updated_at) : meta.updateDate;
   meta.createDate = issue.created_at ? new Date(issue.created_at) : meta.createDate;
   meta.format = meta.format || 'md';
   meta.isDeleted = !!issue.closed_at;
   meta._context = issue;
+
+  const tags = issue.labels.map(l =>
+    ({ name: l.name, color: l.color, description: l.description, default: l.default })
+  )
+  tagCache.upsertMany(tags);
   return meta;
 };
 
@@ -40,7 +48,7 @@ export class DocMeta {
   public version: string;
   public subPage: string[];
   public enable: string[];
-  public tag: Tag[];
+  public tag: string[];
 
   private constructor(
     public id: number,

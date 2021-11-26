@@ -1,4 +1,4 @@
-import { DocContent, DocMeta, SearchResult } from "core";
+import { DocContent, DocMeta, SearchResult, Tag } from "core";
 import { EntityCacheStore, MemEntityCache } from "@rx-store/entity";
 import { state, StateSubject } from "@rx-store/core";
 import { Injectable, isDevMode } from "@angular/core";
@@ -29,6 +29,8 @@ export class DocumentStore {
   docContent = new EntityCacheStore<number, DocContent>(new MemEntityCache({ idGenerator: e => e.id }));
 
   docStatus = new EntityCacheStore<number, DocumentStatus>(new MemEntityCache({ idGenerator: e => e.id }));
+
+  tags = new EntityCacheStore<string, Tag>(new MemEntityCache({ idGenerator: e => e.name }));
 
   currentId_ = new StateSubject<number>().addEffect(pipe(
     tap((id: number) => {

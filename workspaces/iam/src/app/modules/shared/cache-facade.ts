@@ -1,4 +1,4 @@
-import { ICache, LogService, NET_CACHE_TOKEN, DB_CACHE_TOKEN, STORE_CACHE_TOKEN } from 'core';
+import { ICache, NET_CACHE_TOKEN, DB_CACHE_TOKEN, STORE_CACHE_TOKEN } from 'core';
 import { Injectable, Inject } from '@angular/core';
 import { DocumentStore } from './store/document.store';
 @Injectable({
@@ -16,6 +16,7 @@ export class CacheFacade{
       dbCache.init(
         githubCache.init(
           undefined,
+          store.tags,
           id => {
             store.idRangeLow_.next(id);
           },

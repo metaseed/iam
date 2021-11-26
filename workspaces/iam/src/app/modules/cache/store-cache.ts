@@ -108,9 +108,9 @@ export class StoreCache implements ICache {
   }
 
   readDocContent(id: number, format: string): Observable<DocContent> {
-    const updateContentTags = (tags: Tag[], store: DocumentStore, id: number) =>{
+    const updateContentTags = (tags: string[], store: DocumentStore, id: number) =>{
       if (tags && tags.length > 0) {
-        const tagContent = `tag: [${tags.map(t => t.name).join(',')}]`;
+        const tagContent = `tag: [${tags.map(t=>t.trim()).join(',')}]`;
         const docContent = store.currentDocContent$.state;
         const docContentString = docContent.content;
         if (docContentString) {

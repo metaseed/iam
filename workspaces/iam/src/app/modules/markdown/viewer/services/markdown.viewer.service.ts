@@ -186,19 +186,9 @@ export class MarkdownViewerService {
 
     if (!isDiff(yamlMeta, metaDataInStore)) return metaDataInStore;
 
-    let tags = [];
-    if (yamlMeta.tag) {
-      for (const t of yamlMeta.tag) {
-        const tg = metaDataInStore.tag.find(o => o.name === t.name);
-        if (tg) tags.push(tg);
-        else tags.push({ name: t })
-      }
-    }
-
     const newMeta = {
       ...metaDataInStore,
       ...yamlMeta,
-      ...{ tag: tags }
     };
 
     asyncScheduler.schedule(
