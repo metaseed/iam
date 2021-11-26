@@ -9,13 +9,17 @@
   >
     <mat-chip
       class="tag"
+      [style.color]="'#'+tag.color"
+      [style.background-color]="'#'+tag.color+'22'"
+      [style.border]="'1px solid #'+tag.color"
+      [title]="tag.description??tag.name"
       *ngFor="let tag of tagList"
       cdkDrag
       [selectable]="selectable"
       [removable]="removable"
       (removed)="remove(tag)"
     >
-      {{ tag }}
+      {{ tag.name }}
       <button matChipRemove class="hide-button" title="delete this tag">
         <mat-icon>cancel</mat-icon>
       </button>

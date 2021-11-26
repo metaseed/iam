@@ -3,7 +3,11 @@
 </button>
 <ul class="cloud" data-show-value role="navigation" aria-label="tag cloud">
   <li *ngFor="let tag of tags" [title]="tag.description??''">
-    <a (click)="select(tag)" [class.selected]="tag===selectedTag" [style.color]="'#'+tag.color" tabindex="-1" data-weight="5">{{tag.nameOriginal}}</a></li>
+    <a (click)="select(tag)" [class.selected]="tag===selectedTag"
+    [style.color]="'#'+tag.color"
+    [style.background-color]="'#'+tag.color+'22'"
+    [style.border]="'1px solid #'+tag.color"
+    tabindex="-1" data-weight="4">{{tag.nameOriginal}}</a></li>
 </ul>
 
 <section class="tag-edit">

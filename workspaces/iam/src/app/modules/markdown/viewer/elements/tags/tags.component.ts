@@ -20,20 +20,25 @@ export class TagsComponent extends DataSourceLines {
   selectable = false;
   removable = true;
   addOnBlur = false;
-  tagList: string[];
+  tagList: Tag[]=[];
   tagInputFormControl = new FormControl()
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
-  private modifyTags = new Subject<string[]>();
+  private modifyTags = new Subject<Tag[]>();
 
   allRepoTags: Tag[];
   filteredRepoTags: Tag[] = [];
   @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement>;
   @ViewChild('autoCompleteTrigger') autoPanel: MatAutocompleteTrigger;
+
   @Input() set tags(value: string) {
-    this.tagList = value.split(',').map(tag => tag.trim()).filter(t => t !== '');
+    value.split(',').map(tag => tag.trim()).filter(t => t !== '').forEach(
+      name => this.store.tags.getById(name).then(t => {
+        if (t) this.tagList.push(t);
+      })
+    );
   }
 
-  constructor(store: DocumentStore,
+  constructor(private store: DocumentStore,
     docEditor: DocEditorService,
     private snackBar: MatSnackBar,
     private tagService: TagsCloudService) {
@@ -41,7 +46,7 @@ export class TagsComponent extends DataSourceLines {
 
     this.modifyTags.pipe(
       debounceTime(1800),
-      tap(tags => this.source = `tag: [${tags.join(',')}]`)
+      tap(tags => this.source = `tag: [${tags.map(t => t.name).join(',')}]`)
     ).subscribe();
 
     this.tagInputFormControl.valueChanges.pipe(tap(value => {
@@ -55,7 +60,7 @@ export class TagsComponent extends DataSourceLines {
   }
 
   remove(tag: string): void {
-    const index = this.tagList.indexOf(tag);
+    const index = this.tagList.findIndex(t => t.name === tag);
 
     if (index >= 0) {
       this.tagList.splice(index, 1);
@@ -73,14 +78,16 @@ export class TagsComponent extends DataSourceLines {
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    const value = event.option.viewValue;
-    if (this.tagList.includes(value)) {
+    const value = event.option.viewValue.trim();
+    if (this.tagList.some(t => t.name === value)) {
       this.filteredRepoTags = this.allRepoTags;
       this.autoPanel.openPanel();
       this.snackBar.open(`tag ${value} already exist.`, 'ok', { duration: MSG_DISPLAY_TIMEOUT })
     } else {
-      this.tagList.push(value);
-      this.modifyTags.next(this.tagList);
+      this.store.tags.getById('value').then(tag => {
+        this.tagList.push(tag);
+        this.modifyTags.next(this.tagList);
+      });
     }
 
     // the following add() call's value = '';
@@ -88,9 +95,9 @@ export class TagsComponent extends DataSourceLines {
     this.tagInputFormControl.setValue(null);
   }
 
- /**
- * triggered when user input and hit enter.
- */
+  /**
+  * triggered when user input and hit enter.
+  */
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
