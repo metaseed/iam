@@ -3,7 +3,7 @@ import { DocumentStore } from 'app/modules/shared/store/document.store';
 import { Tag } from 'core';
 import { GithubStorage } from 'net-storage';
 import { concat, Observable } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { switchMap, take, tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class TagsCloudService {
@@ -17,7 +17,7 @@ export class TagsCloudService {
         const fromRemote=repo.issue.listAllRepoLabels().pipe(tap(
           (tags: Tag[]) => this.docStore.tags.upsertMany(tags)
         )) as Observable<Tag[]>;
-        const fromStore= this.docStore.tags.values$;
+        const fromStore= this.docStore.tags.values$.pipe(take(1));
         return concat(fromStore,fromRemote);
       })
     )
