@@ -4,7 +4,7 @@ import { Content } from './model/content';
 import { File } from './model/file';
 import { HttpClient } from '@angular/common/http';
 import { Issue } from './issues/issue';
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { base64Encode, base64Decode, scope } from 'core';
 import { map, flatMap, tap, catchError, switchMap } from 'rxjs/operators';
 import { Commit } from './model/commit';
@@ -156,12 +156,26 @@ export class Repository extends Requestable {
   }
 
   // https://developer.github.com/v3/repos/contents/#get-contents
-  getContents(path: string, ref: string = 'master') {
+  getContentsApi(path: string, ref: string = 'master') {
     path = path ? encodeURI(path) : '';
     return this.request('GET', `/repos/${this.fullName}/contents/${path}`, { ref }).pipe(
       map(x => this.decodeContent(<Content | Array<Content>>x)),
       tap({ next: x => this.logger.debug('getContents:', x), error: e => this.logger.error('getContents ERROR:', e) })
     );
+  }
+
+  /**
+   * use public api vs authenticated api,
+   * we generate sha instead of query sha
+   */
+  getContents(path: string, ref = 'master') {
+    const url = `https://raw.githubusercontent.com/${this.fullName}/${ref}/${path}`
+    return this._http.get(url,{responseType:'text'}).pipe(
+      switchMap((content: string) => {
+        return this.generateSha(content).pipe(map(
+          sha=>({ content, sha } as Content)
+        ))
+      }))
   }
 
   getReadme(branch: string = 'master') {
@@ -178,6 +192,26 @@ export class Repository extends Requestable {
     return this.request('GET', `/repos/${this.fullName}/contents/${path}${branch}`, {
       ref: branch
     });
+  }
+
+  /**
+   * https://git-scm.com/book/en/v2/Git-Internals-Git-Objects
+   * https://remarkablemark.medium.com/how-to-generate-a-sha-256-hash-with-javascript-d3b2696382fd
+   * @param path
+   */
+  private generateSha(content: string) {
+    function hash(string) {
+      const utf8 = new TextEncoder().encode(string);
+      return crypto.subtle.digest('SHA-1', utf8).then((hashBuffer) => {
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray
+          .map((bytes) => bytes.toString(16).padStart(2, '0'))
+          .join('');
+        return hashHex;
+      });
+    }
+    const shaContent = `blob ${content.length}\0${content}`
+    return from(hash(shaContent));
   }
 
   /**
