@@ -7,12 +7,12 @@ import {
   HttpParams,
   HttpEvent
 } from '@angular/common/http';
-import { UserInfo } from '.';
 import { Const } from './model/const';
 import { Media } from './media';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { base64Encode } from 'core';
+import { UserInfo } from './user-info';
 const METHODS_WITH_NO_BODY = ['GET', 'HEAD', 'DELETE'];
 export class Requestable {
   private _authorizationHeader: string;

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { DocumentStore } from 'app/modules/shared/store/document.store';
 import { Tag } from 'core';
 import { GithubStorage } from 'net-storage';
-import { concat, Observable } from 'rxjs';
+import { concat, Observable, of } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
@@ -17,7 +17,7 @@ export class TagsCloudService {
         const fromRemote=repo.issue.listAllRepoLabels().pipe(tap(
           (tags: Tag[]) => this.docStore.tags.upsertMany(tags)
         )) as Observable<Tag[]>;
-        const fromStore= this.docStore.tags.values$.pipe(take(1));
+        const fromStore= of(this.docStore.tags.values$.state);
         return concat(fromStore,fromRemote);
       })
     )

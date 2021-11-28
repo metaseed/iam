@@ -30,10 +30,10 @@ export class TagsComponent extends DataSourceLines {
   get filteredRepoTags() {
     return this._filteredRepoTags;
   }
-  set filteredRepoTags(v){
-    this._filteredRepoTags = v.filter(t=> !this.tagList.some(tag=>tag.name === t.name))
-    if(this._filteredRepoTags.length===0)
-    this.snackBar.open(`no available tags, please add more tags`, 'ok', { duration: MSG_DISPLAY_TIMEOUT })
+  set filteredRepoTags(v) {
+    this._filteredRepoTags = v?.filter(t => !this.tagList.some(tag => tag.name === t.name))??[]
+    if (this._filteredRepoTags.length === 0)
+      this.snackBar.open(`no available tags, please add more tags`, 'ok', { duration: MSG_DISPLAY_TIMEOUT })
   }
 
   @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement>;
@@ -64,7 +64,8 @@ export class TagsComponent extends DataSourceLines {
       if (!value || typeof value !== 'string') return;
 
       const v = value.toLocaleLowerCase();
-      this.filteredRepoTags = this.allRepoTags.filter(tag => tag.name.toLocaleLowerCase().includes(v))
+      if (this.allRepoTags)
+        this.filteredRepoTags = this.allRepoTags.filter(tag => tag.name.toLocaleLowerCase().includes(v))
     })).subscribe()
 
   }
@@ -94,7 +95,7 @@ export class TagsComponent extends DataSourceLines {
       this.autoPanel.openPanel();
       this.snackBar.open(`tag ${value} already exist.`, 'ok', { duration: MSG_DISPLAY_TIMEOUT })
     } else {
-      this.store.tags.getById('value').then(tag => {
+      this.store.tags.getById(value).then(tag => {
         this.tagList.push(tag);
         this.modifyTags.next(this.tagList);
       });
