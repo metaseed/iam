@@ -1,4 +1,21 @@
 .tags-list {
+  .label {
+    display: inline-flex;
+    pointer-events: auto;
+    position: absolute;
+    top: 0;
+    margin-top: -1.6rem;
+    color: rgba(0,0,0,0.6);
+    font-size: small;
+    cursor: pointer;
+    line-height: 1.5rem;
+    mat-icon {
+      font-size: small;;
+    }
+    &:hover {
+      color: blue;
+    }
+  }
   width: 100%;
   .tag {
     font-size: 1.4rem;

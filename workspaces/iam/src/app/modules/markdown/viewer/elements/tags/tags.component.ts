@@ -11,6 +11,8 @@ import { MSG_DISPLAY_TIMEOUT, Tag } from "core";
 import { TagsCloudService } from "app/modules/home/tags-cloud/tags-cloud.service";
 import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { FormControl } from "@angular/forms";
+import { MatDialog } from "@angular/material/dialog";
+import { TagsCloudComponent } from "app/modules/home/tags-cloud/tags-cloud.component";
 @Component({
   templateUrl: './tags.component.html',
   styleUrls: ['./tags.component.scss'],
@@ -49,6 +51,7 @@ export class TagsComponent extends DataSourceLines {
   }
 
   constructor(private store: DocumentStore,
+    private dialog: MatDialog,
     docEditor: DocEditorService,
     private snackBar: MatSnackBar,
     private tagService: TagsCloudService) {
@@ -70,6 +73,10 @@ export class TagsComponent extends DataSourceLines {
 
   }
 
+  onShowTags(){
+    this.dialog.open(TagsCloudComponent, { width: '100vw', height: '90vh' });
+
+  }
   remove(tag: Tag): void {
     const index = this.tagList.findIndex(t => t.name === tag.name);
 

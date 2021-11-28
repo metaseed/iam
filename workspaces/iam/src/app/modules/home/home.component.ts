@@ -57,10 +57,7 @@ export class HomeComponent {
   }
 
   showTags(){
-    const dialog= this.dialog.open(TagsCloudComponent, { width: '100vw', height: '90vh' });
-    dialog.afterClosed().subscribe(
-      // (r: ISearchItem) => this.addId(r.id)
-    )
+    this.dialog.open(TagsCloudComponent, { width: '100vw', height: '90vh' });
   }
   ngOnInit() {
     this._rememberScrollPosition();

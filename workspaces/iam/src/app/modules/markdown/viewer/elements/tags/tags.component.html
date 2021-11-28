@@ -1,5 +1,6 @@
 <mat-form-field class="tags-list" appearance="none">
-  <mat-label>tags</mat-label>
+
+  <label class="label" (click)="onShowTags()"><span>tags:</span><mat-icon>open_in_new</mat-icon></label>
   <mat-chip-list
     #chipList
     aria-label="tags"
@@ -9,10 +10,10 @@
   >
     <mat-chip
       class="tag"
-      [style.color]="'#'+tag.color"
-      [style.background-color]="'#'+tag.color+'22'"
-      [style.border]="'1px solid #'+tag.color"
-      [title]="tag.description??tag.name"
+      [style.color]="'#' + tag.color"
+      [style.background-color]="'#' + tag.color + '22'"
+      [style.border]="'1px solid #' + tag.color"
+      [title]="tag.description ?? tag.name"
       *ngFor="let tag of tagList"
       cdkDrag
       [selectable]="selectable"
@@ -24,7 +25,8 @@
         <mat-icon>cancel</mat-icon>
       </button>
     </mat-chip>
-    <input #autoCompleteTrigger="matAutocompleteTrigger"
+    <input
+      #autoCompleteTrigger="matAutocompleteTrigger"
       placeholder="New tag..."
       [formControl]="tagInputFormControl"
       (focus)="tagInputFocus()"
@@ -36,11 +38,13 @@
       (matChipInputTokenEnd)="add($event)"
     />
   </mat-chip-list>
-  <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="selected($event)">
-    <mat-option
-      *ngFor="let tag of filteredRepoTags"
-      [value]="tag"
-    >
+  <mat-autocomplete
+    autoActiveFirstOption
+    #auto="matAutocomplete"
+    [displayWith]="displayFn"
+    (optionSelected)="selected($event)"
+  >
+    <mat-option *ngFor="let tag of filteredRepoTags" [value]="tag">
       {{ tag.name }}
     </mat-option>
   </mat-autocomplete>
