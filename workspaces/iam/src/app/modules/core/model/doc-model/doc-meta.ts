@@ -2,8 +2,11 @@ import picaLib from 'pica';
 import YAML from 'js-yaml';
 import { Issue } from 'app/modules/net-storage/github/issues/issue';
 import { EntityCacheStore } from '@rx-store/entity';
+import { scope } from 'core';
 
 export interface Tag { name: string, description?: string, color?: string }
+
+const logger = scope(console, '@DocMeta')
 
 const pica = picaLib();
 
@@ -24,6 +27,7 @@ export interface HeadMeta {
 export function issueToDocMeta(
   issue: Issue,
   tagCache: EntityCacheStore<string, Tag>) {
+    logger.debug(`issueToDocMeta: received issue:`, issue);
   let meta = DocMeta.deSerialize(issue.body);
   if (!meta) meta = {} as DocMeta;
   meta.id = meta.id || issue.number;
@@ -38,6 +42,7 @@ export function issueToDocMeta(
     ({ name: l.name, color: l.color, description: l.description, default: l.default })
   )
   tagCache.upsertMany(tags);
+  logger.debug(`issueToDocMeta: meta from issue:`, meta);
   return meta;
 };
 
