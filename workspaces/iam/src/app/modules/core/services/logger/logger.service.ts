@@ -1,46 +1,5 @@
 import { Inject, Injectable, InjectionToken, isDevMode, Optional } from "@angular/core";
-
-export let defaultLogFunctionPrdScreen = [console.assert.name, console.debug.name, console.trace.name, console.log.name];
-let logFunctionPrdScreen: string[] = [];
-/**
- * in function we can not use LogService, so have to patch the console global object.
- */
-export function screenConsoleLog(screeLogFunctions?: string[]) {
-  logFunctionPrdScreen= screeLogFunctions??defaultLogFunctionPrdScreen;
-  for (const funcName in logFunctionPrdScreen) {
-    console[funcName] = () => undefined;
-  }
-}
-
-const scopedConsoleFunctions = [
-  console.debug.name, console.log.name, console.info.name, console.warn.name,
-  console.error.name, console.count.name, console.assert.name, console.trace.name
-];
-export function scope(cons: Console, prefix: string) {
-
-  return new Proxy(cons, {
-    get(target, propKey, receiver) {
-      if (logFunctionPrdScreen.includes(propKey as string))
-        return () => undefined;
-
-      const origMethod = target[propKey];
-      if (!scopedConsoleFunctions.includes(propKey as string))
-        return origMethod;
-
-      return function (...args) {
-        if (origMethod === cons.assert) {
-          const [arg0, ...argRest] = args;
-
-          return origMethod.apply(cons, [arg0, prefix, ...argRest]);
-        }
-
-        return origMethod.apply(cons, [prefix + '>', ...args]);
-      };
-
-    }
-  });
-}
-
+import { defaultLogFunctionPrdScreen } from "./scoped-console-log.service";
 
 export const LOG_SERVICE_PRD_FUNCTION_SCREEN_TOKEN = new InjectionToken<string[]>('LOG_SERVICE_FUNCTION_SCREEN_TOKEN');
 @Injectable({ providedIn: 'root' })
