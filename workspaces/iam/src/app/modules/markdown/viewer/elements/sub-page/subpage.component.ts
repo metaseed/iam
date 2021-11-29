@@ -91,7 +91,7 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
   }
 
   addIdBySearch() {
-    const dialog = this.dialog.open(SubPageIdSearchComponent, { width: '100vw', height: '90vh' });
+    const dialog = this.dialog.open(SubPageIdSearchComponent);
 
     dialog.afterClosed().subscribe(
       (r: ISearchItem) => this.addId(r.id)

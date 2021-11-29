@@ -8,7 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSnackBarModule, MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule, MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -49,6 +49,10 @@ export const MatModules = [
 @NgModule({
   imports: [...MatModules],
   exports: [...MatModules],
-  providers: [{ provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: MSG_DISPLAY_TIMEOUT } }]
+  providers: [
+    { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: MSG_DISPLAY_TIMEOUT } },
+    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { width: '95vw', height: '90vh' } },
+
+  ]
 })
 export class MaterialModule { }

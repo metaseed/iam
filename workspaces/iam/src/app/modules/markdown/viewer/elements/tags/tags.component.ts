@@ -25,7 +25,7 @@ export class TagsComponent extends DataSourceLines {
   tagList: Tag[];
   tagInputFormControl = new FormControl()
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
-  private modifyTags = new Subject<Tag[]>();
+  private _modifyTags = new Subject<Tag[]>();
 
   allRepoTags: Tag[];
   _filteredRepoTags: Tag[] = [];
@@ -55,41 +55,44 @@ export class TagsComponent extends DataSourceLines {
     private tagService: TagsCloudService) {
     super(store, docEditor);
 
-    this.modifyTags.pipe(
+    this._modifyTags.pipe(
       debounceTime(1800),
-      tap(tags => this.source = `tag: [${tags.map(t => t.name).join(',')}]`)
+      tap(tags => this.source = `tag: [${tags.filter(t => t).map(t => t.name).join(',')}]`)
     ).subscribe();
 
-    this.tagInputFormControl.valueChanges.pipe(tap(value => {
-      // when value is finally selected the value is type of Tag.
-      if (!value || typeof value !== 'string') return;
+    this.tagInputFormControl.valueChanges.pipe(
+      tap(value => {
+        // when value is finally selected the value is type of Tag.
+        if (!value || typeof value !== 'string') return;
 
-      const v = value.toLocaleLowerCase();
-      if (this.allRepoTags)
-        this.filteredRepoTags = this.allRepoTags.filter(tag => tag.name.toLocaleLowerCase().includes(v))
-    }), debounceTime(1000), tap(value => {
-      if (this._filteredRepoTags.length === 0)
-        this.snackBar.open(`can not find tag: ${value}`, 'ok')
-    })).subscribe()
+        const v = value.toLocaleLowerCase();
+        if (this.allRepoTags)
+          this.filteredRepoTags = this.allRepoTags.filter(tag => tag.name.toLocaleLowerCase().includes(v))
+      }),
+      debounceTime(1000),
+      tap(value => {
+        if (this._filteredRepoTags.length === 0)
+          this.snackBar.open(`can not find tag: ${value}`, 'ok')
+      })).subscribe()
 
   }
 
   onShowTagsCloud() {
-    this.dialog.open(TagsCloudComponent, { width: '100vw', height: '90vh' });
-
+    this.dialog.open(TagsCloudComponent);
   }
+
   remove(tag: Tag): void {
     const index = this.tagList.findIndex(t => t.name === tag.name);
 
     if (index >= 0) {
       this.tagList.splice(index, 1);
-      this.modifyTags.next(this.tagList);
+      this._modifyTags.next(this.tagList);
     }
   }
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.tagList, event.previousIndex, event.currentIndex);
-    this.modifyTags.next(this.tagList);
+    this._modifyTags.next(this.tagList);
   }
 
   displayFn(tag: Tag): string {
@@ -105,7 +108,7 @@ export class TagsComponent extends DataSourceLines {
     } else {
       this.store.tags.getById(value).then(tag => {
         this.tagList.push(tag);
-        this.modifyTags.next(this.tagList);
+        this._modifyTags.next(this.tagList);
       });
     }
 
