@@ -107,12 +107,14 @@ export class TagsComponent extends DataSourceLines {
       this.snackBar.open(`tag ${value} already exist.`, 'ok')
     } else {
       this.store.tags.getById(value).then(tag => {
-        this.tagList.push(tag);
-        this._modifyTags.next(this.tagList);
+        if (tag) {
+          this.tagList.push(tag);
+          this._modifyTags.next(this.tagList);
+        }
       });
     }
 
-    // the following add() call's value = '';
+    // to make the following ui-invoking of onInputEnd() call's value = '';
     this.tagInput.nativeElement.value = '';
     this.tagInputFormControl.setValue(null);
   }
@@ -120,7 +122,7 @@ export class TagsComponent extends DataSourceLines {
   /**
   * triggered when user input and hit enter.
   */
-  add(event: MatChipInputEvent): void {
+   onInputEnd(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
     if (value) {
@@ -136,7 +138,7 @@ export class TagsComponent extends DataSourceLines {
   }
 
   onTagInputFocus() {
-    if (!this.allRepoTags) {
+    if (this.tagInputFormControl.pristine) {
       this.tagService.getAllTags().subscribe(tags => {
         this.allRepoTags = tags;
         this.filteredRepoTags = tags;

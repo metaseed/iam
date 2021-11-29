@@ -17,6 +17,7 @@ export class TagsCloudService {
         const fromRemote=repo.issue.listAllRepoLabels().pipe(tap(
           (tags: Tag[]) => this.docStore.tags.upsertMany(tags)
         )) as Observable<Tag[]>;
+        // should not use this.docStore.tags.values$, because it's never complete.
         const fromStore= of(this.docStore.tags.values$.state);
         return concat(fromStore,fromRemote);
       })
