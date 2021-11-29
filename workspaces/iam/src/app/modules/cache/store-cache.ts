@@ -108,9 +108,9 @@ export class StoreCache implements ICache {
   }
 
   readDocContent(id: number, format: string): Observable<DocContent> {
-    const updateContentTags = (tags: string[], store: DocumentStore, id: number) =>{
+    const updateContentTags = (tags: string[], store: DocumentStore, id: number) => {
       if (tags && tags.length > 0) {
-        const tagContent = `tag: [${tags.map(t=>t.trim()).join(',')}]`;
+        const tagContent = `tag: [${tags.map(t => t.trim()).join(',')}]`;
         const docContent = store.currentDocContent$.state;
         const docContentString = docContent.content;
         if (docContentString) {
@@ -120,7 +120,7 @@ export class StoreCache implements ICache {
             const content = r[0];
             if (content !== tagContent) {
               const newContent = docContentString.replace(regex, tagContent);
-              this.logger.debug(`readDocContent.updateContentTags: update doc content with tags from docMeta`,content, tagContent)
+              this.logger.debug(`readDocContent.updateContentTags: update doc content with tags from docMeta`, content, tagContent)
               docContent.content = newContent;
               this._store.docContent.update({
                 id,
@@ -243,13 +243,21 @@ export class StoreCache implements ICache {
         lastResult = [...lastResult];
         searchResult.forEach(item => {
           const index = lastResult.findIndex(it => it.id === item.id);
-
           if (index !== -1) {
             if (item.source !== SearchResultSource.store) {
               lastResult[index] = item;
             }
           } else {
             lastResult.push(item);
+          }
+
+          if (!item.title) {
+            this._store.docMeta.getById(item.id).then(
+              it => {
+                if (it?.title)
+                  item.title = it.title
+              }
+            )
           }
         });
         return lastResult;

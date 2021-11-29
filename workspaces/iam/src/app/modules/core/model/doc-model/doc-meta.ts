@@ -76,8 +76,13 @@ export class DocMeta {
   ) { }
 
   static parseDocumentName(name: string) {
-    const r = /(.*)_(\d+)\.(\w*)/.exec(name);
-    return { sanitizedTitle: r[1], id: +r[2], ext: r[3] };
+    let r = /(.*)_(\d+)\.(\w*)/.exec(name);
+    if (r)
+      return { sanitizedTitle: r[1], id: +r[2], ext: r[3] };
+    else {
+      r = /(\d+)\.(\w*)/.exec(name);
+      return { sanitizedTitle: '', id: +r[1], ext: r[2] };
+    }
   }
 
   static getHeadMeta(content: string): HeadMeta {

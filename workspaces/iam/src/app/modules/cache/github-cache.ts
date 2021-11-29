@@ -2,7 +2,7 @@ import { ICache, DocMeta, DocContent, DocFormat, SearchResult, SearchResultSourc
 import { Observable, throwError, concat, asyncScheduler, of, merge } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { GithubStorage } from '../net-storage/github/github';
-import { switchMap, map, startWith, tap, catchError, take } from 'rxjs/operators';
+import { switchMap, map, startWith, tap, catchError, take, zip, zipWith } from 'rxjs/operators';
 import { Document } from 'core';
 import { Issue } from '../net-storage/github/issues/issue';
 import { Repository } from '../net-storage/github/repository';
@@ -114,14 +114,14 @@ export class GithubCache implements ICache {
         if (issues.length > 0 && page === 1) {
           this.highestId = issues[0].number;
         }
-        return issues.map(i=>issueToDocMeta(i,this._tagCache))
+        return issues.map(i => issueToDocMeta(i, this._tagCache))
       };
 
       const getPageData = page =>
         this.githubStorage.init().pipe(
           switchMap(repo => {
             // need to get the closed one to mark deleted
-            return repo.issue.listIssues({state: 'all', page, per_page:GITHUB_PAGE_SIZE, sort: 'created'})
+            return repo.issue.listIssues({ state: 'all', page, per_page: GITHUB_PAGE_SIZE, sort: 'created' })
           }),
           map(mapIssueToMeta)
         );
@@ -228,9 +228,9 @@ export class GithubCache implements ICache {
   readDocMeta(id: number, checkNextCache = false) {
     return this.githubStorage.init().pipe(
       switchMap(repo => repo.issue.get(id)),
-      tap(issue=>{this.logger.debug(`issueToDocMeta: received issue:`, issue)}),
-      map(issue => issueToDocMeta(issue,this._tagCache)),
-      tap(meta=>{this.logger.debug(`issueToDocMeta: meta from issue:`, meta);})
+      tap(issue => { this.logger.debug(`issueToDocMeta: received issue:`, issue) }),
+      map(issue => issueToDocMeta(issue, this._tagCache)),
+      tap(meta => { this.logger.debug(`issueToDocMeta: meta from issue:`, meta); })
     );
   }
 
@@ -342,7 +342,7 @@ export class GithubCache implements ICache {
       switchMap(repo => {
         return repo.issue.edit(id, { state: 'closed' }).pipe(
           switchMap(issue => {
-            const docMeta = issueToDocMeta(issue,this._tagCache);
+            const docMeta = issueToDocMeta(issue, this._tagCache);
             return repo.delFile(`${DOCUMENTS_FOLDER_NAME}/${id}.${docMeta.format}`).pipe(
               catchError(err => {
                 if (err.status === 404) {
@@ -362,50 +362,42 @@ export class GithubCache implements ICache {
   }
 
   search(query: string): Observable<SearchResult> {
-    let lastSearchResult: SearchResult = null;
     return this.githubStorage.init().pipe(
       switchMap(repo => {
-        return merge(
-          repo.searchIssue(query).pipe(
-            map(reps =>
-              (reps.body as any).items.map(item => {
-                return {
-                  id: +item.number,
-                  score: item.score,
-                  title: <string>item.title,
-                  text_matches: item.text_matches,
-                  source: SearchResultSource.netIssue
-                };
+        return repo.searchIssue(query).pipe(
+          map(reps =>
+            (reps.body as any).items.map(item => {
+              return {
+                id: +item.number,
+                score: item.score,
+                title: <string>item.title,
+                text_matches: item.text_matches,
+                source: SearchResultSource.netIssue
+              };
+            })
+          ),
+          zipWith(
+            repo.searchCode(query).pipe(
+              map(rep => {
+                return (rep.body as any).items.map(item => {
+                  const { id, sanitizedTitle, ext } = DocMeta.parseDocumentName(item.name);
+                  return { id, score: item.score, title: sanitizedTitle, text_matches: item.text_matches};
+                });
               })
             )
-          ),
-          repo.searchCode(query).pipe(
-            map(rep => {
-              return (rep.body as any).items.map(item => {
-                const { id, sanitizedTitle, ext } = DocMeta.parseDocumentName(item.name);
-                return { id, score: item.score, title: sanitizedTitle, text_matches: item.text_matches };
-              });
-            })
-          )
-        );
+          ))
       }),
-      map(searchR => {
-        if (!lastSearchResult) {
-          lastSearchResult = searchR;
-          return searchR;
-        }
-        searchR.forEach(item => {
-          const index = lastSearchResult.findIndex(v => v.id === item.id);
-          if (index !== -1) {
-            if (item.source !== SearchResultSource.netIssue) {
-              lastSearchResult = [...lastSearchResult];
-              lastSearchResult[index] = item;
-            }
-          } else {
-            lastSearchResult = [...lastSearchResult, item];
+      map(([issue, file]:[SearchResult,SearchResult]) => {
+        for(const is of issue){
+          const ind = file.findIndex(v=>v.id === is.id);
+          if(ind !== -1){
+            file[ind].title = is.title;
+          } else{
+            file.push(is);
           }
-        });
-        return lastSearchResult;
+        }
+
+        return file;
       })
     );
   }
