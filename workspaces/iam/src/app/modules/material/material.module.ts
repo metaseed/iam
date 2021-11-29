@@ -20,6 +20,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatExpansionModule } from '@angular/material/expansion';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MSG_DISPLAY_TIMEOUT } from 'core';
 
 export const MatModules = [
   MatAutocompleteModule,
@@ -48,6 +49,6 @@ export const MatModules = [
 @NgModule({
   imports: [...MatModules],
   exports: [...MatModules],
-  providers: [{ provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 8000 } }]
+  providers: [{ provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: MSG_DISPLAY_TIMEOUT } }]
 })
 export class MaterialModule { }

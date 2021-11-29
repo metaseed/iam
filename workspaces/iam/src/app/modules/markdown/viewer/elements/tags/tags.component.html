@@ -1,6 +1,6 @@
 <mat-form-field class="tags-list" appearance="none">
 
-  <label class="label" (click)="onShowTags()"><span>tags:</span><mat-icon>open_in_new</mat-icon></label>
+  <label class="label" (click)="onShowTagsCloud()"><span>tags:</span><mat-icon>open_in_new</mat-icon></label>
   <mat-chip-list
     #chipList
     aria-label="tags"
@@ -29,7 +29,7 @@
       #autoCompleteTrigger="matAutocompleteTrigger"
       placeholder="add tag..."
       [formControl]="tagInputFormControl"
-      (focus)="tagInputFocus()"
+      (focus)="onTagInputFocus()"
       [matAutocomplete]="auto"
       #tagInput
       [matChipInputFor]="chipList"

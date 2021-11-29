@@ -37,7 +37,7 @@ export class DocItemComponent {
         if(status.step === OperationStep.Timeout) {
           const info = `delete document (id:${this.docMeta.id})  timeout`;
           console.warn(info);
-          this.snackBar.open(info, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
+          this.snackBar.open(info, 'ok');
         }
         return status.step === OperationStep.Success|| status.step === OperationStep.Timeout;
       }

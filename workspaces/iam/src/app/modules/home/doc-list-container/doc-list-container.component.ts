@@ -19,7 +19,7 @@ export class DocListContainerComponent extends SubscriptionManager implements On
 
   private defaultTimeoutHandler(action: string, info?: string) {
     console.warn('action timeout:' + action + (info ? `--${info}` : ''));
-    this.snackBar.open(action + 'time out.', 'ok', { duration: MSG_DISPLAY_TIMEOUT });
+    this.snackBar.open(action + 'time out.', 'ok');
   };
 
 

@@ -23,7 +23,7 @@ export class HomeComponent {
 
   defaultTimeoutHandler = (action: string, info?: string) => err => {
     console.warn(err.message + ' action:' + action + (info ? `--${info}` : ''));
-    this.snackBar.open(err.message, 'ok', { duration: MSG_DISPLAY_TIMEOUT });
+    this.snackBar.open(err.message, 'ok');
   };
 
   docMetas$ = this.store.docMeta.sortedValues$.pipe(

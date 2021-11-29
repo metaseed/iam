@@ -67,14 +67,14 @@ export class TagsComponent extends DataSourceLines {
       const v = value.toLocaleLowerCase();
       if (this.allRepoTags)
         this.filteredRepoTags = this.allRepoTags.filter(tag => tag.name.toLocaleLowerCase().includes(v))
-
+    }), debounceTime(1000), tap(value => {
       if (this._filteredRepoTags.length === 0)
-        this.snackBar.open(`no available tags, please add more tags`, 'ok', { duration: MSG_DISPLAY_TIMEOUT })
+        this.snackBar.open(`can not find tag: ${value}`, 'ok')
     })).subscribe()
 
   }
 
-  onShowTags() {
+  onShowTagsCloud() {
     this.dialog.open(TagsCloudComponent, { width: '100vw', height: '90vh' });
 
   }
@@ -101,7 +101,7 @@ export class TagsComponent extends DataSourceLines {
     if (this.tagList.some(t => t.name === value)) {
       this.filteredRepoTags = this.allRepoTags;
       this.autoPanel.openPanel();
-      this.snackBar.open(`tag ${value} already exist.`, 'ok', { duration: MSG_DISPLAY_TIMEOUT })
+      this.snackBar.open(`tag ${value} already exist.`, 'ok')
     } else {
       this.store.tags.getById(value).then(tag => {
         this.tagList.push(tag);
@@ -122,7 +122,7 @@ export class TagsComponent extends DataSourceLines {
 
     if (value) {
       if (!this.allRepoTags.some(v => v.name === value)) {
-        this.snackBar.open(`tag ${value} does not exist, please select from tags list`, 'ok', { duration: MSG_DISPLAY_TIMEOUT })
+        this.snackBar.open(`tag ${value} does not exist, please select from tags list`, 'ok')
         this.tagInput.nativeElement.value = '';
         this.filteredRepoTags = this.allRepoTags;
         this.autoPanel.openPanel();
@@ -132,7 +132,7 @@ export class TagsComponent extends DataSourceLines {
 
   }
 
-  tagInputFocus() {
+  onTagInputFocus() {
     if (!this.allRepoTags) {
       this.tagService.getAllTags().subscribe(tags => {
         this.allRepoTags = tags;
