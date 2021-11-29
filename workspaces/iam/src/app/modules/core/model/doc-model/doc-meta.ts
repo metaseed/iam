@@ -27,7 +27,6 @@ export interface HeadMeta {
 export function issueToDocMeta(
   issue: Issue,
   tagCache: EntityCacheStore<string, Tag>) {
-    logger.debug(`issueToDocMeta: received issue:`, issue);
   let meta = DocMeta.deSerialize(issue.body);
   if (!meta) meta = {} as DocMeta;
   meta.id = meta.id || issue.number;
@@ -42,7 +41,6 @@ export function issueToDocMeta(
     ({ name: l.name, color: l.color, description: l.description, default: l.default })
   )
   tagCache.upsertMany(tags);
-  logger.debug(`issueToDocMeta: meta from issue:`, meta);
   return meta;
 };
 

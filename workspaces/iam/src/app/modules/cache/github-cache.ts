@@ -1,4 +1,4 @@
-import { ICache, DocMeta, DocContent, DocFormat, SearchResult, SearchResultSource, issueToDocMeta, Tag } from 'core';
+import { ICache, DocMeta, DocContent, DocFormat, SearchResult, SearchResultSource, issueToDocMeta, Tag, scope } from 'core';
 import { Observable, throwError, concat, asyncScheduler, of, merge } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { GithubStorage } from '../net-storage/github/github';
@@ -19,6 +19,7 @@ const FIRST_PAGE_READY_TO_REFRESH = 5 * 60 * 1000;
 export class GithubCache implements ICache {
   // used to calculate the which page the key is in.
   private highestId: number;
+  private logger = scope(console, '@GithubCache');
 
   constructor(private githubStorage: GithubStorage, private util: gitHubCacheUtil) {
     // refresh the first page every
@@ -227,7 +228,9 @@ export class GithubCache implements ICache {
   readDocMeta(id: number, checkNextCache = false) {
     return this.githubStorage.init().pipe(
       switchMap(repo => repo.issue.get(id)),
-      map(issue => issueToDocMeta(issue,this._tagCache))
+      tap(issue=>{this.logger.debug(`issueToDocMeta: received issue:`, issue)}),
+      map(issue => issueToDocMeta(issue,this._tagCache)),
+      tap(meta=>{this.logger.debug(`issueToDocMeta: meta from issue:`, meta);})
     );
   }
 
@@ -245,7 +248,7 @@ export class GithubCache implements ICache {
       if (format) uri = `${uri}.${format}`;
 
       if (isDeleted) {
-        console.debug(`@github-cache.readDocContent: this doc is deleted: {id:${id}, format: ${format}}`)
+        this.logger.debug(`@github-cache.readDocContent: this doc is deleted: {id:${id}, format: ${format}}`)
         return of(new DocContent(id, undefined, undefined, format, isDeleted));
       }
 
@@ -258,14 +261,14 @@ export class GithubCache implements ICache {
               state = 1;
               return this.readDocMeta(id).pipe(
                 switchMap(meta => {
-                  console.debug(`@github-cache.readDocContent: could not get content of id: ${id}, title: ${meta.title}, format:${format}\ntry again with remote meta: {title: ${meta.title}, format: ${meta.format}, isDeleted: ${meta.isDeleted}}`);
+                  this.logger.debug(`@github-cache.readDocContent: could not get content of id: ${id}, title: ${meta.title}, format:${format}\ntry again with remote meta: {title: ${meta.title}, format: ${meta.format}, isDeleted: ${meta.isDeleted}}`);
                   // using the meta from net via id, someone may has deleted it.
                   return getContent(repo, id, meta.format, state, meta.isDeleted, meta.title);
                 })
               );
             } else if (format && state === 1) {
               state = 2; // stop
-              console.debug(`@github-cache.readDocContent: could not get content of id: ${id}, format:${format}\ntry to use get without file format`);
+              this.logger.debug(`@github-cache.readDocContent: could not get content of id: ${id}, format:${format}\ntry to use get without file format`);
               return getContent(repo, id, '', state);
             } else {
               return throwError(() => new Error(`@github-cache.readDocContent: could not get content of id: ${id}, format:${format}`));
