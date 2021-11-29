@@ -33,9 +33,7 @@ export class TagsComponent extends DataSourceLines {
     return this._filteredRepoTags;
   }
   set filteredRepoTags(v) {
-    this._filteredRepoTags = v?.filter(t => !this.tagList.some(tag => tag.name === t.name))??[]
-    if (this._filteredRepoTags.length === 0)
-      this.snackBar.open(`no available tags, please add more tags`, 'ok', { duration: MSG_DISPLAY_TIMEOUT })
+    this._filteredRepoTags = v?.filter(t => !this.tagList.some(tag => tag.name === t.name)) ?? []
   }
 
   @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement>;
@@ -69,11 +67,14 @@ export class TagsComponent extends DataSourceLines {
       const v = value.toLocaleLowerCase();
       if (this.allRepoTags)
         this.filteredRepoTags = this.allRepoTags.filter(tag => tag.name.toLocaleLowerCase().includes(v))
+
+      if (this._filteredRepoTags.length === 0)
+        this.snackBar.open(`no available tags, please add more tags`, 'ok', { duration: MSG_DISPLAY_TIMEOUT })
     })).subscribe()
 
   }
 
-  onShowTags(){
+  onShowTags() {
     this.dialog.open(TagsCloudComponent, { width: '100vw', height: '90vh' });
 
   }
