@@ -28,7 +28,7 @@ export class ScrollHideDirective implements OnDestroy, AfterViewInit {
   position = 'fixed';
 
   @HostBinding('style.z-index')
-  zIndex = 1000;
+  zIndex = 800;
 
   @HostBinding('style.left')
   left = '0';

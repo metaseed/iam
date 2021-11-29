@@ -29,7 +29,7 @@ import { Hotkey } from './hotkey.model';
       }
 
       .cfp-hotkeys-container.fade.in {
-        z-index: 10002;
+        z-index: 1024;
         visibility: visible;
         opacity: 1;
       }

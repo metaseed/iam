@@ -81,7 +81,7 @@ export class DocumentsEffects extends EffectManager {
           this.store.currentId_.next(state.id);
 
           // history version doc only lives in store
-          if(state.id === DOC_HISTORY_VERSION_ID) {
+          if (state.id === DOC_HISTORY_VERSION_ID) {
             return this.store.currentDocContent$;
           }
           return this.cacheFacade
@@ -93,23 +93,22 @@ export class DocumentsEffects extends EffectManager {
   );
 
   saveDocument_ = new EffectStateSubject<
-  { content: string; /*if user force save, show changeLog input box*/changeLog?: string; /** for new doc */format?: DocFormat; forceUpdate?: boolean }
+    { content: string; /*if user force save, show changeLog input box*/changeLog?: string; /** for new doc */format?: DocFormat; forceUpdate?: boolean }
   >().addMonitoredEffect(
     effectInfo =>
       pipe(
         switchMap(state => {
           const { content, format, forceUpdate, changeLog } = state;
-          const meta = this.store.currentDocMeta$.state;
           const docContent = DocContent.with(this.store.currentDocContent$.state, content);
           const newTitle = DocMeta.getTitle(content);
-
+          const id = this.store.currentId_.state;
           if (!newTitle) {
             const msg = 'Must define a title!';
             this.snackbar.open(msg, 'OK');
             return throwError(() => new Error(msg));
           }
 
-          if (meta.id === NEW_DOC_ID) {
+          if (id === NEW_DOC_ID) {
             return this.cacheFacade.CreateDocument(content, format).pipe(
               tap(d => {
                 this.deleteDocument_.next({ id: d.metaData.id });
@@ -118,6 +117,8 @@ export class DocumentsEffects extends EffectManager {
               }),
             );
           } else {
+            const meta = this.store.currentDocMeta$.state;
+
             return this.cacheFacade
               .updateDocument(meta, docContent, forceUpdate, changeLog)
               .pipe(

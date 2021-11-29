@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 @Component({
   template: `
-  <div style="z-index:1000">
+  <div style="z-index:1800">
   <h1 mat-dialog-title *ngIf="this.data.title">{{this.data.title}}</h1>
 <div mat-dialog-content style="white-space: pre-wrap">
     {{this.data.message}}

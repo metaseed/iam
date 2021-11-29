@@ -4,7 +4,7 @@ import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
 
 @Component({
   selector: 'change-note-input',
-  styles:[
+  styles: [
     `.input-form{
       width: 100%;
       max-width: 80rem;
@@ -23,7 +23,7 @@ import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
     <mat-label>document change note</mat-label>
     <input matInput placeholder="showed document history" [(ngModel)]="changeNote" (keyup.Enter)="onOk($event)">
   </mat-form-field>
-  <button mat-flat-button color="primary" (click)="onOk($event)">OK</button>
+  <button #okButton mat-flat-button [autofocus]="okButton.focus()" color="primary" (click)="onOk($event)">OK</button>
 </div>
   `
 })
