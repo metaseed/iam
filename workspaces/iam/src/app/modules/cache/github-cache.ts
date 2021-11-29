@@ -318,7 +318,7 @@ export class GithubCache implements ICache {
               const data: EditIssueParams = {
                 title,
                 body: metaStr,
-                labels: meta.tag
+                labels: meta.tag,
               };
 
               // save docMeta
