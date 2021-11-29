@@ -1,28 +1,35 @@
 import { Injectable } from '@angular/core';
 import { DocumentStore } from 'app/modules/shared/store/document.store';
-import { Tag } from 'core';
+import { NET_COMMU_TIMEOUT, Tag } from 'core';
 import { GithubStorage } from 'net-storage';
-import { concat, Observable, of } from 'rxjs';
-import { switchMap, take, tap } from 'rxjs/operators';
+import { EffectManager, EffectStateSubject, OperationStatusConsoleReporter } from 'packages/rx-store/src/effect';
+import { Observable, pipe } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
-export class TagsCloudService {
+export class TagsCloudService extends EffectManager{
   constructor(private githubStorage: GithubStorage, private docStore: DocumentStore) {
+    super();
+    this.addReporter(new OperationStatusConsoleReporter());
 
   }
 
-  getAllTags() {
-    return this.githubStorage.init().pipe(
-      switchMap(repo => {
-        const fromRemote=repo.issue.listAllRepoLabels().pipe(tap(
-          (tags: Tag[]) => this.docStore.tags.upsertMany(tags)
-        )) as Observable<Tag[]>;
-        // should not use this.docStore.tags.values$, because it's never complete.
-        const fromStore= of(this.docStore.tags.values$.state);
-        return concat(fromStore,fromRemote);
-      })
-    )
-  }
+  getAllTags = new EffectStateSubject<undefined>().addMonitoredEffect(
+    effectInfo => pipe(
+      switchMap(state => {
+        return this.githubStorage.init().pipe(
+          switchMap(repo => {
+            return repo.issue.listAllRepoLabels().pipe(tap(
+              (tags: Tag[]) => this.docStore.tags.upsertMany(tags)
+            )) as Observable<Tag[]>;
+          })
+        )
+      }),
+      tap(tags=> effectInfo.success(tags))
+    ),
+    { type: '[TagsCloudService]getAllTags', timeOut: NET_COMMU_TIMEOUT }
+  )
+
   deleteTag(label: string) {
     return this.githubStorage.init().pipe(
       switchMap(repo => {

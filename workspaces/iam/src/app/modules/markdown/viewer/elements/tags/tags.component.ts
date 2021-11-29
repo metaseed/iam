@@ -3,11 +3,11 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { DataSourceLines } from "../data-source-lines";
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { debounceTime, Observable, of, shareReplay, Subject, tap } from "rxjs";
+import { debounceTime, delay, Observable, of, shareReplay, Subject, tap } from "rxjs";
 import { DocumentStore } from "app/modules/shared/store/document.store";
 import { DocEditorService } from "app/modules/shared/doc-editor.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { MSG_DISPLAY_TIMEOUT, Tag } from "core";
+import { Tag } from "core";
 import { TagsCloudService } from "app/modules/home/tags-cloud/tags-cloud.service";
 import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { FormControl } from "@angular/forms";
@@ -59,6 +59,14 @@ export class TagsComponent extends DataSourceLines {
       debounceTime(1800),
       tap(tags => this.source = `tag: [${tags.filter(t => t).map(t => t.name).join(',')}]`)
     ).subscribe();
+
+    store.tags.values$.pipe(
+      // delay one round wait for input property of tags are set
+      delay(0)
+      ).subscribe(tags => {
+      this.allRepoTags = tags;
+      this.filteredRepoTags = tags;
+    })
 
     this.tagInputFormControl.valueChanges.pipe(
       tap(value => {
@@ -122,7 +130,7 @@ export class TagsComponent extends DataSourceLines {
   /**
   * triggered when user input and hit enter.
   */
-   onInputEnd(event: MatChipInputEvent): void {
+  onInputEnd(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
     if (value) {
@@ -138,13 +146,9 @@ export class TagsComponent extends DataSourceLines {
   }
 
   onTagInputFocus() {
-    if (this.tagInputFormControl.pristine) {
-      this.tagService.getAllTags().subscribe(tags => {
-        this.allRepoTags = tags;
-        this.filteredRepoTags = tags;
-        this.autoPanel.openPanel();
-      });
-
+    if (!this.tagInputFormControl.touched) {
+      this.tagService.getAllTags.next(undefined);
+      this.autoPanel.openPanel();
     }
   }
 }

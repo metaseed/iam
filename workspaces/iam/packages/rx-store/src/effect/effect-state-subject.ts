@@ -4,7 +4,7 @@ import { MonitoredEffectInfo, MonitoredEffectOption, monitorSideEffect } from ".
 import { OperationState } from "./operation-state";
 import { EffectStateObservable } from "./effect-state-observable";
 
-type MonitorEffect<T> = (monitoredEffect: (state: MonitoredEffectInfo) => OperatorFunction<T, unknown>, option: MonitoredEffectOption) => EffectStateSubject<T>
+type MonitorEffect<T> = (monitoredEffect: (effectInfo: MonitoredEffectInfo) => OperatorFunction<T, unknown>, option: MonitoredEffectOption) => EffectStateSubject<T>
 
 export class EffectStateSubject<T> extends StateSubject<T> implements  Exclude<SideEffect<T>, EffectStateObservable<T>>  {
   operationStatus$ = new OperationState();

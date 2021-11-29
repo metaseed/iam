@@ -27,13 +27,14 @@ export class TagsCloudComponent {
     private snackBar: MatSnackBar,
     private dialogRef: MatDialogRef<TagsCloudComponent>,
     private store: DocumentStore) {
-    this.service.getAllTags().subscribe(tags => {
+
+    store.tags.values$.subscribe(tags => {
       this.tags = tags;
       tags.forEach((t: BackupTag) => {
         this.backup(t);
       })
-    });
-
+    })
+    this.service.getAllTags.next(undefined);
   }
 
   newColor() {
