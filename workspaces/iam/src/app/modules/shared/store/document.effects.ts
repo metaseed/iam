@@ -111,7 +111,6 @@ export class DocumentsEffects extends EffectManager {
           if (id === NEW_DOC_ID) {
             return this.cacheFacade.CreateDocument(content, format).pipe(
               tap(d => {
-                this.deleteDocument_.next({ id: d.metaData.id });
                 this.util.modifyUrlAfterSaved(d.metaData.id, newTitle, format);
                 this.snackbar.open('New document saved!', 'OK');
               }),

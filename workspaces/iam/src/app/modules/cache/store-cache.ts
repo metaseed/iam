@@ -57,6 +57,7 @@ export class StoreCache implements ICache {
         this._store.docContent.add(doc.content);
         this._store.docMeta.add(doc.metaData);
         this._store.currentId_.next(doc.metaData.id);
+        this._store.docContent.delete(NEW_DOC_ID);
       })
     );
   }

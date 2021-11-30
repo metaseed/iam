@@ -52,16 +52,50 @@ export class GithubCache implements ICache {
   }
 
   CreateDocument(content: string, format: DocFormat) {
+    const reusedClosedIssue = true;
+    const issueInit = (repo: Repository, title: string) => {
+      if (reusedClosedIssue) {
+        return repo.issue.listIssues({ state: 'closed' }).pipe(switchMap(issues => {
+          if (issues.length > 0) {
+            this.logger.debug(`CreateDocument, reused closed issue:`, issues[0]);
+            return of(issues[0]);
+          }
+          return repo.issue.create({ title });
+        }));
+      }
+      this.logger.debug(`CreateDocument, create new issue:${title}`);
+      return repo.issue.create({ title });
+    }
+
     const title = DocMeta.getTitle(content);
     // create docMeta to get an id;
     return this.githubStorage.init().pipe(
       switchMap(repo =>
-        repo.issue.create({ title }).pipe(
+        issueInit(repo, title).pipe(
           switchMap(issue => {
             const id = issue.number;
             // save docContent;
-            const commitMsg = this.commitMessage(title, '1.0.0', 'create document')
-            return repo.newFile(`${DOCUMENTS_FOLDER_NAME}/${id}.${format}`, content, commitMsg).pipe(
+            const commitMsg = this.commitMessage(title, '1.0.0', 'create document');
+            const path = `${DOCUMENTS_FOLDER_NAME}/${id}.${format}`;
+            return repo.newFile(path, content, commitMsg).pipe(
+              tap(file => this.logger.debug(`CreateDocument.newFile:`, file)),
+              catchError(err => {
+                this.logger.debug(`CreateDocument.newFile error:`, err);
+                // when the file already there.
+                if (err.status === 422) {
+                  return repo.getSha(path).pipe(
+                    switchMap(resp => {
+                      this.logger.debug(`CreateDocument.newFile by reuse existing file`, resp);
+                      return repo.updateFile(path, content, resp.sha, commitMsg)
+                    }
+                    )
+                  );
+                } else {
+                  this.logger.error(`CreateDocument.newFile: errors when create a file`, err);
+                  throw err;
+                }
+
+              }),
               switchMap(file => {
                 const url = this.util.getContentUrl(id, title, format);
 
@@ -381,18 +415,18 @@ export class GithubCache implements ICache {
               map(rep => {
                 return (rep.body as any).items.map(item => {
                   const { id, sanitizedTitle, ext } = DocMeta.parseDocumentName(item.name);
-                  return { id, score: item.score, title: sanitizedTitle, text_matches: item.text_matches};
+                  return { id, score: item.score, title: sanitizedTitle, text_matches: item.text_matches };
                 });
               })
             )
           ))
       }),
-      map(([issue, file]:[SearchResult,SearchResult]) => {
-        for(const is of issue){
-          const ind = file.findIndex(v=>v.id === is.id);
-          if(ind !== -1){
+      map(([issue, file]: [SearchResult, SearchResult]) => {
+        for (const is of issue) {
+          const ind = file.findIndex(v => v.id === is.id);
+          if (ind !== -1) {
             file[ind].title = is.title;
-          } else{
+          } else {
             file.push(is);
           }
         }

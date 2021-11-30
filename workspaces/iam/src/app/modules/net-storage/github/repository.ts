@@ -144,7 +144,14 @@ export class Repository extends Requestable {
       observe: 'response'
     });
   }
-
+  /**
+   * https://developer.github.com/v3/repos/contents/#get-contentdm
+   */
+   public getSha(path: string, branch: string = 'master') {
+    return this.request('GET', `/repos/${this.fullName}/contents/${path}`, {
+      ref: branch
+    }) as Observable< { sha: string }>;
+  }
   private decodeContent(content: Content | Array<Content>) {
     if (Array.isArray(content)) {
       content.forEach((con: Content) => {
@@ -187,15 +194,6 @@ export class Repository extends Requestable {
     );
   }
 
-  /**
-   * https://developer.github.com/v3/repos/contents/#get-contentdm
-   */
-  private getSha(path: string, branch: string = '') {
-    branch = branch ? `?ref=${branch}` : '';
-    return this.request('GET', `/repos/${this.fullName}/contents/${path}${branch}`, {
-      ref: branch
-    });
-  }
 
   /**
    * https://git-scm.com/book/en/v2/Git-Internals-Git-Objects

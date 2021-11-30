@@ -53,6 +53,7 @@ export class Issue extends Labels {
       options
     );
   }
+
   listWithResponse(option: IssueListOption) {
     return this.http.get(`githubapi/repos/${this._userInfo.name}/${this.repository}/issues`, {
       params: option as any,
