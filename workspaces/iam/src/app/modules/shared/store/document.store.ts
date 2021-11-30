@@ -6,6 +6,9 @@ import { DocumentStatus } from "app/modules/core/model/doc-model/doc-status";
 import { map, tap } from "rxjs/operators";
 import { pipe } from "rxjs";
 
+export type DocMetaContent = {id: number, meta?:DocMeta, content?:DocContent};
+export type DocMetaContentRecord = Record<number,DocMetaContent>
+
 @Injectable({ providedIn: 'root' })
 export class DocumentStore {
   constructor() {
@@ -80,6 +83,17 @@ export class DocumentStore {
 
   // only id are sorted, we want sorted
   getAllDocMetas() { return this.docMeta.cache.ids.map(id => this.docMeta.cache.entities[id]) }
+
+  getAllDocMetaContent():DocMetaContentRecord{
+    const result: DocMetaContentRecord = {};
+    for(const [id, meta] of Object.entries(this.docMeta.cache.entities)){
+      result[id]= {id,meta}
+    }
+    for(const [id, content] of Object.entries(this.docContent.cache.entities)){
+      result[id]= {...result[id], ...{content}}
+    }
+    return result;
+  }
 
   getDocContent(id: number) {
     return this.docContent.cache.entities[id];

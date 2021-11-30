@@ -24,7 +24,7 @@ export class DocSearchListComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.docSearchComponent.search
-      .pipe(debounceTime(500),
+      .pipe(debounceTime(800),
         distinctUntilChanged(),
         tap(keyword => {
           if (keyword.trim() === '') {
@@ -37,8 +37,6 @@ export class DocSearchListComponent implements AfterViewInit {
   }
 
   searchResult$: Observable<ISearchItem[]> = this._store.searchResult_;
-
-  onSearch(keyword: string) { }
 
   trackByFunc = (i, searchItem: ISearchItem) => searchItem.id;
 }

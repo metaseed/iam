@@ -221,13 +221,11 @@ export class StoreCache implements ICache {
   }
 
   search(query: string) {
-    const docs = this._store.getAllDocuments();
+    const docs = this._store.getAllDocMetaContent();
 
     const fromStoreCache$ = this._storeSearchService.search(docs, query);
 
-    const fromNextCache$ = this.nextLevelCache
-      .search(query)
-      .pipe(tap(searchResult => this._store.searchResult_.next(searchResult)));
+    const fromNextCache$ = this.nextLevelCache.search(query)
 
     let lastResult: SearchResult;
 
@@ -245,6 +243,7 @@ export class StoreCache implements ICache {
           const index = lastResult.findIndex(it => it.id === item.id);
           if (index !== -1) {
             if (item.source !== SearchResultSource.store) {
+              item.title??= lastResult[index].title;
               lastResult[index] = item;
             }
           } else {
@@ -261,7 +260,8 @@ export class StoreCache implements ICache {
           }
         });
         return lastResult;
-      })
+      }),
+      tap(searchResult => this._store.searchResult_.next(searchResult))
     );
   }
 }
