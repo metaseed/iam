@@ -1,9 +1,9 @@
-import { Component, ElementRef, Inject, Input, ViewChild } from "@angular/core";
+import { Component, ElementRef, Input, ViewChild } from "@angular/core";
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { DataSourceLines } from "../data-source-lines";
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { debounceTime, delay, Observable, of, shareReplay, Subject, tap } from "rxjs";
+import { debounceTime, delay, Subject, tap } from "rxjs";
 import { DocumentStore } from "app/modules/shared/store/document.store";
 import { DocEditorService } from "app/modules/shared/doc-editor.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -63,7 +63,7 @@ export class TagsComponent extends DataSourceLines {
     store.tags.values$.pipe(
       // delay one round wait for input property of tags are set
       delay(0)
-      ).subscribe(tags => {
+    ).subscribe(tags => {
       this.allRepoTags = tags;
       this.filteredRepoTags = tags;
     })
@@ -85,7 +85,8 @@ export class TagsComponent extends DataSourceLines {
 
   }
 
-  onShowTagsCloud() {
+  onShowTagsCloud(e) {
+    e.stopImmediatePropagation()
     this.dialog.open(TagsCloudComponent);
   }
 
