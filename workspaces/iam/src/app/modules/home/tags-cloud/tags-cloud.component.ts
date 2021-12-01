@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Issue } from 'app/modules/net-storage/github';
 import { DocumentStore } from 'app/modules/shared/store/document.store';
-import { DocMeta, issueToDocMeta, SubscriptionManager, Tag } from 'core';
+import { DocMeta, issueToDocMeta, Tag } from 'core';
 import { EMPTY } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { DialogData, MessageDialog } from 'shared';
@@ -31,7 +31,7 @@ export class TagsCloudComponent {
     store.tags.values$.subscribe(tags => {
       this.tags = tags;
       tags.forEach((t: BackupTag) => {
-        this.backup(t);
+        this.backupOriginalProperties(t);
       })
     })
     this.service.getAllTags.next(undefined);
@@ -60,6 +60,15 @@ export class TagsCloudComponent {
       ).subscribe();
   }
 
+  canApply(tag: BackupTag) {
+    const selectedTag = this.selectedTag;
+    return !!(
+      selectedTag.id &&
+      selectedTag.name &&
+      selectedTag.name === selectedTag.nameOriginal &&
+      this.selectedTagChanged(selectedTag))
+  }
+
   apply(tag: BackupTag) {
     this.service.updateTag(tag.nameOriginal, tag).subscribe(
       (t: Tag) => {
@@ -68,22 +77,13 @@ export class TagsCloudComponent {
     );
 
   }
+
   selectedTagDocs: DocMeta[];
   select(tag: Tag) {
     this.selectedTag = tag;
     this.service.listDocuments(tag).subscribe(issues => {
       this.selectedTagDocs = (issues as Issue[]).map(i => issueToDocMeta(i, this.store.tags))
     })
-  }
-
-
-  addTag(tag: Tag) {
-    this.service.addTag(tag).pipe(
-      tap((t: Tag) => {
-        this.backup(t);
-        this.tags.push(t)
-      })
-    ).subscribe();
   }
 
   canAdd(tag: BackupTag) {
@@ -93,14 +93,19 @@ export class TagsCloudComponent {
     );
   }
 
+  addTag(tag: Tag) {
+    this.service.addTag(tag).pipe(
+      tap((t: Tag) => {
+        this.backupOriginalProperties(t);
+        this.store.tags.upsert(t);
+        this.snackBar.open(`tag:${t.name} added!`, 'ok');
+      })
+    ).subscribe();
+  }
+
   private selectedTagChanged(tag: BackupTag) {
     if (tag.description === '' && tag.descriptionOriginal === null) return false;
     return tag.name !== tag.nameOriginal || tag.description !== tag.descriptionOriginal || tag.color !== tag.colorOriginal;
-  }
-
-  canApply(tag: BackupTag) {
-    const selectedTag = this.selectedTag;
-    return !!(selectedTag.id && selectedTag.name && this.selectedTagChanged(selectedTag))
   }
 
   onOpen(tag: Tag) {
@@ -111,7 +116,7 @@ export class TagsCloudComponent {
     this.dialogRef.close();
 
   }
-  private backup(t: BackupTag) {
+  private backupOriginalProperties(t: BackupTag) {
     t.nameOriginal = t.name;
     t.descriptionOriginal = t.description;
     t.colorOriginal = t.color;
