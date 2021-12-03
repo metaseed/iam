@@ -58,7 +58,7 @@ export class GithubCache implements ICache {
         return repo.issue.listIssues({ state: 'closed' }).pipe(switchMap(issues => {
           if (issues.length > 0) {
             this.logger.debug(`CreateDocument, reused closed issue:`, issues[0]);
-            return of(issues[0]);
+            return of(issues[issues.length - 1]);
           }
           return repo.issue.create({ title });
         }));
@@ -70,8 +70,9 @@ export class GithubCache implements ICache {
     const title = DocMeta.getTitle(content);
     // create docMeta to get an id;
     return this.githubStorage.init().pipe(
-      switchMap(repo =>
-        issueInit(repo, title).pipe(
+      switchMap(repo => {
+        let id: number;
+        return issueInit(repo, title).pipe(
           switchMap(issue => {
             const id = issue.number;
             // save docContent;
@@ -85,10 +86,9 @@ export class GithubCache implements ICache {
                 if (err.status === 422) {
                   return repo.getSha(path).pipe(
                     switchMap(resp => {
-                      this.logger.debug(`CreateDocument.newFile by reuse existing file`, resp);
+                      this.logger.debug(`CreateDocument.newFile by reuse existing file, sha:${resp.sha}`, content, resp);
                       return repo.updateFile(path, content, resp.sha, commitMsg)
-                    }
-                    )
+                    })
                   );
                 } else {
                   this.logger.error(`CreateDocument.newFile: errors when create a file`, err);
@@ -110,21 +110,30 @@ export class GithubCache implements ICache {
                 );
                 const data: EditIssueParams = {
                   title: title,
+                  state: 'open',
                   body: metaStr
                 };
                 // save docMeta to update sha;
                 return repo.issue.edit(id, data).pipe(
+                  tap(ise => {
+                    this.logger.debug(`edit issue:`, ise);
+                  }),
                   map(() => {
                     const docContent = new DocContent(id, content, file.content.sha);
                     const doc = new Document(meta, docContent);
                     return doc;
-                  })
+                  }),
                 );
               })
             );
-          })
+          }),
+          catchError(err => {
+            if (id)
+              repo.issue.edit(id, { state: 'closed' }).subscribe();
+            throw err;
+          }),
         )
-      )
+      })
     );
   }
 

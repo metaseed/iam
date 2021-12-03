@@ -13,6 +13,7 @@ import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/m
 import { FormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { TagsCloudComponent } from "app/modules/home/tags-cloud/tags-cloud.component";
+
 @Component({
   templateUrl: './tags.component.html',
   styleUrls: ['./tags.component.scss'],
@@ -44,6 +45,7 @@ export class TagsComponent extends DataSourceLines {
     value.split(',').map(tag => tag.trim()).filter(t => t !== '').forEach(
       name => this.store.tags.getById(name).then(t => {
         if (t) this.tagList.push(t);
+        else this.tagList.push({name})
       })
     );
   }
