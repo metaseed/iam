@@ -1,18 +1,24 @@
-import { Directive, Inject, Input } from "@angular/core";
+import { Directive, Input } from "@angular/core";
 import { DocEditorService } from "app/modules/shared/doc-editor.service";
 import { DocumentStore } from "app/modules/shared/store/document.store";
-import { DocContent } from "core";
+import { scope } from "core";
+
 @Directive()
 export class DataSourceLines {
 
   public sourceLineStart: number;
   public sourceLineEnd: number;
+  protected logger = scope(console, `@${this.constructor.name}`)
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input("data-source-lines")
   public set sourceLines(value) {
     const match = /\[\s*(\d+)\s*,\s*(\d+)\s*\]/.exec(value)
-    this.sourceLineStart = +match[1];
-    this.sourceLineEnd = +match[2];
+    if (match) {
+      this.sourceLineStart = +match[1];
+      this.sourceLineEnd = +match[2];
+    } else {
+      this.logger.debug(`sourceLines: ${value}`);
+    }
   }
 
   constructor(private _store: DocumentStore, private docEditor: DocEditorService) {

@@ -19,7 +19,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class SubPageComponent extends ManageSubscription(DataSourceLines) {
   public isPanelOpen = false;
 
-  constructor(private router: Router, private store: DocumentStore, private logger: LogService,
+  constructor(private router: Router, private store: DocumentStore,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     docEditor: DocEditorService, private dialog: MatDialog,
     private snackbar: MatSnackBar

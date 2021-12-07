@@ -45,6 +45,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
           .pipe(
             subscribeOn(asyncScheduler),
             catchError(err => {
+              this.logger.debug(`error: when save docContent`,err)
               throw err;
             })
           )
@@ -55,6 +56,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
           .pipe(
             subscribeOn(asyncScheduler),
             catchError(err => {
+              this.logger.debug(`error: when save docMeta`,err)
               throw err;
             })
           )
