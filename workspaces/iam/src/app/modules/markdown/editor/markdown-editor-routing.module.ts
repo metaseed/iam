@@ -8,7 +8,12 @@ const markdownEditorRoutes: Routes = [
     path: '',
     canDeactivate: [CanDeactivateGuard],
     component: MarkdownEditorComponent
-  }
+  },
+  {
+    path: 'new',
+    canDeactivate: [CanDeactivateGuard],
+    component: MarkdownEditorComponent
+  },
 ];
 @NgModule({
   imports: [RouterModule.forChild(markdownEditorRoutes)],

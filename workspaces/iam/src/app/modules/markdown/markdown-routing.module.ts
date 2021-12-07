@@ -12,16 +12,6 @@ const documentRoutes: Routes = [
         loadChildren: () => import('app/modules/markdown/editor/markdown-editor.module').then(m => m.MarkdownEditorModule)
       }
     ]
-  },
-  {
-    path: 'new',
-    component: MarkdownComponent,
-    children: [
-      {
-        path: '',
-        loadChildren: () => import('app/modules/markdown/editor/markdown-editor.module').then(m => m.MarkdownEditorModule)
-      }
-    ]
   }
 ];
 

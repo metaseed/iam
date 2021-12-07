@@ -2,15 +2,11 @@ import {
   Component,
   Input,
   Output,
-  ViewChild,
   EventEmitter,
-  forwardRef,
   OnInit,
-  AfterViewInit,
   OnDestroy,
   ElementRef,
 } from "@angular/core";
-import { NG_VALUE_ACCESSOR, ControlValueAccessor } from "@angular/forms";
 
 import * as CodeMirror from "codemirror";
 import "codemirror/addon/display/fullscreen";
@@ -32,25 +28,17 @@ import "codemirror/addon/fold/brace-fold";
 import "codemirror/addon/edit/matchtags";
 import "codemirror/addon/comment/comment";
 import { MarkdownEditorService } from "../../services/markdown-editor.service";
-import { Subject } from "rxjs";
 import { SubscriptionManager, Utilities } from "core";
-import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
 /**
  * Usage : <ms-codemirror [(ngModel)]="markdown" [config]="{...}"></ms-codemirror>
  */
 @Component({
   selector: "ms-codemirror",
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => CodemirrorComponent),
-      multi: true,
-    },
-  ],
   template: ` <textarea #host></textarea> `,
 })
 export class CodemirrorComponent extends SubscriptionManager
-  implements ControlValueAccessor, OnInit, AfterViewInit, OnDestroy {
+  implements OnInit, OnDestroy {
   //    var map = {"Alt-Space": function(cm){...}}
   //    editor.addKeyMap(map);
   @Input()
@@ -63,8 +51,14 @@ export class CodemirrorComponent extends SubscriptionManager
   @Output()
   blur = new EventEmitter();
 
-  @ViewChild("host")
-  host: ElementRef;
+  afterInit = new Subject<CodeMirror.EditorFromTextArea>();
+
+  private _host: HTMLTextAreaElement;
+  get host() {
+    if (!this._host)
+      this._host = this.elementRef.nativeElement.getElementsByTagName('textarea')[0];
+    return this._host;
+  }
 
   codemirror: CodeMirror.EditorFromTextArea;
 
@@ -73,7 +67,8 @@ export class CodemirrorComponent extends SubscriptionManager
 
   constructor(
     private editorService: MarkdownEditorService,
-    private utils: Utilities
+    private utils: Utilities,
+    private elementRef: ElementRef,
   ) {
     super();
     super.addSub(
@@ -113,36 +108,21 @@ export class CodemirrorComponent extends SubscriptionManager
         // "Ctrl-F": "findPersistent"
       },
     };
+    this.codemirrorInit(this.config);
+    this.afterInit.next(this.codemirror);
+
+    this.editorService.docEditorLoaded$.next(this.codemirror);
   }
 
   get value() { return this._value; }
 
-  ngAfterViewInit() {
-    this.codemirrorInit(this.config);
-
-    this.editorService.docEditorLoaded$.next(this.codemirror);
-    // this.service.markdownService.viewer$
-    //   .pipe(switchMap(v => v.activeElement$))
-    //   .subscribe(element => {
-    //     if (!element) return;
-    //     const lines = JSON.parse(element.getAttribute('data-source-lines'));
-    //     try {
-    //       this.instance.scrollIntoView({ line: lines[0] + 1, ch: 0 });
-    //     } catch (e) {
-    //       console.log(e);
-    //     }
-    //   });
-  }
-
   codemirrorInit(config) {
-    this.codemirror = CodeMirror.fromTextArea(this.host.nativeElement, config);
-    this.codemirror.setValue(this._value);
+    this.codemirror = CodeMirror.fromTextArea(this.host, config);
 
     this.codemirror.on("change", () => {
       const value = this.codemirror.getValue();
       if (value !== this._value) {
         this._value = value;
-        this._onChange(value);
         this.change.emit(value);
         this.editorService.docContentModified$.next(value);
       }
@@ -155,9 +135,16 @@ export class CodemirrorComponent extends SubscriptionManager
     });
 
     this.codemirror.on("blur", () => {
-      this._onTouched();
       this.blur.emit();
     });
+  }
+
+  writeValue(value) {
+    this._value = value;
+    if (this.codemirror) {
+      this.codemirror.setValue(value);
+      if (value) this.editorService.docContentSet$.next(this.codemirror);
+    }
   }
 
   private changeCursorStyle(doc) {
@@ -181,29 +168,5 @@ export class CodemirrorComponent extends SubscriptionManager
     this.codemirror.refresh();
   }
 
-  private _onChange(_) { }
-  private _onTouched() { }
 
-  /**
-   * Implements ControlValueAccessor
-   */
-  writeValue(value) {
-    if (this.codemirror) {
-      this._value = value || "";
-      this.codemirror.setValue(this._value);
-      if (value) this.editorService.docContentSet$.next(this.codemirror);
-    }
-  }
-
-  registerOnChange(fn) {
-    this._onChange = fn;
-  }
-
-  registerOnTouched(fn) {
-    this._onTouched = fn;
-  }
-
-  setDisabledState(isDisabled: boolean) {
-    (<HTMLTextAreaElement>(this.host.nativeElement)).disabled = true;
-  }
 }

@@ -13,12 +13,14 @@ import { SharedModule } from 'shared';
 import { KeyMapService } from './services/keymap.service';
 import { FileUploadComponent } from './codemirror-editor/file-upload/file-upload.component';
 import { EditorToolbarModule } from './editor-toolbar/editor-toolbar.module';
+import { CodeMirrorValueAccessor } from './codemirror-editor/codemirror-component/codemirror.value-accessor';
 
 @NgModule({
   declarations: [
     CodemirrorComponent,
     MarkdownEditorComponent,
-    FileUploadComponent
+    FileUploadComponent,
+    CodeMirrorValueAccessor
   ],
   imports: [
     SharedModule,
