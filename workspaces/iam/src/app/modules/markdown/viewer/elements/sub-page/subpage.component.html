@@ -15,13 +15,13 @@
           placeholder="add by id"
           matInput
           type="number"
-          (keyup.Enter)="addId(input.value)"
+          (keyup.Enter)="addId(input.value, input)"
         />
         <button
           matSuffix
           mat-icon-button
           aria-label="add id"
-          (click)="addId(input.value)"
+          (click)="addId(input.value, input)"
         >
           <mat-icon style="color: #000a">add</mat-icon>
         </button>

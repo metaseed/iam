@@ -79,7 +79,7 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
     this.logger.debug('SubPageComponent.delete: id not found')
   }
 
-  addId(id) {
+  addId(id, input?: HTMLInputElement) {
     if (this.ids.includes(+id)) {
       this.snackbar.open(`id ${id} already included`, 'ok', {
         duration: MSG_DISPLAY_TIMEOUT
@@ -89,6 +89,8 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
     this.ids.push(+id);
     this.subPagesChanged = true;
     this.source = `subPage: [${this.ids}]`
+    // clear the id in input element
+    if(input) input.value = null;
   }
 
   addIdBySearch() {
