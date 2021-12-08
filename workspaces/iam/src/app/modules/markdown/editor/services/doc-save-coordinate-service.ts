@@ -27,32 +27,29 @@ export class DocSaveCoordinateService extends SubscriptionManager {
     super.addSub(
       this.editorService.docEditorLoaded$.subscribe(editor => this.editor = editor),
 
-      this.store.currentDocStatus_IsEditorDirty$
-        .pipe(
-          debounceTime(AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL), // e  e e          |
-          tap((isDirty) => {
-            if (isDirty)
-              this.documentEffects.saveDocument_.next({ content: this.editor.getValue(), format: DocFormat.md });
-          }),
-          backoff(8, AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL)
-        ),
+      this.store.currentDocStatus_IsEditorDirty$.pipe(
+        debounceTime(AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL), // e  e e          |
+        tap((isDirty) => {
+          if (isDirty)
+            this.documentEffects.saveDocument_.next({ content: this.editor.getValue(), format: DocFormat.md });
+        }),
+        backoff(8, AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL)
+      ),
 
       this.editorService.docContentSet$.subscribe((editor: ICodeMirrorEditor) => {
         this.docLoadedHandler(editor);
       }),
 
-      this.editorService.docContentModified$
-        .subscribe(([content, editor]) => this.checkDirty(editor)),
+      this.editorService.docContentModified$.subscribe(([content, editor]) => this.checkDirty(editor)),
 
-      this.documentEffects.saveDocument_.operationStatus$
-        .subscribe((as) => {
-          if (as.step === OperationStep.Start) {
-            this.docSavedHandler(this.editor);
-            this.isSaving = true;
-          } else if (as.isEndStatus()) {
-            this.isSaving = false;
-          }
-        })
+      this.documentEffects.saveDocument_.operationStatus$.subscribe((as) => {
+        if (as.step === OperationStep.Start) {
+          this.docSavedHandler(this.editor);
+          this.isSaving = true;
+        } else if (as.isEndStatus()) {
+          this.isSaving = false;
+        }
+      })
     )
   }
 
