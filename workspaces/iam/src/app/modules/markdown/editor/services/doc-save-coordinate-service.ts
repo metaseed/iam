@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { MarkdownEditorService } from './markdown-editor.service';
 import { BehaviorSubject } from 'rxjs';
-import { tap, debounceTime } from 'rxjs/operators';
+import { tap, debounceTime, mergeWith, map } from 'rxjs/operators';
 import { AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL, backoff, DocFormat, SubscriptionManager } from 'core';
 import { ICodeMirrorEditor } from '../model';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
@@ -28,6 +28,7 @@ export class DocSaveCoordinateService extends SubscriptionManager {
       this.editorService.docEditorLoaded$.subscribe(editor => this.editor = editor),
 
       this.store.currentDocStatus_IsEditorDirty$.pipe(
+        mergeWith(this.editorService.docContentModified$.pipe(map(_=> true))),
         debounceTime(AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL), // e  e e          |
         tap((isDirty) => {
           if (isDirty)
