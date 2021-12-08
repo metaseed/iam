@@ -1,9 +1,9 @@
 import { DocContent, DocMeta, SearchResult, Tag } from "core";
 import { EntityCacheStore, MemEntityCache } from "@rx-store/entity";
-import { StateSubject } from "@rx-store/core";
+import { state, StateSubject } from "@rx-store/core";
 import { Injectable, isDevMode } from "@angular/core";
 import { DocumentStatus } from "app/modules/core/model/doc-model/doc-status";
-import { tap } from "rxjs/operators";
+import { distinctUntilChanged, map, tap } from "rxjs/operators";
 import { pipe } from "rxjs";
 
 export type DocMetaContent = {id: number, meta?:DocMeta, content?:DocContent};
@@ -51,7 +51,10 @@ export class DocumentStore {
 
   currentDocContentString$ = this.currentDocContent$.map(content => content?.content);
 
-  currentDocStatus_IsEditorDirty$ = this.currentDocStatus$.map(status => status?.isEditorDirty);
+  currentDocStatus_IsEditorDirty$ = state(this.currentDocStatus$.pipe(
+    map(status => status?.isEditorDirty),
+    distinctUntilChanged()
+    ));
   currentDocStatus_IsEditable$ = this.currentDocStatus$.map(status => status?.isEditable);
 
   currentDocStatus_IsDbDirty$ = this.currentDocStatus$.map(status => status?.isDbDirty);
@@ -109,6 +112,12 @@ export class DocumentStore {
   }
 
   updateCurrentDocStatus(status: Partial<DocumentStatus>) {
+    let statusInStore = this.currentDocStatus$.state;
+    if (!statusInStore) {
+      statusInStore = { id: this.docStatus.currentId_.state, isEditable: true };
+      this.docStatus.set(statusInStore)
+    }
+
     this.docStatus.update({
       id: this.currentId_.state,
       changes: status

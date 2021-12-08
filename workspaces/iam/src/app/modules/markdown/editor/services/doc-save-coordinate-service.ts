@@ -28,7 +28,7 @@ export class DocSaveCoordinateService extends SubscriptionManager {
       this.editorService.docEditorLoaded$.subscribe(editor => this.editor = editor),
 
       this.store.currentDocStatus_IsEditorDirty$.pipe(
-        mergeWith(this.editorService.docContentModified$.pipe(map(_=> true))),
+        mergeWith(this.editorService.docContentModified$.pipe(map(_ => true))),
         debounceTime(AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL), // e  e e          |
         tap((isDirty) => {
           if (isDirty)
@@ -69,18 +69,10 @@ export class DocSaveCoordinateService extends SubscriptionManager {
   }
 
   private checkDirty(editor: CodeMirror.Editor) {
-    let statusInStore = this.store.currentDocStatus$.state;
-    if (!statusInStore) {
-      statusInStore = { id: this.store.docStatus.currentId_.state, isEditable: true };
-      this.store.docStatus.set(statusInStore)
-    }
-
     if (!this.contentGeneration) return; // initial content load
 
     const isEditorDirty = !editor.getDoc().isClean(this.contentGeneration);
-    if (statusInStore.isEditorDirty !== isEditorDirty) {
-      this.store.updateCurrentDocStatus({ isEditorDirty });
-    }
+    this.store.updateCurrentDocStatus({ isEditorDirty });
   }
 
 }
