@@ -115,7 +115,8 @@ export class DocumentStore {
     let statusInStore = this.currentDocStatus$.state;
     if (!statusInStore) {
       statusInStore = { id: this.docStatus.currentId_.state, isEditable: true };
-      this.docStatus.set(statusInStore)
+      this.docStatus.set({...statusInStore, ...status})
+      return;
     }
 
     this.docStatus.update({
