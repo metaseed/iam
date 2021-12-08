@@ -13,7 +13,7 @@ import { KeyMapService } from './services/keymap.service';
 import { FileUploadComponent } from './codemirror-editor/file-upload/file-upload.component';
 import { EditorToolbarModule } from './editor-toolbar/editor-toolbar.module';
 import { CodeMirrorValueAccessor } from './codemirror-editor/codemirror-component/codemirror.value-accessor';
-import { MarkdownEditorComponent } from './codemirror-editor/markdown-editor.component';
+import { MarkdownEditorComponent } from './markdown-editor-component/markdown-editor.component';
 
 @NgModule({
   declarations: [
