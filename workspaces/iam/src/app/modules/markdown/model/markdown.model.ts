@@ -1,7 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import { IContainer } from 'core';
-import { StateSubject } from 'packages/rx-store/src/core';
-import { Observable, Subject } from 'rxjs';
+import { StateSubject } from '@rx-store/core';
+import { Subject } from 'rxjs';
 
 export const MARKDOWN_STORE_TOKEN = new InjectionToken<IMarkdownStore>('MARKDOWN_STORE_TOKEN');
 

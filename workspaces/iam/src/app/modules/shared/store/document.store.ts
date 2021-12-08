@@ -6,8 +6,8 @@ import { DocumentStatus } from "app/modules/core/model/doc-model/doc-status";
 import { distinctUntilChanged, map, tap } from "rxjs/operators";
 import { pipe } from "rxjs";
 
-export type DocMetaContent = {id: number, meta?:DocMeta, content?:DocContent};
-export type DocMetaContentRecord = Record<number,DocMetaContent>
+export type DocMetaContent = { id: number, meta?: DocMeta, content?: DocContent };
+export type DocMetaContentRecord = Record<number, DocMetaContent>
 
 @Injectable({ providedIn: 'root' })
 export class DocumentStore {
@@ -54,7 +54,7 @@ export class DocumentStore {
   currentDocStatus_IsEditorDirty$ = state(this.currentDocStatus$.pipe(
     map(status => status?.isEditorDirty),
     distinctUntilChanged()
-    ));
+  ));
   currentDocStatus_IsEditable$ = this.currentDocStatus$.map(status => status?.isEditable);
 
   currentDocStatus_IsDbDirty$ = this.currentDocStatus$.map(status => status?.isDbDirty);
@@ -84,13 +84,13 @@ export class DocumentStore {
   // only id are sorted, we want sorted
   getAllDocMetas() { return this.docMeta.cache.ids.map(id => this.docMeta.cache.entities[id]) }
 
-  getAllDocMetaContent():DocMetaContentRecord{
+  getAllDocMetaContent(): DocMetaContentRecord {
     const result: DocMetaContentRecord = {};
-    for(const [id, meta] of Object.entries(this.docMeta.cache.entities)){
-      result[id]= {id,meta}
+    for (const [id, meta] of Object.entries(this.docMeta.cache.entities)) {
+      result[id] = { id, meta }
     }
-    for(const [id, content] of Object.entries(this.docContent.cache.entities)){
-      result[id]= {...result[id], ...{content}}
+    for (const [id, content] of Object.entries(this.docContent.cache.entities)) {
+      result[id] = { ...result[id], ...{ content } }
     }
     return result;
   }
@@ -111,16 +111,17 @@ export class DocumentStore {
     return ids.map(id => this.docMeta.cache.entities[id]);
   }
 
-  updateCurrentDocStatus(status: Partial<DocumentStatus>) {
-    let statusInStore = this.currentDocStatus$.state;
+  updateDocStatus(status: Partial<DocumentStatus>, id?: number) {
+    id ??= this.docStatus.currentId_.state;
+    let statusInStore = this.docStatus.cache.entities[id];
     if (!statusInStore) {
-      statusInStore = { id: this.docStatus.currentId_.state, isEditable: true };
-      this.docStatus.set({...statusInStore, ...status})
+      statusInStore = { id, isEditable: true };
+      this.docStatus.set({ ...statusInStore, ...status })
       return;
     }
 
     this.docStatus.update({
-      id: this.currentId_.state,
+      id,
       changes: status
     })
   }

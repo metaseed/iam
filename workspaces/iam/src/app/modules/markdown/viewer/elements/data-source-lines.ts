@@ -43,7 +43,7 @@ export class DataSourceLines {
     const content = splice(originalContentString, start, end - start, value);
     this._store.docContent.update({ id, changes: { content } });
     // to workaround the editor load new content and clear dirty flags.
-    setTimeout(() => this._store.updateCurrentDocStatus({ isEditorDirty: true }));
+    setTimeout(() => this._store.updateDocStatus({ isEditorDirty: true }));
   }
 
   private getRange(content: string) {

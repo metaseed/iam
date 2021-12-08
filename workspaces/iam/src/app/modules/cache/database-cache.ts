@@ -253,7 +253,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
     const id = this.store.currentId_.state;
     this.db.getAllKeys<number[]>(DataTables.DirtyDocs).subscribe(dirtyDocIds => {
       if (dirtyDocIds.includes(id)) {
-        this.store.updateCurrentDocStatus({ isDbDirty: true });
+        this.store.updateDocStatus({ isDbDirty: true });
       }
     });
   }

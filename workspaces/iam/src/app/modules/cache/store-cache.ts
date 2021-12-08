@@ -22,12 +22,10 @@ export class StoreCache implements ICache {
   docMetaData: { hightKey: number; lowKey: number };
 
   public nextLevelCache: ICache;
-  private logger = scope(console, '@StoreCache');
-
+  private logger = scope(console, 'StoreCache');
 
   constructor(
     private _store: DocumentStore,
-    private _logger: LogService,
     private _storeSearchService: StoreSearchService,
   ) { }
 
@@ -54,11 +52,12 @@ export class StoreCache implements ICache {
   CreateDocument(content: string, format: DocFormat) {
     return this.nextLevelCache.CreateDocument(content, format).pipe(
       tap(doc => {
+        const id = doc.metaData.id;
         this._store.docContent.add(doc.content);
         this._store.docMeta.add(doc.metaData);
-        this._store.currentId_.next(doc.metaData.id);
+        this._store.updateDocStatus({isEditable:true}, id);
+        this._store.currentId_.next(id);
         this._store.docContent.delete(NEW_DOC_ID);
-        this._store.updateCurrentDocStatus({isEditable:true});
       })
     );
   }

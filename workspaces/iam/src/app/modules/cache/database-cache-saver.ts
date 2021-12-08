@@ -45,7 +45,7 @@ export class DatabaseCacheSaver {
       )
     ).pipe(
       map(([content, meta]) => {
-        this.store.updateCurrentDocStatus({ isEditorDirty: false, isDbDirty: true });
+        this.store.updateDocStatus({ isEditorDirty: false, isDbDirty: true });
         return new Document(docMeta, docContent);
       }),
       switchMap(doc => {
@@ -78,11 +78,11 @@ export class DatabaseCacheSaver {
     ).pipe(
       switchMap(([content, docMeta]) => {
         // saving to net
-        this.store.updateCurrentDocStatus({ isSyncing: true });
+        this.store.updateDocStatus({ isSyncing: true });
         return this.nextLevelCache.updateDocument(docMeta, content, false, changeLog).pipe(
           switchMap(doc => {
             // saved to net
-            this.store.updateCurrentDocStatus({ isDbDirty: false, isSyncing: false })
+            this.store.updateDocStatus({ isDbDirty: false, isSyncing: false })
             return this.db.delete<DirtyDocument>(DataTables.DirtyDocs, id).pipe(
               map(r => doc)
             );
