@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MarkdownEditorService } from './services/markdown-editor.service';
 import { MarkdownEditorRoutingModule } from './markdown-editor-routing.module';
-import { MarkdownEditorComponent } from './markdown-editor.component';
 import { FormsModule } from '@angular/forms';
 import { SpinnerModule } from '@metaseed/spinner';
 import { MaterialModule } from '../../material/material.module';
@@ -14,6 +13,7 @@ import { KeyMapService } from './services/keymap.service';
 import { FileUploadComponent } from './codemirror-editor/file-upload/file-upload.component';
 import { EditorToolbarModule } from './editor-toolbar/editor-toolbar.module';
 import { CodeMirrorValueAccessor } from './codemirror-editor/codemirror-component/codemirror.value-accessor';
+import { MarkdownEditorComponent } from './codemirror-editor/markdown-editor.component';
 
 @NgModule({
   declarations: [

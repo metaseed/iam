@@ -1,7 +1,7 @@
 import { Routes, RouterModule } from '@angular/router';
-import { MarkdownEditorComponent } from './markdown-editor.component';
 import { NgModule } from '@angular/core';
 import { CanDeactivateGuard } from 'core';
+import { MarkdownEditorComponent } from './codemirror-editor/markdown-editor.component';
 
 const markdownEditorRoutes: Routes = [
   {

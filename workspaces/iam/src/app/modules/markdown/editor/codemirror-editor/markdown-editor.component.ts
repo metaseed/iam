@@ -7,20 +7,20 @@ import {
   AfterViewInit,
   OnDestroy
 } from '@angular/core';
-import { MarkdownEditorService } from '.';
-import { CodemirrorComponent } from './codemirror-editor/codemirror-component/codemirror.component';
+import { CodemirrorComponent } from '../codemirror-editor/codemirror-component/codemirror.component';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { NEW_DOC_ID } from 'shared';
-import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from '../model/markdown.model';
+import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from '../../model/markdown.model';
 import { ContainerRef, ICanComponentDeactivate, scope, Utilities } from 'core';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { SubscriptionManager } from 'app/modules/core/utils/subscription-manager';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
 import { DocumentStore } from 'app/modules/shared/store/document.store';
 import { DialogData, MessageDialog } from 'app/modules/shared/message-dialog';
+import { MarkdownEditorService } from '../services';
 
 @Component({
   selector: 'ms-markdown-editor',
@@ -56,24 +56,21 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
     super
       .addSub(
         this.editorService.docEditorLoaded$.subscribe(() => {
-          setTimeout(() => (this.editorLoaded = true), 0);
-        }))
-      .addSub(
+          setTimeout(() => (this.editorLoaded = true));
+        }),
         this.markdownStore.editIt_
-          .subscribe(({ sourceLine } = {} as any) => {
+          .subscribe(({ sourceLine }) => {
             if (!sourceLine) return;
             this.markdownStore.documentMode_.next(DocumentMode.Edit);
             setTimeout(() => {
               this.editorService.gotoLine(sourceLine[0]);
-            }, 0);
-          }))
-      .addSub(
-        this.editorService.docContentModified$.subscribe(([content,editor])=>this.markdownStore.editorContentChanged_.next(content)))
-      .addSub(
+            });
+          }),
+        this.editorService.docContentModified$.subscribe(([content, editor]) => this.markdownStore.editorContentChanged_.next(content)),
         this.docMode$.subscribe(mode => {
           switch (mode) {
             case DocumentMode.Edit: {
-              setTimeout(() => this.codeMirrorComponent.refresh(), 0);
+              setTimeout(() => this.codeMirrorComponent.refresh());
               break;
             }
           }
@@ -127,11 +124,11 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
       }
     };
 
-    const dialogData:DialogData = {title:'Save?', message:'Document modified, are you want to save?', defaultAction:'Yes', additionalAction: 'No'}
+    const dialogData: DialogData = { title: 'Save?', message: 'Document modified, are you want to save?', defaultAction: 'Yes', additionalAction: 'No' }
     const status = this.store.currentDocStatus$.state;
     if (status?.isEditorDirty) {
       return this.dialog
-        .open(MessageDialog, {width:'300px', data:dialogData})
+        .open(MessageDialog, { width: '300px', data: dialogData })
         .afterClosed()
         .pipe(
           map(value => {
