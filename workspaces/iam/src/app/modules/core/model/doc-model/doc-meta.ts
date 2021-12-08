@@ -24,17 +24,34 @@ export interface HeadMeta {
   enable: string[];
 }
 
+function deSerialize(metaData: string) {
+  const re = /<!--\stype:iam[\r\n]*([\s\S]*)-->[\s\S]*/gm;
+  const jsonString = re.exec(metaData);
+  if (!jsonString) return null;
+  try {
+    const meta = <DocMeta>JSON.parse(jsonString[1]);
+
+    meta.createDate = meta.createDate && new Date(meta.createDate);
+    meta.updateDate = meta.updateDate && new Date(meta.updateDate);
+    return meta;
+  } catch (err) {
+    console.log(jsonString)
+    console.error(err);
+    return null;
+  }
+}
+
 export function issueToDocMeta(
   issue: Issue,
   tagCache: EntityCacheStore<string, Tag>) {
-  let meta = DocMeta.deSerialize(issue.body);
+  let meta = deSerialize(issue.body);
   if (!meta) meta = {} as DocMeta;
+  meta.isDeleted = !!issue.closed_at;
   meta.id = meta.id || issue.number;
   meta.tag = issue.labels.map(l => l.name);
   meta.updateDate = issue.updated_at ? new Date(issue.updated_at) : meta.updateDate;
   meta.createDate = issue.created_at ? new Date(issue.created_at) : meta.createDate;
   meta.format = meta.format || 'md';
-  meta.isDeleted = !!issue.closed_at;
   meta._context = issue;
 
   const tags = issue.labels.map(l =>
@@ -188,23 +205,6 @@ export class DocMeta {
     const meta = { ...oldMeta, ...newMeta } as DocMeta;
     const metaStr = DocMeta.serialize(meta, contentUrl);
     return { meta, metaStr };
-  }
-
-  static deSerialize(metaData: string) {
-    const re = /<!--\stype:iam[\r\n]*([\s\S]*)-->[\s\S]*/gm;
-    const jsonString = re.exec(metaData);
-    if (!jsonString) return null;
-    try {
-      const meta = <DocMeta>JSON.parse(jsonString[1]);
-
-      meta.createDate = meta.createDate && new Date(meta.createDate);
-      meta.updateDate = meta.updateDate && new Date(meta.updateDate);
-      return meta;
-    } catch (err) {
-      console.log(jsonString)
-      console.error(err);
-      return null;
-    }
   }
 
   // http://jsfiddle.net/handtrix/YvQ5y/
