@@ -23,7 +23,7 @@ export class MarkdownEditorService implements IDocEditor {
   // when doc content changes set via [model] change
   public docContentSet$ = new Subject<ICodeMirrorEditor>();
   // when doc content changes set via editor box
-  public docContentModified$ = new Subject<string>();
+  public docContentModified$ = new Subject<[string, ICodeMirrorEditor]>();
   // when doc editor(codemirror) loaded in browser
   public docEditorLoaded$ = new Subject<ICodeMirrorEditor>();
 

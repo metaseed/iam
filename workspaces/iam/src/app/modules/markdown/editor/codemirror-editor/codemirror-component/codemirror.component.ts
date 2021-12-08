@@ -62,7 +62,6 @@ export class CodemirrorComponent extends SubscriptionManager
 
   codemirror: CodeMirror.EditorFromTextArea;
 
-  _value = "";
   private showLineNumber;
 
   constructor(
@@ -114,18 +113,17 @@ export class CodemirrorComponent extends SubscriptionManager
     this.editorService.docEditorLoaded$.next(this.codemirror);
   }
 
-  get value() { return this._value; }
+  get value() { return this.codemirror.getValue(); }
 
   codemirrorInit(config) {
     this.codemirror = CodeMirror.fromTextArea(this.host, config);
 
     this.codemirror.on("change", () => {
-      const value = this.codemirror.getValue();
-      if (value !== this._value) {
-        this._value = value;
-        this.change.emit(value);
-        this.editorService.docContentModified$.next(value);
-      }
+      if(this._contentSet) return;
+
+      const value = this.value;
+      this.change.emit(value);
+      this.editorService.docContentModified$.next([value, this.codemirror]);
     });
 
     this.codemirror.on("cursorActivity", doc => this.changeCursorStyle(doc));
@@ -138,12 +136,15 @@ export class CodemirrorComponent extends SubscriptionManager
       this.blur.emit();
     });
   }
+  private _contentSet = false;
 
   writeValue(value) {
-    this._value = value;
     if (this.codemirror) {
+      this._contentSet = true;
       this.codemirror.setValue(value);
-      if (value) this.editorService.docContentSet$.next(this.codemirror);
+      this._contentSet = false;
+      this.codemirror.clearHistory();
+      this.editorService.docContentSet$.next(this.codemirror);
     }
   }
 

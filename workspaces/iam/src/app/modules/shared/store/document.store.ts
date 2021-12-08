@@ -49,9 +49,7 @@ export class DocumentStore {
 
   currentDocStatus$ = this.docStatus.currentEntity$;
 
-  currentDocContentString$ = state(this.currentDocContent$.pipe(
-    map(content => content?.content ?? '')
-  ));
+  currentDocContentString$ = this.currentDocContent$.map(content => content?.content);
 
   currentDocStatus_IsEditorDirty$ = this.currentDocStatus$.map(status => status?.isEditorDirty);
   currentDocStatus_IsEditable$ = this.currentDocStatus$.map(status => status?.isEditable);

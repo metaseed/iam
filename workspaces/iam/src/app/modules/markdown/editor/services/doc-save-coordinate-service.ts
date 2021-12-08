@@ -41,9 +41,6 @@ export class DocSaveCoordinateService extends SubscriptionManager {
         }))
       .addSub(
         this.editorService.docContentModified$
-          .pipe(
-            combineLatestWith(this.editorLoaded$)
-          )
           .subscribe(([content, editor]) => this.checkDirty(editor)))
       .addSub(
         this.documentEffects.saveDocument_.operationStatus$
