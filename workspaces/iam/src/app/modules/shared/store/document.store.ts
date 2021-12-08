@@ -54,7 +54,6 @@ export class DocumentStore {
   currentDocStatus_IsEditorDirty$ = this.currentDocStatus$.map(status => status?.isEditorDirty);
   currentDocStatus_IsEditable$ = this.currentDocStatus$.map(status => status?.isEditable);
 
-
   currentDocStatus_IsDbDirty$ = this.currentDocStatus$.map(status => status?.isDbDirty);
 
   currentDocStatus_IsSyncing$ = this.currentDocStatus$.map(status => status?.isSyncing);
