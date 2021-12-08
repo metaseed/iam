@@ -35,8 +35,8 @@ function deSerialize(metaData: string) {
     meta.updateDate = meta.updateDate && new Date(meta.updateDate);
     return meta;
   } catch (err) {
-    console.log(jsonString)
-    console.error(err);
+    logger.debug(jsonString)
+    logger.error(err);
     return null;
   }
 }
@@ -235,7 +235,7 @@ export class DocMeta {
     pica
       .resize(img, canvas)
       .then(result => pica.toBlob(result, 'image/jpeg', 0.9))
-      .then(blob => console.log('resized to canvas & created blob!'));
+      .then(blob => logger.debug('resized to canvas & created blob!'));
   }
 
   static convertFileToDataUrlViaFileReader(url, callback) {
