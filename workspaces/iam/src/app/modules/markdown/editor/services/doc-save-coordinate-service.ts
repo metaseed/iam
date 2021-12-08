@@ -26,6 +26,7 @@ export class DocSaveCoordinateService extends SubscriptionManager {
     super();
     super.addSub(
       this.editorService.docEditorLoaded$.subscribe(editor => this.editor = editor),
+
       this.store.currentDocStatus_IsEditorDirty$
         .pipe(
           debounceTime(AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL), // e  e e          |

@@ -74,7 +74,6 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   showPreview$ = this.markdownStore.editWithPreview_;
   logger = scope(console, '@MarkdownEditorToolbar');
 
-
   constructor(
     private router: Router,
     private utils: Utilities,
@@ -90,16 +89,14 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   ) {
     super();
     super.addSub(
-      this._breakpointObserver.observe(['(orientation: portrait)', '(orientation: landscape)'])
-    ).addSub(
+      this._breakpointObserver.observe(['(orientation: portrait)', '(orientation: landscape)']),
       this._editorService.docEditorLoaded$.subscribe(editor => {
         this.editor = editor;
-      })
-    ).addSub(
+      }),
       // switch to view mode if user view an history version with editor open
       this.store.currentDocStatus_IsEditable$.pipe(tap(
         isEditable => {
-          if(!isEditable) this.toViewMode();
+          if (!isEditable) this.toViewMode();
         }
       ))
     );

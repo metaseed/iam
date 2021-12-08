@@ -1,9 +1,9 @@
 import { DocContent, DocMeta, SearchResult, Tag } from "core";
 import { EntityCacheStore, MemEntityCache } from "@rx-store/entity";
-import { state, StateSubject } from "@rx-store/core";
+import { StateSubject } from "@rx-store/core";
 import { Injectable, isDevMode } from "@angular/core";
 import { DocumentStatus } from "app/modules/core/model/doc-model/doc-status";
-import { map, tap } from "rxjs/operators";
+import { tap } from "rxjs/operators";
 import { pipe } from "rxjs";
 
 export type DocMetaContent = {id: number, meta?:DocMeta, content?:DocContent};
@@ -17,7 +17,7 @@ export class DocumentStore {
       globalThis.__RX_STORE__.store = this;
     }
     this.currentDocStatus_IsEditable$.subscribe(v => {
-      globalThis.document.documentElement.style.setProperty('--edit-it-visible', v ? 'visible' : 'hidden');
+      globalThis.document.documentElement.style.setProperty('--iam-is-editable', v ? 'visible' : 'hidden');
     })
   }
 

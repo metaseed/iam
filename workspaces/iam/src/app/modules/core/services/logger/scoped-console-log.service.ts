@@ -6,7 +6,7 @@ let logFunctionPrdScreen: string[] = [];
  * call this function in app init at prod env.
  */
 export function screenConsoleLog(screeLogFunctions?: string[]) {
-  logFunctionPrdScreen= screeLogFunctions??defaultLogFunctionPrdScreen;
+  logFunctionPrdScreen = screeLogFunctions ?? defaultLogFunctionPrdScreen;
   // direct call on console(no proxy) are screened
   for (const funcName of logFunctionPrdScreen) {
     console[funcName] = () => undefined;
@@ -21,6 +21,7 @@ const scopedConsoleFunctions = [
   console.error.name, console.count.name, console.assert.name, console.trace.name
 ];
 export function scope(cons: Console, prefix: string) {
+  if (!prefix.startsWith('@')) prefix = '@' + prefix;
 
   return new Proxy(cons, {
     get(target, propKey, receiver) {

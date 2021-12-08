@@ -28,14 +28,14 @@ body {
 }
 
 :root {
-  --edit-it-visible: visible
+  --iam-is-editable: visible
 }
 
 .markdown-viewer {
   .edit-it-content:hover {
     > .edit-it {
       > .edit-it-icon {
-        visibility: var(--edit-it-visible);
+        visibility: var(--iam-is-editable);
         cursor: pointer;
       }
     }
