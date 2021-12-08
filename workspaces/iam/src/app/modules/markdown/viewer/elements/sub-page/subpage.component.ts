@@ -40,7 +40,7 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
       this.removeSub(metasSub);
       metasSub = this.addObs(
         this.store.docMetasOfIds$(this.ids).pipe(
-          filter(metas => !!metas?.length),
+          // filter(metas => !!metas?.length), should not filter. case: delete the last one
           map(metas => metas.filter(meta => !!meta)),
           debounceTime(300),
           tap(metas => this.pageList = metas)
@@ -48,7 +48,8 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
       );
 
       const { ids } = this;
-      this.documentEffects.readDocMetas_.next({ ids });
+      if (ids.length > 0)
+        this.documentEffects.readDocMetas_.next({ ids });
     }
   })();
 
