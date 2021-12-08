@@ -128,11 +128,11 @@ export class DocumentStore {
   }
 
   delete(id: number) {
-    this.logger.debug('delete docMeta')
+    this.logger.debug('delete docMeta...')
     this.docMeta.delete(id);
-    this.logger.debug('delete docContent')
+    this.logger.debug('delete docContent...')
     this.docContent.delete(id);
-    this.logger.debug('delete docStatus')
+    this.logger.debug('delete docStatus...')
     this.docStatus.delete(id);
   }
   deleteMany(ids: number[]) {
