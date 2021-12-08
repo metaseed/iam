@@ -5,14 +5,14 @@ import { File } from './model/file';
 import { HttpClient } from '@angular/common/http';
 import { Issue } from './issues/issue';
 import { from, Observable } from 'rxjs';
-import { base64Encode, base64Decode, scope } from 'core';
+import { base64Encode, base64Decode, Logger } from 'core';
 import { map, flatMap, tap, catchError, switchMap } from 'rxjs/operators';
 import { Commit } from './model/commit';
 import { of } from 'rxjs';
 
 export class Repository extends Requestable {
 
-  private logger = scope(console, '@githubRepository');
+  private logger = Logger('githubRepository');
   public fullName: string;
 
   constructor(http: HttpClient, userInfo: UserInfo, private _name: string) {

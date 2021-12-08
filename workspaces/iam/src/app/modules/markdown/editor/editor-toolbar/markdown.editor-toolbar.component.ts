@@ -4,7 +4,7 @@ import { MarkdownComponent } from '../../markdown.component';
 import { combineLatest } from 'rxjs';
 import { DocService } from 'home';
 import { ICodeMirrorEditor, MarkdownEditorService } from '..';
-import { DocFormat, scope } from 'core';
+import { DocFormat, Logger } from 'core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';
 import { map, startWith, tap } from 'rxjs/operators';
@@ -72,7 +72,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   )
 
   showPreview$ = this.markdownStore.editWithPreview_;
-  logger = scope(console, '@MarkdownEditorToolbar');
+  logger = Logger('MarkdownEditorToolbar');
 
   constructor(
     private router: Router,

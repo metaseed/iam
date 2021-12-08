@@ -2,11 +2,11 @@ import picaLib from 'pica';
 import YAML from 'js-yaml';
 import { Issue } from 'app/modules/net-storage/github/issues/issue';
 import { EntityCacheStore } from '@rx-store/entity';
-import { scope } from 'core';
+import { Logger } from 'core';
 
 export interface Tag { name: string, description?: string, color?: string }
 
-const logger = scope(console, '@DocMeta')
+const logger = Logger('DocMeta')
 
 const pica = picaLib();
 

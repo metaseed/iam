@@ -1,14 +1,14 @@
 import { Directive, Input } from "@angular/core";
 import { DocEditorService } from "app/modules/shared/doc-editor.service";
 import { DocumentStore } from "app/modules/shared/store/document.store";
-import { scope } from "core";
+import { Logger } from "core";
 
 @Directive()
 export class DataSourceLines {
 
   public sourceLineStart: number;
   public sourceLineEnd: number;
-  protected logger = scope(console, `@${this.constructor.name}`)
+  protected logger = Logger(`${this.constructor.name}`)
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input("data-source-lines")
   public set sourceLines(value) {

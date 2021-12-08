@@ -1,6 +1,6 @@
 import { Database, ModifyAction } from '../database/database-engine';
 import { Injectable } from '@angular/core';
-import { Document, DocMeta, DocContent, DocFormat, SubscriptionManager, scope } from 'core';
+import { Document, DocMeta, DocContent, DocFormat, SubscriptionManager, Logger } from 'core';
 import { Observable, from, concat, asyncScheduler } from 'rxjs';
 import {
   toArray,
@@ -24,7 +24,7 @@ export interface IterableDocuments extends IterableIterator<Observable<Document>
 export class DatabaseCache extends SubscriptionManager implements ICache {
   public nextLevelCache: ICache;
   private dbSaver: DatabaseCacheSaver;
-  private logger = scope(console, '@IndexDbCache');
+  private logger = Logger('IndexDbCache');
 
   constructor(private db: Database, private store: DocumentStore) {
     super();

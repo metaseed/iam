@@ -20,7 +20,7 @@ const scopedConsoleFunctions = [
   console.debug.name, console.log.name, console.info.name, console.warn.name,
   console.error.name, console.count.name, console.assert.name, console.trace.name
 ];
-export function scope(cons: Console, prefix: string) {
+export function Logger(prefix, cons: Console = console) {
   if (!prefix.startsWith('@')) prefix = '@' + prefix;
 
   return new Proxy(cons, {

@@ -14,7 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { NEW_DOC_ID } from 'shared';
 import { DocumentMode, IMarkdownStore, MARKDOWN_STORE_TOKEN } from '../../model/markdown.model';
-import { ContainerRef, ICanComponentDeactivate, scope, Utilities } from 'core';
+import { ContainerRef, ICanComponentDeactivate, Logger, Utilities } from 'core';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { SubscriptionManager } from 'app/modules/core/utils/subscription-manager';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/store';
@@ -28,7 +28,7 @@ import { MarkdownEditorService } from '../services';
   styleUrls: ['./markdown-editor.component.scss']
 })
 export class MarkdownEditorComponent extends SubscriptionManager implements ICanComponentDeactivate, AfterViewInit, OnDestroy {
-  logger = scope(console, '@MarkdownEditorComponent');
+  logger = Logger('MarkdownEditorComponent');
 
   editorLoaded = false;
   DocumentMode = DocumentMode;

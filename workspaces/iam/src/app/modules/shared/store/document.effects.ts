@@ -1,6 +1,6 @@
 import { Inject, Injectable, InjectionToken } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { CACHE_FACADE_TOKEN, DocContent, DocFormat, DocMeta, ICache, NET_COMMU_TIMEOUT, scope } from "core";
+import { CACHE_FACADE_TOKEN, DocContent, DocFormat, DocMeta, ICache, NET_COMMU_TIMEOUT, Logger } from "core";
 import { forkJoin, map, pipe, switchMap, tap, throwError } from "rxjs";
 import { DOC_HISTORY_VERSION_ID, NEW_DOC_ID } from "shared";
 import { DocEffectsUtil } from "./document.effects.util";
@@ -12,7 +12,7 @@ const EFFECT_TIMEOUT = NET_COMMU_TIMEOUT;
 
 @Injectable({ providedIn: 'root' })
 export class DocumentsEffects extends EffectManager {
-  private logger = scope(console, '@DocumentsEffects');
+  private logger = Logger('DocumentsEffects');
 
   constructor(
     @Inject(CACHE_FACADE_TOKEN)

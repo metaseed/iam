@@ -7,7 +7,7 @@ import {
   LogService,
   SearchResult,
   SearchResultSource,
-  scope,
+  Logger,
   Tag
 } from 'core';
 import { Injectable } from '@angular/core';
@@ -22,7 +22,7 @@ export class StoreCache implements ICache {
   docMetaData: { hightKey: number; lowKey: number };
 
   public nextLevelCache: ICache;
-  private logger = scope(console, 'StoreCache');
+  private logger = Logger('StoreCache');
 
   constructor(
     private _store: DocumentStore,

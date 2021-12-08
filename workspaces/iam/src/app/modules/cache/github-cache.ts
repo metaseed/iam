@@ -1,4 +1,4 @@
-import { ICache, DocMeta, DocContent, DocFormat, SearchResult, SearchResultSource, issueToDocMeta, Tag, scope } from 'core';
+import { ICache, DocMeta, DocContent, DocFormat, SearchResult, SearchResultSource, issueToDocMeta, Tag, Logger } from 'core';
 import { Observable, throwError, concat, asyncScheduler, of, merge } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { GithubStorage } from '../net-storage/github/github';
@@ -19,7 +19,7 @@ const FIRST_PAGE_READY_TO_REFRESH = 5 * 60 * 1000;
 export class GithubCache implements ICache {
   // used to calculate the which page the key is in.
   private highestId: number;
-  private logger = scope(console, '@GithubCache');
+  private logger = Logger('GithubCache');
 
   constructor(private githubStorage: GithubStorage, private util: gitHubCacheUtil) {
     // refresh the first page every

@@ -1,4 +1,4 @@
-import { DocContent, DocMeta, SearchResult, Tag } from "core";
+import { DocContent, DocMeta, Logger, SearchResult, Tag } from "core";
 import { EntityCacheStore, MemEntityCache } from "@rx-store/entity";
 import { state, StateSubject } from "@rx-store/core";
 import { Injectable, isDevMode } from "@angular/core";
@@ -11,6 +11,7 @@ export type DocMetaContentRecord = Record<number, DocMetaContent>
 
 @Injectable({ providedIn: 'root' })
 export class DocumentStore {
+  private logger = Logger(`${this.constructor.name}`)
   constructor() {
     if (isDevMode()) {
       if (!globalThis.__RX_STORE__) globalThis.__RX_STORE__ = {};
@@ -127,8 +128,11 @@ export class DocumentStore {
   }
 
   delete(id: number) {
+    this.logger.debug('delete docMeta')
     this.docMeta.delete(id);
+    this.logger.debug('delete docContent')
     this.docContent.delete(id);
+    this.logger.debug('delete docStatus')
     this.docStatus.delete(id);
   }
   deleteMany(ids: number[]) {
