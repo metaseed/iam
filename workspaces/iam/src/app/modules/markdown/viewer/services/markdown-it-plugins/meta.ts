@@ -1,8 +1,8 @@
 // https://github.com/CaliStyle/markdown-it-meta
 
-import * as MarkdownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
 import YAML from 'js-yaml';
-import * as StateBlock from 'markdown-it/lib/rules_block/state_block';
+import StateBlock from 'markdown-it/lib/rules_block/state_block';
 import Renderer from 'markdown-it/lib/renderer';
 import { DocMeta } from 'core';
 

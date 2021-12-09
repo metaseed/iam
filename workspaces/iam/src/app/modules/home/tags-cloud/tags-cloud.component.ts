@@ -71,7 +71,7 @@ export class TagsCloudComponent {
   apply(tag: BackupTag) {
     this.service.updateTag(tag.nameOriginal, tag).subscribe(
       (t: Tag) => {
-        tag.nameOriginal = t.name;
+        this.store.tags.update({ id: tag.nameOriginal, changes: t })
       }
     );
 
@@ -101,7 +101,7 @@ export class TagsCloudComponent {
         this.snackBar.open(`tag:${t.name} added!`, 'ok');
       }),
       catchError(err => {
-        this.snackBar.open(`error while adding tag: ${err?.error?.errors?.[0]?.code??''}`);
+        this.snackBar.open(`error while adding tag: ${err?.error?.errors?.[0]?.code ?? ''}`);
         return EMPTY;
       })
     ).subscribe();
