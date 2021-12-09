@@ -23,6 +23,7 @@ export class DatabaseCacheSaver {
           this.store.docContent.upsert(doc.content);
         })
       ))))),
+      //todo: error retry not stop
       catchError(err => { console.error(err); return EMPTY; })
     )
   }

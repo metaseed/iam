@@ -13,3 +13,10 @@
 1. DocContent do not rely on DocMeta
 1. part of DocMeta's content come from DocContent
 1. DocContent could be accessed via url or from click on DocMeta, the parameter: id and format
+
+## SwUpdate Service Worker
+> error: Service workers are disabled or not supported by this browser 
+    at SwUpdate.checkForUpdate (service-worker.mjs:315)
+    at UpdateService.checkForUpdate (update.service.ts:49)
+
+Because ng serve does not work with service workers, you must use a separate HTTP server to test your project locally. You can use any HTTP server
