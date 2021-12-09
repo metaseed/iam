@@ -1,48 +1,96 @@
-<button mat-icon-button style="float: right;top:-18px;right: -18px;" (click)="close()" color="primary" aria-label="close the tags popup">
+<button
+  mat-icon-button
+  style="float: right; top: -18px; right: -18px"
+  (click)="close()"
+  color="primary"
+  aria-label="close the tags popup"
+>
   <mat-icon>close</mat-icon>
 </button>
 <ul class="cloud" data-show-value role="navigation" aria-label="tag cloud">
-  <li *ngFor="let tag of tags" [title]="tag.description??''">
-    <a (click)="select(tag)" [class.selected]="tag===selectedTag"
-    [style.color]="'#'+tag.color"
-    [style.background-color]="'#'+tag.color+'22'"
-    [style.border]="'1px solid #'+tag.color"
-    tabindex="-1" data-weight="4">{{tag.nameOriginal}}</a></li>
+  <li *ngFor="let tag of tags" [title]="tag.description ?? ''">
+    <a
+      (click)="select(tag)"
+      [class.selected]="tag === selectedTag"
+      [style.color]="'#' + tag.color"
+      [style.background-color]="'#' + tag.color + '22'"
+      [style.border]="'1px solid #' + tag.color"
+      tabindex="-1"
+      data-weight="4"
+      >{{ tag.nameOriginal }}</a
+    >
+  </li>
 </ul>
-
-<section class="tag-edit">
-  <mat-form-field appearance="standard">
-    <mat-label>Name</mat-label>
-    <input required matInput placeholder="tag name" [style.color]="'#'+selectedTag.color" [(ngModel)]="selectedTag.name" #name="ngModel"/>
-    <mat-hint *ngIf="name.invalid">name is required</mat-hint>
-  </mat-form-field>
-  <mat-form-field appearance="standard">
-    <mat-label>Color</mat-label>
-    <span matPrefix>#&nbsp;</span>
-    <input class="color-input" matInput placeholder="tag color"[style.color]="'#'+selectedTag.color" pattern="[a-fA-F0-9]{6}" #color="ngModel" [(ngModel)]="selectedTag.color" />
-    <mat-icon matSuffix title="generate new color" (click)="newColor()">refresh</mat-icon>
-    <mat-hint *ngIf="color.invalid">input 6 hex number</mat-hint>
-
-  </mat-form-field>
-  <mat-form-field appearance="standard">
-    <mat-label>Description</mat-label>
-    <input matInput placeholder="tag description" [(ngModel)]="selectedTag.description" #description="ngModel" />
-    <!-- <mat-hint>Hint</mat-hint> -->
-  </mat-form-field>
-
-  <div>
-    <button mat-icon-button aria-label="apply tag modification" (click)="apply(selectedTag)"  *ngIf="canApply(selectedTag)" title="apply tag modification">
+<mat-card>
+  <section class="tag-edit">
+    <mat-form-field appearance="standard">
+      <mat-label>Name</mat-label>
+      <input
+        required
+        matInput
+        placeholder="tag name"
+        [style.color]="'#' + selectedTag.color"
+        [(ngModel)]="selectedTag.name"
+        #name="ngModel"
+      />
+      <mat-hint *ngIf="name.invalid">name is required</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="standard">
+      <mat-label>Color</mat-label>
+      <span matPrefix>#&nbsp;</span>
+      <input
+        class="color-input"
+        matInput
+        placeholder="tag color"
+        [style.color]="'#' + selectedTag.color"
+        pattern="[a-fA-F0-9]{6}"
+        #color="ngModel"
+        [(ngModel)]="selectedTag.color"
+      />
+      <mat-icon matSuffix title="generate new color" (click)="newColor()"
+        >refresh</mat-icon
+      >
+      <mat-hint *ngIf="color.invalid">input 6 hex number</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="standard">
+      <mat-label>Description</mat-label>
+      <input
+        matInput
+        placeholder="tag description"
+        [(ngModel)]="selectedTag.description"
+        #description="ngModel"
+      />
+      <!-- <mat-hint>Hint</mat-hint> -->
+    </mat-form-field>
+  </section>
+  <div class="buttons">
+    <button
+      mat-icon-button
+      aria-label="apply tag modification"
+      (click)="apply(selectedTag)"
+      *ngIf="canApply(selectedTag)"
+      title="apply tag modification"
+    >
       <mat-icon>done</mat-icon>
     </button>
-    <button mat-icon-button aria-label="add new tag" *ngIf="canAdd(selectedTag)" (click)="addTag(selectedTag)" title="add new tag">
+    <button
+      mat-icon-button
+      aria-label="add new tag"
+      *ngIf="canAdd(selectedTag)"
+      (click)="addTag(selectedTag)"
+      title="add new tag"
+    >
       <mat-icon>add</mat-icon>
     </button>
-    <button mat-icon-button aria-label="delete tag" *ngIf="selectedTag.id" (click)="delete(selectedTag)" title="delete selected tag">
+    <button
+      mat-icon-button
+      aria-label="delete tag"
+      *ngIf="selectedTag.id"
+      (click)="delete(selectedTag)"
+      title="delete selected tag"
+    >
       <mat-icon>delete</mat-icon>
     </button>
   </div>
-
-</section>
-
+</mat-card>
 <doc-list [docMetas]="selectedTagDocs" (show)="onOpen($event)"></doc-list>
-

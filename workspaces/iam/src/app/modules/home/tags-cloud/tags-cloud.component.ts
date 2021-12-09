@@ -5,7 +5,7 @@ import { Issue } from 'app/modules/net-storage/github';
 import { DocumentStore } from 'app/modules/shared/store/document.store';
 import { DocMeta, issueToDocMeta, Tag } from 'core';
 import { EMPTY } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { DialogData, MessageDialog } from 'shared';
 import { TagsCloudService } from './tags-cloud.service';
 
@@ -41,10 +41,10 @@ export class TagsCloudComponent {
     this.selectedTag.color = Math.floor(Math.random() * 16777215/*0xffffff */).toString(16).padStart(6, '0');
   }
   delete(tag: Tag) {
-    const dialogData: DialogData = { title: 'Delete?', message: `are you want to delete tag: '${tag.name}'?\nATTENTION: the tag would be removed from all documents that has this tag.`, defaultAction: 'Ok', additionalAction: 'Cancel' }
+    const dialogData: DialogData = { title: 'Delete?', message: `Are you want to delete tag: '${tag.name}'?\n \n ATTENTION: the tag would be removed from all documents that has this tag.`, defaultAction: 'Ok', additionalAction: 'Cancel' }
 
     this.dialog
-      .open(MessageDialog, { width: '300px', data: dialogData })
+      .open(MessageDialog, { width: '40rem', height: '30rem', data: dialogData })
       .afterClosed()
       .pipe(
         switchMap(value => {
@@ -65,8 +65,7 @@ export class TagsCloudComponent {
     return !!(
       selectedTag.id &&
       selectedTag.name &&
-      selectedTag.name === selectedTag.nameOriginal &&
-      this.selectedTagChanged(selectedTag))
+      this.selectedTagModified(selectedTag))
   }
 
   apply(tag: BackupTag) {
@@ -93,17 +92,22 @@ export class TagsCloudComponent {
     );
   }
 
-  addTag(tag: Tag) {
+  addTag(tag: BackupTag) {
     this.service.addTag(tag).pipe(
       tap((t: Tag) => {
+        this.restoreOriginalProperties(tag);
         this.backupOriginalProperties(t);
         this.store.tags.upsert(t);
         this.snackBar.open(`tag:${t.name} added!`, 'ok');
+      }),
+      catchError(err => {
+        this.snackBar.open(`error while adding tag: ${err?.error?.errors?.[0]?.code??''}`);
+        return EMPTY;
       })
     ).subscribe();
   }
 
-  private selectedTagChanged(tag: BackupTag) {
+  private selectedTagModified(tag: BackupTag) {
     if (tag.description === '' && tag.descriptionOriginal === null) return false;
     return tag.name !== tag.nameOriginal || tag.description !== tag.descriptionOriginal || tag.color !== tag.colorOriginal;
   }
@@ -120,6 +124,11 @@ export class TagsCloudComponent {
     t.nameOriginal = t.name;
     t.descriptionOriginal = t.description;
     t.colorOriginal = t.color;
+  }
+  private restoreOriginalProperties(t: BackupTag) {
+    t.name = t.nameOriginal;
+    t.description = t.descriptionOriginal;
+    t.color = t.colorOriginal;
   }
 }
 

@@ -82,8 +82,14 @@ ul.cloud a:hover::before {
 }
 .tag-edit {
   display: flex;
+  flex-wrap: wrap;
   gap: 2rem;
   align-items: center;
+}
+.buttons {
+  display: flex;
+  column-gap: 1rem;
+  margin-bottom: 2rem;
 }
 .color-input {
   -webkit-text-stroke: 0.08px black;
