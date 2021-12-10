@@ -140,11 +140,11 @@ export class DocumentsEffects extends EffectManager {
     { type: '[DocumentsEffects]saveDocument', timeOut: EFFECT_TIMEOUT }
   );
 
-  deleteDocument_ = new EffectStateSubject<{ id: number }>().addMonitoredEffect(
+  deleteDocument_ = new EffectStateSubject<{ id?: number }>().addMonitoredEffect(
     effectInfo =>
       pipe(
         switchMap(state =>
-          this.cacheFacade.deleteDoc(state.id)
+          this.cacheFacade.deleteDoc(state.id ?? this.store.currentId_.state)
         ),
         tap<number>(id => effectInfo.success({ id }))
       ),

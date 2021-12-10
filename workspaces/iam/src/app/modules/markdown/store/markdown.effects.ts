@@ -14,6 +14,7 @@ export class MarkdownEffects {
 
   private onRefresh() {
     if (this.router.url.startsWith('/doc/new')) return;
+
     const params = this.router.parseUrl(this.router.url).queryParams;
     const title = params['title'];
     const num = +params['id'];
