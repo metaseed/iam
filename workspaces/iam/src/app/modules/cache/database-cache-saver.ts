@@ -21,11 +21,11 @@ export class DatabaseCacheSaver {
       debounceTime(6000)
     )
 
-    this.autoSave$ = interval(AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL).pipe(
+    this.autoSave$ = interval(10000).pipe(
       combineLatestWith(online$),
       switchMap(() => this.db.getAll<DirtyDocument>(DataTables.DirtyDocs)),
       filter(docs => docs.length > 0),
-      tap(dirtyDocs => this.logger.debug(`autoSaver: save dirty docs every ${AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL / 1000 / 60}min`, dirtyDocs)),
+      tap(dirtyDocs => this.logger.debug(`autoSaver: save dirty docs every ${AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL / 1000 / 60}min or network online again.`, dirtyDocs)),
       switchMap(ids => merge(...(ids.map(({ id, changeLog }) => this.saveToNet(id, changeLog).pipe(
         tap((doc: Document) => {
           this.store.docMeta.upsert(doc.metaData);
