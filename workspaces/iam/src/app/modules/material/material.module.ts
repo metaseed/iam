@@ -51,7 +51,6 @@ export const MatModules = [
   exports: [...MatModules],
   providers: [
     { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: MSG_DISPLAY_TIMEOUT } },
-    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { width: '95vw', height: '90vh' } },
 
   ]
 })

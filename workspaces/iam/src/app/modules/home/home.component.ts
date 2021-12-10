@@ -57,7 +57,7 @@ export class HomeComponent {
   }
 
   showTags(){
-    this.dialog.open(TagsCloudComponent);
+    this.dialog.open(TagsCloudComponent, { width: '95vw', height: '90vh' });
   }
   ngOnInit() {
     this._rememberScrollPosition();
