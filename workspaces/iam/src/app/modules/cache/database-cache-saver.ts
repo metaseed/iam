@@ -1,9 +1,10 @@
 import { interval, asyncScheduler, zip, merge } from 'rxjs';
-import { subscribeOn, catchError, switchMap, map, tap, filter, retry } from 'rxjs/operators';
+import { subscribeOn, catchError, switchMap, map, tap, filter, retry, combineLatestWith, startWith, debounceTime } from 'rxjs/operators';
 import { ICache, DocContent, DataTables, DocMeta, Document, AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL, Logger } from 'core';
 import { Database } from '../database/database-engine';
 import { DirtyDocument } from '../core/model/doc-model/doc-status';
 import { DocumentStore } from '../shared/store/document.store';
+import { fromEvent } from 'rxjs';
 
 export class DatabaseCacheSaver {
   public autoSave$;
@@ -14,7 +15,14 @@ export class DatabaseCacheSaver {
     private nextLevelCache: ICache,
     private store: DocumentStore
   ) {
+    const online$ = fromEvent<boolean>(window, 'online').pipe(
+      tap(status=> this.logger.debug(`browser is online.`,status)),
+      startWith(true),
+      debounceTime(6000)
+    )
+
     this.autoSave$ = interval(AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL).pipe(
+      combineLatestWith(online$),
       switchMap(() => this.db.getAll<DirtyDocument>(DataTables.DirtyDocs)),
       filter(docs => docs.length > 0),
       tap(dirtyDocs => this.logger.debug(`autoSaver: save dirty docs every ${AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL / 1000 / 60}min`, dirtyDocs)),
