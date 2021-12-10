@@ -17,7 +17,7 @@ export function idGeneratorWrapper<T>(idGenerator: IdGenerator<T>): IdGenerator<
       }
       return id;
     } catch (error) {
-      throw new Error(`could not generate id from entity:\n ${entity}`);
+      throw new Error(`could not generate id from entity:\n ${JSON.stringify(entity)}`);
     }
   }
 }

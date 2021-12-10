@@ -45,7 +45,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
           .pipe(
             subscribeOn(asyncScheduler),
             catchError(err => {
-              this.logger.debug(`error: when save docContent`,err)
+              this.logger.debug(`error: when save docContent`, err)
               throw err;
             })
           )
@@ -56,7 +56,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
           .pipe(
             subscribeOn(asyncScheduler),
             catchError(err => {
-              this.logger.debug(`error: when save docMeta`,err)
+              this.logger.debug(`error: when save docMeta`, err)
               throw err;
             })
           )
@@ -218,6 +218,13 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
         // another app instance changed remote data, so update local with remote
         // Note: local DB may have modified data sync to remote, but the sha is the same, means I'm the only one edit this doc, so we do not update the local
         const toUpdate = !inCache || inCache.sha !== fromNext.sha;
+        if (inCache && inCache.sha !== fromNext.sha) {
+          this.db.getAllKeys<number[]>(DataTables.DirtyDocs).pipe(
+            filter(dirtyDocIds => dirtyDocIds.includes(inCache.id)),
+            switchMap(() => this.db.delete(DataTables.DirtyDocs, inCache.id)),
+            tap(()=>this.logger.warn(`readDocContent: deleted id: ${inCache.id} from indexDB's DirtyDocs table, because of the sha is different from remote, this means we may lost changes related to  this doc`))
+          ).subscribe();
+        }
         return toUpdate;
       },
       // shouldDelete
@@ -253,7 +260,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
     const id = this.store.currentId_.state;
     this.db.getAllKeys<number[]>(DataTables.DirtyDocs).subscribe(dirtyDocIds => {
       if (dirtyDocIds.includes(id)) {
-        this.store.updateDocStatus({ isDbDirty: true });
+        this.store.updateDocStatus({ isDbDirty: true }, id);
       }
     });
   }
