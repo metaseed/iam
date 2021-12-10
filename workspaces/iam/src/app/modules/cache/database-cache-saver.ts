@@ -1,12 +1,13 @@
-import { interval, asyncScheduler, zip, EMPTY, merge } from 'rxjs';
-import { subscribeOn, catchError, switchMap, map, tap, filter } from 'rxjs/operators';
-import { ICache, DocContent, DataTables, DocMeta, Document, AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL } from 'core';
+import { interval, asyncScheduler, zip, merge } from 'rxjs';
+import { subscribeOn, catchError, switchMap, map, tap, filter, retry } from 'rxjs/operators';
+import { ICache, DocContent, DataTables, DocMeta, Document, AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL, Logger } from 'core';
 import { Database } from '../database/database-engine';
 import { DirtyDocument } from '../core/model/doc-model/doc-status';
 import { DocumentStore } from '../shared/store/document.store';
 
 export class DatabaseCacheSaver {
   public autoSave$;
+  private logger = Logger(this.constructor.name);
 
   constructor(
     private db: Database,
@@ -15,16 +16,16 @@ export class DatabaseCacheSaver {
   ) {
     this.autoSave$ = interval(AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL).pipe(
       switchMap(() => this.db.getAll<DirtyDocument>(DataTables.DirtyDocs)),
-      filter(docs=> docs.length > 0),
-      tap(dirtyDocs =>  console.debug(`@IndexDBCache.autoSaver: save dirty docs every ${AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL / 1000 / 60}min`, dirtyDocs) ),
+      filter(docs => docs.length > 0),
+      tap(dirtyDocs => this.logger.debug(`autoSaver: save dirty docs every ${AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL / 1000 / 60}min`, dirtyDocs)),
       switchMap(ids => merge(...(ids.map(({ id, changeLog }) => this.saveToNet(id, changeLog).pipe(
         tap((doc: Document) => {
           this.store.docMeta.upsert(doc.metaData);
           this.store.docContent.upsert(doc.content);
         })
       ))))),
-      //todo: error retry not stop
-      catchError(err => { console.error(err); return EMPTY; })
+      tap({ error: (err) => this.logger.error(err) }),
+      retry()
     )
   }
 
@@ -33,14 +34,14 @@ export class DatabaseCacheSaver {
       this.db.put<DocContent>(DataTables.DocContent, docContent).pipe(
         subscribeOn(asyncScheduler),
         catchError(err => {
-          console.error(err);
+          this.logger.error(err);
           throw err;
         })
       ),
       this.db.put<DocMeta>(DataTables.DocMeta, docMeta).pipe(
         subscribeOn(asyncScheduler),
         catchError(err => {
-          console.error(err);
+          this.logger.error(err);
           throw err;
         })
       )
@@ -65,14 +66,14 @@ export class DatabaseCacheSaver {
       this.db.get<DocContent>(DataTables.DocContent, id).pipe(
         subscribeOn(asyncScheduler),
         catchError(err => {
-          console.error(err);
+          this.logger.error(err);
           throw err;
         })
       ),
       this.db.get<DocMeta>(DataTables.DocMeta, id).pipe(
         subscribeOn(asyncScheduler),
         catchError(err => {
-          console.error(err);
+          this.logger.error(err);
           throw err;
         })
       )
