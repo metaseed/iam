@@ -93,16 +93,23 @@ export class DocumentsEffects extends EffectManager {
   );
 
   saveDocument_ = new EffectStateSubject<
-    { content: string; /*if user force save, show changeLog input box*/changeLog?: string; /** for new doc */format?: DocFormat; forceUpdate?: boolean }
+    {
+      content: string;
+      /*if user force save, show changeLog input box*/
+      changeLog?: string;
+      /*used by creating doc*/
+      format?: DocFormat;
+      forceUpdate?: boolean
+    }
   >().addMonitoredEffect(
     effectInfo =>
       pipe(
         switchMap(state => {
           const { content, format, forceUpdate, changeLog } = state;
           const docContent = DocContent.with(this.store.currentDocContent$.state, content);
-          const newTitle = DocMeta.getTitle(content);
+          const title = DocMeta.getTitle(content);
           const id = this.store.currentId_.state;
-          if (!newTitle) {
+          if (!title) {
             const msg = 'Must define a title!';
             this.snackbar.open(msg, 'OK');
             return throwError(() => new Error(msg));
@@ -111,7 +118,7 @@ export class DocumentsEffects extends EffectManager {
           if (id === NEW_DOC_ID) {
             return this.cacheFacade.CreateDocument(content, format).pipe(
               tap(d => {
-                this.util.modifyUrlAfterSaved(d.metaData.id, newTitle, format);
+                this.util.modifyUrlAfterSaved(d.metaData.id, title, format);
                 this.snackbar.open('New document saved!', 'OK');
               }),
             );
@@ -122,7 +129,7 @@ export class DocumentsEffects extends EffectManager {
               .updateDocument(meta, docContent, forceUpdate, changeLog)
               .pipe(
                 tap(d => {
-                  this.util.modifyUrlAfterSaved(d.metaData.id, newTitle, format);
+                  this.util.modifyUrlAfterSaved(d.metaData.id, title, format);
                   this.logger.log('Saved!');
                 })
               );
@@ -140,7 +147,8 @@ export class DocumentsEffects extends EffectManager {
     { type: '[DocumentsEffects]saveDocument', timeOut: EFFECT_TIMEOUT }
   );
 
-  deleteDocument_ = new EffectStateSubject<{ id?: number }>().addMonitoredEffect(
+
+  deleteDocument_ = new EffectStateSubject<{ /*if id not set it's current doc*/id?: number }>().addMonitoredEffect(
     effectInfo =>
       pipe(
         switchMap(state =>
