@@ -15,6 +15,7 @@ import { CacheFacade } from './cache-facade';
 import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from './store';
 import { BundleShareModule } from './bundle-share/bundle-share.module';
 import { MessageDialog } from './message-dialog';
+import { DialogSpinnerComponent } from './dialog-spinner.component';
 
 @NgModule({
   imports: [
@@ -31,11 +32,13 @@ import { MessageDialog } from './message-dialog';
   declarations: [
     ReadingPositionIndicatorComponent,
     BottomNavigationComponent,
+    DialogSpinnerComponent,
     MessageDialog
     ],
   exports: [
     ReadingPositionIndicatorComponent,
     BottomNavigationComponent,
+    DialogSpinnerComponent,
     SplitPaneModule,
     MessageDialog,
     /* re-exporting */
