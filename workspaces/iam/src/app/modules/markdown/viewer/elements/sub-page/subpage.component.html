@@ -7,6 +7,39 @@
     <mat-panel-title> Subpages({{ ids.length }}) </mat-panel-title>
     <!-- <mat-panel-description> Subpages of document </mat-panel-description> -->
     <div class="action-group" (click)="$event.stopImmediatePropagation()">
+      <button
+      mat-button
+      style="background-color: transparent;"
+        [matMenuTriggerFor]="menu"
+        aria-label="add as subpage"
+      >
+        <mat-icon style="color: #000a">dashboard_customize</mat-icon>add as subpage
+      </button>
+      <mat-menu #menu="matMenu">
+        <div class="id-input-group" style="height: auto;border: none;" (click)="$event.stopImmediatePropagation()">
+          <input style="width:auto; margin-left: 0.8rem;;"
+            (keydown.Enter)="$event.stopPropagation()"
+            #input
+            class="id-input"
+            placeholder="parent page id"
+            matInput
+            type="number"
+            (keyup.Enter)="addId(input.value, input)"
+          />
+          <button
+            matSuffix
+            mat-button
+            aria-label="add with parent page id"
+            (click)="addId(input.value, input)"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+        <button mat-menu-item>
+          <mat-icon>saved_search</mat-icon>
+          <span>search parent page</span>
+        </button>
+      </mat-menu>
       <div class="id-input-group">
         <input
           (keydown.Enter)="$event.stopPropagation()"
@@ -26,10 +59,10 @@
           <mat-icon style="color: #000a">add</mat-icon>
         </button>
       </div>
-      <button mat-button>
-        <mat-icon style="color: #000a" (click)="addIdBySearch()"
-          >zoom_in</mat-icon
-        >
+      <button title="add subpage by searching" mat-button>
+        <mat-icon style="color: #000a" (click)="addIdBySearch()">
+          zoom_in
+        </mat-icon>
       </button>
     </div>
   </mat-expansion-panel-header>
