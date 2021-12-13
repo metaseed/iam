@@ -11,7 +11,8 @@
       mat-button
       style="background-color: transparent;"
         [matMenuTriggerFor]="menu"
-        aria-label="add as subpage"
+        aria-label="add this page as subpage"
+        title="add this page as a subpage to another page"
       >
         <mat-icon style="color: #000a">dashboard_customize</mat-icon>add as subpage
       </button>
@@ -24,18 +25,18 @@
             placeholder="parent page id"
             matInput
             type="number"
-            (keyup.Enter)="addId(input.value, input)"
+            (keyup.Enter)="addToParentById(input.value, input)"
           />
           <button
             matSuffix
             mat-button
             aria-label="add with parent page id"
-            (click)="addId(input.value, input)"
+            (click)="addToParentById(input.value, input)"
           >
             <mat-icon>add</mat-icon>
           </button>
         </div>
-        <button mat-menu-item>
+        <button mat-menu-item (click)="addToParentBySearch()">
           <mat-icon>saved_search</mat-icon>
           <span>search parent page</span>
         </button>
@@ -59,8 +60,8 @@
           <mat-icon style="color: #000a">add</mat-icon>
         </button>
       </div>
-      <button title="add subpage by searching" mat-button>
-        <mat-icon style="color: #000a" (click)="addIdBySearch()">
+      <button title="add subpage by searching" mat-button (click)="addIdBySearch()">
+        <mat-icon style="color: #000a">
           zoom_in
         </mat-icon>
       </button>

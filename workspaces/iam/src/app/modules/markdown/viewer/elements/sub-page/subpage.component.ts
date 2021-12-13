@@ -79,6 +79,11 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
     this.logger.debug('SubPageComponent.delete: id not found')
   }
 
+
+  addToParentById(id, input?: HTMLInputElement) {
+
+  }
+
   addId(id, input?: HTMLInputElement) {
     if (this.ids.includes(+id)) {
       this.snackbar.open(`id ${id} already included`, 'ok', {
@@ -93,11 +98,18 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
     if(input) input.value = null;
   }
 
+  addToParentBySearch(){
+
+  }
+
   addIdBySearch() {
+    this.searchDoc().subscribe(id=>this.addId(id));
+  }
+  private searchDoc(){
     const dialog = this.dialog.open(SubPageIdSearchComponent);
 
-    dialog.afterClosed().subscribe(
-      (r: ISearchItem) => this.addId(r.id)
+    return dialog.afterClosed().pipe(
+      map((r: ISearchItem) => r.id)
     )
   }
 
