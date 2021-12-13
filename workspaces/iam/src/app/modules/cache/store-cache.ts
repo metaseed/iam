@@ -55,7 +55,7 @@ export class StoreCache implements ICache {
         const id = doc.metaData.id;
         this._store.docContent.add(doc.content);
         this._store.docMeta.add(doc.metaData);
-        this._store.updateDocStatus({isEditable:true}, id);
+        this._store.upsertDocStatus({isEditable:true}, id);
         this._store.currentId_.next(id);
         this._store.docContent.delete(NEW_DOC_ID);
       })
@@ -169,7 +169,7 @@ export class StoreCache implements ICache {
 
         // why need to read docMeta?
         // because: when save docContent, we need to update docMeta
-        // docMeta can has additional content not from docContent. (now no. for future)
+        // docMeta can has additional content not from docContent.
         // we need to merge oldMeta with new content from docContent
         this.nextLevelCache
           .readDocMeta(id)

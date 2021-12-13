@@ -254,13 +254,15 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
   }
 
   // if db is dirty, and user F5, after reload, set the save button blue
-  private updateDbDirtyStatus() {
-    const isDbDirty = this.store.currentDocStatus_IsDbDirty$.state;
+  private updateDbDirtyStatus(id: number) {
+    id ??= this.store.currentId_.state;
+
+    const isDbDirty = this.store.docStatus.cache.entities[id]?.isDbDirty;
     if (isDbDirty) return;
-    const id = this.store.currentId_.state;
+
     this.db.getAllKeys<number[]>(DataTables.DirtyDocs).subscribe(dirtyDocIds => {
       if (dirtyDocIds.includes(id)) {
-        this.store.updateDocStatus({ isDbDirty: true }, id);
+        this.store.upsertDocStatus({ isDbDirty: true }, id);
       }
     });
   }

@@ -72,7 +72,7 @@ export class DocSaveCoordinateService extends SubscriptionManager {
     if (!this.contentGeneration) return; // initial content load
 
     const isEditorDirty = !editor.getDoc().isClean(this.contentGeneration);
-    this.store.updateDocStatus({ isEditorDirty });
+    this.store.upsertDocStatus({ isEditorDirty });
   }
 
 }

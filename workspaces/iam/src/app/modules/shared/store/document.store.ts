@@ -112,7 +112,7 @@ export class DocumentStore {
     return ids.map(id => this.docMeta.cache.entities[id]);
   }
 
-  updateDocStatus(status: Partial<DocumentStatus>, id?: number) {
+  upsertDocStatus(status: Partial<DocumentStatus>, id?: number) {
     id ??= this.docStatus.currentId_.state;
     let statusInStore = this.docStatus.cache.entities[id];
     if (!statusInStore) {
