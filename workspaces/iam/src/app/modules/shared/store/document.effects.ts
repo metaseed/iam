@@ -87,7 +87,7 @@ export class DocumentsEffects extends EffectManager {
           return this.cacheFacade
             .readDocContent(state.id, state.format)
         }),
-        tap(result => effectInfo.success(result))
+        tap({next:result => effectInfo.success(result)})
       ),
     { type: '[DocumentsEffects]readDocument', timeOut: EFFECT_TIMEOUT }
   );

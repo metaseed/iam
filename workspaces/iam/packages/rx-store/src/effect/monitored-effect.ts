@@ -20,6 +20,9 @@ export interface MonitoredEffectOption extends EffectOption {
 export class MonitoredEffectInfo {
   constructor(private operationState: OperationState, private startStatus: OperationStatus) {
   }
+  continue(context?: any) {
+    this.operationState.next(this.startStatus.Continue.with(context));
+  }
   /**
    * send `success` step to this OperationState
    * @param context

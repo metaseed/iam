@@ -207,7 +207,7 @@ export class DatabaseCache extends SubscriptionManager implements ICache {
     const nextCache$ = this.nextLevelCache.readDocContent(id, format);
     // do it 1s later to wait the read data has saved to store (wait 0s not work)
     setTimeout(() => {
-      this.updateDbDirtyStatus();
+      this.updateDbDirtyStatus(id);
     }, 1000);
     return this.syncFromNext<DocContent>(
       DataTables.DocContent,
