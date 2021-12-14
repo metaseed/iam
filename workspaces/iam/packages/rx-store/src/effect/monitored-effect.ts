@@ -89,6 +89,7 @@ export function monitorSideEffect<T>(
       return of(state).pipe(
         monitoredEffect(new MonitoredEffectInfo(effectStatus!, startStatus)),
         getDefaultMonitoredEffectErrorOperator(startStatus, st => effectStatus!.next(st)),
+        tap({complete: ()=> effectStatus!.next(startStatus.Complete)})
       );
 
     })

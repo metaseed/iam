@@ -18,7 +18,8 @@ export enum OperationStep {
    */
   Fail = 'Fail',
   Success = 'Success',
-  Timeout = 'Timeout'
+  Timeout = 'Timeout',
+  Complete = 'Complete'
 }
 
 export class OperationStatus {
@@ -66,11 +67,19 @@ export class OperationStatus {
     status.step = OperationStep.Fail;
     return status;
   }
+
   get Success() {
     const status = this.clone()
     status.step = OperationStep.Success;
     return status;
   }
+
+  get Complete() {
+    const status = this.clone()
+    status.step = OperationStep.Complete;
+    return status;
+  }
+
   get Timeout() {
     const status = this.clone()
     status.step = OperationStep.Timeout;
@@ -97,7 +106,8 @@ export class OperationStatus {
 
   isNoneTimeoutEndStatus() {
     return this.step === OperationStep.Success ||
-      this.step === OperationStep.Fail;
+      this.step === OperationStep.Fail ||
+      this.step === OperationStep.Complete;
   }
 
   clone() {

@@ -4,15 +4,14 @@ import {
   DocContent,
   Document,
   DocFormat,
-  LogService,
   SearchResult,
   SearchResultSource,
   Logger,
   Tag
 } from 'core';
 import { Injectable } from '@angular/core';
-import { Observable, of, merge } from 'rxjs';
-import { tap, catchError, map } from 'rxjs/operators';
+import { Observable, of, merge, EMPTY } from 'rxjs';
+import { tap, catchError, map, switchMap } from 'rxjs/operators';
 import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../shared/store/const';
 import { StoreSearchService } from './services/store-search.service';
 import { DocumentStore } from '../shared/store/document.store';
@@ -55,7 +54,7 @@ export class StoreCache implements ICache {
         const id = doc.metaData.id;
         this._store.docContent.add(doc.content);
         this._store.docMeta.add(doc.metaData);
-        this._store.upsertDocStatus({isEditable:true}, id);
+        this._store.upsertDocStatus({ isEditable: true }, id);
         this._store.currentId_.next(id);
         this._store.docContent.delete(NEW_DOC_ID);
       })
@@ -134,25 +133,25 @@ export class StoreCache implements ICache {
       }
     }
     return this.nextLevelCache.readDocContent(id, format).pipe(
-      tap(docContent => {
+      switchMap(docContent => {
         // no data in next level, but the next level cache should further fetch from its next level. we would receive it.
         // actually this code would never executed. because far-cache only return none empty item.
         if (!docContent) {
           this.logger.warn(`readDocContent: doc(id: ${id}) content from far-cache is empty`)
-          return;
+          return EMPTY;
         }
 
         if (docContent.isDeleted) {
           this.logger.warn(`readDocContent: id: ${id} is deleted from far-cache, so delete is from store`)
           this._store.delete(docContent.id); // delete dotContent, meta and status.
-          return;
+          return EMPTY;
         }
 
         // update it in store
         const docContentInStore = this._store.getDocContent(id);
         if (docContentInStore?.sha === docContent.sha) {
           this.logger.debug(`readDocContent:  received docContent id(${id}) from far-cache, but content sha in mem is the same with the sha from next cache, so no need to update it in store.`)
-          return; // nothing changed.
+          return EMPTY; // nothing changed.
         }
 
         if (!docContentInStore) {
@@ -171,30 +170,17 @@ export class StoreCache implements ICache {
         // because: when save docContent, we need to update docMeta
         // docMeta can has additional content not from docContent.
         // we need to merge oldMeta with new content from docContent
-        this.nextLevelCache
+        return this
           .readDocMeta(id)
           .pipe(
             tap(meta => {
               updateContentTags(meta.tag, this._store, id);
-
-              const metaInStore = this._store.getDocMeta(id);
-              if (!metaInStore) {
-                this.logger.debug(`readDocContent: received docMeta id(${id}) from far-cache, add dotMeta to store.`, meta)
-                this._store.docMeta.add(meta);
-              } else {
-                this.logger.debug(`readDocContent: received docMeta id(${id}) from far-cache, update dotMeta to store.`, meta)
-
-                this._store.docMeta.update({
-                  id: metaInStore.id,
-                  changes: meta
-                });
-
-              }
             }),
             catchError(err => {
               throw err;
-            })
-          ).subscribe()
+            }),
+            map(meta => docContent)
+          )
       })
     );
 
@@ -244,7 +230,7 @@ export class StoreCache implements ICache {
           const index = lastResult.findIndex(it => it.id === item.id);
           if (index !== -1) {
             if (item.source !== SearchResultSource.store) {
-              item.title??= lastResult[index].title;
+              item.title ??= lastResult[index].title;
               lastResult[index] = item;
             }
           } else {

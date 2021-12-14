@@ -73,6 +73,16 @@ export class OperationStatusConsoleReporter implements OperationStatusReporter {
       console.count(msg);
       console.groupEnd();
     })).subscribe();
+
+    operationStatusStore.ofStep(OperationStep.Complete).pipe(tap((status) => {
+      const icon = icons[status.coId! % icons.length]
+      const id = status.id;
+      const msg = `${id}${icon}->complete`;
+      console.groupCollapsed(`%c${msg}`, 'background-color:#aaaaff; color: black', status.trigger);
+      console.log(status);
+      console.count(msg);
+      console.groupEnd();
+    })).subscribe();
   }
 
 }
