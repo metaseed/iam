@@ -1,8 +1,95 @@
 import picaLib from 'pica';
-import YAML from 'js-yaml';
+import { JSON_SCHEMA, dump, load } from 'js-yaml';
 import { Issue } from 'app/modules/net-storage/github/issues/issue';
 import { EntityCacheStore } from '@rx-store/entity';
 import { Logger } from 'core';
+
+const DEFAULT_DOC_HEAD_META_CONTENT = `author: Jason Song <metaseed@gmail.com>
+version: 1.0.0
+tag: []
+subPage: []
+enable: [toc]
+`;
+
+export const DEFAULT_DOC_HEAD_META = `---
+${DEFAULT_DOC_HEAD_META_CONTENT}
+
+---
+`;
+export function getDefaultDocHeadMeta() {
+  return load(DEFAULT_DOC_HEAD_META_CONTENT, { json: true }) as HeadMeta;
+}
+
+export function setHeadMeta(content: string, headMeta: HeadMeta) {
+  const headMetaStr = dump(headMeta, { schema: JSON_SCHEMA, flowLevel:0 });
+  return processHeadMeta<string>(content, (metaStartPos, metaEndPos) => {
+    const metaContent = content.slice(0, metaStartPos) + headMetaStr + content.slice(metaEndPos);
+    return metaContent;
+  }, headMetaStr);
+}
+
+export function getHeadMeta(content: string): HeadMeta {
+  return processHeadMeta<HeadMeta>(content, (metaStartPos, metaEndPos) => {
+    const metaContent = content.substring(metaStartPos, metaEndPos);
+    const headMeta = load(metaContent, { json: true });
+    return headMeta as HeadMeta;
+  });
+}
+/**
+ *
+ * @param content
+ * @param process
+ * @param headMetaStr only used when set
+ * @returns
+ */
+export function processHeadMeta<T>(content: string, process: (start, end) => T, headMetaStr: string = undefined): T {
+  let startPos = 0;
+  let endPos = content.indexOf('\n');
+  if (endPos === -1) {
+    if (headMetaStr) {
+      // assume the content is head that without \n
+      return `${content}
+      ${headMetaStr}` as unknown as T;
+    }
+    return undefined;
+  }
+  let metaStartPos;
+  let metaEndPos;
+
+  while (metaStartPos === undefined || metaEndPos === undefined) {
+    let line = content.substring(startPos, endPos)
+    const regex = /^---\s*$/;
+    if (regex.test(line)) {
+      if (metaStartPos === undefined) metaStartPos = endPos + 1;
+      else if (metaEndPos === undefined) {
+        metaEndPos = startPos;
+        return process(metaStartPos, metaEndPos);
+
+      }
+      else throw Error('we never come here');
+    }
+
+    startPos = endPos + 1;
+
+    // not find in whole content
+    if (startPos >= content.length) {
+      if (headMetaStr) {
+        const headEnd = content.indexOf('\n');
+        return `${content.slice(0, headEnd)}
+        ${headMetaStr}
+        ${content.slice(headEnd + 1)}` as unknown as T;
+      }
+      return undefined;
+    }
+
+    endPos = content.indexOf('\n', startPos);
+
+    // if end of file without \n
+    if (endPos === -1) endPos = content.length
+  }
+}
+
+
 
 export interface Tag { name: string, description?: string, color?: string }
 
@@ -66,7 +153,7 @@ export class DocMeta {
 
   public _context: any; // issue obj;
   public version: string;
-  public subPage: string[];
+  public subPage: number[];
   public enable: string[];
   public tag: string[];
 
@@ -102,40 +189,6 @@ export class DocMeta {
     }
   }
 
-  static getHeadMeta(content: string): HeadMeta {
-    let startPos = 0;
-    let endPos = content.indexOf('\n');
-    if (endPos === -1) return undefined;
-
-    let metaStartPos;
-    let metaEndPos;
-
-    while (metaStartPos === undefined || metaEndPos === undefined) {
-      let line = content.substring(startPos, endPos)
-      const regex = /^---\s*$/;
-      if (regex.test(line)) {
-        if (metaStartPos === undefined) metaStartPos = endPos + 1;
-        else if (metaEndPos === undefined) {
-          metaEndPos = startPos;
-          const metaContent = content.substring(metaStartPos, metaEndPos);
-          const headMeta = YAML.load(metaContent, { json: true });
-          return headMeta;
-
-        }
-        else throw Error('we never come here');
-      }
-
-      startPos = endPos + 1;
-
-      // not find in whole content
-      if (startPos >= content.length) return undefined;
-
-      endPos = content.indexOf('\n', startPos);
-
-      // if end of file without \n
-      if (endPos === -1) endPos = content.length
-    }
-  }
 
   static serialize(meta: DocMeta, contentUrl: string) {
     return `
@@ -202,6 +255,13 @@ export class DocMeta {
       picUrl,
       format
     );
+    function deleteUndefinedField(obj) {
+      for (const [key, value] of Object.entries(obj)) {
+        if (value === undefined) delete obj[key];
+      }
+    }
+    // remove undefined property value that may override oldMeta
+    deleteUndefinedField(newMeta);
     const meta = { ...oldMeta, ...newMeta } as DocMeta;
     const metaStr = DocMeta.serialize(meta, contentUrl);
     return { meta, metaStr };

@@ -2,9 +2,8 @@ import 'codemirror/keymap/vim';
 import 'codemirror/keymap/sublime';
 import 'codemirror/keymap/emacs';
 import { Inject, Injectable } from '@angular/core';
-import { CommandService, Command } from 'core';
+import { CommandService, Command, DEFAULT_DOC_HEAD_META } from 'core';
 import { MarkdownEditorService } from './markdown-editor.service';
-import { DEFAULT_DOC_META } from 'shared';
 import { FileUploadService } from './file-upload.service';
 import * as CodeMirror from 'codemirror';
 import { ICodeMirrorEditor } from '../model';
@@ -201,7 +200,7 @@ Alt-G Jump to line*/
 
   private insertMeta(cm) {
     cm.setCursor({ line: 1, ch: 0 });
-    cm.replaceSelection(DEFAULT_DOC_META, 'start');
+    cm.replaceSelection(DEFAULT_DOC_HEAD_META, 'start');
     cm.focus();
   }
 

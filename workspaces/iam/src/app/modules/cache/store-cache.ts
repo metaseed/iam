@@ -86,7 +86,10 @@ export class StoreCache implements ICache {
     return this.nextLevelCache.readDocMeta(id, checkNextCache).pipe(
       tap(meta => {
         if (meta.isDeleted)
+        {
+          this.logger.debug(`readDocMeta: delete document from store because it's meta data means deleted in remote`)
           this._store.delete(meta.id);
+        }
         else {
           const metaInStore = this._store.getDocMeta(meta.id);
           if (!metaInStore) {
@@ -111,7 +114,7 @@ export class StoreCache implements ICache {
     const updateContentTags = (tags: string[], store: DocumentStore, id: number) => {
       if (tags && tags.length > 0) {
         const tagContent = `tag: [${tags.map(t => t.trim()).join(',')}]`;
-        const docContent = store.currentDocContent$.state;
+        const docContent = store.getDocContent(id);
         const docContentString = docContent.content;
         if (docContentString) {
           const regex = /(?<=\n---.*\n)tag:\s*\[\s*.*?\s*\](?=\s*\n.*\n---)/s;

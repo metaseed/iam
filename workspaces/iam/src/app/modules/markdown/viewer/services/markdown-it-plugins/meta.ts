@@ -1,10 +1,10 @@
 // https://github.com/CaliStyle/markdown-it-meta
 
 import MarkdownIt from 'markdown-it';
-import YAML from 'js-yaml';
+import { load } from 'js-yaml';
 import StateBlock from 'markdown-it/lib/rules_block/state_block';
 import Renderer from 'markdown-it/lib/renderer';
-import { DocMeta } from 'core';
+import { DocMeta, HeadMeta } from 'core';
 
 export class DocYamlMeta {
   author: string; // name <email>
@@ -123,7 +123,7 @@ export class MetaPlugin {
     if (!findEnd) return;
 
     try {
-      const rawYAML = YAML.load(data.join('\n'), { json: true });
+      const rawYAML = load(data.join('\n'), { json: true }) as HeadMeta;
 
       if (rawYAML) {
         let token = state.push('meta_open', '', 1);
@@ -137,7 +137,7 @@ export class MetaPlugin {
         if (meta.version || meta.updateDate) {
           token = state.push('html_block', '', 0);
           // const idMatch = document.URL.match(/id=(\d+)/)[1];
-          token.content = `<i-version version="${meta.version}" create-date="${meta.createDate?.toLocaleDateString()??''}" update-date="${meta.updateDate?.toLocaleDateString()??''}"></i-version>`
+          token.content = `<i-version version="${meta.version}" create-date="${meta.createDate?.toLocaleDateString() ?? ''}" update-date="${meta.updateDate?.toLocaleDateString() ?? ''}"></i-version>`
         }
 
         if (meta?.enable.includes('toc')) {

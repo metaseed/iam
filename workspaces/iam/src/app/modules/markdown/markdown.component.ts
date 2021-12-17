@@ -83,6 +83,8 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewChecked {
             this.router.navigate(['home']);
           }
           this.documentEffects.readDocument_.next({ id, title, format });
+          this.store.currentId_.next(id);
+
         }
       })
     )

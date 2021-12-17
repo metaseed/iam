@@ -1,4 +1,4 @@
-import { ICache, DocMeta, DocContent, DocFormat, SearchResult, SearchResultSource, issueToDocMeta, Tag, Logger } from 'core';
+import { ICache, DocMeta, DocContent, DocFormat, SearchResult, SearchResultSource, issueToDocMeta, Tag, Logger, getHeadMeta } from 'core';
 import { Observable, throwError, concat, asyncScheduler, of, merge } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { GithubStorage } from '../net-storage/github/github';
@@ -334,19 +334,39 @@ export class GithubCache implements ICache {
     const { id, content, format, sha } = docContent;
     const title = docMeta.title; //DocMeta.getTitle(content);
     // undefined if not has doc head meta
-    const headMeta = DocMeta.getHeadMeta(content);
+    const headMeta = getHeadMeta(content);
 
     const commitMessage = this.commitMessage(title, headMeta?.version, changeLog)
 
+    const url = `${DOCUMENTS_FOLDER_NAME}/${id}.${format}`;
     return this.githubStorage.init().pipe(
       switchMap(repo =>
         repo.updateFile(
-          `${DOCUMENTS_FOLDER_NAME}/${id}.${format}`,
+          url,
           content,
           sha,
           commitMessage
         )
           .pipe(
+            // catchError(err => {
+            //   if (err.status === 409) {// sha not match
+            //     return repo.getContents(url).pipe(
+            //       catchError(err => {
+            //         if (err.status === 404){ // could not find file
+            //           return repo.newFile(
+            //             url,
+            //             content,
+            //             commitMessage
+            //           )
+            //         }
+            //         throw err;
+            //       }),
+            //       switchMap(o=>{throw err})
+            //     )
+            //   };
+
+            //   throw err;
+            // }),
             switchMap(file => {
               const url = this.util.getContentUrl(id, title, format);
               const { meta, metaStr } = DocMeta.serializeContent(

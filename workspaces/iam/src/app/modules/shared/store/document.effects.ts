@@ -78,7 +78,6 @@ export class DocumentsEffects extends EffectManager {
     effectInfo =>
       pipe(
         switchMap(state => {
-          this.store.currentId_.next(state.id);
 
           // history version doc only lives in store
           if (state.id === DOC_HISTORY_VERSION_ID) {
@@ -87,7 +86,7 @@ export class DocumentsEffects extends EffectManager {
           return this.cacheFacade
             .readDocContent(state.id, state.format)
         }),
-        tap({next:result => effectInfo.success(result)})
+        tap({ next: result => effectInfo.success(result) })
       ),
     { type: '[DocumentsEffects]readDocument', timeOut: EFFECT_TIMEOUT }
   );
@@ -95,6 +94,7 @@ export class DocumentsEffects extends EffectManager {
   saveDocument_ = new EffectStateSubject<
     {
       content: string;
+      id?: number;
       /*if user force save, show changeLog input box*/
       changeLog?: string;
       /*used by creating doc*/
@@ -106,9 +106,11 @@ export class DocumentsEffects extends EffectManager {
       pipe(
         switchMap(state => {
           const { content, format, forceUpdate, changeLog } = state;
-          const docContent = DocContent.with(this.store.currentDocContent$.state, content);
+          let { id } = state;
+          this.logger.assert(typeof id === 'number')
+          id ??= this.store.currentId_.state;
+          const docContent = DocContent.with(this.store.getDocContent(id), content);
           const title = DocMeta.getTitle(content);
-          const id = this.store.currentId_.state;
           if (!title) {
             const msg = 'Must define a title!';
             this.snackbar.open(msg, 'OK');
@@ -123,14 +125,15 @@ export class DocumentsEffects extends EffectManager {
               }),
             );
           } else {
-            const meta = this.store.currentDocMeta$.state;
-
+            const meta = this.store.getDocMeta(id);
+            const ft = format ? format : meta.format;
             return this.cacheFacade
               .updateDocument(meta, docContent, forceUpdate, changeLog)
               .pipe(
                 tap(d => {
-                  this.util.modifyUrlAfterSaved(d.metaData.id, title, format);
-                  this.logger.log('Saved!');
+                  if (d.metaData.id === this.store.currentId_.state)
+                    this.util.modifyUrlAfterSaved(d.metaData.id, title, ft);
+                  this.logger.log(`doc with id(${d.metaData.id}) Saved!`);
                 })
               );
           }

@@ -12,7 +12,7 @@ export class DocNode {
   isLoading: boolean;
   parent: DocNode;
   subPages: DocNode[];
-  subPageIds: Array<string>;
+  subPageIds: Array<number>;
   format: string
   constructor(meta: DocMeta) {
     this.id = meta.id;
