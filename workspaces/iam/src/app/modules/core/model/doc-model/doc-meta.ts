@@ -21,7 +21,7 @@ export function getDefaultDocHeadMeta() {
 }
 
 export function setHeadMeta(content: string, headMeta: HeadMeta) {
-  const headMetaStr = dump(headMeta, { schema: JSON_SCHEMA, flowLevel:0 });
+  const headMetaStr = dump(headMeta, {flowLevel:1 });
   return processHeadMeta<string>(content, (metaStartPos, metaEndPos) => {
     const metaContent = content.slice(0, metaStartPos) + headMetaStr + content.slice(metaEndPos);
     return metaContent;

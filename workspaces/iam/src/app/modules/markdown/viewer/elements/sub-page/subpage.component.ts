@@ -120,7 +120,7 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
       catchError(err => {
         if (err.name === 'TimeoutError') {
           this.logger.error(err);
-          this.snackbar.open(`this document not added to parent, because of network communication timeout`, 'ok')
+          this.snackbar.open(`this document not added to parent, because of timeout`, 'ok')
           return EMPTY;
         }
         this.snackbar.open(`this document not added to parent, because error happens`, 'ok')
