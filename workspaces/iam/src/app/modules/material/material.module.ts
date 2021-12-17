@@ -43,6 +43,7 @@ export const MatModules = [
   MatSnackBarModule,
   MatChipsModule,
   DragDropModule,
+  MatProgressSpinnerModule,
   MatExpansionModule
 ];
 
