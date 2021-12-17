@@ -108,6 +108,13 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
 
         // save
         this.logger.debug(`try to save parent doc content after add this page as subpage of parent doc: ${id}...`);
+        this.documentEffects.saveDocument_.operationStatus$.pipe(
+          find(status => status.step === OperationStep.Success && status.trigger.id === id),
+          timeout(NET_COMMU_TIMEOUT),
+          tap(o => {
+            this.snackbar.open(`added to page(id: ${id}) as a subpage.`, 'ok');
+          })
+        ).subscribe()
         this.documentEffects.saveDocument_.next({ id, content, format: DocFormat[parentMeta.format] });
       }),
       catchError(err => {
@@ -146,7 +153,7 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
     this.searchDoc().subscribe(id => this.addId(id));
   }
   private searchDoc() {
-    const dialog = this.dialog.open(SubPageIdSearchComponent);
+    const dialog = this.dialog.open(SubPageIdSearchComponent, { width: '95vw', height: '90vh' });
 
     return dialog.afterClosed().pipe(
       map((r: ISearchItem) => r.id)
