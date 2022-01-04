@@ -65,7 +65,6 @@
     "markdown-it-sub": "^1.0.0",
     "markdown-it-sup": "^1.0.0",
     "markdown-it-table-of-contents": "^0.5.2",
-    "markdown-it-task-lists": "^2.1.1",
     "markdown-it-video": "^0.6.3",
     "mermaid": "^8.13.2",
     "mousetrap": "^1.6.5",

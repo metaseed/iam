@@ -33,7 +33,7 @@ import "prismjs/plugins/line-numbers/prism-line-numbers";
 import "prismjs/plugins/line-highlight/prism-line-highlight";
 import * as MarkdownIt from "markdown-it";
 import * as markdownVideoPlugin from "markdown-it-video";
-import * as tasklists from "markdown-it-task-lists";
+import { tasklists } from "./markdown-it-plugins/markdown-it-task-lists";
 import * as emoji from "markdown-it-emoji";
 // import * as emoji from 'markdown-it-emoji/light';
 import * as sub from "markdown-it-sub";
