@@ -21,7 +21,7 @@ export class DatabaseCacheSaver {
       debounceTime(6000)
     )
 
-    this.autoSave$ = interval(10000).pipe(
+    this.autoSave$ = interval(AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL).pipe(
       combineLatestWith(online$),
       switchMap(() => this.db.getAll<DirtyDocument>(DataTables.DirtyDocs)),
       filter(docs => docs.length > 0),
