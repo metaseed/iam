@@ -13,7 +13,6 @@ enable: [toc]
 
 export const DEFAULT_DOC_HEAD_META = `---
 ${DEFAULT_DOC_HEAD_META_CONTENT}
-
 ---
 `;
 export function getDefaultDocHeadMeta() {
