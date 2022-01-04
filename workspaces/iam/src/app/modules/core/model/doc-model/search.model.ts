@@ -4,10 +4,10 @@ export interface ITextMatch {
 }
 
 export enum SearchResultSource {
-  store,
-  indexdb,
-  netFile,
-  netIssue
+  store='store',
+  indexdb='localDb',
+  netFile='netFile',
+  netIssue='netSummary'
 }
 export interface ISearchItem {
   id: number;

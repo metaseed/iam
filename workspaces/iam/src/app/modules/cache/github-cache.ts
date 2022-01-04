@@ -444,7 +444,7 @@ export class GithubCache implements ICache {
               map(rep => {
                 return (rep.body as any).items.map(item => {
                   const { id, sanitizedTitle, ext } = DocMeta.parseDocumentName(item.name);
-                  return { id, score: item.score, title: sanitizedTitle, text_matches: item.text_matches };
+                  return { id, score: item.score, title: sanitizedTitle, text_matches: item.text_matches, source: SearchResultSource.netFile };
                 });
               })
             )

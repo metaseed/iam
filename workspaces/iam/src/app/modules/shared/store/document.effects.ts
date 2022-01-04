@@ -107,8 +107,8 @@ export class DocumentsEffects extends EffectManager {
         switchMap(state => {
           const { content, format, forceUpdate, changeLog } = state;
           let { id } = state;
-          this.logger.assert(typeof id === 'number')
           id ??= this.store.currentId_.state;
+          this.logger.assert(typeof id === 'number')
           const docContent = DocContent.with(this.store.getDocContent(id), content);
           const title = DocMeta.getTitle(content);
           if (!title) {

@@ -3,7 +3,7 @@
     <!--this div is needed to do layout-->
     <div></div>
     <mat-card-title class="title" (click)="onClick.emit(item)">{{ item.title }}</mat-card-title>
-    <mat-card-subtitle> Score: {{ item.score }} Id: {{item.id}}</mat-card-subtitle>
+    <mat-card-subtitle> Score: {{ item.score }} Id: {{item.id}} source: {{item.source}}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
     <div class="fragment" *ngFor="let textMatch of item.text_matches" [innerHTML]="getMatches(textMatch)"></div>

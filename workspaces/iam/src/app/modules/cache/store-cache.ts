@@ -15,6 +15,7 @@ import { tap, catchError, map, switchMap } from 'rxjs/operators';
 import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../shared/store/const';
 import { StoreSearchService } from './services/store-search.service';
 import { DocumentStore } from '../shared/store/document.store';
+import { concat } from 'rxjs';
 
 @Injectable({ providedIn: 'platform' })
 export class StoreCache implements ICache {
@@ -219,7 +220,7 @@ export class StoreCache implements ICache {
 
     let lastResult: SearchResult;
 
-    return merge(fromStoreCache$, fromNextCache$).pipe(
+    return concat(fromStoreCache$, fromNextCache$).pipe(
       map(searchResult => {
         if (!lastResult) {
           lastResult = [];
@@ -234,7 +235,8 @@ export class StoreCache implements ICache {
           if (index !== -1) {
             if (item.source !== SearchResultSource.store) {
               item.title ??= lastResult[index].title;
-              lastResult[index] = item;
+              // lastResult[index] = item;
+              lastResult.splice(index,0, item);
             }
           } else {
             lastResult.push(item);

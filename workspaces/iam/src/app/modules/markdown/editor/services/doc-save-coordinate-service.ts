@@ -32,7 +32,7 @@ export class DocSaveCoordinateService extends SubscriptionManager {
         debounceTime(AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL), // e  e e          |
         tap((isDirty) => {
           if (isDirty)
-            this.documentEffects.saveDocument_.next({ content: this.editor.getValue(), format: DocFormat.md });
+            this.documentEffects.saveDocument_.next({ id: this.store.currentId_.state, content: this.editor.getValue(), format: DocFormat.md });
         }),
         backoff(8, AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL)
       ),
