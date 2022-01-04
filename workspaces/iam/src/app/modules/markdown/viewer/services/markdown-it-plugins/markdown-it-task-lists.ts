@@ -1,3 +1,5 @@
+import MarkdownIt from 'markdown-it';
+
 // Markdown-it plugin to render GitHub-style task lists; see
 //
 // https://github.com/revin/markdown-it-task-lists

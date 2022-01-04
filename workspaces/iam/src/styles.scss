@@ -98,6 +98,9 @@ body {
   list-style: none;
   margin-left: -20px;
 }
+input.task-list-item-checkbox[checked]+.task-list-item-label {
+  text-decoration: line-through;
+}
 
 @import '~codemirror/lib/codemirror';
 // @import '~codemirror/addon/scroll/simplescrollbars';

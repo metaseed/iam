@@ -114,7 +114,7 @@ export class MarkdownViewerService {
       .use(markdownVideoPlugin, {
         youtube: { width: 640, height: 390 },
       })
-      .use(tasklists, { enabled: false })
+      .use(tasklists, { enabled: true, label: true, labelAfter: true })
       .use(emoji)
       .use(sub)
       .use(sup)
