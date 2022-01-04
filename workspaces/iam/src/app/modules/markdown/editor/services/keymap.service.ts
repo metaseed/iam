@@ -171,20 +171,20 @@ export class KeyMapService {
     // const keyMap = (CodeMirror as any).keyMap;
     // option['Ctrl-a'] = keyMap['default']['Alt-G'];
 
-    option['Alt-\\'] = commands['goToBracket'];
-    option['Alt-Shift-\\'] = commands['selectBetweenBrackets'];
-    option['Alt-Shift-Right'] = commands['selectScope'];
-    option['Ctrl-Enter'] = commands['insertLineAfter'];
-    option['Ctrl-Shift-Enter'] = commands['insertLineBefore'];
-    option['Alt-Up'] = commands['swapLineUp'];
-    option['Alt-Down'] = commands['swapLineDown'];
-    option['Ctrl-/'] = commands['toggleCommentIndented'];
-    option['Ctrl-I'] = commands['selectLine'];
-    option['Ctrl-D'] = commands['selectNextOccurrence'];
-    option['Ctrl-H'] = commands['replace'];
-    option['Esc'] = commands['singleSelectionTop'];
-    option['Alt-Shift+Down'] = commands['duplicateLine'];
-    option['Backspace'] = commands['smartBackspace'];
+    option['Alt-\\'] = 'goToBracket';
+    option['Alt-Shift-\\'] = 'selectBetweenBrackets';
+    option['Alt-Shift-Right'] = 'selectScope';
+    option['Ctrl-Enter'] = 'insertLineAfter';
+    option['Ctrl-Shift-Enter'] = 'insertLineBefore';
+    option['Alt-Up'] = 'swapLineUp';
+    option['Alt-Down'] = 'swapLineDown';
+    option['Ctrl-/'] = 'toggleCommentIndented';
+    option['Ctrl-I'] = 'selectLine';
+    option['Ctrl-D'] = 'selectNextOccurrence';
+    option['Ctrl-H'] = 'replace';
+    option['Esc'] = 'singleSelectionTop';
+    option['Alt-Shift+Down'] = 'duplicateLine';
+    option['Backspace'] = 'smartBackspace' ;
     option['Alt-M'] = 'showInCenter';
     option['Ctrl-M M'] = this.insertMeta;
     /*

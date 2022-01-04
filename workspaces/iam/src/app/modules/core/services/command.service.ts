@@ -33,7 +33,7 @@ export class CommandService {
     });
   }
 
-  hotkey(ev: KeyboardEvent, combo: string, commands: string[]): boolean {
+  private hotkey(ev: KeyboardEvent, combo: string, commands: string[]): boolean {
     console.log("hotkey event", combo);
     commands.forEach((c) => {
       const command = {
