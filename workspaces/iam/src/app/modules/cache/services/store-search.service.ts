@@ -60,7 +60,7 @@ export class StoreSearchService {
         d =>
         ({
           id: +d.item.id,
-          score: 1 - d.score, // 0-1
+          score: +(1 - d.score).toFixed(4), // 0-1
           title: d.item.meta.title ?? DocMeta.getTitle(d.item.content.content),
           text_matches: d.matches.map(m=>getFragment(m.value, m.indices)).flat(),
           source: SearchResultSource.store
