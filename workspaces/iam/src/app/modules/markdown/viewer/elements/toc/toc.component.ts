@@ -11,7 +11,6 @@ import { startWith, subscribeOn, tap } from 'rxjs/operators';
 import { combineLatest, asapScheduler } from 'rxjs'; // rxjs 6
 import { TocItem, TocService } from '../../services/toc.service';
 import { SubscriptionManager } from 'core';
-import { Title } from '@angular/platform-browser';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Breakpoints } from '@angular/cdk/layout';
 import { BreakpointState } from '@angular/cdk/layout';
@@ -45,7 +44,6 @@ export class TocComponent extends SubscriptionManager implements OnInit, AfterVi
     targetElem: HTMLElement,
     docId: string,
     tocService: TocService,
-    titleService: Title
   ): () => void {
     const h1Title = targetElem.querySelector('h1');
     const needsToc = !!h1Title && !/no-?toc/i.test(h1Title.className);
@@ -73,7 +71,6 @@ export class TocComponent extends SubscriptionManager implements OnInit, AfterVi
         }
       }
 
-      titleService.setTitle(title ? `I'm - ${title}` : "I'm");
     };
   }
 

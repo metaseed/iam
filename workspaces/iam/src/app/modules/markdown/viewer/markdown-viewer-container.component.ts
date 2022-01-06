@@ -106,9 +106,8 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
             me.viewerContainerDiv.nativeElement.scrollTop += delta_v_view;
           }
         })
-      )
-    ).addSub(this.markdownStore.scrollView_
-      .subscribe(viewState => {
+      ),
+      this.markdownStore.scrollView_.subscribe(viewState => {
         const isScrollUp = viewState.isUp;
         // default value is null
         if (isScrollUp === null || !this.viewerContainerDiv) return;

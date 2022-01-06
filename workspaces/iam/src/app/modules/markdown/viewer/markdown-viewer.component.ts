@@ -1,5 +1,4 @@
-import { Component, Input, ElementRef, EventEmitter } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+import { Component, Input, ElementRef } from '@angular/core';
 import { MarkdownViewerService } from './services/markdown.viewer.service';
 import { DocumentRef, SubscriptionManager } from 'core';
 import lozad from 'packages/lazy-load';
@@ -40,7 +39,6 @@ export class MarkdownViewerComponent extends SubscriptionManager {
     elementRef: ElementRef,
     private markdownViewerService: MarkdownViewerService,
     private tocService: TocService,
-    private titleService: Title,
     private elementsLoader: ElementsLoader
   ) {
     super();
@@ -60,8 +58,7 @@ export class MarkdownViewerComponent extends SubscriptionManager {
           const targetElement = this.parent.viewerContainerDiv.nativeElement;
           this.elementsLoader.loadContainedCustomElements(targetElement).subscribe();
         })
-      )
-    ).addSub(
+      ),
       this.updateToc$.pipe(
         debounceTime(2000, asyncScheduler),
         tap(_ => {
@@ -74,8 +71,7 @@ export class MarkdownViewerComponent extends SubscriptionManager {
             addTitleAndToc = TocComponent.prepareTitleAndToc(
               this.hostElement,
               docId,
-              this.tocService,
-              this.titleService
+              this.tocService
             );
           }
           addTitleAndToc();

@@ -64,6 +64,7 @@ import { markdownitIncrementalDOM } from "./markdown-it-plugins/incremental-dom"
 import * as IncrementalDom from "incremental-dom";
 import { MetaPlugin } from "./markdown-it-plugins/meta";
 import { DocumentStore } from "app/modules/shared/store/document.store";
+import { Title } from "@angular/platform-browser";
 
 const enableIDOM = true;
 
@@ -87,6 +88,7 @@ export class MarkdownViewerService {
   constructor(
     private docRef: DocumentRef,
     private utils: Utilities,
+    private titleService: Title,
     private store: DocumentStore,
     @Inject('MarkdownConfig') @Optional() config?: MarkdownConfig
   ) {
@@ -109,6 +111,7 @@ export class MarkdownViewerService {
       .use(
         title((title, level) => {
           this.updateMeta({ title });
+          this.titleService.setTitle(title ? `${title} - I'm` : "I'm");
         }, 1)
       )
       .use(markdownVideoPlugin, {
