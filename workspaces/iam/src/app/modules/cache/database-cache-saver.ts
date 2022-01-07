@@ -6,6 +6,11 @@ import { DirtyDocument } from '../core/model/doc-model/doc-status';
 import { DocumentStore } from '../shared/store/document.store';
 import { fromEvent } from 'rxjs';
 
+interface DocAndIamInstanceId {
+  doc: Document;
+  iamInstanceId: number;
+}
+
 export class DatabaseCacheSaver {
   public autoSave$;
   private logger = Logger(this.constructor.name);
@@ -19,8 +24,8 @@ export class DatabaseCacheSaver {
     // when auto saved to net in another window or tab.
     this.broadcastChannel.onmessage = (event) => {
       this.logger.info(`IndexedDBBroadcastChannel: received dirty doc saved event:`, event.data);
-      const doc: Document = event.data;
-      this.updateStore_AutoSaver(doc);
+      const docAndInstance: DocAndIamInstanceId = event.data;
+      this.updateStore_AutoSaver(docAndInstance);
 
     }
     const online$ = fromEvent<boolean>(window, 'online').pipe(
@@ -29,17 +34,18 @@ export class DatabaseCacheSaver {
       debounceTime(6000)
     )
 
-    this.autoSave$ = interval(AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL + Math.random() * 10000).pipe(
+    this.autoSave$ = interval(AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL + Math.random() * 10000)
+    .pipe(
       combineLatestWith(online$),
       switchMap(() => this.db.getAll<DirtyDocument>(DataTables.DirtyDocs)),
       filter(docs => docs.length > 0),
       tap(dirtyDocs => this.logger.debug(`autoSaver: save dirty docs every ${AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL / 1000 / 60}min or network online again.`, dirtyDocs)),
-      switchMap(ids => merge(...(ids.map(({ id, changeLog }) => this.saveToNet(id, changeLog).pipe(
+      switchMap(dirtyDocs => merge(...(dirtyDocs.map(({ id, changeLog, iamInstanceId }) => this.saveToNet(id, changeLog).pipe(
         tap((doc: Document) => {
           this.logger.info('autoSaver: broadcast doc saved to network');
           // let other tab or window know
-          this.broadcastChannel.postMessage(doc);
-          this.updateStore_AutoSaver(doc);
+          this.broadcastChannel.postMessage({ doc, iamInstanceId });
+          this.updateStore_AutoSaver({ doc, iamInstanceId });
         }),
         backoff(2, 2000),
       ))))),
@@ -47,13 +53,21 @@ export class DatabaseCacheSaver {
       retry()
     )
   }
-  private updateStore_AutoSaver(doc: Document) {
+
+  private updateStore_AutoSaver({ doc, iamInstanceId }: DocAndIamInstanceId) {
     this.logger.info('autoSaver: update doc in store after update the network doc!');
     this.store.upsertDocStatus({ isDbDirty: false, isSyncing: false }, doc.metaData.id);
-    this.updateStore(doc);
+    const isSameInstance = iamInstanceId === this.store.iamInstanceId;
+    this.updateStore(doc, isSameInstance);
   }
-  private updateStore(doc: Document) {
+
+  private updateStore(doc: Document, notUpdateContent = true) {
     this.store.docMeta.upsert(doc.metaData);
+    if (notUpdateContent) {
+      const docContentInStore = this.store.getDocContent(doc.content.id);
+      if (docContentInStore)
+        doc.content.content = docContentInStore.content;
+    }
     this.store.docContent.upsert(doc.content);
   }
 
@@ -82,7 +96,7 @@ export class DatabaseCacheSaver {
         return new Document(docMeta, docContent);
       }),
       switchMap(doc => {
-        const ro = this.db.put<DirtyDocument>(DataTables.DirtyDocs, new DirtyDocument(doc.metaData.id, changeLog));
+        const ro = this.db.put<DirtyDocument>(DataTables.DirtyDocs, new DirtyDocument(doc.metaData.id, changeLog, this.store.iamInstanceId));
         if (forceSave) {
           return ro.pipe(
             switchMap(r => this.saveToNet(doc.metaData.id, changeLog)),

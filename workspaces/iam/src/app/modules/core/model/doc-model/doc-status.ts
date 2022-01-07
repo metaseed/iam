@@ -10,5 +10,5 @@ export class DocumentStatus {
 }
 
 export class DirtyDocument {
-  constructor(public id: number, public changeLog: string) {}
+  constructor(public id: number, public changeLog: string, public iamInstanceId: number) {}
 }

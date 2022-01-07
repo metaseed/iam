@@ -30,6 +30,13 @@ export class DocumentStore {
         : -1
   }));
 
+  /**
+   * used to identify the iam instance
+   * because IndexDb is shared by all instance(tab window) of same origin,
+   * if the content is modified by me, no need to update dirty content in store, so no override of editing content (no dirty content lost of current editing doc)
+   */
+  iamInstanceId = Math.random();
+
   docContent = new EntityCacheStore<number, DocContent>(new MemEntityCache({ idGenerator: e => e.id }));
 
   docStatus = new EntityCacheStore<number, DocumentStatus>(new MemEntityCache({ idGenerator: e => e.id }));
