@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
 
 
@@ -21,9 +21,9 @@ import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
 <div class="input-form">
   <mat-form-field class="input-field" appearance="fill">
     <mat-label>document change note</mat-label>
-    <input matInput placeholder="showed document history" [(ngModel)]="changeNote" (keyup.Enter)="onOk($event)">
+    <input matInput #input [autofocus]="input.focus()" placeholder="showed in document history" [(ngModel)]="changeNote" (keyup.Enter)="onOk($event)">
   </mat-form-field>
-  <button #okButton mat-flat-button [autofocus]="okButton.focus()" color="primary" (click)="onOk($event)">OK</button>
+  <button mat-flat-button color="primary" (click)="onOk($event)">OK</button>
 </div>
   `
 })
