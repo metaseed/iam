@@ -27,15 +27,15 @@ a:hover {
   color:royalblue;
 }
 .net-syncing:after {
-  margin-top: -1em;
-  margin-left: 0.4em;
-  content: '';
+  margin-top: -2.2rem;
+  margin-left: 1.25rem;
+  content: "";
   display: inherit;
   border: 3px solid #f3f3f3;
   border-radius: 50%;
-  border-top: 3px solid #3498db;
-  width: 13px;
-  height: 13px;
+  border-top: 0.35rem solid #3498db;
+  width: 0.8rem;
+  height: 0.8rem;
   animation: spin 1.8s linear infinite;
 }
 
