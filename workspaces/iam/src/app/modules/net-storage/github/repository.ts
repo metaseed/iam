@@ -55,7 +55,7 @@ export class Repository extends Requestable {
       sha,
       branch
     }).pipe(
-      tap({ next: x => this.logger.debug('updateFile success:', x), error: e => this.logger.error('updateFile error:', e) })
+      tap({ next: x => this.logger.debug('updateFile success:', path, x), error: e => this.logger.error('updateFile error:', e) })
     ) as Observable<File>;
   }
 
@@ -69,7 +69,7 @@ export class Repository extends Requestable {
       },
       content: base64Encode(content)
     }, undefined).pipe(
-      tap({ next: x => this.logger.debug('newFile success:', x), error: e => this.logger.error('newFile ERROR:', e) })
+      tap({ next: x => this.logger.debug('newFile success:',path, x), error: e => this.logger.error('newFile ERROR:', e) })
     ) as Observable<File>;
   }
 
@@ -82,7 +82,7 @@ export class Repository extends Requestable {
       },
       content: isBase64 ? content : base64Encode(content)
     }, undefined).pipe(
-      tap({ next: x => this.logger.debug('newFileReportProgress:', x), error: e => this.logger.error('newFileReportProgress ERROR:', e) })
+      tap({ next: x => this.logger.debug('newFileReportProgress:',path, x), error: e => this.logger.error('newFileReportProgress ERROR:', e) })
     );
   }
 
@@ -104,7 +104,7 @@ export class Repository extends Requestable {
           }
         });
       }),
-      tap({ next: x => this.logger.debug('deleteFile success:', x), error: e => this.logger.error('deleteFile ERROR:', e) }),
+      tap({ next: x => this.logger.debug('deleteFile success:',path, x), error: e => this.logger.error('deleteFile ERROR:', e) }),
       map(x => <File>x)
     );
   }
@@ -120,7 +120,7 @@ export class Repository extends Requestable {
         }
       })
       .pipe(
-        tap({ next: x => this.logger.debug('delFileViaSha success:', x), error: e => this.logger.error('delFileViaSha ERROR:', e) })
+        tap({ next: x => this.logger.debug('delFileViaSha success:',path, x), error: e => this.logger.error('delFileViaSha ERROR:', e) })
       );
   }
 
@@ -168,7 +168,7 @@ export class Repository extends Requestable {
     path = path ? encodeURI(path) : '';
     return this.request('GET', `/repos/${this.fullName}/contents/${path}`, { ref }).pipe(
       map(x => this.decodeContent(<Content | Array<Content>>x)),
-      tap({ next: x => this.logger.debug('getContents:', x), error: e => this.logger.error('getContents ERROR:', e) })
+      tap({ next: x => this.logger.debug('getContents:',path, x), error: e => this.logger.error('getContents ERROR:', e) })
     );
   }
 

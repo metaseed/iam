@@ -1,4 +1,4 @@
-import { interval, asyncScheduler, zip, merge } from 'rxjs';
+import { interval, asyncScheduler, zip, merge, concat } from 'rxjs';
 import { subscribeOn, catchError, switchMap, map, tap, filter, retry, combineLatestWith, startWith, debounceTime } from 'rxjs/operators';
 import { ICache, DocContent, DataTables, DocMeta, Document, AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL, Logger, backoff } from 'core';
 import { Database } from '../database/database-engine';
@@ -35,27 +35,29 @@ export class DatabaseCacheSaver {
     )
 
     this.autoSave$ = interval(AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL + Math.random() * 10000)
-    .pipe(
-      combineLatestWith(online$),
-      switchMap(() => this.db.getAll<DirtyDocument>(DataTables.DirtyDocs)),
-      filter(docs => docs.length > 0),
-      tap(dirtyDocs => this.logger.debug(`autoSaver: save dirty docs every ${AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL / 1000 / 60}min or network online again.`, dirtyDocs)),
-      switchMap(dirtyDocs => merge(...(dirtyDocs.map(({ id, changeLog, iamInstanceId }) => this.saveToNet(id, changeLog).pipe(
-        tap((doc: Document) => {
-          this.logger.info('autoSaver: broadcast doc saved to network');
-          // let other tab or window know
-          this.broadcastChannel.postMessage({ doc, iamInstanceId });
-          this.updateStore_AutoSaver({ doc, iamInstanceId });
-        }),
-        backoff(2, 2000),
-      ))))),
-      tap({ error: (err) => this.logger.error(err) }),
-      retry()
-    )
+      .pipe(
+        combineLatestWith(online$),
+        switchMap(() => this.db.getAll<DirtyDocument>(DataTables.DirtyDocs)),
+        filter(docs => docs.length > 0),
+        tap(dirtyDocs => this.logger.debug(`autoSaver: save dirty docs every ${AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL / 1000 / 60}min or network online again.`, dirtyDocs)),
+        switchMap(dirtyDocs => concat(
+          ...(dirtyDocs.map(({ id, changeLog, iamInstanceId }) => this.saveToNet(id, changeLog).pipe(
+            tap((doc: Document) => {
+              this.logger.info('autoSaver: broadcast doc saved to network', doc);
+              // let other tab or window know
+              this.broadcastChannel.postMessage({ doc, iamInstanceId });
+              this.updateStore_AutoSaver({ doc, iamInstanceId });
+            }),
+            backoff(2, 2000),
+          )))
+        )),
+        tap({ error: (err) => this.logger.error(err) }),
+        retry()
+      )
   }
 
   private updateStore_AutoSaver({ doc, iamInstanceId }: DocAndIamInstanceId) {
-    this.logger.info('autoSaver: update doc in store after update the network doc!');
+    this.logger.info('autoSaver: update doc in store after update the network doc!', doc);
     this.store.upsertDocStatus({ isDbDirty: false, isSyncing: false }, doc.metaData.id);
     const isSameInstance = iamInstanceId === this.store.iamInstanceId;
     this.updateStore(doc, isSameInstance);
@@ -65,9 +67,13 @@ export class DatabaseCacheSaver {
     this.store.docMeta.upsert(doc.metaData);
     if (notUpdateContent) {
       const docContentInStore = this.store.getDocContent(doc.content.id);
-      if (docContentInStore)
+      if (docContentInStore){
+        this.logger.info('autoSaver: no need to update content string in store!', doc);
         doc.content.content = docContentInStore.content;
+      }
     }
+
+    this.logger.info('autoSaver: update Doc in store!', doc);
     this.store.docContent.upsert(doc.content);
   }
 
