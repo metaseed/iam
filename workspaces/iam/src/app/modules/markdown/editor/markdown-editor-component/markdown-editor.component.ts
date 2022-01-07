@@ -81,6 +81,8 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
   ngAfterViewInit() {
     const codeMirrorScrollElement = (this._elementRef.nativeElement as HTMLElement).getElementsByClassName('CodeMirror-scroll')[0] as HTMLElement;
 
+    // override default style. to fix the issue: when content is just one page, scroll to bottom, can not show several bottom lines.
+    codeMirrorScrollElement.style.marginRight = '0px';
     this.markdownStore.editor_.next(
       new ContainerRef(
         codeMirrorScrollElement,
