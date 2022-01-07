@@ -1,4 +1,13 @@
-<editor-toolbar #toolbar style="z-index: 802;" [scrollHide]="[{container$:markdownStore.viewer_},{container$:markdownStore.editor_}]" [hide]="(docMode$|async)!==DocumentMode.Edit"
-  [hideHeight]="toolbar.hideHeight"></editor-toolbar>
-<ms-codemirror [ngModel]="markdown$|async"></ms-codemirror>
+<editor-toolbar
+  #toolbar
+  style="z-index: 802"
+  [scrollHide]="[
+    { container$: markdownStore.viewer_ },
+    { container$: markdownStore.editor_ }
+  ]"
+  [hide]="(docMode$ | async) !== DocumentMode.Edit"
+  [usePadding]="true"
+  [hideHeight]="toolbar.hideHeight"
+></editor-toolbar>
+<ms-codemirror [ngModel]="markdown$ | async"></ms-codemirror>
 <sk-cube-grid [isRunning]="!editorLoaded"></sk-cube-grid>

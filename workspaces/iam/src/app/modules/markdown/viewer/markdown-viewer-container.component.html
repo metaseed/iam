@@ -1,5 +1,6 @@
 <ms-viewer-toolbar
   [scrollHide]="[{ container$: markdownStore.viewer_ }]"
+  [usePadding]="true"
   [hide]="(docMode$ | async) !== DocumentMode.View"
 >
 </ms-viewer-toolbar>

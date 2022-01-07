@@ -62,6 +62,9 @@ export class ScrollHideDirective implements OnDestroy, AfterViewInit {
   }
 
   @Input()
+  usePadding = false;
+
+  @Input()
   clickToggleEnable = true;
 
   @Input()
@@ -121,7 +124,10 @@ export class ScrollHideDirective implements OnDestroy, AfterViewInit {
       this._containerItems.forEach(item => {
         const marginElement = item.elementWithMarginTop;
         if (marginElement && marginElement._marginChanged) {
-          marginElement.style.marginTop = marginElement._margin + 'px';
+          if (this.usePadding)
+            marginElement.style.paddingTop = marginElement._margin + 'px';
+          else
+            marginElement.style.marginTop = marginElement._margin + 'px';
           marginElement._marginChanged = false;
         }
       });
@@ -189,9 +195,17 @@ export class ScrollHideDirective implements OnDestroy, AfterViewInit {
       const configContainer = (container: IContainer) => {
         const marginElement = item.elementWithMarginTop || (container.nativeElement as HTMLElement);
         marginElement.style.transitionDuration = TRANSITION_DURATION;
-        marginElement.style.transitionProperty = 'margin-top';
+        if (this.usePadding)
+          marginElement.style.transitionProperty = 'padding-top';
+        else
+          marginElement.style.transitionProperty = 'margin-top';
         marginElement.style.transitionTimingFunction = 'ease-in-out';
-        marginElement.style.marginTop = this._height + 'px';
+        if (this.usePadding){
+          marginElement.style.boxSizing = 'border-box';
+          marginElement.style.paddingTop = this._height + 'px';
+        }
+        else
+          marginElement.style.marginTop = this._height + 'px';
         item.elementWithMarginTop = marginElement;
         item.elementWithMarginTop._margin = this._height;
         item.container = container;
@@ -229,7 +243,10 @@ export class ScrollHideDirective implements OnDestroy, AfterViewInit {
         this.transitionProperty = 'top';
         containerItems.forEach(it => {
           if (it.elementWithMarginTop !== undefined) {
-            it.elementWithMarginTop.style.transitionProperty = 'margin-top';
+            if (this.usePadding)
+              it.elementWithMarginTop.style.transitionProperty = 'padding-top';
+            else
+              it.elementWithMarginTop.style.transitionProperty = 'margin-top';
           }
         });
       };
@@ -339,7 +356,10 @@ export class ScrollHideDirective implements OnDestroy, AfterViewInit {
             // console.log(marginValue);
             // [0, height]
             const marginValue = this._height + this.top;
-            marginElement.style.marginTop = marginValue + 'px';
+            if (this.usePadding)
+              marginElement.style.paddingTop = marginValue + 'px';
+            else
+              marginElement.style.marginTop = marginValue + 'px';
             marginElement._margin = marginValue;
             marginElement._marginChanged = true;
             it.container.scrollTop -= marginValue;
