@@ -125,7 +125,7 @@ export default function toc(md: MarkdownIt, option) {
         .reduce((acc, t) => acc + t.content, '');
       buffer = `<li><a href="${options.getHref(options.slugify(title))}">
       ${typeof options.format === 'function' ? options.format(heading.content) : title}
-        </a>'`;
+        </a>`;
       i++;
     }
     buffer += buffer === '' ? '' : '</li>';
