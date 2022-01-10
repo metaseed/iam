@@ -10,6 +10,7 @@ import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN, DOC_HISTORY_VERSION_ID, ROOT_
 import { DocumentStore } from '../shared/store/document.store';
 import { MatDialog } from '@angular/material/dialog';
 import { TagsCloudComponent } from './tags-cloud/tags-cloud.component';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'home',
@@ -38,7 +39,7 @@ export class HomeComponent {
     private router: Router,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-
+    private titleService: Title
   ) { }
 
   private _scrollTop;
@@ -62,6 +63,7 @@ export class HomeComponent {
   ngOnInit() {
     this._rememberScrollPosition();
     this.documentEffects.readBulkDocMeta_.next({ isBelowRange: false });
+    this.titleService.setTitle("Home - I'm");
 
     //   from([this.initDocs$, filteredDocs$]).pipe(
 
