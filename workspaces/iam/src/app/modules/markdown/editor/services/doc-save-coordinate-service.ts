@@ -14,7 +14,6 @@ export class DocSaveCoordinateService extends SubscriptionManager {
   isSyncing$ = new BehaviorSubject(false);
   isSaving: boolean;
   private editor: CodeMirror.Editor;
-
   private contentGeneration: number;
 
   constructor(
