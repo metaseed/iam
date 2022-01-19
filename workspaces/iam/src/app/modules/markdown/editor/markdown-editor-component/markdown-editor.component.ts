@@ -58,6 +58,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
         this.editorService.docEditorLoaded$.subscribe(() => {
           setTimeout(() => (this.editorLoaded = true));
         }),
+
         this.markdownStore.editIt_
           .subscribe(({ sourceLine }) => {
             if (!sourceLine) return;
@@ -66,7 +67,9 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
               this.editorService.gotoLine(sourceLine[0]);
             });
           }),
+
         this.editorService.docContentModified$.subscribe(([content, editor]) => this.markdownStore.editorContentChanged_.next(content)),
+
         this.docMode$.subscribe(mode => {
           switch (mode) {
             case DocumentMode.Edit: {
