@@ -133,7 +133,6 @@ export class DocumentsEffects extends EffectManager {
                 tap(d => {
                   if (d.metaData.id === this.store.currentId_.state)
                     this.util.modifyUrlAfterSaved(d.metaData.id, title, ft);
-                  this.logger.log(`doc with id(${d.metaData.id}) Saved!`);
                 })
               );
           }
