@@ -67,8 +67,9 @@ export class DatabaseCacheSaver {
     this.store.docMeta.upsert(doc.metaData);
     if (notUpdateContent) {
       const docContentInStore = this.store.getDocContent(doc.content.id);
-      if (docContentInStore){
-        this.logger.info('autoSaver: no need to update content string in store!', doc);
+      const isEditorDirty = this.store.currentDocStatus_IsEditorDirty$.state;
+      if (docContentInStore && isEditorDirty) {
+        this.logger.info('autoSaver: net saving(every 5mins) triggered by me, no need to update content string in store, in case of modification within 10s!', doc);
         doc.content.content = docContentInStore.content;
       }
     }
@@ -106,7 +107,7 @@ export class DatabaseCacheSaver {
         if (forceSave) {
           return ro.pipe(
             switchMap(r => this.saveToNet(doc.metaData.id, changeLog)),
-            tap(doc => this.updateStore(doc))
+            tap(doc => this.updateStore(doc, true))
           );
         } else {
           return ro.pipe(map(r => doc));

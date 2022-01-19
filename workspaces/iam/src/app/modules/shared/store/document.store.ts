@@ -33,7 +33,8 @@ export class DocumentStore {
   /**
    * used to identify the iam instance
    * because IndexDb is shared by all instance(tab window) of same origin,
-   * if the content is modified by me, no need to update dirty content in store, so no override of editing content (no dirty content lost of current editing doc)
+   * if the content saving event is triggered by me, and content is saved to net(very 5mins),
+   * no need to update dirty content in store, so no override of editing content (no dirty content lost of current editing doc within 10s)
    */
   iamInstanceId = Math.random();
 
