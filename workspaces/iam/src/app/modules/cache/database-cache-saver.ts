@@ -69,7 +69,7 @@ export class DatabaseCacheSaver {
       const docContentInStore = this.store.getDocContent(doc.content.id);
       const isEditorDirty = this.store.currentDocStatus_IsEditorDirty$.state;
       if (docContentInStore && isEditorDirty) {
-        this.logger.info('autoSaver: net saving(every 5mins) triggered by me, no need to update content string in store, in case of modification within 10s!', doc);
+        this.logger.info('autoSaver: net saving(every 5mins) triggered by me, just update none-content property, no need to update content string in store, in case of modification within 10s!', doc);
         doc.content.content = docContentInStore.content;
       }
     }
