@@ -2,7 +2,7 @@ import { DocContent, DocMeta, Logger, SearchResult, Tag } from "core";
 import { EntityCacheStore, MemEntityCache } from "@rx-store/entity";
 import { state, StateSubject } from "@rx-store/core";
 import { Injectable, isDevMode } from "@angular/core";
-import { DocumentStatus } from "app/modules/core/model/doc-model/doc-status";
+import * as docStatus from "app/modules/core/model/doc-model/doc-status";
 import { distinctUntilChanged, map, tap } from "rxjs/operators";
 import { pipe } from "rxjs";
 
@@ -30,6 +30,9 @@ export class DocumentStore {
         : -1
   }));
 
+  dirtyDoc = new EntityCacheStore<number, docStatus.DirtyDocumentInStore>(new MemEntityCache({
+    idGenerator: e => e.id
+  }));
   /**
    * used to identify the iam instance
    * because IndexDb is shared by all instance(tab window) of same origin,
@@ -40,7 +43,7 @@ export class DocumentStore {
 
   docContent = new EntityCacheStore<number, DocContent>(new MemEntityCache({ idGenerator: e => e.id }));
 
-  docStatus = new EntityCacheStore<number, DocumentStatus>(new MemEntityCache({ idGenerator: e => e.id }));
+  docStatus = new EntityCacheStore<number, docStatus.DocumentStatus>(new MemEntityCache({ idGenerator: e => e.id }));
 
   tags = new EntityCacheStore<string, Tag>(new MemEntityCache({ idGenerator: e => e.name }));
 
@@ -60,6 +63,10 @@ export class DocumentStore {
 
   currentDocContentString$ = this.currentDocContent$.map(content => content?.content);
 
+  currentDocStatus_IsStoreDirty$ = state(this.currentDocStatus$.pipe(
+    map(status => status?.isStoreDirty),
+    distinctUntilChanged()
+  ));
   currentDocStatus_IsEditorDirty$ = state(this.currentDocStatus$.pipe(
     map(status => status?.isEditorDirty),
     distinctUntilChanged()
@@ -120,7 +127,7 @@ export class DocumentStore {
     return ids.map(id => this.docMeta.cache.entities[id]);
   }
 
-  upsertDocStatus(status: Partial<DocumentStatus>, id?: number) {
+  upsertDocStatus(status: Partial<docStatus.DocumentStatus>, id?: number) {
     id ??= this.docStatus.currentId_.state;
     let statusInStore = this.docStatus.cache.entities[id];
     if (!statusInStore) {

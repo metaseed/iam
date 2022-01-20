@@ -6,7 +6,7 @@ import { DocService } from 'home';
 import { ICodeMirrorEditor, MarkdownEditorService } from '..';
 import { DocFormat, Logger } from 'core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
-import { DocSaveCoordinateService } from '../services/doc-save-coordinate-service';
+import { EditorSaveService  } from '../services/editor-save-service';
 import { map, startWith, tap } from 'rxjs/operators';
 import { SubscriptionManager, Utilities } from '../../../core/utils';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -49,7 +49,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
   @ViewChild('toolbar', { read: ElementRef })
   toolbar: ElementRef;
   isScreenWide$ = this.utils.isWideScreen$;
-  isEditorDirty$ = this.store.currentDocStatus_IsEditorDirty$
+  isStoreDirty$ = this.store.currentDocStatus_IsStoreDirty$
     .pipe(
       startWith(false)
     );
@@ -62,7 +62,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
       startWith(false)
     );
 
-  dirtyInfo$ = combineLatest([this.isEditorDirty$, this.isDbDirty$, this.isSyncing$]).pipe(
+  dirtyInfo$ = combineLatest([this.isStoreDirty$, this.isDbDirty$, this.isSyncing$]).pipe(
     map(([memDirty, dbDirty, sync]) => {
       if (memDirty) { return 'modification not saved' }
       else if (dbDirty) { return 'modification not sync with server' }
@@ -82,7 +82,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
     public docService: DocService,
     private store: DocumentStore,
     private bottomSheet: MatBottomSheet,
-    public docSaver: DocSaveCoordinateService,
+    public docSaver: EditorSaveService,
     private _breakpointObserver: BreakpointObserver,
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
     @Inject(MARKDOWN_STORE_TOKEN) private markdownStore: IMarkdownStore,
@@ -130,7 +130,7 @@ export class EditorToolbarComponent extends SubscriptionManager implements After
 
   onSave = () => {
     const content = this.editor.getValue();
-    if (this.store.currentDocStatus_IsEditorDirty$.state) {
+    if (this.store.currentDocStatus_IsStoreDirty$.state) {
       // if is not dirty, remote side would not take the commit msg.
       // todo: update last commit msg.
       const changeNoteInput = this.bottomSheet.open(ChangeNoteInputComponent)

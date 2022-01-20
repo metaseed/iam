@@ -11,7 +11,7 @@
     <button [title]="dirtyInfo$ | async"
       mat-icon-button
       (click)="onSave()"
-      [class.mem-dirty]="isEditorDirty$ | async"
+      [class.mem-dirty]="isStoreDirty$ | async"
       [class.db-dirty]="isDbDirty$ | async"
       [class.net-syncing]="isSyncing$ | async"
     >

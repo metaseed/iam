@@ -68,8 +68,6 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
             });
           }),
 
-        this.editorService.docContentModified$.subscribe(([content, editor]) => this.markdownStore.editorContentChanged_.next(content)),
-
         this.docMode$.subscribe(mode => {
           switch (mode) {
             case DocumentMode.Edit: {
@@ -131,7 +129,7 @@ export class MarkdownEditorComponent extends SubscriptionManager implements ICan
 
     const dialogData: DialogData = { title: 'Save?', message: 'Document modified, are you want to save?', defaultAction: 'Yes', additionalAction: 'No' }
     const status = this.store.currentDocStatus$.state;
-    if (status?.isEditorDirty) {
+    if (status?.isStoreDirty) {
       return this.dialog
         .open(MessageDialog, { width: '300px', data: dialogData })
         .afterClosed()

@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { SpinnerModule } from '@metaseed/spinner';
 import { MaterialModule } from '../../material/material.module';
 import { CodemirrorComponent } from './codemirror-editor/codemirror-component/codemirror.component';
-import { DocSaveCoordinateService } from './services/doc-save-coordinate-service';
+import { EditorSaveService } from './services/editor-save-service';
 import { CanDeactivateGuard } from '../../core/services/can-deactive-guard.service';
 import { SharedModule } from 'shared';
 import { KeyMapService } from './services/keymap.service';
@@ -35,7 +35,7 @@ import { MarkdownEditorComponent } from './markdown-editor-component/markdown-ed
   providers: [
     KeyMapService,
     MarkdownEditorService,
-    DocSaveCoordinateService,
+    EditorSaveService,
     CanDeactivateGuard
   ],
   entryComponents: []

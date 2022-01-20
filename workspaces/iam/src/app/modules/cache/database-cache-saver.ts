@@ -34,14 +34,14 @@ export class DatabaseCacheSaver {
       debounceTime(6000)
     )
 
-    this.autoSave$ = interval(AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL + Math.random() * 10000)
+    this.autoSave$ = interval(AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL + Math.random() * 10000) // random value used to give instances different db saving interval
       .pipe(
         combineLatestWith(online$),
         switchMap(() => this.db.getAll<DirtyDocument>(DataTables.DirtyDocs)),
         filter(docs => docs.length > 0),
         tap(dirtyDocs => this.logger.debug(`autoSaver: save dirty docs every ${AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL / 1000 / 60}min or network online again.`, dirtyDocs)),
         switchMap(dirtyDocs => concat(
-          ...(dirtyDocs.map(({ id, changeLog, iamInstanceId }) => this.saveToNet(id, changeLog).pipe(
+          ...(dirtyDocs.map(({ id, changeLog, iamInstanceId }) => this.saveToNextCache(id, changeLog).pipe(
             tap((doc: Document) => {
               this.logger.info('autoSaver: broadcast doc saved to network', doc);
               // let other tab or window know
@@ -65,17 +65,18 @@ export class DatabaseCacheSaver {
 
   private updateStore(doc: Document, notUpdateContent = true) {
     this.store.docMeta.upsert(doc.metaData);
+
     if (notUpdateContent) {
       const docContentInStore = this.store.getDocContent(doc.content.id);
-      const isEditorDirty = this.store.currentDocStatus_IsEditorDirty$.state;
-      if (docContentInStore && isEditorDirty) {
+      const isStoreDirty = this.store.currentDocStatus_IsStoreDirty$.state;
+      if (docContentInStore && isStoreDirty) {
         this.logger.info('autoSaver: net saving(every 5mins) triggered by me, just update none-content property, no need to update content string in store, in case of modification within 10s!', doc);
         doc.content.content = docContentInStore.content;
       }
     }
 
-    this.logger.info('autoSaver: update Doc in store!', doc);
     this.store.docContent.upsert(doc.content);
+    this.logger.info('autoSaver: update Doc in store!', doc);
   }
 
   private saveDocToDb(docMeta: DocMeta, docContent: DocContent) {
@@ -96,17 +97,18 @@ export class DatabaseCacheSaver {
       )
     )
   }
-  public saveToDb(docMeta: DocMeta, docContent: DocContent, forceSave = false, changeLog: string) {
+
+  public updateDocument(docMeta: DocMeta, docContent: DocContent, forceSave = false, changeLog: string) {
     return this.saveDocToDb(docMeta, docContent).pipe(
       map(([content, meta]) => {
-        this.store.upsertDocStatus({ isEditorDirty: false, isDbDirty: true }, content.id);
+        this.store.upsertDocStatus({ isStoreDirty: false, isDbDirty: true }, content.id);
         return new Document(docMeta, docContent);
       }),
       switchMap(doc => {
         const ro = this.db.put<DirtyDocument>(DataTables.DirtyDocs, new DirtyDocument(doc.metaData.id, changeLog, this.store.iamInstanceId));
         if (forceSave) {
           return ro.pipe(
-            switchMap(r => this.saveToNet(doc.metaData.id, changeLog)),
+            switchMap(r => this.saveToNextCache(doc.metaData.id, changeLog)),
             tap(doc => this.updateStore(doc, true))
           );
         } else {
@@ -116,7 +118,7 @@ export class DatabaseCacheSaver {
     );
   }
 
-  private saveToNet(id: number, changeLog: string) {
+  private saveToNextCache(id: number, changeLog: string) {
     return zip(
       this.db.get<DocContent>(DataTables.DocContent, id).pipe(
         subscribeOn(asyncScheduler),

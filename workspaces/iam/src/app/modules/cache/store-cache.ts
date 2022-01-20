@@ -7,30 +7,37 @@ import {
   SearchResult,
   SearchResultSource,
   Logger,
-  Tag
+  SubscriptionManager
 } from 'core';
 import { Injectable } from '@angular/core';
-import { Observable, of, merge, EMPTY } from 'rxjs';
+import { Observable, of, EMPTY, Subject } from 'rxjs';
 import { tap, catchError, map, switchMap } from 'rxjs/operators';
 import { NEW_DOC_ID, DEFAULT_NEW_DOC_CONTENT } from '../shared/store/const';
 import { StoreSearchService } from './services/store-search.service';
 import { DocumentStore } from '../shared/store/document.store';
 import { concat } from 'rxjs';
+import { StoreSaver } from './store-cache-saver';
 
 @Injectable({ providedIn: 'platform' })
-export class StoreCache implements ICache {
+export class StoreCache extends SubscriptionManager implements ICache {
   docMetaData: { hightKey: number; lowKey: number };
 
   public nextLevelCache: ICache;
   private logger = Logger('StoreCache');
+  private storeSaver: StoreSaver;
 
   constructor(
     private _store: DocumentStore,
     private _storeSearchService: StoreSearchService,
-  ) { }
+  ) {
+    super();
+  }
 
   init(nextLevelCache: ICache): ICache {
     this.nextLevelCache = nextLevelCache;
+    this.storeSaver = new StoreSaver(this._store, nextLevelCache);
+
+    super.addSub(this.storeSaver.autoSave$);
     return this;
   }
 
@@ -86,8 +93,7 @@ export class StoreCache implements ICache {
   readDocMeta(id: number, checkNextCache?: boolean): Observable<DocMeta> {
     return this.nextLevelCache.readDocMeta(id, checkNextCache).pipe(
       tap(meta => {
-        if (meta.isDeleted)
-        {
+        if (meta.isDeleted) {
           this.logger.debug(`readDocMeta: delete document from store because it's meta data means deleted in remote`)
           this._store.delete(meta.id);
         }
@@ -191,10 +197,7 @@ export class StoreCache implements ICache {
   }
 
   updateDocument(oldDocMeta: DocMeta, content: DocContent, forceUpdate: boolean, changeLog: string) {
-    this._store.docContent.upsert(content);
-    this.logger.log(`doc content string with id(${oldDocMeta.id}) Saved to store!`);
-
-    return this.nextLevelCache.updateDocument(oldDocMeta, content, forceUpdate, changeLog);
+    return this.storeSaver.updateDocument(oldDocMeta, content, forceUpdate, changeLog);
   }
 
   deleteDoc(id: number) {
@@ -234,7 +237,7 @@ export class StoreCache implements ICache {
             if (item.source !== SearchResultSource.store) {
               item.title ??= lastResult[index].title;
               // lastResult[index] = item;
-              lastResult.splice(index,0, item);
+              lastResult.splice(index, 0, item);
             }
           } else {
             lastResult.push(item);

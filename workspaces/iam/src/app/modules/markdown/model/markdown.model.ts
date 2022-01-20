@@ -13,7 +13,6 @@ export enum DocumentMode {
 export interface IMarkdownStore {
   viewer_: StateSubject<IContainer>;
   editor_: StateSubject<IContainer>;
-  editorContentChanged_: Subject<string>;
   isLockEditorScrollWithView_: Subject<boolean>;
   scrollView_: Subject<{isUp: boolean}>;
   documentMode_: Subject<DocumentMode>;

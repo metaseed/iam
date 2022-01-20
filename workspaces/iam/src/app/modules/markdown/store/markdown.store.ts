@@ -8,8 +8,6 @@ import { Subject } from 'rxjs';
 export class MarkdownStore implements IMarkdownStore {
   viewer_ = new StateSubject<IContainer>();
   editor_ = new StateSubject<IContainer>();
-  // need to be an observable (not stateSubject), because we do not want to keep state, otherwise doc viewer would see the laster edited doc versers the current doc.
-  editorContentChanged_ = new Subject<string>();
   isLockEditorScrollWithView_ = new Subject<boolean>();
   scrollView_ = new Subject<{ isUp: boolean }>();
   documentMode_ = new StateSubject<DocumentMode>(DocumentMode.View);

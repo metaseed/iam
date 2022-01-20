@@ -47,12 +47,11 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.markdownStore.editWithPreview_
   );
 
-  markdown$  = merge(
-    this.store.currentDocContentString$,
-    this.markdownStore.editorContentChanged_
-  ).pipe(
-    map(d => d ?? ''),
-    backoff<string>(80, 1000));
+  markdown$ =
+    this.store.currentDocContentString$.pipe(
+      map(d => d ?? ''),
+      backoff<string>(80, 1000)
+    );
 
   constructor(
     @Inject(DOCUMENT_EFFECTS_TOKEN) private documentEffects: DocumentsEffects,
@@ -67,28 +66,28 @@ export class MarkdownComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnInit() {
     this.router.routerState.root.firstChild.queryParams
-    .pipe(
-      tap(params => {
-        if (this.router.url.startsWith('/doc/new')) {
-          const format = params['f'] as DocFormat;
-          this.documentEffects.createDocument_.next({ format });
-          this.markdownStore.documentMode_.next(DocumentMode.Edit);
+      .pipe(
+        tap(params => {
+          if (this.router.url.startsWith('/doc/new')) {
+            const format = params['f'] as DocFormat;
+            this.documentEffects.createDocument_.next({ format });
+            this.markdownStore.documentMode_.next(DocumentMode.Edit);
 
-        } else {
-          const title = params['title'];
-          const id = +params['id']
-          const format = params['f'];
-          if(id === DOC_HISTORY_VERSION_ID && !this.store.currentDocContent$.state) {
-            // if no content in store cache, means user F5 refresh the page with the history doc(id === -1) url.
-            this.router.navigate(['home']);
+          } else {
+            const title = params['title'];
+            const id = +params['id']
+            const format = params['f'];
+            if (id === DOC_HISTORY_VERSION_ID && !this.store.currentDocContent$.state) {
+              // if no content in store cache, means user F5 refresh the page with the history doc(id === -1) url.
+              this.router.navigate(['home']);
+            }
+            this.documentEffects.readDocument_.next({ id, title, format });
+            this.store.currentId_.next(id);
+
           }
-          this.documentEffects.readDocument_.next({ id, title, format });
-          this.store.currentId_.next(id);
-
-        }
-      })
-    )
-    .subscribe();
+        })
+      )
+      .subscribe();
   }
 
   ngOnDestroy() {
