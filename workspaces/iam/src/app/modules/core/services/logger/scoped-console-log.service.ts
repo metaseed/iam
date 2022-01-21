@@ -15,7 +15,7 @@ export function screenConsoleLog(screeLogFunctions?: string[]) {
 
 /**
  * only these functions are supported by scope function.
- *
+ * hard to scope assert, so remove it from here
  */
 const scopedConsoleFunctions = [
   console.debug.name, console.log.name, console.info.name, console.warn.name,
@@ -24,22 +24,23 @@ const scopedConsoleFunctions = [
 
 /**
  * usage:
+ * logger = Logger(`${this.constructor.name}`)
  * logger = Logger('DocumentsEffects');
  */
-export function Logger(prefix, cons: Console = console) {
-  if (!prefix.startsWith('@')) prefix = '@' + prefix;
+export function Logger(scopePrefix, cons: Console = console) {
+  if (!scopePrefix.startsWith('@')) scopePrefix = '@' + scopePrefix;
 
   return new Proxy(cons, {
     get(target, propKey, receiver) {
-      // screen call via proxy
-      if (logFunctionPrdScreen.includes(propKey as string))
-        return () => undefined;
+      // screen call via proxy is not needed
+      // if (logFunctionPrdScreen.includes(propKey as string))
+      //   return () => undefined;
 
       const origMethod = target[propKey];
       if (!scopedConsoleFunctions.includes(propKey as string))
         return origMethod;
 
-      return origMethod.bind(cons, prefix + '>');
+      return origMethod.bind(cons, scopePrefix + '>');
 
     }
   });
