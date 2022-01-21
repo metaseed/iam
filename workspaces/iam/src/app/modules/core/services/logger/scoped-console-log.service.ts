@@ -15,11 +15,17 @@ export function screenConsoleLog(screeLogFunctions?: string[]) {
 
 /**
  * only these functions are supported by scope function.
+ *
  */
 const scopedConsoleFunctions = [
   console.debug.name, console.log.name, console.info.name, console.warn.name,
-  console.error.name, console.count.name, console.assert.name, console.trace.name
+  console.error.name, console.count.name, console.trace.name
 ];
+
+/**
+ * usage:
+ * logger = Logger('DocumentsEffects');
+ */
 export function Logger(prefix, cons: Console = console) {
   if (!prefix.startsWith('@')) prefix = '@' + prefix;
 
@@ -33,15 +39,7 @@ export function Logger(prefix, cons: Console = console) {
       if (!scopedConsoleFunctions.includes(propKey as string))
         return origMethod;
 
-      return function (...args) {
-        if (origMethod === cons.assert) {
-          const [arg0, ...argRest] = args;
-
-          return origMethod.apply(cons, [arg0, prefix, ...argRest]);
-        }
-
-        return origMethod.apply(cons, [prefix + '>', ...args]);
-      };
+      return origMethod.bind(cons, prefix + '>');
 
     }
   });
