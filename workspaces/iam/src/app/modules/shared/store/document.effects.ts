@@ -22,7 +22,7 @@ export class DocumentsEffects extends EffectManager {
     private store: DocumentStore
   ) {
     super();
-    this.addReporter(new OperationStatusConsoleReporter());
+    this.addReporter(new OperationStatusConsoleReporter(),['saveDocument_']);
   }
 
   createDocument_ = new EffectStateSubject<Pick<DocMeta, 'format'>>().addMonitoredEffect(
@@ -120,6 +120,7 @@ export class DocumentsEffects extends EffectManager {
           if (id === NEW_DOC_ID) {
             return this.cacheFacade.CreateDocument(content, format).pipe(
               tap(d => {
+                this.logger.debug('new document saved', d);
                 this.util.modifyUrlAfterSaved(d.metaData.id, title, format);
                 this.snackbar.open('New document saved!', 'OK');
               }),

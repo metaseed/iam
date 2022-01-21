@@ -5,10 +5,10 @@ type Constructor<T> = new (...args: any[]) => T;
 
 export function MixinEffectManager<T extends Constructor<{}>> (Base: T) {
   return class extends Base {
-    addReporter(reporter: OperationStatusReporter) {
+    addReporter(reporter: OperationStatusReporter, hiddenEffects?: string[]) {
       let effect: EffectStateObservable<any>;
-      for (effect of Object.values(this)) {
-        if (effect.operationStatus$) {
+      for (const [key,effect] of Object.entries(this)) {
+        if (effect.operationStatus$ && (!hiddenEffects || !hiddenEffects.includes(key))) {
           effect.operationStatus$.addReporter(reporter);
         }
       }
