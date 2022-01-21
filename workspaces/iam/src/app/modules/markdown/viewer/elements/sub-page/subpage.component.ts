@@ -156,7 +156,8 @@ export class SubPageComponent extends ManageSubscription(DataSourceLines) {
     const dialog = this.dialog.open(SubPageIdSearchComponent, { width: '95vw', height: '90vh' });
 
     return dialog.afterClosed().pipe(
-      map((r: ISearchItem) => r.id)
+      map((r: ISearchItem) => r?.id),
+      filter(r=>!!r)
     )
   }
 

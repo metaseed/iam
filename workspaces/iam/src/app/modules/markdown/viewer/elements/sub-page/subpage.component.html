@@ -79,7 +79,7 @@
         <button class="delete-button" mat-button (click)="delete(meta)">
           <mat-icon>delete_forever</mat-icon>
         </button>
-        <span class="meta-version"> v{{ meta.version }} </span>
+        <span class="meta-version" *ngIf="meta.version"> v{{ meta.version }} </span>
         <span style="margin-left: 10px" class="meta-date"
           >{{ meta.createDate?.toLocaleDateString() }} -
           {{ meta.updateDate.toLocaleDateString() }}</span
