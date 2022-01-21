@@ -1,6 +1,5 @@
 import { DocMeta } from './doc-meta';
 import { DocContent } from './doc-content';
-import { DocumentStatus } from './doc-status';
 
 export interface IDocument {
   metaData: DocMeta;

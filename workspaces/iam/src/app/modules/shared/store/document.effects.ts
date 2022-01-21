@@ -1,11 +1,12 @@
 import { Inject, Injectable, InjectionToken } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { CACHE_FACADE_TOKEN, DocContent, DocFormat, DocMeta, ICache, NET_COMMU_TIMEOUT, Logger } from "core";
-import { forkJoin, map, pipe, switchMap, tap, throwError } from "rxjs";
+import { forkJoin, map, of, pipe, switchMap, tap, throwError } from "rxjs";
 import { DOC_HISTORY_VERSION_ID, NEW_DOC_ID } from "shared";
 import { DocEffectsUtil } from "./document.effects.util";
 import { EffectManager, EffectStateSubject, OperationStatusConsoleReporter } from "@rx-store/effect";
 import { DocumentStore } from "./document.store";
+import { Document } from "core";
 
 export const DOCUMENT_EFFECTS_TOKEN = new InjectionToken<DocumentsEffects>('DOCUMENT_EFFECTS_TOKEN');
 const EFFECT_TIMEOUT = NET_COMMU_TIMEOUT;
@@ -22,7 +23,7 @@ export class DocumentsEffects extends EffectManager {
     private store: DocumentStore
   ) {
     super();
-    this.addReporter(new OperationStatusConsoleReporter(),['saveDocument_']);
+    this.addReporter(new OperationStatusConsoleReporter(), ['saveDocument_']);
   }
 
   createDocument_ = new EffectStateSubject<Pick<DocMeta, 'format'>>().addMonitoredEffect(
@@ -91,6 +92,8 @@ export class DocumentsEffects extends EffectManager {
     { type: '[DocumentsEffects]readDocument', timeOut: EFFECT_TIMEOUT }
   );
 
+  private isCreatingDoc = false;
+  private newContentDuringCreating:string = undefined;
   saveDocument_ = new EffectStateSubject<
     {
       content: string;
@@ -118,11 +121,29 @@ export class DocumentsEffects extends EffectManager {
           }
 
           if (id === NEW_DOC_ID) {
+            if(this.isCreatingDoc) {
+              this.logger.debug('new doc: waiting for doc created, then update');
+              this.newContentDuringCreating = content;
+              return of(new Document(null, null))
+            }
+            this.isCreatingDoc  = true;
             return this.cacheFacade.CreateDocument(content, format).pipe(
-              tap(d => {
-                this.logger.debug('new document saved', d);
-                this.util.modifyUrlAfterSaved(d.metaData.id, title, format);
-                this.snackbar.open('New document saved!', 'OK');
+              tap({
+                next: d => {
+                  this.logger.debug('new document saved', d);
+                  this.util.modifyUrlAfterSaved(d.metaData.id, title, format);
+                  this.snackbar.open('New document saved!', 'OK');
+
+                  if(this.newContentDuringCreating) {
+                    this.logger.debug('new document: save new content during creating doc!', d);
+                    this.saveDocument_.next({content: this.newContentDuringCreating, id: d.metaData.id, changeLog: 'auto save updated content during creating doc',format, forceUpdate: false});
+                  }
+                }, error: err => {
+                  this.logger.error('new doc creating err:', err);
+                }, complete: () => {
+                  this.isCreatingDoc = false;
+                  this.newContentDuringCreating = undefined;
+                }
               }),
             );
           } else {
