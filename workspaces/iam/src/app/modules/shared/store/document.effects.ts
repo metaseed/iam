@@ -117,7 +117,7 @@ export class DocumentsEffects extends EffectManager {
           if (!title) {
             const msg = 'Must define a title!';
             this.snackbar.open(msg, 'OK');
-            return throwError(() => new Error(msg));
+            return throwError(() => Error(msg));
           }
 
           if (id === NEW_DOC_ID) {

@@ -62,15 +62,17 @@ export function backoff<T>(maxTries: number, interval: number | ((i: number) => 
 export function consecutiveStatus<T>(
   errors: [number, number], consecutiveErrorStatus: (errors: number) => void,
   items?: [number, number], consecutiveItemStatus?: (items: number) => void) {
+
   let consecutiveErrors = 0;
   let consecutiveItems = 0
   let lastIsError = false;
+
   return tap<T>({
     next: () => {
       if (lastIsError) {
         lastIsError = false;
         if (errors[0] <= consecutiveErrors && consecutiveErrors <= errors[1])
-          consecutiveErrorStatus(0);
+          consecutiveErrorStatus(0); // clear
         consecutiveErrors = 0;
         consecutiveItems = 0;
 
@@ -88,7 +90,7 @@ export function consecutiveStatus<T>(
         lastIsError = true;
         if (items)
           if (items[0] <= consecutiveItems && consecutiveItems <= items[1])
-            consecutiveItemStatus?.(0);
+            consecutiveItemStatus?.(0); // clear
         consecutiveErrors = 0;
         consecutiveItems = 0;
       }
@@ -114,6 +116,7 @@ export function error<T>(
    * Observable<any>: when emit would retry. i.e. return timer(2000) would retry 2s later.
    */
   errorHandler: (status: ErrorStatus) => Observable<any> | null) {
+
   const status: ErrorStatus = {
     errors: 0,
     consecutiveErrors: 0,
@@ -125,6 +128,7 @@ export function error<T>(
   return pipe(
     consecutiveStatus([1, Infinity], errors => status.consecutiveErrors = errors,
       [1, Infinity], successes => status.consecutiveSuccesses = successes),
+
     retryWhen<T>(err$ => {
       return err$.pipe(
         mergeMap(err => {
@@ -145,13 +149,13 @@ export function error<T>(
 }
 
 export function complete<T>(condition: (o: T) => boolean) {
-  return (source: Observable<T>) => new Observable<T>(observer => {
+  return (source: Observable<T>) => new Observable<T>(observer =>
     source.pipe(
       tap(o => {
         if (condition(o)) {
           observer.complete();
         }
       })
-    ).subscribe(observer);
-  });
+    ).subscribe(observer)
+  );
 }

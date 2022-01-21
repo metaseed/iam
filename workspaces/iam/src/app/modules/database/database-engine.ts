@@ -1,6 +1,7 @@
 import { Observable, Observer, Subject, from, of } from 'rxjs';
 import { mergeMap, tap, shareReplay, filter } from 'rxjs/operators';
 import { InjectionToken, Inject, Injectable } from '@angular/core';
+import { Logger } from '../core/services';
 
 const IDB_SUCCESS = 'success';
 const IDB_COMPLETE = 'complete';
@@ -46,6 +47,7 @@ export class Database {
 
   private _dbFactory: IDBFactory;
   private _schema: DBSchema;
+  private logger = Logger(`${this.constructor.name}`);
 
   constructor(@Inject(DatabaseBackend) idbBackend: any, @Inject(IDB_SCHEMA) schema: any) {
     this._schema = schema;
@@ -206,6 +208,7 @@ export class Database {
 
   delete<T>(storeName: string, id): Observable<T> {
     return this.request(storeName, IDB_TXN_READWRITE, store => {
+      this.logger.debug(`delete:`, storeName, id);
       return store.delete(id);
     });
   }

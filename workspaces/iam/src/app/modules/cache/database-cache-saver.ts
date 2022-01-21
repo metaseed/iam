@@ -82,14 +82,12 @@ export class DatabaseCacheSaver {
   private saveDocToDb(docMeta: DocMeta, docContent: DocContent) {
     return zip(
       this.db.put<DocContent>(DataTables.DocContent, docContent).pipe(
-        subscribeOn(asyncScheduler),
         catchError(err => {
           this.logger.error(err);
           throw err;
         })
       ),
       this.db.put<DocMeta>(DataTables.DocMeta, docMeta).pipe(
-        subscribeOn(asyncScheduler),
         catchError(err => {
           this.logger.error(err);
           throw err;
