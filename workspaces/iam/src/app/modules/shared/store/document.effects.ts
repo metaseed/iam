@@ -116,8 +116,10 @@ export class DocumentsEffects extends EffectManager {
           const title = DocMeta.getTitle(content);
           if (!title) {
             const msg = 'Must define a title!';
-            this.snackbar.open(msg, 'OK');
-            return throwError(() => Error(msg));
+            this.logger.warn(msg);
+            return of(new Document(null, null))
+            // this.snackbar.open(msg, 'OK');
+            // return throwError(() => Error(msg));
           }
 
           if (id === NEW_DOC_ID) {
