@@ -9,7 +9,7 @@
             <h2 mat-card-subtitle class="summary-truncate">{{docMeta?.summary}}</h2>
           </div>
           <div *ngIf="docMeta?.imageData"
-            style="background-position:50% 50%; width:168px;height:158px;margin-top:16px"
+            style="background-position:50% 50%; width:168px;height:158px;margin-top:16px;background-size: 100%;background-repeat: no-repeat;"
             [style.background-image]="'url('+docMeta?.imageData+')'"></div>
         </div>
       </a>
