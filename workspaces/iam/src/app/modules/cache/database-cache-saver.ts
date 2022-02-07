@@ -1,6 +1,6 @@
-import { interval, asyncScheduler, zip, merge, concat } from 'rxjs';
+import { interval, asyncScheduler, zip, merge, concat, timer } from 'rxjs';
 import { subscribeOn, catchError, switchMap, map, tap, filter, retry, combineLatestWith, startWith, debounceTime } from 'rxjs/operators';
-import { ICache, DocContent, DataTables, DocMeta, Document, AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL, Logger, backoff } from 'core';
+import { ICache, DocContent, DataTables, DocMeta, Document, AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL, Logger, backoff, AUTO_SAVE_TO_STORE_AFTER_LAST_EDIT_INTERVAL } from 'core';
 import { Database } from '../database/database-engine';
 import { DirtyDocument } from '../core/model/doc-model/doc-status';
 import { DocumentStore } from '../shared/store/document.store';
@@ -59,24 +59,39 @@ export class DatabaseCacheSaver {
   private updateStore_AutoSaver({ doc, iamInstanceId }: DocAndIamInstanceId) {
     this.logger.info('autoSaver: update doc in store after update the network doc!', doc);
     this.store.upsertDocStatus({ isDbDirty: false, isSyncing: false }, doc.metaData.id);
-    const isSameInstance = iamInstanceId === this.store.iamInstanceId;
-    this.updateStore(doc, isSameInstance);
+    // i'm the one who do the last db update.
+    const lastDbSaverIsMe = iamInstanceId === this.store.iamInstanceId;
+    this.updateStore(doc, lastDbSaverIsMe);
   }
 
-  private updateStore(doc: Document, notUpdateContent = true) {
+  // |    |     |    | every 10s save to db
+  // |                    | every 5min to net
+  private updateStore(doc: Document, lastDbSaverOfDocIsMe) {
     this.store.docMeta.upsert(doc.metaData);
 
-    if (notUpdateContent) {
-      const docContentInStore = this.store.getDocContent(doc.content.id);
-      const isStoreDirty = this.store.currentDocStatus_IsStoreDirty$.state;
-      if (docContentInStore && isStoreDirty) {
-        this.logger.info('autoSaver: net saving(every 5mins) triggered by me, just update none-content property, no need to update content string in store, in case of modification within 10s!', doc);
-        doc.content.content = docContentInStore.content;
-      }
-    }
+    // const isStoreDirty = this.store.currentDocStatus_IsStoreDirty$.state;
 
-    this.store.docContent.upsert(doc.content);
-    this.logger.info('autoSaver: update Doc in store!', doc);
+    if (lastDbSaverOfDocIsMe) {
+      const updateContentFromStore = () => {
+        const docContentInStore = this.store.getDocContent(doc.content.id);
+        if (docContentInStore) {
+          this.logger.info('autoSaver: last db saving triggered by me, and there is dirty content in store, just update none-content property, no need to update content string in store!', doc);
+          doc.content.content = docContentInStore.content; this.store.docContent.upsert(doc.content);
+          this.logger.info('autoSaver: update Doc in store!', doc);
+        }
+      }
+
+      // wait for the dirty content in editor sync to store
+      // const isEditorDirty = this.store.currentDocStatus_IsEditorDirty$.state;
+      // if (isEditorDirty)
+      //   timer(AUTO_SAVE_TO_STORE_AFTER_LAST_EDIT_INTERVAL + 10).subscribe(updateContentFromStore);
+      // else {
+        updateContentFromStore();
+      // }
+    } else {
+      this.store.docContent.upsert(doc.content);
+      this.logger.info('autoSaver: update Doc in store!', doc);
+    }
   }
 
   private saveDocToDb(docMeta: DocMeta, docContent: DocContent) {
@@ -107,7 +122,7 @@ export class DatabaseCacheSaver {
         if (forceSave) {
           return ro.pipe(
             switchMap(r => this.saveToNextCache(doc.metaData.id, changeLog)),
-            tap(doc => this.updateStore(doc, true))
+            tap(doc => this.updateStore(doc, false))
           );
         } else {
           return ro.pipe(map(r => doc));

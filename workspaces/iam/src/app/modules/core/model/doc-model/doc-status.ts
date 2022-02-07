@@ -14,7 +14,9 @@ export class DirtyDocumentInStore {
 }
 
 export class DirtyDocument extends DirtyDocumentInStore {
-  constructor(public id: number, public changeLog: string, public iamInstanceId: number) {
+  constructor(public id: number, public changeLog: string,
+    // the instance who save the content to store at last time
+    public iamInstanceId: number) {
     super(id, changeLog);
   }
 }

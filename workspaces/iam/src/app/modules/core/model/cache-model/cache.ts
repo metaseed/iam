@@ -7,7 +7,7 @@ export enum DataTables {
   DocContent = 'document',
   DirtyDocs = 'dirty_docs'
 }
-export const AUTO_SAVE_TO_STORE_AFTER_LAST_EDIT_INTERVAL = 1000;
+export const AUTO_SAVE_TO_STORE_AFTER_LAST_EDIT_INTERVAL = 800;
 export const AUTO_SAVE_TO_DB_AFTER_LAST_EDIT_INTERVAL = 10 * 1000; // 10s
 export const AUTO_SAVE_DIRTY_DOCS_IN_DB_INTERVAL = 5 * 60 * 1000; //5min
 
