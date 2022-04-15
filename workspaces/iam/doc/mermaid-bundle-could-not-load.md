@@ -1,0 +1,6 @@
+"deploy": "ng build --configuration production --named-chunks
+we use --named-chunks and the mermaid chunck is named like: node_modules_mermaid_dist_mermaid_esm_min_mjs.ecc7b1798163ce1a.js
+
+it start with the node_modules_ and the github gh-pages,Github pages uses a version of Jekyll that ignores node_modules folder by default:
+https://stackoverflow.com/questions/43481269/github-pages-404-on-node-modules-folder#answer-43487798
+so we create an empty file: .nojekyll and solved this problem

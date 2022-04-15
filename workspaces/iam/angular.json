@@ -31,7 +31,8 @@
                 "output": "/"
               },
               "src/assets",
-              "src/manifest.json"
+              "src/manifest.json",
+              "src/.nojekyll"
             ],
             "styles": ["src/styles.scss", "src/styles/main.scss"],
             "stylePreprocessorOptions": {

@@ -348,6 +348,20 @@ export class GithubCache implements ICache {
           commitMessage
         )
           .pipe(
+            tap(
+              () => {
+                this.logger.info(`@github-cache.updateDocument: try to delete old file(let this code run for a period): {id:${id}, format: ${format}}`);
+                const oldUrl = `${DOCUMENTS_FOLDER_NAME}/${title}_${id}.${format}`;
+                repo.getContents(oldUrl).pipe(
+                  switchMap((content:Content) => {
+                    // if (content.sha === sha) {
+                      return repo.delFile(oldUrl);
+                    // }
+                    // return of(undefined);
+                  })
+                ).subscribe()
+              }
+            ),
             // catchError(err => {
             //   if (err.status === 409) {// sha not match
             //     return repo.getContents(url).pipe(
@@ -444,7 +458,12 @@ export class GithubCache implements ICache {
               map(rep => {
                 return (rep.body as any).items.map(item => {
                   const { id, sanitizedTitle, ext } = DocMeta.parseDocumentName(item.name);
-                  return { id, score: item.score, title: sanitizedTitle, text_matches: item.text_matches, source: SearchResultSource.netFile };
+                  return {
+                    id, score: item.score,
+                    title: sanitizedTitle,
+                    text_matches: item.text_matches,
+                    source: SearchResultSource.netFile
+                  };
                 });
               })
             )
