@@ -1,0 +1,3 @@
+// used to prevent jekyll from generating a static file for this directory
+// we use --named-chunks and the mermaid chunck is named like: node_modules_mermaid_dist_mermaid_esm_min_mjs.ecc7b1798163ce1a.js
+// it start with the node_modules_ and the github gh-pages,Github pages uses a version of Jekyll that ignores node_modules folder by default:
