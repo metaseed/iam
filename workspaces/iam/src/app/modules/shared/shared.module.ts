@@ -16,6 +16,7 @@ import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from './store';
 import { BundleShareModule } from './bundle-share/bundle-share.module';
 import { MessageDialog } from './message-dialog';
 import { DialogSpinnerComponent, DialogSpinnerDialogComponent } from './dialog-spinner.component';
+import { DirectiveModule } from './directives';
 
 @NgModule({
   imports: [
@@ -45,6 +46,7 @@ import { DialogSpinnerComponent, DialogSpinnerDialogComponent } from './dialog-s
     /* re-exporting */
     CommonModule,
     FormsModule,
+    DirectiveModule,
     CoreModule,
     BundleShareModule,
   ],

@@ -91,7 +91,6 @@ export class DocumentsEffects extends EffectManager {
       ),
     { type: '[DocumentsEffects]readDocument', timeOut: EFFECT_TIMEOUT }
   );
-
   private isCreatingDoc = false;
   private newContentDuringCreating:string = undefined;
   saveDocument_ = new EffectStateSubject<
