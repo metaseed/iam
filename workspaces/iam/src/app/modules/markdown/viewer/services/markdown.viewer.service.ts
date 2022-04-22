@@ -47,7 +47,7 @@ import * as html from "./markdown-it-plugins/html";
 import * as footnote from "./markdown-it-plugins/footnote";
 import * as imsize from "./markdown-it-plugins/imsize";
 import anchor from "./markdown-it-plugins/anchor";
-import fence from "./markdown-it-plugins/fence";
+import fence from "./markdown-it-plugins/code/fence";
 import toc from "./markdown-it-plugins/toc";
 import { ContainerPlugin } from "./markdown-it-plugins/container";
 import { MarkdownConfig } from "../markdown.config";
@@ -65,6 +65,7 @@ import * as IncrementalDom from "incremental-dom";
 import { MetaPlugin } from "./markdown-it-plugins/meta";
 import { DocumentStore } from "app/modules/shared/store/document.store";
 import { Title } from "@angular/platform-browser";
+import { setInnerHtml } from "./exec-script";
 
 const enableIDOM = true;
 
@@ -227,11 +228,12 @@ export class MarkdownViewerService {
           return irender_code_inline_rule(...args);
         };
 
+        const parsed = mdIt.parse(raw, this.env);
         const r = IncrementalDom.patch(
           target,
           // should not use: (mdIt as any).renderToIncrementalDOM(raw, this.env),
           // because the rules changed again when it get the IncrementalDOMRenderer
-          incrementalDomRenderer.render(mdIt.parse(raw, this.env), mdIt["options"], this.env)
+          incrementalDomRenderer.render(parsed, mdIt["options"], this.env)
         );
 
         return r.textContent;
@@ -240,10 +242,14 @@ export class MarkdownViewerService {
         return e;
       }
     } else {
-      const r = (target.innerHTML = this.markdownIt.render(raw, this.env));
+      const r =  this.markdownIt.render(raw, this.env);
+      // target.innerHTML = r; script tags could not be executed
+      setInnerHtml(target, r); // script tags could be executed
       return r;
     }
   }
+
+
 
   private DEFAULT_HIGHLIGHT_FUNCTION = (str, lang: string) => {
     const reg = /\s+{[ ,-\d+]+}/;

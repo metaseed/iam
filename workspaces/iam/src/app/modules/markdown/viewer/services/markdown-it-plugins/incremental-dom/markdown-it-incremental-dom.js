@@ -1,6 +1,7 @@
 import { renderer } from './mixins/renderer'
 import { rules} from './mixins/rules'
-
+// http://google.github.io/incremental-dom/
+// https://github.com/google/incremental-dom
 export function markdownitIncrementalDOM(md, target, opts = {}) {
   const options = { incrementalizeDefaultRules: true, ...opts }
   const incrementalDOM = !target && window ? window.IncrementalDOM : target
