@@ -1,36 +1,10 @@
 import {
   Inject,
   Injectable,
+  Injector,
   Optional,
 } from "@angular/core";
-// import highlightjs from 'highlight.js/lib/highlight';
-import * as prismjs from "prismjs";
 
-// import 'prismjs/components/prism-core';
-import "prismjs/components/prism-clike";
-import "prismjs/components/prism-c";
-import "prismjs/components/prism-typescript";
-import "prismjs/components/prism-bash";
-import "prismjs/components/prism-cpp";
-import "prismjs/components/prism-csharp";
-import "prismjs/components/prism-css";
-import "prismjs/components/prism-docker";
-import "prismjs/components/prism-git";
-import "prismjs/components/prism-graphql";
-import "prismjs/components/prism-java";
-import "prismjs/components/prism-json";
-import "prismjs/components/prism-makefile";
-import "prismjs/components/prism-markdown";
-// import 'prismjs/components/prism-php';// have problem
-import "prismjs/components/prism-powershell";
-import "prismjs/components/prism-lisp";
-import "prismjs/components/prism-python";
-import "prismjs/components/prism-sass";
-import "prismjs/components/prism-sql";
-import "prismjs/components/prism-vim";
-import "prismjs/components/prism-yaml";
-import "prismjs/plugins/line-numbers/prism-line-numbers";
-import "prismjs/plugins/line-highlight/prism-line-highlight";
 import * as MarkdownIt from "markdown-it";
 import * as markdownVideoPlugin from "markdown-it-video";
 import { tasklists } from "./markdown-it-plugins/markdown-it-task-lists";
@@ -52,7 +26,7 @@ import toc from "./markdown-it-plugins/toc";
 import { ContainerPlugin } from "./markdown-it-plugins/container";
 import { MarkdownConfig } from "../markdown.config";
 import latex from "markdown-it-latex";
-import { mergeConf, DocumentRef, base64Encode } from "core";
+import { mergeConf, DocumentRef } from "core";
 import { MermaidPlugin } from "./markdown-it-plugins/mermaid.plugin";
 import { CopierService } from "core";
 import { Subscription, asyncScheduler } from "rxjs";
@@ -66,11 +40,12 @@ import { MetaPlugin } from "./markdown-it-plugins/meta";
 import { DocumentStore } from "app/modules/shared/store/document.store";
 import { Title } from "@angular/platform-browser";
 import { setInnerHtml } from "./exec-script";
+import { DEFAULT_HIGHLIGHT_FUNCTION, ViewerService } from "./markdown-it-plugins/code/highlight";
 
 const enableIDOM = true;
 
 @Injectable()
-export class MarkdownViewerService {
+export class MarkdownViewerService implements ViewerService {
   private defaultConfig: MarkdownConfig = {
     markdownIt: {
       html: true,
@@ -83,23 +58,21 @@ export class MarkdownViewerService {
   };
 
   mediaChangeSubscription: Subscription;
-  private markdownIt: MarkdownIt;
-
+  public markdownIt: MarkdownIt;
+  public env: any = {};
+  public target: HTMLElement;
   private showCodeLineNumber: boolean;
   constructor(
     private docRef: DocumentRef,
-    private utils: Utilities,
     private titleService: Title,
     private store: DocumentStore,
+    private injector: Injector,
     @Inject('MarkdownConfig') @Optional() config?: MarkdownConfig
   ) {
-    this.utils.isWideScreen$.subscribe(
-      (wide) => (this.showCodeLineNumber = wide)
-    );
     config = config || mergeConf(this.defaultConfig, config);
 
     if (!config.markdownIt.highlight) {
-      config.markdownIt.highlight = this.DEFAULT_HIGHLIGHT_FUNCTION;
+      config.markdownIt.highlight = DEFAULT_HIGHLIGHT_FUNCTION(this, injector);
     }
 
     this.markdownIt = new MarkdownIt(config.markdownIt);
@@ -205,8 +178,7 @@ export class MarkdownViewerService {
     return newMeta;
   };
 
-  env: any = {};
-  target: HTMLElement;
+
   public render(target: HTMLElement, raw: string): string {
     this.target = target;
     if (enableIDOM) {
@@ -249,60 +221,4 @@ export class MarkdownViewerService {
     }
   }
 
-
-
-  private DEFAULT_HIGHLIGHT_FUNCTION = (str, lang: string) => {
-    const reg = /\s+{[ ,-\d+]+}/;
-    lang = lang.replace(reg, "");
-    const hlLineNumbers = this.env.highlightLineNumbers;
-    const language = prismjs.languages[lang];
-    if (lang && language) {
-      const preNode: HTMLElement = this.docRef.document.createElement("pre");
-      const codeNode = this.docRef.document.createElement("code");
-      preNode.className =
-        (this.showCodeLineNumber ? "line-numbers" : "") + " language-" + lang;
-      preNode.appendChild(codeNode);
-      codeNode.textContent = str;
-      if (hlLineNumbers) {
-        preNode.setAttribute("data-line", hlLineNumbers);
-        codeNode.style["white-space"] = "pre";
-      }
-      preNode.style.visibility = "collapse";
-      this.target.appendChild(preNode);
-
-      try {
-        prismjs.highlightElement(codeNode);
-        preNode.style.visibility = "visible";
-        this.target.removeChild(preNode);
-        const r =
-          `<div class="markdown-code">
-<div class="markdown-code__lang">${lang}</div>
-<div class="code-buttons">
-
-<button class="material-icons code-button" title="edit code"
-onclick="md_edit_event(event.target.parentElement.parentElement.parentElement)">
-edit
-</button>
-
-<button class="material-icons code-button" title="line wrap"
-onclick="md_code_wrapText()">
-wrap_text
-</button>
-
-<button class="material-icons code-button no-print"
-title="Copy code snippet"
-originalstr=${base64Encode(str)}
-onclick="document.copier.copyText(this.attributes.originalstr.value,true)">
-<span aria-hidden="true">content_copy</span>
-</button></div>${preNode.outerHTML}</div>`;
-
-        return r;
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return `<pre class="highlight"><code>${this.markdownIt.utils.escapeHtml(
-      str
-    )} </code></pre>`;
-  };
 }
