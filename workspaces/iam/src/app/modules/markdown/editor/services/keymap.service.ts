@@ -29,13 +29,42 @@ export class KeyMapService {
     private _commandService: CommandService,
     private _uploadService: FileUploadService,
     @Inject(MARKDOWN_STORE_TOKEN) private markdownStore: IMarkdownStore
-
   ) {
     // cm.setOption('keyMap', 'vim');
     // cm.setOption('keyMap', 'sublime');
     this._commandService.commands.subscribe(c => this.handleCommand(c));
 
     this._editorService.docEditorLoaded$.subscribe((editor: CodeMirror.Editor) => {
+      editor.on('paste',(editor, event) => {
+        // if (!this.editor.hasFocus()) return;
+
+        const clipboardData = event.clipboardData || (window as any).clipboardData;
+        const items = clipboardData.items;
+        console.log(JSON.stringify(items)); // will give you the mime types
+
+        if (items) {
+          for (let i = 0; i < items.length; i++) {
+            if (items[i].kind === 'file') {
+              const blob = items[i].getAsFile();
+              // get file type
+              let subFolder  = blob.type.split('/')[0];
+              if (!subFolder) {
+                const name = blob.name.split('.');
+                if(name.length > 1) {
+                  subFolder = name.pop();
+                } else {
+                  subFolder = 'resource';
+                }
+              }
+
+              this._uploadService.uploadFile(subFolder, blob).then(path => {
+                this.editor.replaceSelection(`![](${path})`);
+              })
+            }
+          }
+        }
+      });
+
       if (!KeyMapService.COMMANDS_CONFIG) {
         KeyMapService.COMMANDS_CONFIG = {
           Bold: {
@@ -134,10 +163,10 @@ export class KeyMapService {
       editor.display.input.textarea.blur();
     };
     option['Ctrl-Alt-Up'] = () => {
-      this.markdownStore.scrollView_.next({isUp:true});
+      this.markdownStore.scrollView_.next({ isUp: true });
     };
     option['Ctrl-Alt-Down'] = () => {
-      this.markdownStore.scrollView_.next({isUp:false});
+      this.markdownStore.scrollView_.next({ isUp: false });
     };
     option['Ctrl-Up'] = 'scrollLineUp';
     option['Ctrl-G'] = 'jumpToLine';
@@ -184,7 +213,7 @@ export class KeyMapService {
     option['Ctrl-H'] = 'replace';
     option['Esc'] = 'singleSelectionTop';
     option['Alt-Shift+Down'] = 'duplicateLine';
-    option['Backspace'] = 'smartBackspace' ;
+    option['Backspace'] = 'smartBackspace';
     option['Alt-M'] = 'showInCenter';
     option['Ctrl-M M'] = this.insertMeta;
     /*
@@ -239,9 +268,11 @@ Alt-G Jump to line*/
       // for (let i = 0; i < config.endSize; i++) this.editor.execCommand('goCharLeft');
     }
     if (config.command === 'Image') {
-      this._uploadService.fileUploaded = path => this.editor.replaceSelection(path);
-      this._uploadService.upload('image');
+      this._uploadService.uploadSelected('image').then(path => {
+        this.editor.replaceSelection(path);
+      });
     }
+
     // if (config.command === 'Ul') {
     //   this._hideIcons.Ul = true;
     //   this._hideIcons.Ol = false;

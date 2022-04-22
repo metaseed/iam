@@ -22,12 +22,12 @@ import { IFileUploadData } from "../../services/file-upload-data";
 })
 export class FileUploadComponent {
   progressPercent = 0;
-  showMessage = true;
   accept = "image/*";
   constructor(
     @Inject(MAT_SNACK_BAR_DATA) public data: IFileUploadData,
     private snackBarRef: MatSnackBarRef<FileUploadComponent>
   ) {
+    this.data.notifyProgress = this.notifyProgress.bind(this);
     this.accept = data.accept;
   }
 
@@ -40,11 +40,13 @@ export class FileUploadComponent {
   private selectedFile: File;
   onFileChanged(event) {
     this.selectedFile = event.target.files[0];
-    this.showMessage = false;
+    this.data.showMessage = false;
     this.data.action = "cancel";
-    this.data.takeAction(this.selectedFile, (percent) => {
-      this.progressPercent = percent;
-    });
+    this.data.takeAction?.(this.selectedFile);
+  }
+
+  notifyProgress(percent: number) {
+    this.progressPercent = percent;
   }
 
   get hasAction(): boolean {
@@ -58,7 +60,7 @@ export class FileUploadComponent {
     }
 
     this.imageUpload.nativeElement.click(); // show file selection dialog;
-    this.data.selectFile();
+    this.data.selectFile?.();
     this.data.action = 'cancel';
   }
 }

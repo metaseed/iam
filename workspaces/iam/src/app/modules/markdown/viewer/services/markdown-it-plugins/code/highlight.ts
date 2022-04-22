@@ -43,6 +43,7 @@ export const DEFAULT_HIGHLIGHT_FUNCTION = (viewer: ViewerService, injector: Inje
   utils.isWideScreen$.subscribe(
     (wide) => (showCodeLineNumber = wide)
   );
+
   return (str, lang: string) => {
     const reg = /\s+{[ ,-\d+]+}/;
     lang = lang.replace(reg, "");
