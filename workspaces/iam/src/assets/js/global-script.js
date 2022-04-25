@@ -1,6 +1,8 @@
+// detect the user use a touchable device
 window.addEventListener(
   'touchstart',
   function onFirstTouch() {
+    // user device is touchable
     window.USER_IS_TOUCHING = true;
     window.removeEventListener('touchstart', onFirstTouch, false);
   },

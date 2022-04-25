@@ -18,7 +18,7 @@ export class DocumentStore {
       globalThis.__RX_STORE__.store = this;
     }
     this.currentDocStatus_IsEditable$.subscribe(v => {
-      globalThis.document.documentElement.style.setProperty('--iam-is-editable', v ? 'visible' : 'hidden');
+      globalThis.document.documentElement.style.setProperty('--iam-is-editable', v ? 'visible' : 'collapse');
     })
   }
 
