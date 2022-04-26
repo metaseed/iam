@@ -18,7 +18,7 @@ import * as abbr from "markdown-it-abbr";
 import * as deflist from "markdown-it-deflist";
 import title from "./markdown-it-plugins/title";
 import { html } from "./markdown-it-plugins/html";
-// import * as footnote from "./markdown-it-plugins/footnote";
+import { footnote } from "./markdown-it-plugins/footnote";
 import * as imsize from "./markdown-it-plugins/imsize";
 import anchor from "./markdown-it-plugins/anchor";
 import fence from "./markdown-it-plugins/code/fence";
@@ -97,9 +97,9 @@ export class MarkdownViewerService implements ViewerService {
       .use(sup)
       .use(ins)
       .use(mark)
-      // .use(footnote, {
-      //   getUrl: (_) => getAddr(this.docRef.document.location.href),
-      // })
+      .use(footnote, {
+        getUrl: (_) => getAddr(this.docRef.document.location.href),
+      })
       .use(deflist)
       .use(abbr)
       .use(fence)
@@ -120,7 +120,7 @@ export class MarkdownViewerService implements ViewerService {
         },
         includeLevel: [2, 3, 4],
       })
-      // .use(imsize, { autofill: true })
+      .use(imsize, { autofill: true })
       .use(sourceLine)
       .use(latex)
       .use(html(IncrementalDom, enableIDOM));

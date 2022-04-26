@@ -1,5 +1,3 @@
-'use strict';
-
 function render_footnote_anchor_name(tokens, idx, options, env , slf) {
   var n = Number(tokens[idx].meta.id + 1).toString();
   var prefix = '';
@@ -48,7 +46,7 @@ function render_footnote_close() {
   return '</li>\n';
 }
 
-module.exports = function footnote_plugin(md, conf) {
+export const footnote = (md, conf)=> {
   var config = conf;
   var parseLinkLabel = md.helpers.parseLinkLabel,
     isSpace = md.utils.isSpace;

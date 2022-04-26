@@ -24,7 +24,6 @@
     "yarn": ">=1.3.2 <2.0.0"
   },
   "private": true,
-  "type": "module",
   "dependencies": {
     "@angular/animations": "^13.0.0",
     "@angular/cdk": "^13.0.0",
