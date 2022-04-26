@@ -17,7 +17,7 @@ import * as mark from "markdown-it-mark";
 import * as abbr from "markdown-it-abbr";
 import * as deflist from "markdown-it-deflist";
 import title from "./markdown-it-plugins/title";
-import * as html from "./markdown-it-plugins/html";
+import { html } from "./markdown-it-plugins/html";
 import * as footnote from "./markdown-it-plugins/footnote";
 import * as imsize from "./markdown-it-plugins/imsize";
 import anchor from "./markdown-it-plugins/anchor";
@@ -214,7 +214,7 @@ export class MarkdownViewerService implements ViewerService {
         return e;
       }
     } else {
-      const r =  this.markdownIt.render(raw, this.env);
+      const r = this.markdownIt.render(raw, this.env);
       // target.innerHTML = r; script tags could not be executed
       setInnerHtml(target, r); // script tags could be executed
       return r;

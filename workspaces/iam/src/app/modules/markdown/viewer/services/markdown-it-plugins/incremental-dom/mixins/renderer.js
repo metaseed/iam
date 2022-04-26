@@ -1,5 +1,5 @@
 import { Parser } from "htmlparser2/lib/Parser";
-import {evalScript} from '../../../exec-script';
+import { evalScript } from "../../../exec-script";
 //import { notifications } from "incremental-dom";
 // import { attributes, applyProp, applyAttr } from "incremental-dom";
 // attributes. = function (node, name, value) {
@@ -38,9 +38,13 @@ export function renderer(incrementalDom) {
   const sanitizeName = (name) => name.replace(/[^-:\w]/g, "");
 
   const textChange = (text) => {
+    if (!(text.trim())) return text;
+
     const node = incrementalDom.currentElement();
     if (node instanceof HTMLScriptElement) {
-      evalScript(text);
+      if (!node.type || node.type === "text/javascript") {
+        evalScript(text);
+      }
     }
     return text;
   };

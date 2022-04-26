@@ -1,8 +1,8 @@
 <input style="display: none" type="file" [accept]="accept" (change)="onFileChanged($event)"  #imageUpload>
 <div>
   <div class="mat-simple-snackbar">
-    <span *ngIf="showMessage">{{data.message}}</span>
-    <mat-progress-bar *ngIf="!showMessage" #progress mode="determinate" [value]="progressPercent">
+    <span *ngIf="data.showMessage">{{data.message}}</span>
+    <mat-progress-bar *ngIf="!data.showMessage" #progress mode="determinate" [value]="progressPercent">
     </mat-progress-bar>
     <div class="mat-simple-snackbar-action" *ngIf="hasAction">
       <button mat-button (click)="action()">{{data.action}}</button>

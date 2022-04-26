@@ -15,3 +15,13 @@ export function setInnerHtml(elm, html) {
     oldScript.parentNode.replaceChild(newScript, oldScript);
   });
 }
+
+export function loadModuleScript(src){
+  const script = document.body.querySelector('script[src="'+src+'"]')
+  if(script) return script;
+
+  let dyn = document.createElement("script")
+  dyn.type = "module"
+  dyn.src= src;
+  document.body.appendChild(dyn)
+}
