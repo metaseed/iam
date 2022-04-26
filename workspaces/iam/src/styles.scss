@@ -7,10 +7,10 @@ body {
 
 // $icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap';
 // @import '~bootstrap/scss/bootstrap';
-@import '~markdown-it-latex/src/katex.css';
-@import '~prismjs/themes/prism';
-@import '~prismjs/plugins/line-numbers/prism-line-numbers';
-@import '~prismjs/plugins/line-highlight/prism-line-highlight';
+@import "~markdown-it-latex/src/katex.css";
+@import "~prismjs/themes/prism";
+@import "~prismjs/plugins/line-numbers/prism-line-numbers";
+@import "~prismjs/plugins/line-highlight/prism-line-highlight";
 @media all and (min-width: 960px) {
   ::-webkit-scrollbar {
     width: 6px;
@@ -28,7 +28,7 @@ body {
 }
 
 :root {
-  --iam-is-editable: visible
+  --iam-is-editable: visible;
 }
 
 .markdown-viewer {
@@ -98,16 +98,16 @@ body {
   list-style: none;
   margin-left: -20px;
 }
-input.task-list-item-checkbox[checked]+.task-list-item-label {
+input.task-list-item-checkbox[checked] + .task-list-item-label {
   text-decoration: line-through;
   text-decoration-color: rgb(225 0 0 / 60%);
 }
 
-@import '~codemirror/lib/codemirror';
+@import "~codemirror/lib/codemirror";
 // @import '~codemirror/addon/scroll/simplescrollbars';
-@import '~codemirror/addon/display/fullscreen';
-@import '~codemirror/addon/dialog/dialog';
-@import '~codemirror/addon/search/matchesonscrollbar';
+@import "~codemirror/addon/display/fullscreen";
+@import "~codemirror/addon/dialog/dialog";
+@import "~codemirror/addon/search/matchesonscrollbar";
 // .cm-em {
 // letter-spacing: 0.12rem;
 // }
@@ -132,4 +132,11 @@ input.task-list-item-checkbox[checked]+.task-list-item-label {
 #DialogSpinnerComponent {
   box-shadow: none !important;
   background: transparent !important;
+}
+
+@media (max-width: 960px) {
+  playground-ide {
+    flex-direction: column;
+    --playground-preview-width: 100%;
+  }
 }
