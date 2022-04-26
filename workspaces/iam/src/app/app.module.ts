@@ -1,5 +1,5 @@
 import { BrowserModule, HammerModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { Inject, NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
@@ -75,10 +75,11 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
   bootstrap: [AppComponent]
 })
 export class AppModule {
-  constructor(){
+  constructor(@Inject(APP_BASE_HREF) baseHref:string){
     if(environment.production){
       enableProdMode();
       screenConsoleLog()
     }
+    environment.baseUrl = `${location.origin}${baseHref}`;
   }
 }

@@ -17,8 +17,11 @@
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "customWebpackConfig": {
+              "path": "./custom-webpack.config.cjs"
+            },
             "outputPath": "dist/iam",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -31,8 +34,9 @@
                 "output": "/"
               },
               "src/assets",
+              "src/.nojekyll",
               "src/manifest.json",
-              "src/.nojekyll"
+              "src/playground"
             ],
             "styles": ["src/styles.scss", "src/styles/main.scss"],
             "stylePreprocessorOptions": {
@@ -87,7 +91,7 @@
           "defaultConfiguration": ""
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "defaultConfiguration": "",
           "options": {
             "browserTarget": "iam:build:development"
@@ -103,13 +107,13 @@
           }
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "builder": "@angular-builders/custom-webpack:extract-i18n",
           "options": {
             "browserTarget": "iam:build"
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular-builders/custom-webpack:karma",
           "options": {
             "main": "src/test.ts",
             "karmaConfig": "./karma.conf.js",

@@ -1,6 +1,7 @@
 // import htmlparser2 from "htmlparser2";
 // import 'playground-elements'
 declare let require: any;
+import { environment } from "environments/environment";
 import { Parser } from "htmlparser2/lib/Parser";
 import { loadModuleScript } from "../exec-script";
 export const html = (incrementalDom, enableIDOM) => md => {
@@ -53,16 +54,22 @@ export const html = (incrementalDom, enableIDOM) => md => {
       }
     }
     if (content.match(/^<playground-.*>/)) {
-      // b5054c5318212ffd.js:1 Uncaught ReferenceError: require is not defined
+    //  // b5054c5318212ffd.js:1 Uncaught ReferenceError: require is not defined
       // (async () => {
       //   await import(
+      //     // https://webpack.js.org/api/module-methods/#magic-comments
       //     /* webpackChunkName: "code-playground" */
       //     /* webpackMode: "lazy" */
       //     /* webpackPrefetch: true */
       //     /* webpackPreload: true */
-      //     "../../web-components/playground");
+      //     "./playground.js");
       // })()
-      loadModuleScript("https://unpkg.com/playground-elements?module");
+      //  (async () => {
+      //    await import(`${currentBaseUrl}playground/main.js`);
+      //   })();
+        const currentBaseUrl = environment.baseUrl;
+      loadModuleScript(`${currentBaseUrl}playground/main.js`);
+      // loadModuleScript("https://unpkg.com/playground-elements?module");
 
       // https://stackoverflow.com/questions/53178938/dynamically-loading-a-module-that-is-not-in-a-script-tag-with-type-module
 

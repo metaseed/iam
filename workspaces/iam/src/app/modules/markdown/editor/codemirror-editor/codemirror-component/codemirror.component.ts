@@ -8,7 +8,7 @@ import {
   ElementRef,
 } from "@angular/core";
 
-import * as CodeMirror from "codemirror";
+import CodeMirror from "codemirror";
 import "codemirror/addon/display/fullscreen";
 import "codemirror/mode/gfm/gfm"; // github flavored markdown
 import "codemirror/addon/dialog/dialog";
@@ -22,7 +22,7 @@ import "codemirror/addon/search/jump-to-line";
 // import 'codemirror/addon/edit/closetag';
 import "codemirror/addon/edit/matchbrackets";
 // import 'codemirror/addon/edit/closebrackets';
-import "../codemirror-addon/closebrackets";
+// import {closeBracket} from "../codemirror-addon/closebrackets";
 import "codemirror/addon/fold/foldcode";
 import "codemirror/addon/fold/brace-fold";
 import "codemirror/addon/edit/matchtags";
@@ -74,6 +74,7 @@ export class CodemirrorComponent extends SubscriptionManager
       this.utils.isWideScreen$
         .subscribe(wide => this.showLineNumber = wide)
     );
+    // closeBracket(this.codemirror);
   }
 
   ngOnInit() {

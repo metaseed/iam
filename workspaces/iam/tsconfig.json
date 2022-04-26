@@ -10,7 +10,7 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "importHelpers": true,
-    "target": "es2017",
+    "target": "es2020",
     "baseUrl": "./src",
     "paths": {
       "packages/*": ["../packages/*"],
