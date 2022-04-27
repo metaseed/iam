@@ -110,6 +110,10 @@ i-code pre {
   display: flex;
   flex-direction: column;
 
+  .pointer-events-none {
+    pointer-events: none;
+  }
+
   &:hover > .code-buttons > button {
     visibility: visible;
   }

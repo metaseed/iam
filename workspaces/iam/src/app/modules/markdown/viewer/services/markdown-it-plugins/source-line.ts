@@ -30,6 +30,7 @@ export function sourceLine(
         token.attrSet('class', 'edit-it-content');
         token.attrSet('onmouseenter', 'md_edit_mouseenter()');
         token.attrSet('onmouseleave', 'md_edit_mouseleave()');
+
         const linkTokens = [
           Object.assign(new state.Token('link_open', 'a', 1), {
             attrs: [
@@ -61,4 +62,5 @@ export function sourceLine(
       });
     return null;// null is ok for core ruler
   });
+
 }

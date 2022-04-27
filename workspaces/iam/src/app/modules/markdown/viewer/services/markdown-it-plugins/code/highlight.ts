@@ -37,12 +37,18 @@ export interface ViewerService {
 }
 
 export const DEFAULT_HIGHLIGHT_FUNCTION = (viewer: ViewerService, injector: Injector) => {
-  const docRef= injector.get(DocumentRef);
-  const utils = injector.get( Utilities);
+  const docRef = injector.get(DocumentRef);
+  const utils = injector.get(Utilities);
   let showCodeLineNumber = false;
   utils.isWideScreen$.subscribe(
-    (wide) => (showCodeLineNumber = wide)
-  );
+    wide => {
+      showCodeLineNumber = wide;
+      // could not dynamic change line number column html-element, it could not show/hide with class modification, so we just capture
+      // the screen size and use it, at code render time, because of idom, it could not rerendered if no changes.
+      // docRef.document.querySelectorAll("pre.code-with-line-numbers").forEach(pre => {
+      //   pre.classList.toggle("line-numbers", showCodeLineNumber);
+      // });
+    });
 
   return (str, lang: string) => {
     const reg = /\s+{[ ,-\d+]+}/;
@@ -51,9 +57,10 @@ export const DEFAULT_HIGHLIGHT_FUNCTION = (viewer: ViewerService, injector: Inje
     const language = prismjs.languages[lang];
     if (lang && language) {
       const preNode: HTMLElement = docRef.document.createElement("pre");
-      const codeNode = docRef.document.createElement("code");
       preNode.className =
-        (showCodeLineNumber ? "line-numbers" : "") + " language-" + lang;
+        (showCodeLineNumber ? "line-numbers" : "") + " language-" + lang + " code-with-line-numbers pointer-events-none";
+      const codeNode = docRef.document.createElement("code");
+      codeNode.classList.add("inner-code");
       preNode.appendChild(codeNode);
       codeNode.textContent = str;
       if (hlLineNumbers) {
@@ -65,6 +72,27 @@ export const DEFAULT_HIGHLIGHT_FUNCTION = (viewer: ViewerService, injector: Inje
 
       try {
         prismjs.highlightElement(codeNode);
+        // replace all textNode with span, so it could be find with
+        // document.elementFromPoint, textNode is not findable.
+        //
+        // set relative line number.
+        let line = 1;
+        codeNode.childNodes.forEach(node => {
+          if (node.nodeType === Node.TEXT_NODE) {
+            const text:string = (node as any).data;
+            const span = document.createElement('span');
+            span.append(text);
+            span.setAttribute('data-line', line.toString());
+            node.replaceWith(span)
+
+            if(text.includes('\n')){
+              line += text.split('\n').length-1;
+            }
+          } else {
+            (node as any).setAttribute('data-line', line.toString());
+          }
+        })
+
         preNode.style.visibility = "visible";
         viewer.target.removeChild(preNode);
         const r =
