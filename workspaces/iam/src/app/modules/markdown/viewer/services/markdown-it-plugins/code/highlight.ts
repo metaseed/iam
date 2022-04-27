@@ -29,6 +29,7 @@ import "prismjs/plugins/line-highlight/prism-line-highlight";
 import { base64Encode, DocumentRef, Utilities } from "core";
 import MarkdownIt from "markdown-it";
 import { Injector } from "@angular/core";
+import { replaceTextWithSpanAndSetRelativeLineNumber } from "app/modules/markdown/view-edit-swipe-switch";
 
 export interface ViewerService {
   env: { highlightLineNumbers: any };
@@ -76,22 +77,7 @@ export const DEFAULT_HIGHLIGHT_FUNCTION = (viewer: ViewerService, injector: Inje
         // document.elementFromPoint, textNode is not findable.
         //
         // set relative line number.
-        let line = 1;
-        codeNode.childNodes.forEach(node => {
-          if (node.nodeType === Node.TEXT_NODE) {
-            const text:string = (node as any).data;
-            const span = document.createElement('span');
-            span.append(text);
-            span.setAttribute('data-line', line.toString());
-            node.replaceWith(span)
-
-            if(text.includes('\n')){
-              line += text.split('\n').length-1;
-            }
-          } else {
-            (node as any).setAttribute('data-line', line.toString());
-          }
-        })
+        replaceTextWithSpanAndSetRelativeLineNumber(codeNode);
 
         preNode.style.visibility = "visible";
         viewer.target.removeChild(preNode);
