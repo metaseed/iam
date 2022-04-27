@@ -36,11 +36,11 @@ export const viewSwipeToEditorLine = (e) => {
               continue;
             }
             const bound = child.getBoundingClientRect();
-            const absTop = Math.abs(bound.top - swipeStartY);
+            const absTpBottom = Math.abs(bound.bottom - swipeStartY);
 
-            if (absTop < nearestY) {
+            if (absTpBottom < nearestY) {
               actionSpan = child;
-              nearestY = absTop;
+              nearestY = absTpBottom;
             }
           }
 
