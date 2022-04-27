@@ -134,6 +134,10 @@ input.task-list-item-checkbox[checked] + .task-list-item-label {
   background: transparent !important;
 }
 
+playground-ide {
+  --playground-preview-toolbar-background: #eaeaea
+}
+
 @media (max-width: 960px) {
   playground-ide {
     flex-direction: column;
