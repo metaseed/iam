@@ -103,13 +103,12 @@ onclick="document.copier.copyText(this.attributes.originalstr.value,true)">
 <span aria-hidden="true">content_copy</span>
 </button>
 
-<button class="material-icons code-button" title="full screen"
-onclick="if(document.fullscreenElement) {document.exitFullscreen();event.target.firstChild.data='fullscreen' }
-else {event.target.parentElement.parentElement.parentElement.requestFullscreen();event.target.firstChild.data='fullscreen_exit'}">
+<button class="material-icons code-button fullscreen-button" title="full screen">
 fullscreen
 </button>
-
-</div>${preNode.outerHTML}</div>`;
+</div>${preNode.outerHTML}
+<img style="height:0;" src onerror="event.target.parentElement.dispatchEvent(new CustomEvent('code-loaded', { bubbles: true}));event.target.remove();"></img>
+</div>`;
 
         return r;
       } catch (e) {

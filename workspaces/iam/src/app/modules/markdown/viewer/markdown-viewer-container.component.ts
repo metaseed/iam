@@ -127,7 +127,14 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
         this.markdownStore.editIt_.next(e.detail);
       }
     );
-
+    (this.viewerContainerDiv.nativeElement as HTMLElement).addEventListener(
+      'code-loaded',
+      (e: CustomEvent) => {
+        const codeDiv = e.target as HTMLElement;
+        const fullscreenButton = codeDiv.querySelector('.fullscreen-button');
+        fullscreenButton.addEventListener('click', fullscreenHandler);
+      }
+    );
     let hammer = null;
     super.addSub(this.utils.isWideScreen$.pipe(
       tap(wide => {
@@ -162,4 +169,9 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
     const sourceLine = viewSwipeToEditorLine(e);
     this.markdownStore.editIt_.next({ sourceLine });
   }
+}
+
+function fullscreenHandler(event) {
+  if (document.fullscreenElement) { document.exitFullscreen(); event.target.firstChild.data = 'fullscreen' }
+  else { event.target.parentElement.parentElement.parentElement.requestFullscreen(); event.target.firstChild.data = 'fullscreen_exit' }
 }

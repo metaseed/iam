@@ -18,10 +18,10 @@ function md_code_wrapText() {
   }
 }
 
-function md_edit_mouseenter() {
+function md_edit_mouseenter(event) {
   if (window.USER_IS_TOUCHING) event.target.setAttribute('data-mouseenter', Date.now());
 }
-function md_edit_mouseleave() {
+function md_edit_mouseleave(event) {
   if (window.USER_IS_TOUCHING) event.target.removeAttribute('data-mouseenter');
 }
 function md_edit_event(target) {
@@ -29,7 +29,7 @@ function md_edit_event(target) {
     const dateTick = target.getAttribute('data-mouseenter');
     const diff = Date.now() - dateTick;
     // fix for mobile touch(hover is triggered by and before click),
-    // because the hover(mouseenter) and click is triggered simutinously
+    // because the hover(mouseenter) and click is triggered simultaneously
     if (diff < 200) return;
   }
   const element = target;
