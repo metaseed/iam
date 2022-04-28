@@ -107,7 +107,7 @@ onclick="document.copier.copyText(this.attributes.originalstr.value,true)">
 fullscreen
 </button>
 </div>${preNode.outerHTML}
-<img style="height:0;" src onerror="event.target.parentElement.dispatchEvent(new CustomEvent('code-loaded', { bubbles: true}));event.target.remove();"></img>
+<img src onerror="event.target.parentElement.dispatchEvent(new CustomEvent('code-fence-loaded', { bubbles: true}));event.target.remove();"></img>
 </div>`;
 
         return r;
@@ -119,4 +119,28 @@ fullscreen
       str
     )} </code></pre>`;
   }
-}
+};
+
+export function codeFenceConnectedCallback(codeDiv: HTMLElement) {
+  const fullscreenHandler = (event: CustomEvent) => {
+    const fullscreenButton = event.target as HTMLElement;
+    const textNode = fullscreenButton.firstChild as Text;
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+      textNode.data = 'fullscreen'
+    }
+    else {
+      const outerPre = fullscreenButton.parentElement.parentElement.parentElement.parentElement;
+      outerPre.requestFullscreen();
+      textNode.data = 'fullscreen_exit'
+    }
+  }
+
+
+  const fullscreenButton = codeDiv.querySelector('.fullscreen-button');
+  fullscreenButton.addEventListener('click', fullscreenHandler);
+
+
+};
+
+

@@ -20,6 +20,7 @@ import { DocumentsEffects, DOCUMENT_EFFECTS_TOKEN } from 'app/modules/shared/sto
 import { OperationStep } from 'packages/rx-store/src/effect';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { viewSwipeToEditorLine } from '../view-edit-swipe-switch';
+import { codeFenceConnectedCallback } from './services/markdown-it-plugins/code/highlight';
 
 @Component({
   selector: 'markdown-viewer-container',
@@ -128,11 +129,10 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
       }
     );
     (this.viewerContainerDiv.nativeElement as HTMLElement).addEventListener(
-      'code-loaded',
+      'code-fence-loaded',
       (e: CustomEvent) => {
         const codeDiv = e.target as HTMLElement;
-        const fullscreenButton = codeDiv.querySelector('.fullscreen-button');
-        fullscreenButton.addEventListener('click', fullscreenHandler);
+        codeFenceConnectedCallback(codeDiv);
       }
     );
     let hammer = null;
@@ -171,7 +171,3 @@ export class MarkdownViewerContainerComponent extends SubscriptionManager implem
   }
 }
 
-function fullscreenHandler(event) {
-  if (document.fullscreenElement) { document.exitFullscreen(); event.target.firstChild.data = 'fullscreen' }
-  else { event.target.parentElement.parentElement.parentElement.requestFullscreen(); event.target.firstChild.data = 'fullscreen_exit' }
-}
