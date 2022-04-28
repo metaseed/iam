@@ -9,15 +9,6 @@ window.addEventListener(
   false
 );
 
-function md_code_wrapText() {
-  const e = event.target.parentElement.parentElement.getElementsByTagName('code')[0];
-  if (e.style['white-space'] === 'pre-wrap') {
-    e.style['white-space'] = 'pre';
-  } else {
-    e.style['white-space'] = 'pre-wrap';
-  }
-}
-
 function md_edit_mouseenter(event) {
   if (window.USER_IS_TOUCHING) event.target.setAttribute('data-mouseenter', Date.now());
 }

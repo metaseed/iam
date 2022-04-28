@@ -91,8 +91,7 @@ onclick="md_edit_event(event.target.parentElement.parentElement.parentElement)">
 edit
 </button>
 
-<button class="material-icons code-button" title="line wrap"
-onclick="md_code_wrapText()">
+<button class="material-icons code-button code-wrap-button" title="line wrap">
 wrap_text
 </button>
 
@@ -122,7 +121,7 @@ fullscreen
 };
 
 export function codeFenceConnectedCallback(codeDiv: HTMLElement) {
-  const fullscreenHandler = (event: CustomEvent) => {
+  function fullscreenHandler(event: CustomEvent) {
     const fullscreenButton = event.target as HTMLElement;
     const textNode = fullscreenButton.firstChild as Text;
     if (document.fullscreenElement) {
@@ -136,11 +135,21 @@ export function codeFenceConnectedCallback(codeDiv: HTMLElement) {
     }
   }
 
+  function md_code_wrapText(event: Event) {
+    const codeWrapButton = event.target as HTMLElement;
+    const e = codeWrapButton.parentElement.parentElement.getElementsByTagName('code')[0];
+    if (e.style['white-space'] === 'pre-wrap') {
+      e.style['white-space'] = 'pre';
+    } else {
+      e.style['white-space'] = 'pre-wrap';
+    }
+  }
 
   const fullscreenButton = codeDiv.querySelector('.fullscreen-button');
   fullscreenButton.addEventListener('click', fullscreenHandler);
 
-
+  const codeWrapButton = codeDiv.querySelector('.code-wrap-button');
+  codeWrapButton.addEventListener('click', md_code_wrapText);
 };
 
 
