@@ -28,8 +28,8 @@ export function sourceLine(
         const parentMap = JSON.stringify(token.map); // start from 0
         token.attrSet('data-source-lines', parentMap);
         token.attrSet('class', 'edit-it-content');
-        token.attrSet('onmouseenter', 'md_edit_mouseenter()');
-        token.attrSet('onmouseleave', 'md_edit_mouseleave()');
+        token.attrSet('onmouseenter', 'md_edit_mouseenter(event)');
+        token.attrSet('onmouseleave', 'md_edit_mouseleave(event)');
 
         const linkTokens = [
           Object.assign(new state.Token('link_open', 'a', 1), {
