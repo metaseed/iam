@@ -113,6 +113,7 @@ fullscreen
 </div>${preNode.outerHTML}<div class="code-console" style="border-top: 1px solid lightgray;"></div>
 <img src onerror="event.target.parentElement.dispatchEvent(new CustomEvent('code-fence-loaded', { bubbles: true}));"></img>
 </div>`;
+// img is the last element, so it will be loaded last, when we dispatch code-fence-loaded event, all sibling elements are loaded
 // event.target.remove();  should not be added this to img err handler, because it will trigger the connectedCallback every time the source code is edited, which will add click event handler several times to every button. note: because of incremental dom, the buttons would not be rerendered.
 // we could use this mechanism to implement the update lifetime hook. just add another img and remove itself in the err handler.
 
