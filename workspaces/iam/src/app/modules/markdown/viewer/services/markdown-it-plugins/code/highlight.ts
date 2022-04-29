@@ -30,6 +30,7 @@ import { base64Encode, DocumentRef, Utilities } from "core";
 import MarkdownIt from "markdown-it";
 import { Injector } from "@angular/core";
 import { replaceTextWithSpanAndSetRelativeLineNumber } from "app/modules/markdown/view-edit-swipe-switch";
+import { consoleProxy, scopedEval } from "./script-run";
 
 export interface ViewerService {
   env: { highlightLineNumbers: any };
@@ -110,8 +111,10 @@ onclick="document.copier.copyText(this.attributes.originalstr.value,true)">
 fullscreen
 </button>
 </div>${preNode.outerHTML}<div class="code-console" style="border-top: 1px solid lightgray;"></div>
-<img src onerror="event.target.parentElement.dispatchEvent(new CustomEvent('code-fence-loaded', { bubbles: true}));event.target.remove();"></img>
+<img src onerror="event.target.parentElement.dispatchEvent(new CustomEvent('code-fence-loaded', { bubbles: true}));"></img>
 </div>`;
+// event.target.remove();  should not be added this to img err handler, because it will trigger the connectedCallback every time the source code is edited, which will add click event handler several times to every button. note: because of incremental dom, the buttons would not be rerendered.
+// we could use this mechanism to implement the update lifetime hook. just add another img and remove itself in the err handler.
 
         return r;
       } catch (e) {
@@ -170,43 +173,7 @@ function runCode(event, codeConsole: HTMLElement) {
   const codeWrapButton = event.target as HTMLElement;
   const code = codeWrapButton.parentElement.parentElement.getElementsByTagName('code')[0];
   const codeStr = code.textContent; // span's content would come in here.
-  scopedEval(thisObj, scope, { console: consoleProxy(codeConsole) }, codeStr);
-}
-// share additional function and variable that can be used without `this` keyword.
-const scope = {};
-// this obj for all scripts, use this to reference it;
-// so we could share data between scripts.
-const thisObj = {};
-
-const scopedEval = function scopedEval(thisObj, scriptsScope, localScope, script) {
-  const context = { ...scriptsScope, ...localScope };
-  const evaluator = Function.apply(null, [...Object.keys(context), 'script',
-  `"use strict";
-  try{${script}}
-  catch (e) {
-    console.error(e);
-  }`]);
-  evaluator.apply(thisObj, [...Object.values(context), script]);
+  scopedEval(codeStr, { console: consoleProxy(codeConsole) });
 }
 
-const consoleProxy = consoleElement => new Proxy(console, {
-  get: function (target, propKey) {
-    const origMethod = target[propKey];
 
-    return function (...args) {
-      const codeConsole = consoleElement;
-      const now = new Date();
-      // get time with milliseconds
-      const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') + ':' + now.getSeconds().toString().padStart(2,'0') + '.' + now.getMilliseconds().toString().padStart(3,'0');
-      const text = document.createTextNode(`${time}: ${args.join(' ')}\n`);
-      if (propKey === 'error') {
-        const span = document.createElement('span');
-        span.style.color = 'red';
-        span.appendChild(text);
-        codeConsole.appendChild(span);
-      } else
-        codeConsole.appendChild(text);
-      origMethod.apply(target, args);
-    }
-  }
-});
