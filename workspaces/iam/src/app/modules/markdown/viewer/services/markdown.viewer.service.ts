@@ -28,7 +28,7 @@ import { MarkdownConfig } from "../markdown.config";
 import latex from "markdown-it-latex";
 import { mergeConf, DocumentRef } from "core";
 import { MermaidPlugin } from "./markdown-it-plugins/mermaid.plugin";
-import { CopierService } from "core";
+// import { CopierService } from "core";
 import { Subscription, asyncScheduler } from "rxjs";
 import { getAddr } from "../utils/getUri";
 import { Utilities } from "core";
@@ -128,7 +128,7 @@ export class MarkdownViewerService implements ViewerService {
     new MermaidPlugin(this.markdownIt);
     new ContainerPlugin(this.markdownIt, "warning");
 
-    this.docRef.document["copier"] = new CopierService();
+    // this.docRef.document["copier"] = new CopierService();
   }
 
   private updateMeta = (yamlMeta) => {

@@ -100,11 +100,8 @@ edit
 wrap_text
 </button>
 
-<button class="material-icons code-button no-print"
-title="Copy code snippet"
-originalstr=${base64Encode(str)}
-onclick="document.copier.copyText(this.attributes.originalstr.value,true)">
-<span aria-hidden="true">content_copy</span>
+<button class="material-icons code-button no-print code-copy-button" title="copy code">
+content_copy
 </button>
 
 <button class="material-icons code-button fullscreen-button" title="full screen">
@@ -113,9 +110,9 @@ fullscreen
 </div>${preNode.outerHTML}<div class="code-console" style="border-top: 1px solid lightgray;"></div>
 <img src onerror="event.target.parentElement.dispatchEvent(new CustomEvent('code-fence-loaded', { bubbles: true}));"></img>
 </div>`;
-// img is the last element, so it will be loaded last, when we dispatch code-fence-loaded event, all sibling elements are loaded
-// event.target.remove();  should not be added this to img err handler, because it will trigger the connectedCallback every time the source code is edited, which will add click event handler several times to every button. note: because of incremental dom, the buttons would not be rerendered.
-// we could use this mechanism to implement the update lifetime hook. just add another img and remove itself in the err handler.
+        // img is the last element, so it will be loaded last, when we dispatch code-fence-loaded event, all sibling elements are loaded
+        // event.target.remove();  should not be added this to img err handler, because it will trigger the connectedCallback every time the source code is edited, which will add click event handler several times to every button. note: because of incremental dom, the buttons would not be rerendered.
+        // we could use this mechanism to implement the update lifetime hook. just add another img and remove itself in the err handler.
 
         return r;
       } catch (e) {
@@ -145,12 +142,21 @@ export function codeFenceConnectedCallback(codeDiv: HTMLElement) {
 
   function md_code_wrapText(event: Event) {
     const codeWrapButton = event.target as HTMLElement;
-    const e = codeWrapButton.parentElement.parentElement.getElementsByTagName('code')[0];
-    if (e.style['white-space'] === 'pre-wrap') {
-      e.style['white-space'] = 'pre';
+    const codeNode = codeWrapButton.parentElement.parentElement.getElementsByTagName('code')[0];
+    if (codeNode.style['white-space'] === 'pre-wrap') {
+      codeNode.style['white-space'] = 'pre';
     } else {
-      e.style['white-space'] = 'pre-wrap';
+      codeNode.style['white-space'] = 'pre-wrap';
     }
+  }
+
+  function copyCode(event: Event) {
+    const copyButton = event.target as HTMLElement;
+    const codeNode = copyButton.parentElement.parentElement.getElementsByTagName('code')[0];
+    const text = codeNode.textContent;
+    navigator.clipboard.writeText(text)
+      // .then(() => console.log('code copied'))'));
+
   }
 
   const fullscreenButton = codeDiv.querySelector('.fullscreen-button');
@@ -158,6 +164,9 @@ export function codeFenceConnectedCallback(codeDiv: HTMLElement) {
 
   const codeWrapButton = codeDiv.querySelector('.code-wrap-button');
   codeWrapButton.addEventListener('click', md_code_wrapText);
+
+  const codeCopyButton = codeDiv.querySelector('.code-copy-button');
+  codeCopyButton.addEventListener('click', copyCode);
 
   const innerCode = codeDiv.querySelector('.inner-code');
   const isJs = innerCode.classList.contains('language-js');

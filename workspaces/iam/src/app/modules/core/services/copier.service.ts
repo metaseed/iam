@@ -1,5 +1,8 @@
 import { base64Decode } from "../utils";
 
+/**
+ * deprecated: see dev-note:5
+ */
 export class CopierService {
   private fakeElem: HTMLTextAreaElement | null;
 
