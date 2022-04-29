@@ -86,6 +86,10 @@ export const DEFAULT_HIGHLIGHT_FUNCTION = (viewer: ViewerService, injector: Inje
 <div class="markdown-code__lang">${lang}</div>
 <div class="code-buttons">
 
+<button class="material-icons code-button code-run-button" style="visibility:collapse;" title="line wrap">
+play_arrow
+</button>
+
 <button class="material-icons code-button" title="edit code"
 onclick="md_edit_event(event.target.parentElement.parentElement.parentElement)">
 edit
@@ -105,7 +109,7 @@ onclick="document.copier.copyText(this.attributes.originalstr.value,true)">
 <button class="material-icons code-button fullscreen-button" title="full screen">
 fullscreen
 </button>
-</div>${preNode.outerHTML}
+</div>${preNode.outerHTML}<div class="code-console" style="border-top: 1px solid lightgray;"></div>
 <img src onerror="event.target.parentElement.dispatchEvent(new CustomEvent('code-fence-loaded', { bubbles: true}));event.target.remove();"></img>
 </div>`;
 
@@ -150,6 +154,59 @@ export function codeFenceConnectedCallback(codeDiv: HTMLElement) {
 
   const codeWrapButton = codeDiv.querySelector('.code-wrap-button');
   codeWrapButton.addEventListener('click', md_code_wrapText);
+
+  const innerCode = codeDiv.querySelector('.inner-code');
+  const isJs = innerCode.classList.contains('language-js');
+  const codeConsole = codeDiv.querySelector('.code-console') as HTMLElement;
+  const codeRunButton = codeDiv.querySelector('.code-run-button') as HTMLElement;
+  if (isJs) {
+    codeRunButton.style.visibility = ''; // remove the hidden style
+    codeRunButton.addEventListener('click', event => runCode(event, codeConsole));
+  }
+
 };
 
+function runCode(event, codeConsole: HTMLElement) {
+  const codeWrapButton = event.target as HTMLElement;
+  const code = codeWrapButton.parentElement.parentElement.getElementsByTagName('code')[0];
+  const codeStr = code.textContent; // span's content would come in here.
+  scopedEval(thisObj, scope, { console: consoleProxy(codeConsole) }, codeStr);
+}
+// share additional function and variable that can be used without `this` keyword.
+const scope = {};
+// this obj for all scripts, use this to reference it;
+// so we could share data between scripts.
+const thisObj = {};
 
+const scopedEval = function scopedEval(thisObj, scriptsScope, localScope, script) {
+  const context = { ...scriptsScope, ...localScope };
+  const evaluator = Function.apply(null, [...Object.keys(context), 'script',
+  `"use strict";
+  try{${script}}
+  catch (e) {
+    console.error(e);
+  }`]);
+  evaluator.apply(thisObj, [...Object.values(context), script]);
+}
+
+const consoleProxy = consoleElement => new Proxy(console, {
+  get: function (target, propKey) {
+    const origMethod = target[propKey];
+
+    return function (...args) {
+      const codeConsole = consoleElement;
+      const now = new Date();
+      // get time with milliseconds
+      const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') + ':' + now.getSeconds().toString().padStart(2,'0') + '.' + now.getMilliseconds().toString().padStart(3,'0');
+      const text = document.createTextNode(`${time}: ${args.join(' ')}\n`);
+      if (propKey === 'error') {
+        const span = document.createElement('span');
+        span.style.color = 'red';
+        span.appendChild(text);
+        codeConsole.appendChild(span);
+      } else
+        codeConsole.appendChild(text);
+      origMethod.apply(target, args);
+    }
+  }
+});

@@ -1,4 +1,6 @@
-export let defaultLogFunctionPrdScreen = [console.assert.name, console.debug.name, console.trace.name, console.log.name];
+export let defaultLogFunctionPrdScreen =
+  [console.assert.name, console.debug.name, console.trace.name, console.log.name];
+
 let logFunctionPrdScreen: string[] = [];
 /**
  * in function we can not use LogService, so have to patch the console global object.
