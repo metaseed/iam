@@ -156,7 +156,6 @@ export function codeFenceConnectedCallback(codeDiv: HTMLElement) {
     const text = codeNode.textContent;
     navigator.clipboard.writeText(text)
       // .then(() => console.log('code copied'))'));
-
   }
 
   const fullscreenButton = codeDiv.querySelector('.fullscreen-button');
