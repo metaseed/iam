@@ -155,7 +155,7 @@ export function codeFenceConnectedCallback(codeDiv: HTMLElement) {
     const codeNode = copyButton.parentElement.parentElement.getElementsByTagName('code')[0];
     const text = codeNode.textContent;
     navigator.clipboard.writeText(text)
-      // .then(() => console.log('code copied'))'));
+    // .then(() => console.log('code copied'))'));
   }
 
   const fullscreenButton = codeDiv.querySelector('.fullscreen-button');
@@ -178,11 +178,15 @@ export function codeFenceConnectedCallback(codeDiv: HTMLElement) {
 
 };
 
+const dataForConsoleProxy = { consoleUI: null };
+const console = consoleProxy(dataForConsoleProxy);
+const docScope = {};
 function runCode(event, codeConsole: HTMLElement) {
+  dataForConsoleProxy.consoleUI = codeConsole;
   const codeWrapButton = event.target as HTMLElement;
   const code = codeWrapButton.parentElement.parentElement.getElementsByTagName('code')[0];
   const codeStr = code.textContent; // span's content would come in here.
-  scopedEval(codeStr, { console: consoleProxy(codeConsole) });
+  scopedEval(codeStr, { console, docScope });
 }
 
 
