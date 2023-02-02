@@ -69,7 +69,7 @@ export class FileUploadService {
         .pipe(
           switchMap((repo) => {
             const id = this._store.currentId_.state;
-            const date = new Date().toISOString().replace(/[-:.]/g, "");
+            const date = new Date().toISOString().replace(/[-:.]/g, ""); // '2023-02-02T21:19:27.399Z'
             const path = `${DOCUMENTS_FOLDER_NAME}/${id}/${subFolder}/${date}-${file.name}`;
             return repo.newFileReportProgress(path, base64, true);
           })

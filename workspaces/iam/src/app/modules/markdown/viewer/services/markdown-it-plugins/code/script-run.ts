@@ -47,6 +47,9 @@ const operations = {
       scriptsScope = { ...defaultScriptsScope };
     }
   },
+  $share(obj: Object) {
+    scriptsScope = { ...scriptsScope, ...obj };
+  }
 };
 
 
@@ -68,14 +71,19 @@ export const scopedEval = function scopedEval(script, scope = scriptsScope, scri
 
   const context = { ...operations, ...scope, ...scriptScope };
   // create new Function with keys from context as parameters, 'script' is the last parameter.
-  const evaluator = Function.apply(null, [...Object.keys(context), 'script',
-  `"use strict";
-  try{
-    ${script}
+  try {
+    const evaluator = Function.apply(null, [...Object.keys(context), 'script',
+    `"use strict";
+      try{
+        ${script}
+      }
+      catch (e) {
+        console.error(e);
+      }`]); // parse error from here
+    // call the function with values from context and 'script' as arguments.
+    evaluator.apply(thisObj, [...Object.values(context), script]);// run time error from here
+  } catch (e) {
+    const con = (scope as any).console || console;
+    con.error(e);
   }
-  catch (e) {
-    console.error(e);
-  }`]);
-  // call the function with values from context and 'script' as arguments.
-  evaluator.apply(thisObj, [...Object.values(context), script]);
 }

@@ -23,6 +23,86 @@ interface ICommandConfig {
 export class KeyMapService {
   private static COMMANDS_CONFIG: ICommandConfig;
   editor: ICodeMirrorEditor;
+  config = KeyMapService.COMMANDS_CONFIG ?? {
+    Bold: {
+      command: 'Bold',
+      func: (selectedText, defaultText) => {
+        return `**${selectedText || defaultText}**`;
+      },
+      startSize: 2,
+      hotKey: 'Ctrl-M B'
+    },
+    Italic: {
+      command: 'Italic',
+      func: (selectedText, defaultText) => `*${selectedText || defaultText}*`,
+      startSize: 1,
+      hotKey: 'Ctrl-M T'
+    },
+    Heading: {
+      command: 'Heading',
+      func: (selectedText, defaultText) => `# ${selectedText || defaultText}`,
+      startSize: 2,
+      hotKey: 'Ctrl-M H'
+    },
+    Reference: {
+      command: 'Reference',
+      func: (selectedText, defaultText) => `> ${selectedText || defaultText}`,
+      startSize: 2,
+      hotKey: 'Ctrl-M R'
+    },
+    Link: {
+      command: 'Link',
+      func: (selectedText, defaultText) => `[${selectedText || defaultText}]()`,
+      endSize: 1,
+      hotKey: 'Ctrl-M L'
+    },
+    Image: {
+      command: 'Image',
+      func: (selectedText, defaultText) => `![${selectedText || defaultText}]()`,
+      endSize: 1,
+      hotKey: 'Ctrl-M I'
+    },
+    Ul: {
+      command: 'Ul',
+      func: (selectedText, defaultText) => `- ${selectedText || defaultText}`,
+      startSize: 2,
+      hotKey: 'Ctrl-M U'
+    },
+    Ol: {
+      command: 'Ol',
+      func: (selectedText, defaultText) => `1 ${selectedText || defaultText}`,
+      startSize: 2,
+      hotKey: 'Ctrl-M O'
+    },
+    Code: {
+      command: 'Code',
+      func: (selectedText, defaultText, config) => {
+        const pos = this.editor.getCursor();
+        const cur = (this.editor as any).getSearchCursor(/^\s*```[^\S\n\r]*(\S+)/, pos);
+        let found = cur.findPrevious();
+        let lang: string;
+        if (found) {
+          lang = cur.pos.match[1];
+        } else {
+          found = cur.findNext();
+          if (found) {
+            lang = cur.pos.match[1];
+          } else {
+            lang = '';
+          }
+        }
+        config.startSize = lang ? lang.length + 4 : 3;
+        return '```' + lang + '\r\n' + (selectedText || defaultText) + '\r\n```';
+      },
+      startSize: 3,
+      hotKey: 'Ctrl-M C'
+    },
+    Meta: {
+      command: 'Meta',
+      hotKey: 'Ctrl-M M',
+      func: this.insertMeta
+    }
+  };
 
   constructor(
     private _editorService: MarkdownEditorService,
@@ -30,27 +110,29 @@ export class KeyMapService {
     private _uploadService: FileUploadService,
     @Inject(MARKDOWN_STORE_TOKEN) private markdownStore: IMarkdownStore
   ) {
+
     // cm.setOption('keyMap', 'vim');
     // cm.setOption('keyMap', 'sublime');
     this._commandService.commands.subscribe(c => this.handleCommand(c));
 
     this._editorService.docEditorLoaded$.subscribe((editor: CodeMirror.Editor) => {
-      editor.on('paste',(editor, event) => {
+      // we can paste by copying the file or paste from clipboard: i.e. screenshot
+      editor.on('paste', (editor, event) => {
         // if (!this.editor.hasFocus()) return;
 
         const clipboardData = event.clipboardData || (window as any).clipboardData;
         const items = clipboardData.items;
-        console.log(JSON.stringify(items)); // will give you the mime types
+        console.log(items); // will give you the mime types kind: "file";type: "text/plain"
 
         if (items) {
           for (let i = 0; i < items.length; i++) {
             if (items[i].kind === 'file') {
               const blob = items[i].getAsFile();
               // get file type
-              let subFolder  = blob.type.split('/')[0];
+              let subFolder = blob.type.split('/')[0];
               if (!subFolder) {
                 const name = blob.name.split('.');
-                if(name.length > 1) {
+                if (name.length > 1) {
                   subFolder = name.pop();
                 } else {
                   subFolder = 'resource';
@@ -65,95 +147,16 @@ export class KeyMapService {
         }
       });
 
-      if (!KeyMapService.COMMANDS_CONFIG) {
-        KeyMapService.COMMANDS_CONFIG = {
-          Bold: {
-            command: 'Bold',
-            func: (selectedText, defaultText) => {
-              return `**${selectedText || defaultText}**`;
-            },
-            startSize: 2,
-            hotKey: 'Ctrl-M B'
-          },
-          Italic: {
-            command: 'Italic',
-            func: (selectedText, defaultText) => `*${selectedText || defaultText}*`,
-            startSize: 1,
-            hotKey: 'Ctrl-M T'
-          },
-          Heading: {
-            command: 'Heading',
-            func: (selectedText, defaultText) => `# ${selectedText || defaultText}`,
-            startSize: 2,
-            hotKey: 'Ctrl-M H'
-          },
-          Reference: {
-            command: 'Reference',
-            func: (selectedText, defaultText) => `> ${selectedText || defaultText}`,
-            startSize: 2,
-            hotKey: 'Ctrl-M R'
-          },
-          Link: {
-            command: 'Link',
-            func: (selectedText, defaultText) => `[${selectedText || defaultText}]()`,
-            endSize: 1,
-            hotKey: 'Ctrl-M L'
-          },
-          Image: {
-            command: 'Image',
-            func: (selectedText, defaultText) => `![${selectedText || defaultText}]()`,
-            endSize: 1,
-            hotKey: 'Ctrl-M I'
-          },
-          Ul: {
-            command: 'Ul',
-            func: (selectedText, defaultText) => `- ${selectedText || defaultText}`,
-            startSize: 2,
-            hotKey: 'Ctrl-M U'
-          },
-          Ol: {
-            command: 'Ol',
-            func: (selectedText, defaultText) => `1 ${selectedText || defaultText}`,
-            startSize: 2,
-            hotKey: 'Ctrl-M O'
-          },
-          Code: {
-            command: 'Code',
-            func: (selectedText, defaultText, config) => {
-              const pos = this.editor.getCursor();
-              const cur = (this.editor as any).getSearchCursor(/^\s*```[^\S\n\r]*(\S+)/, pos);
-              let found = cur.findPrevious();
-              let lang: string;
-              if (found) {
-                lang = cur.pos.match[1];
-              } else {
-                found = cur.findNext();
-                if (found) {
-                  lang = cur.pos.match[1];
-                } else {
-                  lang = '';
-                }
-              }
-              config.startSize = lang ? lang.length + 4 : 3;
-              return '```' + lang + '\r\n' + (selectedText || defaultText) + '\r\n```';
-            },
-            startSize: 3,
-            hotKey: 'Ctrl-M C'
-          }
+      this.editor = <any>editor;
+
+      const option = {};
+      for (const key of Object.keys(this.config)) {
+        const config = this.config[key];
+        option[config.hotKey] = () => {
+          this.insertContent(key);
         };
       }
-      this.editor = <any>editor;
-      const configs = KeyMapService.COMMANDS_CONFIG;
-      const option = {};
-      for (const key in configs) {
-        if (configs.hasOwnProperty(key)) {
-          const config = configs[key];
-          const me = this;
-          option[config.hotKey] = function () {
-            me.insertContent(key);
-          };
-        }
-      }
+
       this.codeMirrorMaps(option);
     });
   }
@@ -215,7 +218,7 @@ export class KeyMapService {
     option['Alt-Shift+Down'] = 'duplicateLine';
     option['Backspace'] = 'smartBackspace';
     option['Alt-M'] = 'showInCenter';
-    option['Ctrl-M M'] = this.insertMeta;
+
     /*
 Ctrl-F / Cmd-F Start searching
 Ctrl-G / Cmd-G Find next
@@ -236,6 +239,7 @@ Alt-G Jump to line*/
   handleCommand(command: Command) {
     this.insertContent(command.name);
   }
+
   insertContent(type: string) {
     if (!this.editor) {
       return;
@@ -250,7 +254,7 @@ Alt-G Jump to line*/
       return;
     }
 
-    const config = KeyMapService.COMMANDS_CONFIG[type];
+    const config = this.config[type];
     // let selectionText: string = this.editor.getModel().getValueInRange(selection);
     selectionText = config.func(selectionText, '', config);
     const position = this.editor.getCursor();

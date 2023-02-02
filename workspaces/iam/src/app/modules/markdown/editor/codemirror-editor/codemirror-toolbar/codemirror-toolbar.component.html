@@ -1,35 +1,35 @@
 <mat-toolbar class="tool-bar" [ngClass]="{'tool-bar--bottom':(isScreenWide$|async) === false}" style="height: 3.8rem;">
-  <button mat-icon-button title="Bold" (click)="insertContent('Bold')" *ngIf="!_hideIcons.Bold">
+  <button mat-icon-button title="Bold ({{keyMapService.config.Bold.hotKey}})" (click)="insertContent('Bold')" *ngIf="!_hideIcons.Bold">
     <mat-icon>format_bold</mat-icon>
   </button>
 
-  <button mat-icon-button title="Italic" (click)="insertContent('Italic')" *ngIf="!_hideIcons.Italic">
+  <button mat-icon-button title="Italic ({{keyMapService.config.Bold.hotKey}})" (click)="insertContent('Italic')" *ngIf="!_hideIcons.Italic">
     <mat-icon>format_italic</mat-icon>
   </button>
-  <button mat-icon-button title="Heading" (click)="insertContent('Heading')" *ngIf="!_hideIcons.Heading">
+  <button mat-icon-button title="Heading ({{keyMapService.config.Heading.hotKey}})" (click)="insertContent('Heading')" *ngIf="!_hideIcons.Heading">
     <mat-icon>title</mat-icon>
   </button>
-  <button mat-icon-button title="Reference" (click)="insertContent('Reference')" *ngIf="!_hideIcons.Refrence">
+  <button mat-icon-button title="Reference ({{keyMapService.config.Reference.hotKey}})" (click)="insertContent('Reference')" *ngIf="!_hideIcons.Refrence">
     <mat-icon>format_quote</mat-icon>
   </button>
 
-  <button mat-icon-button title="Unordered List" (click)="insertContent('Ul')" *ngIf="!_hideIcons.Ul">
+  <button mat-icon-button title="Unordered List ({{keyMapService.config.Ul.hotKey}})" (click)="insertContent('Ul')" *ngIf="!_hideIcons.Ul">
     <mat-icon>format_list_bulleted</mat-icon>
   </button>
-  <button mat-icon-button title="Ordered List" (click)="insertContent('Ol')" *ngIf="!_hideIcons.Ol">
+  <button mat-icon-button title="Ordered List ({{keyMapService.config.Ol.hotKey}})" (click)="insertContent('Ol')" *ngIf="!_hideIcons.Ol">
     <mat-icon>format_list_numbered</mat-icon>
   </button>
 
-  <button mat-icon-button title="Code Block" (click)="insertContent('Code')" *ngIf="!_hideIcons.Code">
+  <button mat-icon-button title="Code Block ({{keyMapService.config.Code.hotKey}})" (click)="insertContent('Code')" *ngIf="!_hideIcons.Code">
     <mat-icon>code</mat-icon>
   </button>
-  <button mat-icon-button title="Link" (click)="insertContent('Link')" *ngIf="!_hideIcons.Link">
+  <button mat-icon-button title="Link ({{keyMapService.config.Link.hotKey}})" (click)="insertContent('Link')" *ngIf="!_hideIcons.Link">
     <mat-icon>link</mat-icon>
   </button>
-  <button mat-icon-button title="Image" (click)="insertContent('Image')" *ngIf="!_hideIcons.Image">
+  <button mat-icon-button title="Image ({{keyMapService.config.Image.hotKey}})" (click)="insertContent('Image')" *ngIf="!_hideIcons.Image">
     <mat-icon>image</mat-icon>
   </button>
-  <button mat-icon-button title="Meta Data" (click)="insertContent('Meta')">
+  <button mat-icon-button title="Meta Data ({{keyMapService.config.Meta.hotKey}})" (click)="insertContent('Meta')">
     <mat-icon>receipt</mat-icon>
   </button>
 
