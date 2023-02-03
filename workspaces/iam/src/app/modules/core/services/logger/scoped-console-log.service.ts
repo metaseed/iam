@@ -11,7 +11,8 @@ export function screenConsoleLog(screeLogFunctions?: string[]) {
   logFunctionPrdScreen = screeLogFunctions ?? defaultLogFunctionPrdScreen;
   // direct call on console(no proxy) are screened
   for (const funcName of logFunctionPrdScreen) {
-    console[funcName] = () => undefined;
+    console[`${funcName}_`] = console[funcName]
+    console[funcName] = () => undefined
   }
 }
 
