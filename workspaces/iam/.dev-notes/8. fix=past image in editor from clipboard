@@ -1,2 +1,2 @@
-M:\Workspace\iam\workspaces\iam\src\app\modules\markdown\editor\services\keymap.service.ts
+keymap.service.ts
 editor.on('edit', function) works
