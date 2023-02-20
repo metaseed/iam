@@ -16,29 +16,28 @@ import { CodeMirrorValueAccessor } from './codemirror-editor/codemirror-componen
 import { MarkdownEditorComponent } from './markdown-editor-component/markdown-editor.component';
 
 @NgModule({
-  declarations: [
-    CodemirrorComponent,
-    MarkdownEditorComponent,
-    FileUploadComponent,
-    CodeMirrorValueAccessor
-  ],
-  imports: [
-    SharedModule,
-    CommonModule,
-    FormsModule,
-    SpinnerModule,
-    EditorToolbarModule,
-    MarkdownEditorRoutingModule,
-    MaterialModule
-  ],
-  exports: [MarkdownEditorComponent, CodemirrorComponent],
-  providers: [
-    KeyMapService,
-    MarkdownEditorService,
-    EditorSaveService,
-    CanDeactivateGuard
-  ],
-  entryComponents: []
+    declarations: [
+        CodemirrorComponent,
+        MarkdownEditorComponent,
+        FileUploadComponent,
+        CodeMirrorValueAccessor
+    ],
+    imports: [
+        SharedModule,
+        CommonModule,
+        FormsModule,
+        SpinnerModule,
+        EditorToolbarModule,
+        MarkdownEditorRoutingModule,
+        MaterialModule
+    ],
+    exports: [MarkdownEditorComponent, CodemirrorComponent],
+    providers: [
+        KeyMapService,
+        MarkdownEditorService,
+        EditorSaveService,
+        CanDeactivateGuard
+    ]
 })
 export class MarkdownEditorModule {
   // when module loaded initial the markdown-editor service to set the currentEditor in the DocEditorService in 'root'

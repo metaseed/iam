@@ -1,7 +1,7 @@
-import { FormGroup } from "@angular/forms";
+import { UntypedFormGroup } from "@angular/forms";
 
 
-export class ResettableFormGroup extends FormGroup  {
+export class ResettableFormGroup extends UntypedFormGroup  {
   private appliedData: any;
 
   update(update: object): void {

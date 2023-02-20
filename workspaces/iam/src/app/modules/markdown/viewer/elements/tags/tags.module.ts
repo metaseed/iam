@@ -7,10 +7,9 @@ import { MatModules } from 'material';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  imports: [CommonModule,MatModules,ReactiveFormsModule],
-  declarations: [TagsComponent],
-  entryComponents: [TagsComponent],
-  exports: [TagsComponent]
+    imports: [CommonModule, MatModules, ReactiveFormsModule],
+    declarations: [TagsComponent],
+    exports: [TagsComponent]
 })
 export class TagsModule implements WithCustomElementComponent {
   customElementComponent: Type<any> = TagsComponent;

@@ -10,7 +10,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Tag } from "core";
 import { TagsCloudService } from "app/modules/home/tags-cloud/tags-cloud.service";
 import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/material/autocomplete";
-import { FormControl } from "@angular/forms";
+import { UntypedFormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { TagsCloudComponent } from "app/modules/home/tags-cloud/tags-cloud.component";
 
@@ -24,7 +24,7 @@ export class TagsComponent extends DataSourceLines {
   removable = true;
   addOnBlur = false;
   tagList: Tag[];
-  tagInputFormControl = new FormControl()
+  tagInputFormControl = new UntypedFormControl()
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
   private _modifyTags = new Subject<Tag[]>();
 

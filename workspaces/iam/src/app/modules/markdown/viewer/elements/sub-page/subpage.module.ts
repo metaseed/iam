@@ -8,10 +8,9 @@ import { SearchModule } from 'app/modules/shared/bundle-share/components/search/
 import { MatModules } from 'material';
 
 @NgModule({
-  imports: [CommonModule, MatModules, SearchModule],
-  declarations: [SubPageComponent, SubPageIdSearchComponent],
-  entryComponents: [SubPageComponent],
-  exports: [SubPageComponent]
+    imports: [CommonModule, MatModules, SearchModule],
+    declarations: [SubPageComponent, SubPageIdSearchComponent],
+    exports: [SubPageComponent]
 })
 export class SubPageModule implements WithCustomElementComponent {
   customElementComponent: Type<any> = SubPageComponent;

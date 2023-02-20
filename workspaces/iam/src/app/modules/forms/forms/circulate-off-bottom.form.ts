@@ -1,16 +1,16 @@
 import { Injectable } from "@angular/core";
-import { FormControl, Validators } from "@angular/forms";
+import { UntypedFormControl, Validators } from "@angular/forms";
 import { ResettableFormGroup } from "../models";
 import { validatorValueMap } from "../utils";
 @Injectable()
 export class CirculateOffBottomForm extends ResettableFormGroup {
   constructor(){
     super({
-      CirculateOffBottomRPM: new FormControl(null, validatorValueMap('Quantity',Validators.min(0), Validators.required)),
-      CirculateOffBottomFlowRate: new FormControl(null, validatorValueMap('Quantity',Validators.min(0), Validators.required)),
-      CirculateOffBottomFlowRampRate: new FormControl(null, validatorValueMap('Quantity',Validators.min(0), Validators.required)),
-      CirculateOffBottomUseDrillingRPM: new FormControl(),
-      CirculateOffBottomUseDrillingFlowRate: new FormControl(),
+      CirculateOffBottomRPM: new UntypedFormControl(null, validatorValueMap('Quantity',Validators.min(0), Validators.required)),
+      CirculateOffBottomFlowRate: new UntypedFormControl(null, validatorValueMap('Quantity',Validators.min(0), Validators.required)),
+      CirculateOffBottomFlowRampRate: new UntypedFormControl(null, validatorValueMap('Quantity',Validators.min(0), Validators.required)),
+      CirculateOffBottomUseDrillingRPM: new UntypedFormControl(),
+      CirculateOffBottomUseDrillingFlowRate: new UntypedFormControl(),
     });
   }
 }

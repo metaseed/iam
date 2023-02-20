@@ -7,11 +7,10 @@ import { DocumentHistoryListComponent } from './document-history-list.component'
 import { VersionComponent } from './version.component';
 
 @NgModule({
-  imports: [CommonModule, MatModules],
-  exports: [VersionComponent],
-  entryComponents: [VersionComponent],
-  declarations: [VersionComponent, DocumentHistoryListComponent],
-  providers: [],
+    imports: [CommonModule, MatModules],
+    exports: [VersionComponent],
+    declarations: [VersionComponent, DocumentHistoryListComponent],
+    providers: []
 })
 export class VersionModule {
   customElementComponent = VersionComponent;

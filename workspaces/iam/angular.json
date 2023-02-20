@@ -234,7 +234,6 @@
       }
     }
   },
-  "defaultProject": "iam",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "ms",

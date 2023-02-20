@@ -6,10 +6,9 @@ import { Type } from '@angular/core';
 import { MatModules } from 'material';
 
 @NgModule({
-  imports: [CommonModule,MatModules],
-  declarations: [TocComponent],
-  entryComponents: [TocComponent],
-  exports: [TocComponent]
+    imports: [CommonModule, MatModules],
+    declarations: [TocComponent],
+    exports: [TocComponent]
 })
 export class TocModule implements WithCustomElementComponent {
   customElementComponent: Type<any> = TocComponent;
