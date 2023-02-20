@@ -18,7 +18,8 @@ import { LazyCustomElementComponent } from './lazy-custom-element.component';
     // Providing these routes as a signal to the build system that these modules should be
     // registered as lazy-loadable.
     // TODO(andrewjs): Provide first-class support for providing this.
-    { provide: ROUTES, useValue: ELEMENT_MODULE_LOAD_CALLBACKS_AS_ROUTES, multi: true }
+    // NOTE: update from 13 to 14 need to remove this;
+    //{ provide: ROUTES, useValue: ELEMENT_MODULE_LOAD_CALLBACKS_AS_ROUTES, multi: true }
   ]
 })
 export class ElementsModule {}

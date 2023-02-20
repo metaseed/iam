@@ -5,7 +5,6 @@ import { RouterModule } from '@angular/router';
 import { SelectivePreloadingStrategy } from './selective-preloading-strategy';
 import { CanDeactivateGuard } from './can-deactivate-guard.service';
 import { HomeComponent } from 'home';
-import { MarkdownComponent } from './modules/markdown/markdown.component';
 
 const appRoutes: Routes = [
   // {
