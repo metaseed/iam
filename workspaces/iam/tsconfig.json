@@ -10,27 +10,61 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "importHelpers": true,
-    "target": "es2020",
+    "target": "ES2022",
     "baseUrl": "./src",
     "paths": {
-      "packages/*": ["../packages/*"],
-      "net-storage": ["app/modules/net-storage"],
-      "database": ["app/modules/database"],
-      "home": ["app/modules/home"],
-      "markdown": ["app/modules/markdown"],
-      "core": ["app/modules/core"],
-      "shared": ["app/modules/shared"],
-      "material": ["app/modules/material"],
-      "@metaseed/angular-hotkey": ["../projects/angular-hotkey"],
-      "@metaseed/spinner": ["../projects/spinner"],
-      "@rx-store/core": ["../packages/rx-store/src/core"],
-      "@rx-store/effect": ["../packages/rx-store/src/effect"],
-      "@rx-store/entity": ["../packages/rx-store/src/entity"],
-      "lispjs": ["../packages/lisp.js"]
+      "packages/*": [
+        "../packages/*"
+      ],
+      "net-storage": [
+        "app/modules/net-storage"
+      ],
+      "database": [
+        "app/modules/database"
+      ],
+      "home": [
+        "app/modules/home"
+      ],
+      "markdown": [
+        "app/modules/markdown"
+      ],
+      "core": [
+        "app/modules/core"
+      ],
+      "shared": [
+        "app/modules/shared"
+      ],
+      "material": [
+        "app/modules/material"
+      ],
+      "@metaseed/angular-hotkey": [
+        "../projects/angular-hotkey"
+      ],
+      "@metaseed/spinner": [
+        "../projects/spinner"
+      ],
+      "@rx-store/core": [
+        "../packages/rx-store/src/core"
+      ],
+      "@rx-store/effect": [
+        "../packages/rx-store/src/effect"
+      ],
+      "@rx-store/entity": [
+        "../packages/rx-store/src/entity"
+      ],
+      "lispjs": [
+        "../packages/lisp.js"
+      ]
     },
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["es2018", "dom"],
-    "skipLibCheck": true
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "skipLibCheck": true,
+    "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
