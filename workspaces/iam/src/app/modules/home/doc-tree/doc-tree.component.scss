@@ -17,14 +17,16 @@
     white-space: normal; // wrap text in button
     line-height: 2.2rem;
     text-align: left;
+    justify-content: flex-start;
+}
+.root-tree-node {
+  justify-content: center;
 }
 
 .my-tree-node {
     min-height: 3.6rem;
 }
-.mat-tree-node {
-    // align-items: stretch;
-}
+
 .root-node {
     display: flex;
     align-items: stretch;

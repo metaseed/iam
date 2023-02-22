@@ -33,6 +33,11 @@
       &:hover {
 
         .delete-button {
+          mat-icon {
+          font-size: initial;
+          height: initial;
+          width: inherit;
+        }
           visibility: visible;
         }
       }

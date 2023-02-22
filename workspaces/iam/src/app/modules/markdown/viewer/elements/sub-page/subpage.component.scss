@@ -11,9 +11,9 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-/* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+
 }
 
 .id-input-group {
@@ -35,4 +35,20 @@ input[type=number] {
 .id-input {
   width: 6.5rem;
   margin-top: 0.02rem;
+  font: inherit;
+  background: transparent;
+  color: currentColor;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  vertical-align: bottom;
+  text-align: inherit;
+  box-sizing: content-box;
+}
+
+mat-icon {
+  font-size: initial !important;
+  height: initial !important;
+  width: initial !important;
 }

@@ -1,9 +1,11 @@
+@use '@angular/material' as mat;
+
 @import '../typography-variables';
 // always using rem as size unit, 1rem = 10px
 html {
   font-size: 62.5%;
 }
-
+@include mat.typography-hierarchy($iam-typography-config);
 .markdown-container {
   kbd {
     display: inline-block;
@@ -27,6 +29,7 @@ html {
     font-size: 0.8rem;
   }
   .markdown-viewer {
+    // font-size: 1.8rem;
     blockquote {
       // @include mat-typography-level-to-styles($iam-typography-config, blockquote);
       color: #555;

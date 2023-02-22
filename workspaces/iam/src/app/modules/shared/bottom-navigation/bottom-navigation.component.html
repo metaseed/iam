@@ -1,7 +1,7 @@
 <mat-toolbar style="position:fixed; bottom:0;min-height: inherit;height: 5rem; z-index: 1;" class="tab-bar--dark" *ngIf="show">
-  <mat-toolbar-row style="height: inherit;">
+  <mat-toolbar-row  style="height: inherit;">
 
-    <nav mat-tab-nav-bar style="text-transform:capitalize;margin:0 auto;flex-grow: 1;">
+    <nav mat-tab-nav-bar [tabPanel]="tabPanel" style="text-transform:capitalize;margin:0 auto;flex-grow: 1;">
       <a mat-tab-link routerLinkActive #rla="routerLinkActive" [active]="rla.isActive" [routerLink]="['/home']">
         <mat-icon *ngIf="rla.isActive" svgIcon="home"></mat-icon>
         <mat-icon *ngIf="!rla.isActive" svgIcon="home-inactive"></mat-icon>
@@ -28,6 +28,6 @@
       </a>
 
     </nav>
-
+    <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
   </mat-toolbar-row>
 </mat-toolbar>

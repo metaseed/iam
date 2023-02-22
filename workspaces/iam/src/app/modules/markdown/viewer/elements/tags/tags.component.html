@@ -1,4 +1,4 @@
-<mat-form-field class="tags-list" appearance="none">
+<mat-form-field class="tags-list" appearance="outline">
   <label class="label" (click)="onShowTagsCloud($event)"><span>tags</span><mat-icon style="width: auto;height: auto;">open_in_new</mat-icon>:</label>
   <mat-chip-grid
     #chipList
@@ -15,7 +15,6 @@
       [title]="tag.description ?? tag.name"
       *ngFor="let tag of tagList"
       cdkDrag
-      [selectable]="selectable"
       [removable]="removable"
       (removed)="remove(tag)"
     >

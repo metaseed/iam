@@ -4,13 +4,13 @@
     pointer-events: auto;
     position: absolute;
     top: 0;
-    margin-top: -1.6rem;
-    color: rgba(0,0,0,0.6);
+    // margin-top: -1.6rem;
+    color: rgba(0, 0, 0, 0.6);
     font-size: small;
     cursor: pointer;
     line-height: 1.5rem;
     mat-icon {
-      font-size: small;;
+      font-size: small;
     }
     &:hover {
       color: blue;
@@ -19,15 +19,15 @@
   width: 100%;
   .tag {
     font-size: 1.4rem;
-  -webkit-text-stroke: 0.08px black;
+    -webkit-text-stroke: 0.08px black;
 
     &.cdk-drop-list-dragging {
       transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
     }
-    &:hover .hide-button{
+    &:hover .hide-button {
       visibility: visible;
     }
-    .hide-button{
+    .hide-button {
       // margin-left: 2px;
       visibility: collapse;
     }
@@ -35,11 +35,21 @@
   .cdk-drag-animating {
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
   }
-
 }
-/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
-:host ::ng-deep .mat-form-field-wrapper {
-  padding-bottom: 0.5rem;
+:host ::ng-deep {
+  .mdc-evolution-chip__text-label {
+    color: inherit !important;
+  }
+  .mat-mdc-form-field {
+    margin-bottom: -4rem;
+    .mat-mdc-text-field-wrapper {
+      padding: 0;
+      height: initial;
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-style: none;
+      }
+    }
+  }
 }
-
-

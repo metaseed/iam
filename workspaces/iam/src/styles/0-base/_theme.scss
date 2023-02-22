@@ -2,17 +2,22 @@
 @import '../theme-variables';
 // @import '../typography-variables';
 @import '../../app/modules/shared/theme';
+
 @include mat.core();
 // @include mat-core($iam-typography-config);
 @include mat.core-theme($iam-theme-light);
-
-// @mixin themes($theme) {
-//   @include angular-material-theme($theme);
-//   @include shared-module-theme($theme);
-// }
+@include mat.all-component-themes($iam-theme-light);
+@mixin themes($theme) {
+  // @include angular-material-theme($theme);
+  // @include shared-module-theme($theme);
+  @include mat.core-theme($theme);
+  @include mat.all-component-themes($theme);
+  @include shared-module-theme($theme);
+}
 // todo: https://material.angular.io/guide/theming#multiple-themes-in-one-file
-// @include themes($iam-theme-light);
+@include themes($iam-theme-light);
 .theme-dark {
-  @include mat.core-theme($iam-theme-dark);
+  // @include mat.core-theme($iam-theme-dark);
+  // @include mat.all-component-themes($iam-theme-dark);
   // @include themes($iam-theme-dark);
 }

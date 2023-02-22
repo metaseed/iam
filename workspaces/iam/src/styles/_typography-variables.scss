@@ -9,11 +9,11 @@ $iam-typography-config: mat.define-typography-config(
         $headline-2:     mat.define-typography-level(4.5rem, 5.6rem, 400),
         $headline-3:     mat.define-typography-level(5.6rem, 6.2rem, 400),
         $headline-4:     mat.define-typography-level(8rem, 8rem, 400),
-        $headline-5:     mat.define-typography-level(10rem, 10rem, 400), /* h1*/
-        $headline-6:     mat.define-typography-level(11.2rem, 11.2rem, 400), /* h2*/
-        $subtitle-2:  mat.define-typography-level(2rem, 3.6rem, 500),   /* h3*/
-        $subtitle-1:  mat.define-typography-level(1.9rem, 3.2rem, 400), /* h4*/
-        $body-2:        mat.define-typography-level(1.8rem, 3.2rem, 500), /*Bolder body text.*/
+        $headline-5:     mat.define-typography-level(2.8rem, 4rem, 500), /* h1*/
+        $headline-6:     mat.define-typography-level(2.4rem, 2.6rem, 500), /* h2*/
+        $subtitle-1:  mat.define-typography-level(2rem, 3.6rem, 500), /* h3*/
+        $subtitle-2:  mat.define-typography-level(1.9rem, 3.2rem, 400),   /* h4*/
+        $body-2:        mat.define-typography-level(1.8rem, 2.8rem, 400), /*Bolder body text.*/
         $body-1:        mat.define-typography-level(1.8rem, 2.8rem, 400),
         $caption:       mat.define-typography-level(1.6rem, 2.8rem, 400),/*Smaller body and hint text.*/
         $button:        mat.define-typography-level(1.8rem, 1.4rem, 400),

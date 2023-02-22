@@ -20,7 +20,6 @@ import { TagsCloudComponent } from "app/modules/home/tags-cloud/tags-cloud.compo
   selector: 'i-tag',
 })
 export class TagsComponent extends DataSourceLines {
-  selectable = false;
   removable = true;
   addOnBlur = false;
   tagList: Tag[];
@@ -34,13 +33,14 @@ export class TagsComponent extends DataSourceLines {
     return this._filteredRepoTags;
   }
   set filteredRepoTags(v) {
-    this._filteredRepoTags = v?.filter(t => !this.tagList.some(tag => tag.name === t.name)) ?? []
+    this._filteredRepoTags = v?.filter(t => !this.tagList?.some(tag => tag.name === t.name)) ?? []
   }
 
   @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement>;
   @ViewChild('autoCompleteTrigger') autoPanel: MatAutocompleteTrigger;
 
-  @Input() set tags(value: string) {
+  @Input()
+  set tags(value: string) {
     this.tagList = [];
     value.split(',').map(tag => tag.trim()).filter(t => t !== '').forEach(
       name => this.store.tags.getById(name).then(t => {
