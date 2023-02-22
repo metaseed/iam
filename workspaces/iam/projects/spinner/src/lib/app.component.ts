@@ -4,22 +4,22 @@ import { Component, OnInit } from '@angular/core';
   selector: 'app',
   styles: [
     `
-      .wrapper {
-        width: 480px;
-        margin: 0 auto;
-        text-align: center;
-      }
-
-      h1 {
-        margin-bottom: 15px;
-        padding-bottom: 15px;
-        border-bottom: 1px dashed #333;
-      }
-
-      h3 {
-        margin-bottom: 15px;
-      }
-    `
+           .wrapper {
+             width: 480px;
+             margin: 0 auto;
+             text-align: center;
+           }
+     
+           h1 {
+             margin-bottom: 15px;
+             padding-bottom: 15px;
+             border-bottom: 1px dashed #333;
+           }
+     
+           h3 {
+             margin-bottom: 15px;
+           }
+         `
   ],
   template: `
     <div class="wrapper">

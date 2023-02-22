@@ -28,7 +28,7 @@ html {
   }
   .markdown-viewer {
     blockquote {
-      @include mat-typography-level-to-styles($iam-typography-config, blockquote);
+      // @include mat-typography-level-to-styles($iam-typography-config, blockquote);
       color: #555;
       --x-height-multiplier: 0.375;
       --baseline-multiplier: 0.17;
@@ -126,6 +126,7 @@ html {
     .cm-header-6 {
       @extend h4;
     }
+    /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.*/
     .mat-tab-body-wrapper h2 {
       margin-top: 0;
     }

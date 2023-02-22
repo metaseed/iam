@@ -7,7 +7,7 @@
   $hintColor: map-get($foreground, text);//hint-text);
   $textColor: map-get($foreground, text);
   $disableTextColor: map-get($foreground, icon);//disabled-text);
-  a.mat-tab-link {
+  a.mat-mdc-tab-link {
     color: $hintColor;
     stroke: $hintColor;
     &:hover {
@@ -19,6 +19,7 @@
       color:$primary-color;
 
     }
+    /*TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.*/
     &.mat-tab-label-active:not(.mat-tab-disabled) {
       opacity: 1 !important;
       color: $textColor;

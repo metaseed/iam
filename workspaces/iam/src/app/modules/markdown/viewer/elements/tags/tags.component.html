@@ -1,13 +1,13 @@
 <mat-form-field class="tags-list" appearance="none">
   <label class="label" (click)="onShowTagsCloud($event)"><span>tags</span><mat-icon style="width: auto;height: auto;">open_in_new</mat-icon>:</label>
-  <mat-chip-list
+  <mat-chip-grid
     #chipList
     aria-label="tags"
     cdkDropList
     cdkDropListOrientation="horizontal"
     (cdkDropListDropped)="drop($event)"
   >
-    <mat-chip
+    <mat-chip-row
       class="tag"
       [style.color]="'#' + tag.color"
       [style.background-color]="'#' + tag.color + '22'"
@@ -23,7 +23,7 @@
       <button matChipRemove class="hide-button" title="delete this tag">
         <mat-icon>cancel</mat-icon>
       </button>
-    </mat-chip>
+    </mat-chip-row>
     <input
       #autoCompleteTrigger="matAutocompleteTrigger"
       placeholder="add tag..."
@@ -36,7 +36,7 @@
       [matChipInputAddOnBlur]="addOnBlur"
       (matChipInputTokenEnd)="onInputEnd($event)"
     />
-  </mat-chip-list>
+  </mat-chip-grid>
   <mat-autocomplete
     autoActiveFirstOption
     #auto="matAutocomplete"

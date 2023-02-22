@@ -1,13 +1,14 @@
 .mat-toolbar-row {
   padding: 0 0.5rem;
-  .mat-tab-nav-bar {
+  .mat-mdc-tab-nav-bar {
     justify-content: space-around;
     display: flex;
+    /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.*/
     ::ng-deep div.mat-tab-list {
       display: flex;
       justify-content: center;
     }
-    .mat-tab-link {
+    .mat-mdc-tab-link {
       padding: 0 0.8rem;
       flex-direction: column;
       line-height: 1.6rem;

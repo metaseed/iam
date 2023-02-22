@@ -5,41 +5,41 @@ import { SplitSeparatorComponent } from './split-pane-separator.component';
   selector: 'vertical-split-separator',
   styles: [
     `
-      :host {
-        background-color: #eeeeee;
-        border-left: 1px solid #ddd;
-        cursor: col-resize;
-        position: relative;
-      }
-      :host:hover {
-        background-color: #ddd;
-      }
-
-      .invisible-extension {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        min-width: 7px;
-      }
-
-      .handle {
-        width: 100%;
-        height: 36px;
-        background-color: #ddd;
-        position: absolute;
-        display: flex;
-        align-items: center;
-        top: calc(50% - 18px);
-        padding: 12px 0;
-      }
-      .handle-bar {
-        border: 1px solid #aaa;
-        border-bottom-width: 0;
-        border-top-width: 0;
-        width: 3px;
-        height: 20px;
-      }
-    `,
+           :host {
+             background-color: #eeeeee;
+             border-left: 1px solid #ddd;
+             cursor: col-resize;
+             position: relative;
+           }
+           :host:hover {
+             background-color: #ddd;
+           }
+     
+           .invisible-extension {
+             position: absolute;
+             height: 100%;
+             width: 100%;
+             min-width: 7px;
+           }
+     
+           .handle {
+             width: 100%;
+             height: 36px;
+             background-color: #ddd;
+             position: absolute;
+             display: flex;
+             align-items: center;
+             top: calc(50% - 18px);
+             padding: 12px 0;
+           }
+           .handle-bar {
+             border: 1px solid #aaa;
+             border-bottom-width: 0;
+             border-top-width: 0;
+             width: 3px;
+             height: 20px;
+           }
+         `,
   ],
   template: `
     <!-- Used to extend the 'draggable' area in case the separator is too thin,

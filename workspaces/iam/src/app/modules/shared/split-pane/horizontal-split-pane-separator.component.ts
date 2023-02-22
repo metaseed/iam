@@ -5,30 +5,30 @@ import { SplitSeparatorComponent } from './split-pane-separator.component';
   selector: 'horizontal-split-separator',
   styles: [
     `
-      :host {
-        background-color: #eeeeee;
-        border-top: 1px solid #ddd;
-        cursor: row-resize;
-        position: relative;
-      }
-      :host:hover {
-        background-color: #fafafa;
-      }
-
-      .invisible-extension {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        min-height: 7px;
-      }
-
-      .handle {
-        width: 35px;
-        height: 100%;
-        background-color: #eee;
-        margin: auto;
-      }
-    `,
+           :host {
+             background-color: #eeeeee;
+             border-top: 1px solid #ddd;
+             cursor: row-resize;
+             position: relative;
+           }
+           :host:hover {
+             background-color: #fafafa;
+           }
+     
+           .invisible-extension {
+             position: absolute;
+             height: 100%;
+             width: 100%;
+             min-height: 7px;
+           }
+     
+           .handle {
+             width: 35px;
+             height: 100%;
+             background-color: #eee;
+             margin: auto;
+           }
+         `,
   ],
   template: `
     <!-- Used to extend the 'draggable' area in case the separator is too thin,

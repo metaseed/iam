@@ -1,28 +1,31 @@
+@use '@angular/material' as mat;
 @import '@angular/material/theming';
+// https://material.angular.io/guide/typography
 // just replace the material's default one: px to rem;
-$iam-typography-config: mat-typography-config(
+$iam-typography-config: mat.define-typography-config(
         $font-family:   $main-font,
-        $display-4:     mat-typography-level(11.2rem, 11.2rem, 400),
-        $display-3:     mat-typography-level(5.6rem, 6.2rem, 400),
-        $display-2:     mat-typography-level(4.5rem, 5.6rem, 400),
-        $display-1:     mat-typography-level(3.4rem, 4rem, 400),
-        $headline:      mat-typography-level(2.8rem, 4.0rem, 500), /* h1*/
-        $title:         mat-typography-level(2.4rem, 2.6rem, 500), /* h2*/
-        $subheading-2:  mat-typography-level(2rem, 3.6rem, 500),   /* h3*/
-        $subheading-1:  mat-typography-level(1.9rem, 3.2rem, 400), /* h4*/
-        $body-2:        mat-typography-level(1.8rem, 3.2rem, 500),
-        $body-1:        mat-typography-level(1.8rem, 2.8rem, 400),
-        $caption:       mat-typography-level(1.6rem, 2.8rem, 400),
-        $button:        mat-typography-level(1.8rem, 1.4rem, 400),
-        // Line-height must be unit-less fraction of the font-size.
-        $input:         mat-typography-level(1.4rem, 1.5, 500)
+        /* 1-4: One-off header, usually at the top of the page (e.g. a hero header).*/
+        $headline-1:     mat.define-typography-level(3.4rem, 4rem, 400),
+        $headline-2:     mat.define-typography-level(4.5rem, 5.6rem, 400),
+        $headline-3:     mat.define-typography-level(5.6rem, 6.2rem, 400),
+        $headline-4:     mat.define-typography-level(8rem, 8rem, 400),
+        $headline-5:     mat.define-typography-level(10rem, 10rem, 400), /* h1*/
+        $headline-6:     mat.define-typography-level(11.2rem, 11.2rem, 400), /* h2*/
+        $subtitle-2:  mat.define-typography-level(2rem, 3.6rem, 500),   /* h3*/
+        $subtitle-1:  mat.define-typography-level(1.9rem, 3.2rem, 400), /* h4*/
+        $body-2:        mat.define-typography-level(1.8rem, 3.2rem, 500), /*Bolder body text.*/
+        $body-1:        mat.define-typography-level(1.8rem, 2.8rem, 400),
+        $caption:       mat.define-typography-level(1.6rem, 2.8rem, 400),/*Smaller body and hint text.*/
+        $button:        mat.define-typography-level(1.8rem, 1.4rem, 400),
 );
 
-$iam-typography-config: map-merge($iam-typography-config,
-      (
-      radio: mat-typography-level(1.4rem, 1.4rem, 400, "RobotoRegular"),
-      blockquote: mat-typography-level(inherit, 1.58, 400, inherit, -0.003em)
-      ));
+// $iam-typography-config: map-merge($iam-typography-config,
+//       (
+//       // Line-height must be unit-less fraction of the font-size.
+//       $input: mat.define-typography-level(1.4rem, 1.5, 500),
+//       $radio: mat.define-typography-level(1.4rem, 1.4rem, 400, "RobotoRegular"),
+//       $blockquote: mat.define-typography-level(inherit, 1.58, 400, inherit, -0.003em)
+//       ));
 // .unicorn-header {
 //   font-size: mat-font-size($config, headline);
 //   font-family: mat-font-family($config);

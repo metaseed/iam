@@ -1,14 +1,18 @@
+@use '@angular/material' as mat;
 @import '../theme-variables';
-@import '../typography-variables';
+// @import '../typography-variables';
 @import '../../app/modules/shared/theme';
+@include mat.core();
+// @include mat-core($iam-typography-config);
+@include mat.core-theme($iam-theme-light);
 
-@include mat-core($iam-typography-config);
-@mixin themes($theme) {
-  @include angular-material-theme($theme);
-  @include shared-module-theme($theme);
-}
-
-@include themes($iam-theme-light);
+// @mixin themes($theme) {
+//   @include angular-material-theme($theme);
+//   @include shared-module-theme($theme);
+// }
+// todo: https://material.angular.io/guide/theming#multiple-themes-in-one-file
+// @include themes($iam-theme-light);
 .theme-dark {
-  @include themes($iam-theme-dark);
+  @include mat.core-theme($iam-theme-dark);
+  // @include themes($iam-theme-dark);
 }

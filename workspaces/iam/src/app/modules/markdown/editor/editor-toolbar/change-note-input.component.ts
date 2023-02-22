@@ -6,16 +6,16 @@ import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
   selector: 'change-note-input',
   styles: [
     `.input-form{
-      width: 100%;
-      max-width: 80rem;
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-    }
-    .input-field{
-      width: 100%;
-    }
-    `
+           width: 100%;
+           max-width: 80rem;
+           display: flex;
+           align-items: center;
+           flex-direction: column;
+         }
+         .input-field{
+           width: 100%;
+         }
+         `
   ],
   template: `
 <div class="input-form">

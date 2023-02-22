@@ -21,9 +21,9 @@
     >
   </li>
 </ul>
-<mat-card>
+<mat-card appearance="outlined">
   <section class="tag-edit">
-    <mat-form-field appearance="standard">
+    <mat-form-field>
       <mat-label>Name</mat-label>
       <input
         required
@@ -35,7 +35,7 @@
       />
       <mat-hint *ngIf="name.invalid">name is required</mat-hint>
     </mat-form-field>
-    <mat-form-field appearance="standard">
+    <mat-form-field>
       <mat-label>Color</mat-label>
       <span matPrefix>#&nbsp;</span>
       <input
@@ -52,7 +52,7 @@
       >
       <mat-hint *ngIf="color.invalid">input 6 hex number</mat-hint>
     </mat-form-field>
-    <mat-form-field appearance="standard">
+    <mat-form-field>
       <mat-label>Description</mat-label>
       <input
         matInput

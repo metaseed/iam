@@ -15,20 +15,20 @@ import { PositionService } from './position.service';
   selector: 'vertical-split-pane',
   styles: [
     `
-      .v-outer {
-        height: 100%;
-        width: 100%;
-        display: flex;
-      }
-
-      .left-component {
-        width: calc(50% - 4px);
-      }
-
-      .right-component {
-        width: calc(50% - 4px);
-      }
-    `
+          .v-outer {
+            height: 100%;
+            width: 100%;
+            display: flex;
+          }
+    
+          .left-component {
+            width: calc(50% - 4px);
+          }
+    
+          .right-component {
+            width: calc(50% - 4px);
+          }
+        `
   ],
   template: `
   <div #outer class="v-outer">

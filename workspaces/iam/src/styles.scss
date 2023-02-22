@@ -8,9 +8,9 @@ body {
 // $icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap';
 // @import '~bootstrap/scss/bootstrap';
 @import "~markdown-it-latex/src/katex.css";
-@import "~prismjs/themes/prism";
-@import "~prismjs/plugins/line-numbers/prism-line-numbers";
-@import "~prismjs/plugins/line-highlight/prism-line-highlight";
+@import "prismjs/themes/prism";
+@import "prismjs/plugins/line-numbers/prism-line-numbers";
+@import "prismjs/plugins/line-highlight/prism-line-highlight";
 @media all and (min-width: 960px) {
   ::-webkit-scrollbar {
     width: 6px;
@@ -103,11 +103,11 @@ input.task-list-item-checkbox[checked] + .task-list-item-label {
   text-decoration-color: rgb(225 0 0 / 60%);
 }
 
-@import "~codemirror/lib/codemirror";
+@import "codemirror/lib/codemirror";
 // @import '~codemirror/addon/scroll/simplescrollbars';
-@import "~codemirror/addon/display/fullscreen";
-@import "~codemirror/addon/dialog/dialog";
-@import "~codemirror/addon/search/matchesonscrollbar";
+@import "codemirror/addon/display/fullscreen";
+@import "codemirror/addon/dialog/dialog";
+@import "codemirror/addon/search/matchesonscrollbar";
 // .cm-em {
 // letter-spacing: 0.12rem;
 // }

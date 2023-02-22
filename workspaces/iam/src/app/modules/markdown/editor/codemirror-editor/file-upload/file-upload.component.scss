@@ -10,7 +10,7 @@ $mat-snack-bar-button-vertical-margin: - math.div(
   2
 );
 
-.mat-simple-snackbar {
+.mat-mdc-simple-snack-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -18,7 +18,7 @@ $mat-snack-bar-button-vertical-margin: - math.div(
   opacity: 1;
 }
 
-.mat-simple-snackbar-action {
+.mat-mdc-snack-bar-action {
   flex-shrink: 0;
   margin: $mat-snack-bar-button-vertical-margin
     $mat-snack-bar-button-horizontal-margin * -1
