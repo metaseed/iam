@@ -3,18 +3,23 @@
   .mat-mdc-tab-nav-bar {
     justify-content: space-around;
     display: flex;
+    .link {
+      flex: 1 1 0;
+      min-width: unset;
+      padding: 0;
+    }
     /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.*/
     ::ng-deep div.mat-mdc-tab-list {
       display: flex;
       justify-content: center;
     }
-    ::ng-deep  .mdc-tab__text-label {
+    ::ng-deep .mdc-tab__text-label {
       padding: 0 0.8rem;
       flex-direction: column;
       line-height: 1.6rem;
       font-size: 1.2rem;
       min-width: inherit; // override style
-      width: 6rem;
+      // width: 6rem;
       height: auto;
       &:hover {
         text-decoration: none;
