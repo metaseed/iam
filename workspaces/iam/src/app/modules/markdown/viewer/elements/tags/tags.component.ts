@@ -87,7 +87,7 @@ export class TagsComponent extends DataSourceLines {
 
   }
 
-  onShowTagsCloud(e, tag) {
+  onShowTagsCloud(e, tag = null) {
     e.stopImmediatePropagation()
     this.dialog.open(TagsCloudComponent, { data: tag, height: '100%' });
   }

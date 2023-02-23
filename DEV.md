@@ -6,3 +6,9 @@
 1. run `yarn` at root folder.
 1. run `yarn start`
 1. http://localhost:4200
+
+## publish
+yarn deploy
+
+## bundle analysis
+yarn ba
