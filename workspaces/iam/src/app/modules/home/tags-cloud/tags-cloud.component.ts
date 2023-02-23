@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Issue } from 'app/modules/net-storage/github';
 import { DocumentStore } from 'app/modules/shared/store/document.store';
@@ -21,10 +21,12 @@ type BackupTag = Tag & { id?: string, nameOriginal?: string; descriptionOriginal
 
 export class TagsCloudComponent {
   tags: BackupTag[] = [];
-  selectedTag: BackupTag & { id?: string } = { name: undefined }
+  selectedTag: BackupTag & { id?: string };
   constructor(private service: TagsCloudService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
+    @Inject(MAT_DIALOG_DATA)
+    currentTag: Tag,
     private dialogRef: MatDialogRef<TagsCloudComponent>,
     private store: DocumentStore) {
 
@@ -35,6 +37,8 @@ export class TagsCloudComponent {
       })
     })
     this.service.getAllTags.next(undefined);
+    this.selectedTag = currentTag ??  { name: undefined };
+    this.select(this.selectedTag);
   }
 
   newColor() {

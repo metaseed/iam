@@ -45,7 +45,7 @@ export class TagsComponent extends DataSourceLines {
     value.split(',').map(tag => tag.trim()).filter(t => t !== '').forEach(
       name => this.store.tags.getById(name).then(t => {
         if (t) this.tagList.push(t);
-        else this.tagList.push({name})
+        else this.tagList.push({ name })
       })
     );
   }
@@ -87,9 +87,9 @@ export class TagsComponent extends DataSourceLines {
 
   }
 
-  onShowTagsCloud(e) {
+  onShowTagsCloud(e, tag) {
     e.stopImmediatePropagation()
-    this.dialog.open(TagsCloudComponent);
+    this.dialog.open(TagsCloudComponent, { data: tag, height: '100%' });
   }
 
   remove(tag: Tag): void {
