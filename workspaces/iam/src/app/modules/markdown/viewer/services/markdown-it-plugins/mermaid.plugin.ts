@@ -4,7 +4,7 @@
 
 import MarkdownIt from 'markdown-it';
 import { uid } from 'core';
-import { Mermaid } from 'mermaid';
+import Mermaid  from 'mermaid';
 
 export class MermaidPlugin {
   constructor(private markdownIt: MarkdownIt) {
@@ -29,7 +29,7 @@ export class MermaidPlugin {
     }
   };
 
-  loadPreferences = (mermaid: Mermaid, preferenceStore) => {
+  loadPreferences = (mermaid: typeof Mermaid, preferenceStore) => {
     let mermaidTheme = preferenceStore.get('mermaid-theme');
     if (mermaidTheme === undefined) {
       mermaidTheme = 'default';

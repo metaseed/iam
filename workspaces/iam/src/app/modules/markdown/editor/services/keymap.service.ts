@@ -117,7 +117,7 @@ export class KeyMapService {
 
     this._editorService.docEditorLoaded$.subscribe((editor: CodeMirror.Editor) => {
       // we can paste by copying the file or paste from clipboard: i.e. screenshot
-      editor.on('paste', (editor, event) => {
+      (editor as any).on('paste', (editor, event) => {
         // if (!this.editor.hasFocus()) return;
 
         const clipboardData = event.clipboardData || (window as any).clipboardData;

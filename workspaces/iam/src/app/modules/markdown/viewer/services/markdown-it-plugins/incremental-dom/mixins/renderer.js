@@ -1,4 +1,4 @@
-import { Parser } from "htmlparser2/lib/Parser";
+import { Parser } from "htmlparser2";
 import { evalScript } from "../../../exec-script";
 //import { notifications } from "incremental-dom";
 // import { attributes, applyProp, applyAttr } from "incremental-dom";

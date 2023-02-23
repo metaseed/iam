@@ -2,7 +2,7 @@
 // import 'playground-elements'
 declare let require: any;
 import { environment } from "environments/environment";
-import { Parser } from "htmlparser2/lib/Parser";
+import { Parser } from "htmlparser2";
 import { loadModuleScript } from "../exec-script";
 export const html = (incrementalDom, enableIDOM) => md => {
   const originalHtmlBlockRule = md.renderer.rules.html_block;
