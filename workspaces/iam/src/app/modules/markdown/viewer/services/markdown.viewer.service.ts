@@ -31,7 +31,6 @@ import { MermaidPlugin } from "./markdown-it-plugins/mermaid.plugin";
 // import { CopierService } from "core";
 import { Subscription, asyncScheduler } from "rxjs";
 import { getAddr } from "../utils/getUri";
-import { Utilities } from "core";
 import { LispPlugin } from "./markdown-it-plugins/lisp";
 import { sourceLine } from "./markdown-it-plugins/source-line";
 import { markdownitIncrementalDOM } from "./markdown-it-plugins/incremental-dom";
