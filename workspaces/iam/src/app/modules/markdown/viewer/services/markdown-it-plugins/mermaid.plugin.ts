@@ -4,8 +4,8 @@
 
 import MarkdownIt from 'markdown-it';
 import { uid } from 'core';
-import Mermaid  from 'mermaid';
-
+import MermaidConst from 'mermaid';
+type Mermaid = typeof MermaidConst;
 export class MermaidPlugin {
   constructor(private markdownIt: MarkdownIt) {
     this.markdownIt.use(this.mermaidPlugin, 'mermaid');
@@ -13,23 +13,24 @@ export class MermaidPlugin {
 
   mermaidChart = code => {
     try {
+
       const id = 'id' + uid();
-      if (this._mermaid) {
-        this._mermaid.render(id, code, sc => code = sc);
-        return `<div class="mermaid">${code}</div>`;;
-      } else {
-        this.mermaid().then(mermaid => {
-          mermaid.parse(code);
-          mermaid.init(undefined, `#${id}`);
-        });
-      }
+      // 10.0 not work
+      // this.mermaid().then(mermaid => {
+      //   const e = document.getElementById(id)
+      //   mermaid.render(id, code, e);
+      // });
+      this.mermaid().then(mermaid => {
+        mermaid.parse(code);
+        mermaid.init(undefined, `#${id}`);
+      });
       return `<div class="mermaid" id="${id}">${code}</div>`;
     } catch (e) {
       return `<pre>${e}</pre>`;
     }
   };
 
-  loadPreferences = (mermaid: typeof Mermaid, preferenceStore) => {
+  loadPreferences = (mermaid: Mermaid, preferenceStore) => {
     let mermaidTheme = preferenceStore.get('mermaid-theme');
     if (mermaidTheme === undefined) {
       mermaidTheme = 'default';
@@ -60,13 +61,13 @@ export class MermaidPlugin {
     };
   };
 
-  private _mermaid;
-  mermaid = async () => {
-    if (!this._mermaid) {
+
+  mermaid = ((mermaid: Mermaid) => async () => {
+    if (!mermaid) {
       const mermaidModule = (await import('mermaid')).default;
-      if (!this._mermaid) {
-        this._mermaid = mermaidModule;
-        this.loadPreferences(this._mermaid, {
+      if (!mermaid) {
+        mermaid = mermaidModule;
+        this.loadPreferences(mermaid, {
           get: key => {
             // if (key === 'mermaid-theme') {
             //   return 'forest'
@@ -80,8 +81,8 @@ export class MermaidPlugin {
         });
       }
     }
-    return this._mermaid;
-  }
+    return mermaid;
+  })(undefined)
 
   mermaidPlugin = (markdown: MarkdownIt) => {
     const originalFenceRule = markdown.renderer.rules.fence.bind(markdown.renderer.rules);
