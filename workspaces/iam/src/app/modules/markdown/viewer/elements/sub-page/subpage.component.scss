@@ -16,6 +16,12 @@ input[type=number] {
 
 }
 
+@media (max-width: 840px) and (orientation: portrait) {
+  .add-as-subpage {
+    display: none;
+  }
+}
+
 .id-input-group {
   display: flex;
   border: lightgray solid 0.1rem;
@@ -51,4 +57,8 @@ mat-icon {
   font-size: initial !important;
   height: initial !important;
   width: initial !important;
+}
+
+::ng-deep .mat-expansion-panel-header {
+  padding: 0 !important;
 }
