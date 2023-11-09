@@ -102,8 +102,8 @@ i-code pre {
   content: "";
   position: absolute;
   z-index: 1;
-  right: 0;
-  border-right: 8px solid #f5f2f0; // code background color
+  right: -8px;
+  border-right: 8px solid transparent;
   border-top: 18px solid #ddd;
 }
 
