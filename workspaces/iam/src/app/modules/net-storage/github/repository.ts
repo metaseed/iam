@@ -125,21 +125,27 @@ export class Repository extends Requestable {
   }
 
   searchIssue(query: string) {
+    const q = `${query} state:open repo:${this.fullName}`
+    // const q = `${query.replace(' ', '+')}+state:open+repo:${this.fullName}`
     return this._http.get(`githubapi/search/issues`, {
       headers: { Accept: 'application/vnd.github.v3.text-match+json' },
       params: {
-        q: `${query.replace(' ', '+')}+state:open+repo:${this.fullName}`
+        q
       },
       observe: 'response'
     });
   }
 
   searchCode(query: string, folder = 'documents', extension = 'md') {
+    const q = `${query} in:file extension:${extension} path:${folder} repo:${this.fullName}`
+    // Angular HttpClient will automatically encode the '+' in to '%2B' and it will be encoded again into
+    // %252B, it wrong.
+    // so we temporarily replace the '+' into ' ' as a workaround
+    // const q = `${query.replace(' ', '+')}+in:file+extension:${extension}+path:${folder}+repo:${this.fullName}`
     return this._http.get(`githubapi/search/code`, {
       headers: { Accept: 'application/vnd.github.v3.text-match+json' },
       params: {
-        q: `${query.replace(' ', '+')}+in:file+extension:${extension}+path:${folder}+repo:${this.fullName
-          }`
+        q
       },
       observe: 'response'
     });
