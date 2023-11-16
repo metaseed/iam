@@ -1,10 +1,10 @@
 .toc-container {
   z-index: 20;
-  width: 18%;
+  width: 22%;
   position: fixed;
   top: 76px;
   height: fit-content;
-  max-height: 100%;
+  max-height: calc(100% - 76px);
   right: 8px;
   bottom: 12px;
   overflow-y: auto;
@@ -126,6 +126,9 @@ i-toc.embedded {
       }
       &.h3 {
         padding-left: 24px;
+      }
+      &.h4 {
+        padding-left: 36px;
       }
       a {
         font-size: inherit;

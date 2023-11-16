@@ -4,7 +4,7 @@ import * as ParserInline from 'markdown-it/lib/parser_inline';
 // reference this to implement popup toc: https://codepad.co/snippet/
 // var string = require("string");
 let defaultOptions = {
-  includeLevel: [1, 2],
+  includeLevel: [2, 3, 4],
   containerClass: 'table-of-contents',
   slugify: s => s,
   // function(str) {

@@ -88,7 +88,7 @@ export class TocService {
   }
 
   private findTocHeadings(docElement: Element): HTMLHeadingElement[] {
-    const headings = docElement.querySelectorAll('h1,h2,h3');
+    const headings = docElement.querySelectorAll('h1,h2,h3,h4');
     const skipNoTocHeadings = (heading: HTMLHeadingElement) =>
       !/(?:no-toc|notoc)/i.test(heading.className);
 

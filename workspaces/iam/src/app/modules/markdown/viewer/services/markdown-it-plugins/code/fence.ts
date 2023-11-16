@@ -1,5 +1,5 @@
 import MarkdownIt from "markdown-it";
-// to hight line numbers, pase the line numbers to highlight plugin by the env object
+// to hight line numbers, pass the line numbers to highlight plugin by the env object
 const regex = /{([ ,\d-]+)}/;
 export default function fence(md: MarkdownIt) {
   const originalRule = md.renderer.rules.fence;
