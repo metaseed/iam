@@ -8,6 +8,7 @@
 1. chrome: http://localhost:4200
 
 ## publish
+modify version: M:\Workspace\iam\workspaces\iam\package.json
 yarn deploy
 
 ## bundle analysis

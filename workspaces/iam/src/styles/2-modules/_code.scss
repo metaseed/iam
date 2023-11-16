@@ -93,19 +93,21 @@ i-code pre {
   background: #ddd;
   height: 18px;
   line-height: 16px;
-  min-width: 46px;
+  min-width: 36px;
   text-align: center;
   padding-right: 18px;
   color: #6e6e6e;
 }
-.markdown-code__lang::after {
-  content: "";
-  position: absolute;
-  z-index: 1;
-  right: -8px;
-  border-right: 8px solid transparent;
-  border-top: 18px solid #ddd;
-}
+// disable for now, the the border color and background color is different in dark theme of the browser
+// after we directly support dark theme with css we can enable it.
+// .markdown-code__lang::after {
+//   content: "";
+//   position: absolute;
+//   z-index: 1;
+//   right: -8px;
+//   border-right: 8px solid transparent;
+//   border-top: 18px solid #ddd;
+// }
 
 .markdown-code {
   position: relative;
