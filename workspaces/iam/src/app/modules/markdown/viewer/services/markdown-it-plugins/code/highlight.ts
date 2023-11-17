@@ -56,12 +56,12 @@ export const DEFAULT_HIGHLIGHT_FUNCTION = (viewer: ViewerService, injector: Inje
     const reg = /\s+{[ ,-\d+]+}/;
     lang = lang.replace(reg, "");
     const hlLineNumbers = viewer.env.highlightLineNumbers;
-    const language = prismjs.languages[lang] ?? 'js';
+    lang = prismjs.languages[lang] ? lang: 'js';
     // although the language is not in the language list, we try to use js language as a fallback
     if (lang) {
       const preNode: HTMLElement = docRef.document.createElement("pre");
       preNode.className =
-        (showCodeLineNumber ? "line-numbers" : "") + " language-" + language + " code-with-line-numbers pointer-events-none";
+        (showCodeLineNumber ? "line-numbers" : "") + " language-" + lang + " code-with-line-numbers pointer-events-none";
       const codeNode = docRef.document.createElement("code");
       codeNode.classList.add("inner-code");
       preNode.appendChild(codeNode);
