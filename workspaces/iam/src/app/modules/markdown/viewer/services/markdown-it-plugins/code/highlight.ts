@@ -54,9 +54,9 @@ export const DEFAULT_HIGHLIGHT_FUNCTION = (viewer: ViewerService, injector: Inje
 
   return (str, lang: string) => {
     const reg = /\s+{[ ,-\d+]+}/;
-    lang = lang.replace(reg, "");
+    const langName = lang.replace(reg, "");
     const hlLineNumbers = viewer.env.highlightLineNumbers;
-    lang = prismjs.languages[lang] ? lang: 'js';
+    lang = prismjs.languages[langName] ? langName: 'js';
     // although the language is not in the language list, we try to use js language as a fallback
     if (lang) {
       const preNode: HTMLElement = docRef.document.createElement("pre");
@@ -85,7 +85,7 @@ export const DEFAULT_HIGHLIGHT_FUNCTION = (viewer: ViewerService, injector: Inje
         viewer.target.removeChild(preNode);
         const r =
           `<div class="markdown-code">
-<div class="markdown-code__lang">${lang}</div>
+<div class="markdown-code__lang">${langName}</div>
 <div class="code-buttons">
 
 <button class="material-icons code-button code-run-button" style="visibility:collapse;" title="line wrap">
