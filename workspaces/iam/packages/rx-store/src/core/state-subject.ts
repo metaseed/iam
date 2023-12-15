@@ -17,7 +17,7 @@ export interface IStateSubject<T> extends  StateSetter<T>, StateObservable<T> {
 }
 
 /**
- * keep latest passed value as state, even the StateSubject has not subscriber.
+ * keep latest passed value as state, even the StateSubject has no subscriber.
  *
  * only difference with BehaviorSubject is:
  * it would not emit value if initial value is 'undefined'.
