@@ -80,6 +80,7 @@ html {
       padding: 0 0.2rem;
       line-height: 1.4;
     }
+
     h1 {
       counter-reset: the-h2;
     }
@@ -103,6 +104,15 @@ html {
       counter-increment: the-h4;
       content: counter(the-h2) '.' counter(the-h3) '.' counter(the-h4) '. ';
     }
+
+    h4 {
+      counter-reset: the-h5;
+    }
+    h5::before {
+      counter-increment: the-h5;
+      content: counter(the-h2) '.' counter(the-h3) '.' counter(the-h4) '.' counter(the-h5) '. ';
+    }
+
   }
   .CodeMirror {
     height: 100%;

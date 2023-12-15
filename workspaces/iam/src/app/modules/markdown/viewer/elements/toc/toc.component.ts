@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  Inject,
   OnDestroy,
   OnInit,
   QueryList,
@@ -14,7 +15,7 @@ import { SubscriptionManager } from 'core';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Breakpoints } from '@angular/cdk/layout';
 import { BreakpointState } from '@angular/cdk/layout';
-import { Location } from '@angular/common';
+import { DOCUMENT, Location } from '@angular/common';
 
 type TocType = 'None' | 'Floating' | 'EmbeddedSimple' | 'EmbeddedExpandable';
 
@@ -28,7 +29,7 @@ type TocType = 'None' | 'Floating' | 'EmbeddedSimple' | 'EmbeddedExpandable';
 export class TocComponent extends SubscriptionManager implements OnInit, AfterViewInit, OnDestroy {
   activeIndex: number | null = null;
   type: TocType = 'None';
-
+  touchDocToShow = false;
   show = true;
   isSmallScreen: boolean;
   isCollapsed = true;
@@ -78,7 +79,8 @@ export class TocComponent extends SubscriptionManager implements OnInit, AfterVi
     breakpointObserver: BreakpointObserver,
     public tocService: TocService,
     private elementRef: ElementRef,
-    private location: Location
+    private location: Location,
+    @Inject(DOCUMENT) private document: Document,
   ) {
     super();
     breakpointObserver.observe([Breakpoints.Small, Breakpoints.XSmall]).subscribe((state: BreakpointState) => {
@@ -91,6 +93,11 @@ export class TocComponent extends SubscriptionManager implements OnInit, AfterVi
       }
     });
     this.isEmbedded = elementRef.nativeElement.className.indexOf('embedded') !== -1;
+    // fromEvent<TouchEvent>(<HTMLElement>document.documentElement, "touchend", {
+    //   passive: true,
+    // }).subscribe(e=>{
+    //   this.touchDocToShow = !this.isCollapsed;
+    // });
   }
 
   ngOnInit() {
@@ -159,6 +166,12 @@ export class TocComponent extends SubscriptionManager implements OnInit, AfterVi
 
   navigate(addr) {
     if (this.isSmallScreen) this.show = false;
+    const url = new URL(addr);
+    let ele = document.getElementById(decodeURI(url.hash.substring(1)));
+    this.scrollContainer.scrollTo({
+      top: ele.offsetTop - 80,
+      // behavior: 'smooth'
+    })
   }
 
   toTop() {

@@ -36,7 +36,9 @@
           [class.active]="i === activeIndex"
         >
           <div style="display: inline-block" (click)="navigate(toc.href)">
-            <a [href]="toc.href" [innerHTML]="toc.content"></a>
+            <!-- [href]="toc.href" this way the top bar may hide the element -->
+            <a
+            [innerHTML]="toc.content"></a>
           </div>
         </li>
       </ng-container>
