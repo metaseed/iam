@@ -168,8 +168,9 @@ export class TocComponent extends SubscriptionManager implements OnInit, AfterVi
     if (this.isSmallScreen) this.show = false;
     const url = new URL(addr);
     let ele = document.getElementById(decodeURI(url.hash.substring(1)));
+    let offset = ele.offsetTop < this.scrollContainer.scrollTop ? 80: 0;
     this.scrollContainer.scrollTo({
-      top: ele.offsetTop - 80,
+      top: ele.offsetTop - offset,
       // behavior: 'smooth'
     })
   }
