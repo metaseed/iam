@@ -1,10 +1,21 @@
 # Plan: Rewrite IAM (Angular 17) on std-ui
 
-Status: draft. Based on a first-pass review. Verify the items marked **(verify)** before committing to them.
+Status: **Phase 0 complete** (see [phase-0-findings.md](./phase-0-findings.md)). Phases 1-7 are planned, not started.
+
+## Decisions so far
+
+| Topic | Decision |
+|-------|----------|
+| UI components (G1) | **Adopt Web Awesome** (`@awesome.me/webawesome`). No in-house component set except IAM-specific pieces (split pane, bottom navigation, float button). |
+| New app location | `M:\Workspace\iam\workspaces\iam-next`, a member of the root workspaces list alongside `workspaces/iam` and `workspaces/server`. |
+| std-ui consumption | **Relative path aliases** to the sibling checkout `M:\Workspace\std-ui\src\{core,ext,router}\src` (set in `iam-next/vite.config.ts` and `tsconfig.json`). Not published or linked for now. Revisit before cutover. |
+| Toolchain | Vite + esbuild TS transform (stage-3 decorators), TypeScript 7 (needed for the Navigation API types in std-ui), vitest. |
+| Install | Root monorepo uses yarn (`engines`, `yarn.lock`), so install from `M:\Workspace\iam` with yarn. Standalone fallback inside `iam-next` is `npm install --workspaces=false --include-workspace-root=false`. Plain `npm install` at the root fails on the Angular app's peer dependencies. |
+| First slice | Read-only doc view `/doc?id=N&f=md`, done. |
 
 ## 1. Goal and scope
 
-Rewrite the IAM app (Markdown doc editor/viewer backed by GitHub Issues, PWA) on std-ui (`@std-ui/core`, `@std-ui/ext`, `@std-ui/router`): Web Components, signals, tagged templates, no Angular runtime.
+Rewrite the IAM app (Markdown doc editor/viewer backed by GitHub, PWA) on std-ui (`@std-ui/core`, `@std-ui/ext`, `@std-ui/router`): Web Components, signals, tagged templates, no Angular runtime.
 
 Non-goals: changing features or the data model. The GitHub storage format and doc model stay the same.
 
@@ -19,67 +30,75 @@ IAM (Angular 17):
 
 std-ui provides: `UIElement`, templates and directives, signals/`state()`, `toSignal`, `@provide`/`@consume`, form state and validators, `virtualize`, and a Navigation API router. It has no component library, overlay layer, HTTP layer, async-resource primitive or PWA support.
 
-## 3. Gap summary
+## 3. Gap summary (updated after Phase 0)
 
-| # | Gap | Severity | Resolution |
-|---|-----|----------|------------|
-| G1 | No UI component library (dialog, menu, tabs, input, tree, etc.) | Blocking | Build a small `iam-ui` set on `<dialog>`/Popover API, or adopt an existing Web Component library |
-| G2 | No overlay primitive (dialog, bottom-sheet, snack-bar, menu, autocomplete, tooltip) | Blocking | Build one overlay service on `<dialog>`/Popover |
-| G3 | No service layer/DI for 48 services | Blocking | Module singletons, `@provide` for context-scoped ones |
-| G4 | No HTTP layer | Important | `fetch` wrapper with interceptors, retry/backoff, abort |
-| G5 | No async/effect primitive (`rx-store` effects) | Important | `resource`-style helper: loading, error, timeout, retry |
-| G6 | Router: route reuse, preloading, scroll restoration **(verify)** | Important | Contribute to `@std-ui/router` or implement in the app shell |
-| G7 | Template conditionals/lists beyond `mapByKey`/`virtualize` **(verify)** | Medium | Ternaries in `t`; add small directives if needed |
+| # | Gap | Severity | Status / resolution |
+|---|-----|----------|---------------------|
+| G1 | No UI component library | Blocking | **Decided:** Web Awesome. Remaining work: theming and IAM-specific components |
+| G2 | No overlay primitive (dialog, bottom-sheet, snack-bar, menu, autocomplete, tooltip) | Blocking | Use Web Awesome dialog, drawer, dropdown, tooltip; add a thin service for snack-bar/toasts and bottom-sheet. Verify coverage in Phase 1 |
+| G3 | No service layer/DI for 48 services | Blocking | Module singletons, `@provide` for context-scoped ones. Config already ported (`src/config.ts`) |
+| G4 | No HTTP layer | Important | `fetch` wrapper with interceptors, retry/backoff, abort. Read path started (`src/github/client.ts`) |
+| G5 | No async/effect primitive (`rx-store` effects) | Important | First cut done: `src/lib/resource.ts` (abort, loading, error). Needs timeout, retry, mutation support |
+| G6a | Router: scroll restoration | n/a | **Not a gap.** The Navigation API handles it |
+| G6b | Router: route reuse / keep-alive | Important | **Confirmed gap.** `<std-outlet>` reuses an element only while route and tag are unchanged. Needed for home. Upstream std-ui feature |
+| G6c | Router: preloading | Medium | **Confirmed gap**, small: call `route.lazy()` on idle or hover |
+| G7 | Template conditionals/lists | n/a | **Not a gap.** `t` handles `null`/`false`, arrays, nested templates; `mapByKey` for keyed lists |
 | G8 | Gestures (HammerJS) and hotkeys (Mousetrap) | Medium | Custom attributes `gesture` and `hotkey` |
 | G9 | PWA: service worker, update prompts, push | Medium | Hand-written SW or Workbox, manifest |
-| G10 | Theming (Material provided it) | Medium | CSS variable tokens, light/dark |
-| G11 | Tooling: lint, test (Karma to vitest), build (ng to Vite) | Low | Reuse the std-ui Vite/vitest setup |
-| G12 | `@HostListener`/`@HostBinding` equivalents **(verify)** | Low | Check `UIElement` hooks |
+| G10 | Theming (Material provided it) | Medium | Web Awesome theme and CSS variable tokens, light/dark |
+| G11 | Tooling | Low | **Done** in the spike: Vite, vitest, TS 7 |
+| G12 | `@HostListener`/`@HostBinding` equivalents | Low | **Minor.** No decorators; use `connect()`/`disconnect()` or `addClassHooks` |
+| G13 | `@searchParam`/`@routeParam` unavailable in `connect()` (new) | Low | Workaround: create dependent effects in `firstRendered()`. Upstream fix: define getters in `beforeConnect` |
 
-Reusable as-is (framework-independent): markdown-it and its plugins, mermaid, KaTeX, Prism, CodeMirror, Quill, Fuse.js, pica, `lisp.js`, the GitHub client, the doc model, the IndexedDB layer. The viewer elements (toc, tags, version, subpage, code-example) are already custom elements.
+Reusable as-is (framework-independent): markdown-it and its plugins, mermaid, KaTeX, Prism, CodeMirror, Quill, Fuse.js, pica, `lisp.js`, the doc model, the IndexedDB layer.
 
-## 4. Where the gap work lives
+**Needs a real port (corrected):** `net-storage/github` (built on `HttpClient`, `@Injectable` and RxJS) and the `rx-store` document store/effects.
 
-- **std-ui core/ext/router:** only generic, reusable pieces (G6, G7, G8, G12, possibly the async resource from G5).
-- **`iam-ui` (new package, in the IAM repo or std-ui):** components, overlay, theming (G1, G2, G10).
-- **IAM app:** services, HTTP, PWA, features (G3, G4, G9).
+The viewer elements (toc, tags, version, subpage, code-example) are already custom elements, which fits std-ui well.
+
+## 4. Where the work lives
+
+- **std-ui core/ext/router:** only generic, reusable pieces (G6b, G6c, G8, G13, possibly the async resource from G5).
+- **IAM app (`iam-next`):** services, HTTP, PWA, features, IAM-specific components (G3, G4, G9).
 
 ## 5. Phases
 
-### Phase 0: Spike and decisions (about 1 week)
-- Decide G1: build or adopt a component library. This is the largest cost driver.
-- Verify G6, G7 and G12 against the std-ui source and tests.
-- Stand up a Vite + TS app skeleton consuming std-ui, with vitest.
-- Port one vertical slice end to end to prove the stack: the `me` page, or a read-only doc view fetched from GitHub.
-- **Exit:** the slice runs, and the build/test pipeline works.
+### Phase 0: Spike and decisions: DONE
+- G1 decided (Web Awesome). G6, G7, G12 verified.
+- `iam-next` skeleton running with Vite, TS 7, vitest; std-ui via relative paths.
+- Vertical slice: read-only doc view against the real `metasong/iam-data` repo (config, `fetch` client, head-meta parsing, markdown-it, router, resource helper, Web Awesome callout/spinner/badge, sub-page links).
+- Result: `tsc` clean, 4 tests pass, production build about 83 kB gzip JS + 15 kB gzip CSS.
 
 ### Phase 1: Foundations (2-3 weeks)
-- Theming tokens and light/dark.
-- Overlay service: dialog, snack-bar, bottom-sheet, menu, tooltip. This replaces `dialog.service`, `message-dialog` and `dialog-spinner`.
-- Base components: button, icon, toolbar, card, chips, checkbox, toggle, progress, spinner, input/form-field (wired to `ext` form state).
+- Theming tokens and light/dark on top of the Web Awesome theme.
+- Overlay layer: wrap Web Awesome dialog/drawer for dialogs and bottom-sheet; add a toast/snack-bar service. Replaces `dialog.service`, `message-dialog`, `dialog-spinner`.
+- Base components: use Web Awesome button, icon, card, tag, checkbox, switch, progress, spinner, input, tabs, tree, dropdown/menu. Write only thin IAM wrappers (input wired to `ext` form state).
+- IAM-specific components: split pane, bottom navigation, float button, reading-position indicator.
 - `matchMedia` signals (replaces `cdk/layout`).
-- Core services as module singletons: logger, config, command, copier, scroll, scroll-spy.
-- **Exit:** a component gallery in the demo shows all of these with keyboard and ARIA behaviour.
+- Core services as module singletons: logger, command, copier, scroll, scroll-spy.
+- std-ui upstream: G13 fix (`beforeConnect`), start G6b (keep-alive) design.
+- **Exit:** a component gallery page in `iam-next` shows all of these with keyboard and ARIA behaviour.
 
 ### Phase 2: Data layer (2 weeks)
-- `fetch` client with interceptors (GitHub auth), retry/backoff and abort. Port `backoff`, `error-retry` and `timeout-monitor` logic.
-- Async resource helper (G5).
-- Port `net-storage/github` (mostly framework-free) and `auth.service`.
-- Port the database/IndexedDB layer and the entity cache. Replace the `rx-store` document store and effects with `state()` + async resources.
+- Extend `src/github/client.ts` to authenticated calls (contents, issues, commits, search) with interceptor-style auth, retry/backoff (port `backoff`, `error-retry`, `timeout-monitor`) and abort. This is a real port of `net-storage/github`, not a copy.
+- Extend the resource helper (G5): timeout, retry, mutations.
+- Port the IndexedDB layer and entity cache. Replace the `rx-store` document store and effects with `state()` plus resources.
+- Port `auth.service`.
 - Tests: port the `rx-store` specs that remain relevant.
 - **Exit:** the document store passes the ported tests against a mocked GitHub.
 
 ### Phase 3: App shell and routing (1-2 weeks)
 - `<std-router>` routes: `home`, `doc`, `explore`, `message`, `search`, `me`, not-found.
-- Route reuse for home, preloading, scroll restoration (G6).
+- Route keep-alive for home (G6b, upstream), preloading (G6c).
 - `beforeLeave` replaces `CanDeactivateGuard`.
 - App shell: top bar, bottom nav, float button, sidenav.
-- **Exit:** navigation works across all routes with the placeholders in place.
+- **Exit:** navigation works across all routes with placeholders in place.
 
 ### Phase 4: Viewer (3 weeks)
-- Wrap the markdown-it pipeline in a `UIElement` viewer.
-- Port the viewer widgets: toc, tags, version/history, subpage, code-example/code, reading-position indicator.
+- Move the markdown-it pipeline into a `UIElement` viewer; port the ~20 plugins (`incremental-dom` rendering is replaced by setting HTML through `unsafeHtml` or a morphing step).
+- Port the viewer widgets: toc, tags, version/history, subpage (with titles), code-example/code, reading-position indicator.
 - Mermaid, KaTeX, Prism and code-fence script run, with the same isolation.
+- Decide HTML sanitizing (docs are rendered with raw HTML today).
 - **Exit:** a visual and functional comparison against the Angular viewer on a corpus of real docs.
 
 ### Phase 5: Editor (3 weeks)
@@ -95,33 +114,35 @@ Reusable as-is (framework-independent): markdown-it and its plugins, mermaid, Ka
 ### Phase 7: PWA, hardening, cutover (2 weeks)
 - Service worker, update prompt, push (G9), manifest and offline behaviour.
 - Accessibility pass, bundle-size budget, cross-browser check (Navigation API shim on Safari).
+- Decide how std-ui is consumed for release (publish, link, or vendor); relative paths are for development.
 - Run old and new in parallel under different base paths, then switch over, keeping the Angular app for a rollback window.
 
-Estimated total: about 15-18 weeks for one developer. It varies mostly with the G1 decision.
+Estimated total remaining: about 14-17 weeks for one developer. Adopting Web Awesome removes most of the component work from Phase 1.
 
 ## 6. Risks
 
 | Risk | Mitigation |
 |------|-----------|
-| Component library effort balloons | Decide in Phase 0. Prefer adopting an existing Web Component set. Limit scope to what IAM uses |
-| Overlay and focus handling bugs | Build on native `<dialog>`/Popover, test with keyboard and screen reader |
-| Router lacks route reuse or preloading | Spike in Phase 0, contribute upstream |
-| std-ui is young, with API churn | Pin versions, keep adapters thin, add tests in IAM for the contract used |
-| Decorators need a compile step | Use esbuild/TS in Vite; already assumed |
+| Web Awesome lacks a widget IAM needs (bottom-sheet, autocomplete, tree behavior) | Check coverage at the start of Phase 1; build thin wrappers or IAM-specific components |
+| Web Awesome licensing/version (it replaced Shoelace; the pro tier is paid) | Confirm which components and the version are in the free tier before widening use; pin the version |
+| Relative-path std-ui coupling breaks if the sibling checkout moves or changes | Pin a known std-ui commit; revisit publishing before cutover |
+| Router lacks route keep-alive | Design and contribute in Phase 1; fallback is caching list state in a signal store |
+| std-ui is young, with API churn | Keep adapters thin; add tests in IAM for the contract used |
+| TS 7 / esbuild toolchain differences | Match std-ui's versions; keep the typecheck in CI |
 | Navigation API support on Safari | Rely on the built-in shim; test early |
 | Feature regressions | Parity checklist per phase, comparison corpus of real docs |
+| Raw HTML rendered from docs | Keep the data repo trusted, or sanitize in Phase 4 |
 | Dev-notes features in flight (code playground, upload as link, etc.) | Freeze new features on Angular, or port after Phase 5 |
 
 ## 7. Open questions
 
-1. Build `iam-ui` or adopt Shoelace/Web Awesome, Material Web or Spectrum?
-2. Which parts of the work are contributed upstream to std-ui, and which stay in IAM?
-3. Is a big-bang cutover acceptable, or must old and new coexist longer?
-4. Do `rx-store` and `angular-hotkey`/`spinner` need to remain usable as standalone packages?
-5. Which browsers must be supported (this affects the Navigation API requirement)?
+1. Which parts of the work are contributed upstream to std-ui, and which stay in IAM? (Candidates: keep-alive, preloading, `beforeConnect` fix, the resource helper.)
+2. Is a big-bang cutover acceptable, or must old and new coexist longer?
+3. Do `rx-store` and `angular-hotkey`/`spinner` need to remain usable as standalone packages?
+4. Which browsers must be supported (this affects the Navigation API requirement)?
+5. Is the Web Awesome free tier sufficient for all needed components?
 
-## 8. Immediate next steps
+## 8. Next steps
 
-1. Review and confirm this plan, then answer the open questions.
-2. Run the Phase 0 spike (decision on G1 and verification of G6, G7, G12).
-3. Create the new app skeleton and the first vertical slice.
+1. Start Phase 1: Web Awesome coverage check against the Material/CDK list, theming, and the component gallery.
+2. Run the yarn install from the repo root once to confirm the updated workspace list.

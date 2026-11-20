@@ -32,9 +32,9 @@ Spike app: `M:\Workspace\iam\workspaces\iam-next` (Vite + TS, std-ui consumed fr
 ## Issues found (std-ui and tooling)
 
 1. **`@searchParam`/`@routeParam` are not readable in `connect()`.** The getters are defined by a hook that runs after `connect()`, so the value is `undefined` there, and a signal effect created in `connect()` never re-runs. Workaround: create dependent effects in `firstRendered()`. Upstream options: define the getters in `beforeConnect`, or document it.
-2. **The root `M:\Workspace\iam\package.json` declares `workspaces: ["workspaces/*"]`.** `iam-next` is auto-included and a plain `npm install` fails on the Angular app's peer dependency conflicts. Workaround: `npm install --workspaces=false --include-workspace-root=false`. A cleaner fix is to narrow the root `workspaces` list or move the new app out.
+2. **Workspaces and installing.** *Resolved.* The root `M:\Workspace\iam\package.json` used the glob `workspaces/*`, and a plain `npm install` fails on the Angular app's peer dependency conflicts. The monorepo uses yarn (`yarn.lock`, `engines`), so install with yarn from the root. The workspace list is now explicit (`workspaces/iam`, `workspaces/iam-next`, `workspaces/server`, plus the existing libraries glob). Standalone fallback inside `iam-next`: `npm install --workspaces=false --include-workspace-root=false`.
 3. **TypeScript 5.x cannot type-check std-ui source.** The router needs the Navigation API types that ship with TS 7. `iam-next` uses `typescript ^7.0.2`, like std-ui.
-4. **std-ui is not published.** It is consumed through relative path aliases. Before Phase 1, decide between a published or linked package and keep versions pinned.
+4. **std-ui is not published.** *Decision:* keep consuming it through relative path aliases (`vite.config.ts` and `tsconfig.json` in `iam-next`). Revisit before cutover; pin a known std-ui commit meanwhile.
 5. **Real docs put the `---` head meta after the `# Title` line, not at the top.** The new `splitHeadMeta` handles both layouts (covered by a test).
 6. **Security note:** `html: true` plus `unsafeHtml` renders raw HTML from docs. This matches the old app, but it is only safe while the data repo is trusted. Decide on sanitizing before editing or sharing features are added.
 
@@ -43,10 +43,6 @@ Spike app: `M:\Workspace\iam\workspaces\iam-next` (Vite + TS, std-ui consumed fr
 - [x] The slice runs against the real data repo.
 - [x] Build, typecheck and test pipeline works.
 - [x] G1, G6, G7, G12 resolved or scoped.
-- [ ] Open for you: fix the root `workspaces` setting; decide how std-ui is consumed (item 4).
+- [x] Root `workspaces` setting updated; std-ui stays on relative paths.
 
-## Suggested adjustments to the plan
-
-- Phase 1: add a keep-alive/route-cache and preload task (G6) to the std-ui side, and a note that `@searchParam` needs the `beforeConnect` fix or the `firstRendered` workaround.
-- Phase 2: the GitHub client port is a real port, not a copy. Start from `fetch` and the `getDocRaw` pattern, then add authenticated calls (issues, contents, commits) with the interceptor-style wrapper.
-- Replace "adopt vs build" in Phase 0 with the decision above, and drop the in-house `iam-ui` set except for IAM-specific pieces (split pane, bottom navigation, float button).
+**Status: Phase 0 complete.** The adjustments from these findings are now folded into [rewrite-with-std-ui-plan.md](./rewrite-with-std-ui-plan.md).

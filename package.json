@@ -3,7 +3,9 @@
   "name": "iam",
   "workspaces": [
     "workspaces/iam/libraries/*",
-    "workspaces/*"
+    "workspaces/iam",
+    "workspaces/iam-next",
+    "workspaces/server"
   ],
   "scripts": {
     "start": "npm run dev --workspace iam-next",
