@@ -48,7 +48,7 @@ std-ui provides: `UIElement`, templates and directives, signals/`state()`, `toSi
 | G10 | Theming (Material provided it) | Medium | Web Awesome theme and CSS variable tokens, light/dark |
 | G11 | Tooling | Low | **Done** in the spike: Vite, vitest, TS 7 |
 | G12 | `@HostListener`/`@HostBinding` equivalents | Low | **Minor.** No decorators; use `connect()`/`disconnect()` or `addClassHooks` |
-| G13 | `@searchParam`/`@routeParam` unavailable in `connect()` (new) | Low | Workaround: create dependent effects in `firstRendered()`. Upstream fix: define getters in `beforeConnect` |
+| G13 | `@searchParam`/`@routeParam` unavailable in `connect()` (new) | Low | **Fixed** in std-ui (`beforeConnect` hook + regression test) |
 
 Reusable as-is (framework-independent): markdown-it and its plugins, mermaid, KaTeX, Prism, CodeMirror, Quill, Fuse.js, pica, `lisp.js`, the doc model, the IndexedDB layer.
 
@@ -69,14 +69,24 @@ The viewer elements (toc, tags, version, subpage, code-example) are already cust
 - Vertical slice: read-only doc view against the real `metasong/iam-data` repo (config, `fetch` client, head-meta parsing, markdown-it, router, resource helper, Web Awesome callout/spinner/badge, sub-page links).
 - Result: `tsc` clean, 4 tests pass, production build about 83 kB gzip JS + 15 kB gzip CSS.
 
-### Phase 1: Foundations (2-3 weeks)
-- Theming tokens and light/dark on top of the Web Awesome theme.
-- Overlay layer: wrap Web Awesome dialog/drawer for dialogs and bottom-sheet; add a toast/snack-bar service. Replaces `dialog.service`, `message-dialog`, `dialog-spinner`.
-- Base components: use Web Awesome button, icon, card, tag, checkbox, switch, progress, spinner, input, tabs, tree, dropdown/menu. Write only thin IAM wrappers (input wired to `ext` form state).
-- IAM-specific components: split pane, bottom navigation, float button, reading-position indicator.
-- `matchMedia` signals (replaces `cdk/layout`).
-- Core services as module singletons: logger, command, copier, scroll, scroll-spy.
-- std-ui upstream: G13 fix (`beforeConnect`), start G6b (keep-alive) design.
+### Phase 1: Foundations (2-3 weeks): IN PROGRESS (core done)
+Coverage check done: see [web-awesome-coverage.md](./web-awesome-coverage.md). Only autocomplete and drag-drop have no Web Awesome equivalent.
+
+Done (`iam-next/src/ui`, `src/lib`; 12 unit tests; browser-verified on `/gallery`):
+- [x] Theming: light/dark/system, persisted (`theme.ts`).
+- [x] Overlay layer: `confirm`, `alert`, `bottomSheet`, `busy` (`dialogs.ts`), `snackbar` with action (`snackbar.ts`). Replaces `dialog.service`, `message-dialog`, `dialog-spinner`, `MatSnackBar`, `MatBottomSheet`.
+- [x] `matchMedia` signals (`media.ts`), logger (`lib/logger.ts`), async resource (`lib/resource.ts`).
+- [x] IAM components: `<iam-bottom-nav>`, `<iam-float-button>`; split pane replaced by `<wa-split-panel>`.
+- [x] Component gallery at `/gallery`.
+- [x] std-ui G13 fix: `@routeParam`/`@searchParam` readable in `connect()` (`beforeConnect` hook, regression test added in `std-ui/src/router`; all 59 router tests pass). The `firstRendered` workaround in `doc-view.ts` is removed.
+
+Remaining:
+- [ ] Input/form-field wrapper bound to `ext` form state.
+- [ ] Core services still to port: command, copier, scroll, scroll-spy.
+- [ ] Reading-position indicator.
+- [ ] Icon assets for production builds (see coverage doc).
+- [ ] Start the G6b keep-alive design in std-ui (needed by Phase 3).
+- [ ] Keyboard and screen-reader pass on the gallery.
 - **Exit:** a component gallery page in `iam-next` shows all of these with keyboard and ARIA behaviour.
 
 ### Phase 2: Data layer (2 weeks)
@@ -144,5 +154,6 @@ Estimated total remaining: about 14-17 weeks for one developer. Adopting Web Awe
 
 ## 8. Next steps
 
-1. Start Phase 1: Web Awesome coverage check against the Material/CDK list, theming, and the component gallery.
+1. Finish the remaining Phase 1 items above (form input wrapper, remaining core services, icon assets, a11y pass).
 2. Run the yarn install from the repo root once to confirm the updated workspace list.
+3. Commit the std-ui router change (it is in the sibling `M:\Workspace\std-ui` repo, uncommitted).

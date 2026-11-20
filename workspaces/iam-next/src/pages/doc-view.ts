@@ -1,9 +1,7 @@
-// Phase 0 vertical slice: read-only doc view at `/doc?id=<n>&f=md`.
-// Exercises: std-ui router (@searchParam), signals, async resource, markdown-it, Shoelace components.
-import '@awesome.me/webawesome/dist/components/spinner/spinner.js';
-import '@awesome.me/webawesome/dist/components/callout/callout.js';
-import '@awesome.me/webawesome/dist/components/badge/badge.js';
-import { tag, t, unsafeHtml, UIElement, signal } from '@std-ui/core';
+// Read-only doc view at `/doc?id=<n>&f=md`.
+// Exercises: std-ui router (@searchParam), signals, async resource, markdown-it, Web Awesome components.
+import '../ui/components.ts';
+import { tag, t, unsafeHtml, UIElement } from '@std-ui/core';
 import { searchParam } from '@std-ui/router';
 import { getDocRaw } from '../github/client.ts';
 import { renderMarkdown } from '../markdown/render.ts';
@@ -14,30 +12,25 @@ export class DocView extends UIElement {
 	@searchParam('id') readonly docId?: string;
 	@searchParam('f') readonly format?: string;
 
-	#doc = signal<Resource<ReturnType<typeof renderMarkdown>> | undefined>(undefined);
+	#doc?: Resource<ReturnType<typeof renderMarkdown>>;
 
-	// Not `connect()`: std-ui defines the @searchParam getters in a hook that runs after `connect()`,
-	// so reading `docId` there returns undefined and the resource would never re-run.
-	protected override firstRendered(): void {
-		this.#doc.set(
-			resource(
-				() => (this.docId ? { id: this.docId, format: this.format ?? 'md' } : undefined),
-				async ({ id, format }, signal) => {
-					const { content } = await getDocRaw(id, format, signal);
-					return renderMarkdown(content);
-				},
-			),
+	protected override connect(): void {
+		this.#doc = resource(
+			() => (this.docId ? { id: this.docId, format: this.format ?? 'md' } : undefined),
+			async ({ id, format }, signal) => {
+				const { content } = await getDocRaw(id, format, signal);
+				return renderMarkdown(content);
+			},
 		);
 	}
 
 	protected override disconnect(): void {
-		this.#doc.peek()?.dispose();
-		this.#doc.set(undefined);
+		this.#doc?.dispose();
 	}
 
 	protected override template() {
+		const doc = this.#doc;
 		if (!this.docId) return t`<wa-callout variant="warning">Missing <code>?id=</code>.</wa-callout>`;
-		const doc = this.#doc();
 		if (!doc) return;
 		if (doc.error()) return t`<wa-callout variant="danger">${String(doc.error())}</wa-callout>`;
 		const value = doc.value();

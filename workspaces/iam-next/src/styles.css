@@ -1,4 +1,6 @@
 @import '@awesome.me/webawesome/dist/styles/webawesome.css';
 
-body { margin: 0; font-family: var(--wa-font-family-body); color: var(--wa-color-text-normal); }
-iam-doc-view { display: block; max-width: 52rem; margin: 0 auto; padding: 1rem; }
+body { margin: 0; font-family: var(--wa-font-family-body); color: var(--wa-color-text-normal); background: var(--wa-color-surface-default); }
+iam-doc-view, iam-gallery { display: block; max-width: 52rem; margin: 0 auto; padding: 1rem; }
+iam-gallery section { margin-block: var(--wa-space-l); display: flex; flex-wrap: wrap; align-items: center; gap: var(--wa-space-s); }
+iam-gallery section > h2 { flex-basis: 100%; margin: 0; }
