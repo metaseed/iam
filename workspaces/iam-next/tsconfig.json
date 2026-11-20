@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		// ES2022 => useDefineForClassFields=true, which std-ui's stage-3 decorators rely on.
+		"target": "ES2022",
+		"module": "ES2020",
+		"lib": ["ES2022", "DOM", "DOM.Iterable"],
+		"moduleResolution": "bundler",
+		"strict": true,
+		"noImplicitOverride": true,
+		"noEmit": true,
+		"allowImportingTsExtensions": true,
+		"isolatedModules": true,
+		"skipLibCheck": true,
+		"types": ["vite/client", "node"],
+		// std-ui is consumed from source (sibling checkout) until it is published.
+		"paths": {
+			"@std-ui/core": ["../../../std-ui/src/core/src/index.ts"],
+			"@std-ui/ext": ["../../../std-ui/src/ext/src/index.ts"],
+			"@std-ui/router": ["../../../std-ui/src/router/src/index.ts"]
+		}
+	},
+	"include": ["src/**/*.ts", "scripts/**/*.ts", "vite.config.ts"]
+}

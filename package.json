@@ -6,7 +6,7 @@
     "workspaces/*"
   ],
   "scripts": {
-    "start": "cd workspaces\\iam & npm start",
+    "start": "npm run dev --workspace iam-next",
     "hmr": "cd workspaces\\iam & npm run hmr",
     "deploy": "cd workspaces\\iam & npm run deploy",
     "upgrade": "yarn upgrade --latest",
