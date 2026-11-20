@@ -13,7 +13,11 @@ Web Awesome `@awesome.me/webawesome` 3.15.0, MIT licensed. Registered components
 | `split-pane` (custom, 7 files) | `<wa-split-panel>` directly | Covered, in gallery |
 | `bottom-navigation` | `<iam-bottom-nav>` (`src/ui/bottom-nav.ts`) | Done, tested (`isActive`) |
 | `float-button` (ngc) | `<iam-float-button>` speed dial (`src/ui/float-button.ts`) | Done, verified |
-| `mat-input`, form-field | `<wa-input>` (needs binding to `ext` form state) | Component available; form wiring pending |
+| `mat-input`, form-field | `<iam-input>` (`src/ui/iam-input.ts`) wrapping `<wa-input>`, bound with std-ui `formBind()` | Done, verified (required, min length, touched, disabled) |
+| `reading-position-indicator` | `<iam-reading-progress>` (`src/ui/reading-progress.ts`) | Done, verified |
+| `ScrollService`, `ScrollSpyService` | `src/lib/scroll.ts` (`scrollToElement`, `scrollToHash`, `scrollSpy`) | Done, tested |
+| `CommandService` + `angular-hotkey` | `src/lib/commands.ts` (`createCommands`, key sequences) | Done, tested and verified |
+| `CopierService` | `src/lib/copier.ts` (Clipboard API with `execCommand` fallback) | Done, unit-tested; not yet seen working in a real browser |
 | `mat-slide-toggle` | `<wa-switch>` | Available |
 | `mat-chips` | `<wa-tag>` (`removable`) / `<wa-tag-input>` | Available |
 | `mat-tabs` | `<wa-tab-group>` | Available, in gallery |
@@ -32,5 +36,5 @@ Web Awesome `@awesome.me/webawesome` 3.15.0, MIT licensed. Registered components
 ## Notes
 
 - **Icons:** `wa-icon` with a name loads its SVG from the base path set in `main.ts` (`/node_modules/...` in dev). A production build does not ship those files. Before cutover, copy `node_modules/@awesome.me/webawesome/dist/assets` into the build and point `setBasePath` at it, or register an inline icon set. The current UI uses no named icons.
-- **Bundle size:** with the Phase 1 components registered, the production bundle is about 150 kB gzip JS and 15 kB gzip CSS. Register only the components used; split heavy ones by route if the budget matters.
+- **Bundle size:** with the Phase 1 components and `@std-ui/ext` registered, the production bundle is about 157 kB gzip JS and 15 kB gzip CSS. Register only the components used; split heavy ones by route if the budget matters.
 - **Gaps left:** autocomplete and drag-drop only. Both are Phase 6 concerns.

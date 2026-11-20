@@ -69,10 +69,10 @@ The viewer elements (toc, tags, version, subpage, code-example) are already cust
 - Vertical slice: read-only doc view against the real `metasong/iam-data` repo (config, `fetch` client, head-meta parsing, markdown-it, router, resource helper, Web Awesome callout/spinner/badge, sub-page links).
 - Result: `tsc` clean, 4 tests pass, production build about 83 kB gzip JS + 15 kB gzip CSS.
 
-### Phase 1: Foundations (2-3 weeks): IN PROGRESS (core done)
+### Phase 1: Foundations (2-3 weeks): NEARLY DONE
 Coverage check done: see [web-awesome-coverage.md](./web-awesome-coverage.md). Only autocomplete and drag-drop have no Web Awesome equivalent.
 
-Done (`iam-next/src/ui`, `src/lib`; 12 unit tests; browser-verified on `/gallery`):
+Done (`iam-next/src/ui`, `src/lib`; 26 unit tests; browser-verified on `/gallery`):
 - [x] Theming: light/dark/system, persisted (`theme.ts`).
 - [x] Overlay layer: `confirm`, `alert`, `bottomSheet`, `busy` (`dialogs.ts`), `snackbar` with action (`snackbar.ts`). Replaces `dialog.service`, `message-dialog`, `dialog-spinner`, `MatSnackBar`, `MatBottomSheet`.
 - [x] `matchMedia` signals (`media.ts`), logger (`lib/logger.ts`), async resource (`lib/resource.ts`).
@@ -80,10 +80,13 @@ Done (`iam-next/src/ui`, `src/lib`; 12 unit tests; browser-verified on `/gallery
 - [x] Component gallery at `/gallery`.
 - [x] std-ui G13 fix: `@routeParam`/`@searchParam` readable in `connect()` (`beforeConnect` hook, regression test added in `std-ui/src/router`; all 59 router tests pass). The `firstRendered` workaround in `doc-view.ts` is removed.
 
+- [x] `<iam-input>` (`ui/iam-input.ts`): `<wa-input>` as a `formBind` control. Verified: two-way value, `required`/`minLength` messages, touched, disabled, hint shows the error after touch. Needed because `formBind` reports validation only to native controls or elements with `setErrors()`.
+- [x] Core services ported (`src/lib`): `commands.ts` (config hotkeys incl. sequences like `ctrl+m f`, replaces `CommandService` + `angular-hotkey`), `copier.ts`, `scroll.ts` (scroll helpers and scroll-spy with the old selection rule). Hotkeys verified in the browser.
+- [x] `<iam-reading-progress>` (`ui/reading-progress.ts`): verified in the browser (41% at 700 of 1718 px).
+
 Remaining:
-- [ ] Input/form-field wrapper bound to `ext` form state.
-- [ ] Core services still to port: command, copier, scroll, scroll-spy.
-- [ ] Reading-position indicator.
+- [ ] Copy-to-clipboard has unit tests for both paths, but it has not been seen to succeed in a real browser: the automation browser has no document focus, so the Clipboard API rejects. Check by hand in a normal browser.
+- [ ] Wire `getCommands()` into the real features when they are ported (editor, viewer).
 - [ ] Icon assets for production builds (see coverage doc).
 - [ ] Start the G6b keep-alive design in std-ui (needed by Phase 3).
 - [ ] Keyboard and screen-reader pass on the gallery.

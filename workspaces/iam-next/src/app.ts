@@ -3,6 +3,7 @@ import '@std-ui/router'; // defines <std-router>, <std-route>, <std-outlet>
 import './pages/doc-view.ts';
 import './pages/gallery.ts';
 import './ui/bottom-nav.ts';
+import './ui/reading-progress.ts';
 import type { BottomNav } from './ui/bottom-nav.ts';
 
 @tag('iam-app')
@@ -18,6 +19,7 @@ export class App extends UIElement {
 		return t`
 			<std-router>
 				<main style="padding-bottom: 4.5rem"><std-outlet></std-outlet></main>
+				<iam-reading-progress></iam-reading-progress>
 				<iam-bottom-nav></iam-bottom-nav>
 				<std-route path="/" redirect="/doc?id=1"></std-route>
 				<std-route path="/doc" element="iam-doc-view" title="iam"></std-route>

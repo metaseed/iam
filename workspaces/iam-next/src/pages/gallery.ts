@@ -1,16 +1,45 @@
 // Component gallery: every Phase 1 building block in one place, for manual keyboard / ARIA / theming checks.
 import '../ui/components.ts';
 import '../ui/float-button.ts';
-import { tag, t, UIElement, signal } from '@std-ui/core';
+import '../ui/iam-input.ts';
+import { tag, t, UIElement, signal, state } from '@std-ui/core';
+import { check, formBind, formUi, minLength, required } from '@std-ui/ext';
 import { snackbar } from '../ui/snackbar.ts';
 import { alert, confirm, bottomSheet, busy } from '../ui/dialogs.ts';
 import { isHandset } from '../ui/media.ts';
 import { setTheme, themeChoice, theme } from '../ui/theme.ts';
+import { getCommands } from '../lib/app-commands.ts';
+import { copyText } from '../lib/copier.ts';
+import { scrollToTop } from '../lib/scroll.ts';
 
 @tag('iam-gallery')
 export class Gallery extends UIElement {
 	readonly #answer = signal('(none yet)');
 	readonly #handset = isHandset();
+	readonly #copied = signal('');
+	readonly #lastCommand = signal('(press Ctrl+B, or Ctrl+M then F)');
+	readonly #form = (() => {
+		const form = state({ title: '' }).with(check).with(formUi);
+		form.title.check.validators.set([required(), minLength(3, 'At least 3 characters')]);
+		return form;
+	})();
+	#offCommands: Array<() => void> = [];
+
+	protected override connect(): void {
+		let disposed = false;
+		void getCommands().then((commands) => {
+			if (disposed) return;
+			for (const name of ['Bold', 'Focus']) {
+				this.#offCommands.push(commands.on(name, (c) => { this.#lastCommand.set(`${c.name} (${c.combo})`); return false; }));
+			}
+		});
+		this.#offCommands.push(() => (disposed = true));
+	}
+
+	protected override disconnect(): void {
+		this.#offCommands.forEach((off) => off());
+		this.#offCommands = [];
+	}
 
 	async #askConfirm(): Promise<void> {
 		this.#answer.set(String(await confirm('Delete this document?', { title: 'Confirm', ok: 'Delete', variant: 'danger' })));
@@ -31,7 +60,12 @@ export class Gallery extends UIElement {
 		setTimeout(done, 1500);
 	}
 
+	async #copy(): Promise<void> {
+		this.#copied.set((await copyText('Copied from iam-next')) ? 'copied' : 'failed');
+	}
+
 	protected override template() {
+		const title = this.#form.title;
 		return t`
 			<h1>Gallery</h1>
 
@@ -59,10 +93,21 @@ export class Gallery extends UIElement {
 			</section>
 
 			<section>
-				<h2>Form controls</h2>
-				<wa-input label="Title" placeholder="Document title"></wa-input>
+				<h2>Form: iam-input + formBind (required, min length 3)</h2>
+				<iam-input id="title-input" label="Title" hint="Bound to a state() node" .value=${formBind(title)}></iam-input>
+				<p id="form-state">value: "${title()}" - valid: ${String(title.check.valid())} - touched: ${String(title.formUi.touched())}</p>
+				<wa-button @click=${() => title.formUi.disabled.own.set(!title.formUi.disabled.own.peek())}>Toggle disabled</wa-button>
+				<wa-button @click=${() => title.formUi.touchAll()}>Touch all (submit)</wa-button>
 				<wa-switch>Enable TOC</wa-switch>
 				<div><wa-tag variant="brand">javascript</wa-tag> <wa-tag removable>css</wa-tag></div>
+			</section>
+
+			<section>
+				<h2>Hotkeys, clipboard, scroll</h2>
+				<span id="last-command">Last command: ${this.#lastCommand()}</span>
+				<wa-button @click=${() => void this.#copy()}>Copy text</wa-button>
+				<span id="copied">${this.#copied()}</span>
+				<wa-button @click=${() => scrollToTop()}>Scroll to top</wa-button>
 			</section>
 
 			<section>
