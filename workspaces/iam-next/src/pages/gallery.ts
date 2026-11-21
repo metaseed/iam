@@ -87,7 +87,7 @@ export class Gallery extends UIElement {
 				<h2>Dialogs</h2>
 				<wa-button @click=${() => void alert('Hello from alert()', 'Alert')}>alert()</wa-button>
 				<wa-button @click=${() => void this.#askConfirm()}>confirm()</wa-button>
-				<span id="answer">Last answer: ${this.#answer()}</span>
+				<span id="answer" role="status">Last answer: ${this.#answer()}</span>
 				<wa-button @click=${() => this.#sheet()}>Bottom sheet</wa-button>
 				<wa-button @click=${() => this.#busy()}>Busy (1.5 s)</wa-button>
 			</section>
@@ -104,9 +104,9 @@ export class Gallery extends UIElement {
 
 			<section>
 				<h2>Hotkeys, clipboard, scroll</h2>
-				<span id="last-command">Last command: ${this.#lastCommand()}</span>
+				<span id="last-command" role="status">Last command: ${this.#lastCommand()}</span>
 				<wa-button @click=${() => void this.#copy()}>Copy text</wa-button>
-				<span id="copied">${this.#copied()}</span>
+				<span id="copied" role="status">${this.#copied()}</span>
 				<wa-button @click=${() => scrollToTop()}>Scroll to top</wa-button>
 			</section>
 

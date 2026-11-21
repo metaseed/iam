@@ -88,8 +88,8 @@ Remaining:
 - [ ] Copy-to-clipboard has unit tests for both paths, but it has not been seen to succeed in a real browser: the automation browser has no document focus, so the Clipboard API rejects. Check by hand in a normal browser.
 - [ ] Wire `getCommands()` into the real features when they are ported (editor, viewer).
 - [x] Icon assets: the free Web Awesome package ships no icon files, so `ui/icons.ts` bundles inline SVG icons and replaces the `default` icon library (no network fetch, works in production builds). Add icons to the map as features need them. Also fixed std-ui API renames (`firstRendered`/`rendered` are now `firstUpdated`/`updated`); `tsc` clean, 60 tests pass.
-- [ ] Start the G6b keep-alive design in std-ui (needed by Phase 3).
-- [ ] Keyboard and screen-reader pass on the gallery.
+- [x] G6b keep-alive in std-ui (uncommitted, in `std-ui/src/router`): `keepAlive` on `RouteDef` / `keep-alive` attribute on `<std-route>`. `<std-outlet>` detaches the element when leaving the route (so `disconnect()` runs and effects stop) and re-attaches the same instance on return, with fresh `params`/`data`. Instance state (signals, fields, DOM) survives; `connect()` runs again, so keep one-time setup in the constructor or guard it. Limits: per outlet, unbounded cache, not for `errorElement`/`template` routes; scroll position inside the element is not restored by the router. 61 router tests pass, including a new one. Phase 3 should add an LRU cap if needed.
+- [x] Code-level keyboard/ARIA pass on the gallery components (not yet a real screen-reader run): float button now has an accessible name via visually hidden text (an `aria-label` on the `<wa-button>` host does not reach its inner `<button>`), glyph is `aria-hidden`, and Escape returns focus to the toggle; gallery status text uses `role="status"`. Bottom nav (`nav` + `aria-current`) and reading progress (`progressbar`) were already fine. A manual check with NVDA/Narrator is still worth doing before cutover.
 - **Exit:** a component gallery page in `iam-next` shows all of these with keyboard and ARIA behaviour.
 
 ### Phase 2: Data layer (2 weeks): IN PROGRESS

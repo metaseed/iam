@@ -23,6 +23,7 @@ export class FloatButton extends UIElement {
 		}
 		.items { display: none; flex-direction: column; align-items: flex-end; gap: var(--wa-space-s); }
 		:host([open]) .items { display: flex; }
+		.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 		.fab::part(base) { width: 3.5rem; height: 3.5rem; border-radius: 50%; box-shadow: var(--wa-shadow-l); }
 	`;
 
@@ -31,7 +32,10 @@ export class FloatButton extends UIElement {
 
 	protected override connect(): void {
 		const onKey = (e: KeyboardEvent): void => {
-			if (e.key === 'Escape') this.open.set(false);
+			if (e.key !== 'Escape' || !this.open.peek()) return;
+			this.open.set(false);
+			// Closing hides the focused action (display: none); put focus back on the toggle.
+			this.shadowRoot?.querySelector<HTMLElement>('.fab')?.focus();
 		};
 		// Clicking an action closes the speed dial.
 		const onItem = (e: Event): void => {
@@ -57,12 +61,10 @@ export class FloatButton extends UIElement {
 			<wa-button
 				class="fab"
 				variant="brand"
-				aria-label=${open ? 'Close actions' : 'Open actions'}
-				aria-expanded=${String(open)}
 				@click=${(e: Event) => {
 					e.stopPropagation();
 					this.open.set(!this.open.peek());
 				}}
-			>${open ? '×' : '+'}</wa-button>`;
+			><span class="sr">${open ? 'Close actions' : 'Open actions'}</span><span aria-hidden="true">${open ? '×' : '+'}</span></wa-button>`;
 	}
 }
