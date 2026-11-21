@@ -44,6 +44,7 @@ export const Tables = { meta: 'doc_meta', content: 'document', dirty: 'dirty_doc
  * decides what to forward.
  */
 export interface NextCache {
+	create(content: string, format: string): Promise<Doc>;
 	/** `key`: undefined = initial fetch, `Number.MAX_VALUE` = refresh first page. See `readBulkMeta`. */
 	readBulkMeta(key: number | undefined, isBelowKey: boolean): Promise<DocMeta[]>;
 	readMeta(id: number): Promise<DocMeta>;

@@ -81,6 +81,21 @@ describe('GithubCache', () => {
 		expect(issueApi.list.mock.calls.map((c) => c[0].page)).toEqual([1, 2, 3]);
 	});
 
+	it('readBulkMeta returns earlier pages when a later page fails, but throws if nothing was read', async () => {
+		const { issueApi, cache } = fakeRepo();
+		const page1 = Array.from({ length: 50 }, (_, i) => issue(200 - i));
+		issueApi.list.mockImplementation(async (o: { page: number }) => {
+			if (o.page === 1) return page1;
+			throw err(500);
+		});
+		const metas = await cache.readBulkMeta(120, true);
+		expect(metas).toHaveLength(50);
+
+		const fresh = fakeRepo();
+		fresh.issueApi.list.mockRejectedValue(err(500));
+		await expect(fresh.cache.readBulkMeta(undefined, true)).rejects.toMatchObject({ status: 500 });
+	});
+
 	it('readContent falls back to the issue meta on 404 and honours deletion', async () => {
 		const { repo, issueApi, cache } = fakeRepo();
 		repo.getContents.mockRejectedValueOnce(err(404));

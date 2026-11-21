@@ -112,7 +112,14 @@ Remaining:
   - Fixed while porting: `create` never closed the issue after a failed create (its `id` variable was never assigned); `FileResult.commit` was typed as the list-commits shape, but the contents API returns the git commit object (`committer` directly on it).
   - Behaviour changes: `readBulkMeta` returns one deduplicated list instead of emitting page by page; the 5-minute first-page refresh is a staleness check instead of a one-shot timer; the legacy `<Title>_<id>` file name is sanitized like the read path. Old quirk kept: `create` reuses the *last* closed issue in the list (the old log message said first).
   - The tag cache and id range callbacks are injected (`onLabels`, `onIdRange`), so no store dependency.
-- [ ] Remaining entity cache work: `store-cache` (+ saver) and the db auto-saver, which depend on the document store. (`database-cache`, `github-cache`, `store-cache`) and the `rx-store` document store.
+- [x] `readBulkMeta` now returns the pages read so far when a later page fails (it still throws when nothing was read); logged as a warning.
+- [x] Document store and store level (`src/store`; 15 new tests, 108 total, `tsc` clean):
+  - `entities.ts`: `EntityMap` replaces `EntityCacheStore`/`MemEntityCache` (one signal holding an immutable `Map`, optional sort, `upsert`/`upsertMany`/`update`/`delete`/`deleteMany`).
+  - `doc-store.ts`: `DocStore` replaces `DocumentStore` (metas sorted newest first, contents, statuses, in-store dirty list, tags, `currentId`, `idRangeHigh/Low`, `searchResult`, computed `currentMeta/Content/Status` and the dirty/editable/syncing flags, `upsertStatus`, `delete`). Effects (`rx-store`) are not needed: the reads are signals and the writes are plain async methods.
+  - `store-cache.ts`: `StoreCache` replaces `StoreCache` + `StoreSaver`: `createDraft`, `create`, `readBulkMeta`/`readMeta`/`readContent` (apply what the db level yields to the store; sha check, remote deletes, tag line from labels via `withTags`), `update` (dirty marker, or write-through with `forceSave` that also clears `isStoreDirty`/`isDbDirty`/`isSyncing`), `delete`, `saveDirtyNow` and `startAutoSave` (10 s, rounds never overlap, 2 retries, failures stay dirty).
+  - `NextCache.create` / `DbCache.create` added; the db copy is written with `put` (the old `add` failed when a reused issue id already had a stale local record).
+  - Changed: the old `readDocContent` emitted the content once per meta emission; it now yields once, after the meta sync. Store search is left for Phase 6 (needs the local search service).
+- [ ] Remaining entity cache work: the db auto-saver (5 min push of dirty docs to GitHub, online event, `BroadcastChannel` to tell other tabs), and wiring the three levels together in one `createCaches()`. (`database-cache`, `github-cache`, `store-cache`) and the `rx-store` document store.
 - [ ] Sign-in UI (the `me` page, Phase 6) and a manual check of writes against a scratch repo.
 
 Original scope:

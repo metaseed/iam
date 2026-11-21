@@ -26,6 +26,7 @@ beforeEach(() => {
 	db = new Idb(cacheSchema, new IDBFactory());
 	remote = { bulk: [], updated: [], deleted: [] };
 	const next: NextCache = {
+		create: async (c, format) => ({ meta: meta(42), content: { ...content(42), content: c, format } }),
 		readBulkMeta: async () => remote.bulk,
 		readMeta: async () => remote.meta!,
 		readContent: async () => remote.content!,
@@ -106,6 +107,12 @@ describe('update / syncToNext / delete', () => {
 	});
 	it('syncToNext fails for an unknown doc', async () => {
 		await expect(cache.syncToNext(99, '')).rejects.toThrow('not in the local db');
+	});
+	it('create stores the new doc in the db', async () => {
+		const doc = await cache.create('# T', 'md');
+		expect(doc.meta.id).toBe(42);
+		expect((await db.get<DocContent>('document', 42))!.content).toBe('# T');
+		expect(await db.get('doc_meta', 42)).toBeTruthy();
 	});
 	it('delete removes remote then local copies', async () => {
 		await cache.add({ meta: meta(1), content: content(1) });

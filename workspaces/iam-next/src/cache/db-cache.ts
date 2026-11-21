@@ -104,6 +104,13 @@ export class DbCache {
 		await this.db.add(Tables.meta, doc.meta);
 	}
 
+	/** Creates the doc at the next level, then keeps a copy in the db. */
+	async create(content: string, format: string): Promise<Doc> {
+		const doc = await this.next.create(content, format);
+		await Promise.all([this.db.put(Tables.content, doc.content), this.db.put(Tables.meta, doc.meta)]);
+		return doc;
+	}
+
 	/** Local save: content and meta plus a dirty marker in one go. With `forceSave` it also syncs to the next level. */
 	async update(meta: DocMeta, content: DocContent, changeLog: string, forceSave = false): Promise<Doc> {
 		await Promise.all([this.db.put(Tables.content, content), this.db.put(Tables.meta, meta)]);

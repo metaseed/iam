@@ -130,7 +130,14 @@ export class GithubCache implements NextCache {
 		for (const page of pagesFor(id, highestId, isBelowKey)) {
 			if (page === 1 && loadedFirst) continue;
 			if (page < 1) continue;
-			metas.push(...(await getPage(page)));
+			try {
+				metas.push(...(await getPage(page)));
+			} catch (e) {
+				if (metas.length === 0) throw e;
+				// Keep what was read so far (the old version had stored earlier pages already).
+				log.warn(`page ${page} failed, returning the pages read so far`, e);
+				break;
+			}
 		}
 
 		const seen = new Set<number>();
