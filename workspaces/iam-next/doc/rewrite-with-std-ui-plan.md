@@ -107,7 +107,8 @@ Done (`iam-next/src/lib`, `src/github`; `data.test.ts`, 31 tests; `tsc` clean, 5
 Remaining:
 - [ ] Issues API (`issues/issue.ts`, `labels.ts`) if the app still uses it.
 - [x] IndexedDB layer: `lib/idb.ts` (promise based, replaces `database-engine`: lazy shared open, `get`/`getAll`/`getAllKeys`/`count`, atomic `putMany`/`put`/`add`/`delete`/`deleteMany`/`clear`, cursor `query` with range/direction/filter/skip/limit, `getByPage`, `modify` for read-decide-write) and `lib/schema.ts` (same three stores). Tested with `fake-indexeddb` (7 tests; 67 total, `tsc` clean). The old `changes` Subject is dropped; the cache layer will notify through signals.
-- [ ] Entity cache (`database-cache`, `github-cache`, `store-cache`) and the `rx-store` document store.
+- [x] `cache/db-cache.ts` + `cache/model.ts` (port of `DatabaseCache`, framework free; 11 tests, 78 total, `tsc` clean). Reads are async generators that yield the cached value first, then newer remote data (`readBulkMeta`, `readMeta`, `readContent`), with the same sync rules (remote delete wins, `updateDate` / `sha` comparison, dirty flag dropped on sha change). Also `add`, `update` (local save + dirty marker, optional `forceSave`), `syncToNext`, `dirtyIds`, `delete`. The next level is a small `NextCache` promise interface. Model is plain data (no classes). Not yet ported: the auto-saver (timer, online event, `BroadcastChannel`, store updates), `github-cache` (the `NextCache` implementation over `github/repository.ts`) and `store-cache`.
+- [ ] Remaining entity cache work (see above) (`database-cache`, `github-cache`, `store-cache`) and the `rx-store` document store.
 - [ ] Sign-in UI (the `me` page, Phase 6) and a manual check of writes against a scratch repo.
 
 Original scope:
