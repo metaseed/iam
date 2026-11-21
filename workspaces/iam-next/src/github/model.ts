@@ -37,7 +37,13 @@ export interface Commit {
 /** Result of creating, updating or deleting a file. */
 export interface FileResult {
 	content: Content | null;
-	commit: Commit;
+	/** The git commit object (author/committer directly on it), unlike `Commit` from the list-commits API. */
+	commit: {
+		sha: string;
+		message: string;
+		author: Person;
+		committer: Person;
+	};
 }
 
 export interface SearchResult<T> {

@@ -4,6 +4,7 @@ import { base64ToText, textToBase64 } from '../lib/base64.ts';
 import { createHttp, HttpError, type Http, type Interceptor, type RequestOptions } from '../lib/http.ts';
 import { Logger } from '../lib/logger.ts';
 import { authorization, credentials } from './auth.ts';
+import { IssuesApi } from './issues.ts';
 import { Media } from './media.ts';
 import type { Commit, Content, FileResult, ListCommitsOptions, SearchResult } from './model.ts';
 
@@ -59,7 +60,10 @@ export class Repository {
 		private readonly fetchImpl: typeof fetch = (...a) => fetch(...a),
 	) {
 		this.fullName = `${owner}/${name}`;
+		this.issue = new IssuesApi(http, this.fullName);
 	}
+
+	readonly issue: IssuesApi;
 
 	private requireSignedIn(): void {
 		if (!credentials.peek()) throw new NotSignedInError();
