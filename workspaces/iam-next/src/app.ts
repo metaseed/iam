@@ -8,7 +8,7 @@ import type { BottomNav } from './ui/bottom-nav.ts';
 
 @tag('iam-app')
 export class App extends UIElement {
-	protected override firstRendered(): void {
+	protected override firstUpdated(): void {
 		(this.querySelector('iam-bottom-nav') as BottomNav).items.set([
 			{ href: '/', label: 'Home', glyph: '⌂' },
 			{ href: '/gallery', label: 'Gallery', glyph: '▦' },

@@ -1,7 +1,7 @@
-import { setBasePath } from '@awesome.me/webawesome/dist/webawesome.js';
 import './app.ts';
+import { registerIcons } from './ui/icons.ts';
 import { initTheme } from './ui/theme.ts';
 
-// Web Awesome assets (icons etc.) are served from node_modules during development.
-setBasePath('/node_modules/@awesome.me/webawesome/dist');
+// Icons are bundled inline (see ui/icons.ts); no Web Awesome asset path is needed.
+registerIcons();
 initTheme();

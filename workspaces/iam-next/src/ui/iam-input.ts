@@ -79,7 +79,7 @@ export class IamInput extends UIElement {
 		this.#untouch?.();
 	}
 
-	protected override rendered(): void {
+	protected override updated(): void {
 		this.#inner?.setCustomValidity(mergeErrors(this.#errors.peek())); // the inner input exists only after the first render
 	}
 

@@ -87,7 +87,7 @@ Done (`iam-next/src/ui`, `src/lib`; 26 unit tests; browser-verified on `/gallery
 Remaining:
 - [ ] Copy-to-clipboard has unit tests for both paths, but it has not been seen to succeed in a real browser: the automation browser has no document focus, so the Clipboard API rejects. Check by hand in a normal browser.
 - [ ] Wire `getCommands()` into the real features when they are ported (editor, viewer).
-- [ ] Icon assets for production builds (see coverage doc).
+- [x] Icon assets: the free Web Awesome package ships no icon files, so `ui/icons.ts` bundles inline SVG icons and replaces the `default` icon library (no network fetch, works in production builds). Add icons to the map as features need them. Also fixed std-ui API renames (`firstRendered`/`rendered` are now `firstUpdated`/`updated`); `tsc` clean, 60 tests pass.
 - [ ] Start the G6b keep-alive design in std-ui (needed by Phase 3).
 - [ ] Keyboard and screen-reader pass on the gallery.
 - **Exit:** a component gallery page in `iam-next` shows all of these with keyboard and ARIA behaviour.
