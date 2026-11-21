@@ -92,7 +92,24 @@ Remaining:
 - [ ] Keyboard and screen-reader pass on the gallery.
 - **Exit:** a component gallery page in `iam-next` shows all of these with keyboard and ARIA behaviour.
 
-### Phase 2: Data layer (2 weeks)
+### Phase 2: Data layer (2 weeks): IN PROGRESS
+Done (`iam-next/src/lib`, `src/github`; `data.test.ts`, 31 tests; `tsc` clean, 57 tests total):
+- [x] `lib/retry.ts` (replaces `backoff`, `error-retry`, `timeout-monitor`): `retry`, `withTimeout`, `sleep`, interval shapes. Original error is rethrown instead of a generic "retried N times" error.
+- [x] `lib/http.ts` (replaces `HttpClient` + interceptors): JSON, params, abort, timeout, retry on network/5xx/408/429 for idempotent methods only, interceptors, `HttpError`.
+- [x] `lib/resource.ts` (G5): `resource` gains `retry`, `timeout`, `reload()`, keep-previous; new `mutation()` (no retry by default, newer run aborts older).
+- [x] `github/repository.ts` (+ `model.ts`, `media.ts`): `getSha`, `getContents`, `getContentsRaw`, `getReadme`, `newFile`, `updateFile`, `newBinaryFile`, `file` (upsert, creates only on 404), `delFile`, `delFileViaSha`, `searchIssue`, `searchCode`, `listCommits`, `move`. Writes are never retried.
+- [x] `github/auth.ts` (replaces `AuthService`/`UserInfo`): credentials signal in localStorage; signed out means read-only via the raw endpoint.
+- Decisions and fixes found while porting:
+  - The old bundle embedded an XOR-obfuscated GitHub token. It is **not** copied; sign-in with a token replaces it. Rotate that token, since it is in the old repo's history.
+  - Old `move` read `response.data` and could never have worked with `HttpClient`; fixed, covered by a mocked test, but **not yet run against the real API**.
+  - Old `generateSha` hashed the UTF-16 length for non-ASCII docs, so shas differed from GitHub's. The new `gitSha` uses the byte length (matches GitHub). Existing IndexedDB cache entries for non-ASCII docs will not match; the cache is rebuilt anyway.
+
+Remaining:
+- [ ] Issues API (`issues/issue.ts`, `labels.ts`) if the app still uses it.
+- [ ] IndexedDB layer (`database-engine`), entity cache (`database-cache`, `github-cache`, `store-cache`) and the `rx-store` document store.
+- [ ] Sign-in UI (the `me` page, Phase 6) and a manual check of writes against a scratch repo.
+
+Original scope:
 - Extend `src/github/client.ts` to authenticated calls (contents, issues, commits, search) with interceptor-style auth, retry/backoff (port `backoff`, `error-retry`, `timeout-monitor`) and abort. This is a real port of `net-storage/github`, not a copy.
 - Extend the resource helper (G5): timeout, retry, mutations.
 - Port the IndexedDB layer and entity cache. Replace the `rx-store` document store and effects with `state()` plus resources.

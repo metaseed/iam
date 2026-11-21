@@ -1,11 +1,8 @@
 // Replaces core/services/copier.service (execCommand + hidden textarea). Uses the async Clipboard API and falls back to
 // the old textarea trick where it is unavailable (insecure context, older browsers).
 
-/** Decodes base64 holding UTF-8 text (the old viewer stored code-fence content that way). */
-export function base64ToText(b64: string): string {
-	const bin = atob(b64);
-	return new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0)));
-}
+import { base64ToText } from './base64.ts';
+export { base64ToText };
 
 function legacyCopy(text: string): boolean {
 	const area = document.createElement('textarea');
