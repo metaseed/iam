@@ -132,6 +132,11 @@ export class DbCache {
 		return doc;
 	}
 
+	/** Docs saved to the db and not yet on GitHub, with the note and the tab that saved them. */
+	dirtyDocs(): Promise<DirtyDocument[]> {
+		return this.db.getAll<DirtyDocument>(Tables.dirty);
+	}
+
 	async dirtyIds(): Promise<number[]> {
 		return (await this.db.getAllKeys(Tables.dirty)) as number[];
 	}

@@ -17,6 +17,8 @@ export interface StoreNext {
 	create(content: string, format: string): Promise<Doc>;
 	update(meta: DocMeta, content: DocContent, changeLog: string, forceSave?: boolean): Promise<Doc>;
 	delete(id: number): Promise<void>;
+	/** Ids saved to the db but not on GitHub yet. */
+	dirtyIds(): Promise<number[]>;
 }
 
 /** Store-level auto save of edited docs to the next level (the db), every 10 s by default. */
@@ -94,6 +96,11 @@ export class StoreCache {
 	 * the store already has. After a change the meta is synced too (its tags can differ from the content head).
 	 */
 	async *readContent(id: number, format: string): AsyncGenerator<DocContent> {
+		// After a reload the db may still hold unsynced edits: show the "save pending" state again.
+		void this.next.dirtyIds().then(
+			(ids) => ids.includes(id) && !this.store.statuses.peek(id)?.isDbDirty && this.store.upsertStatus({ isDbDirty: true }, id),
+			(e) => log.warn('could not read the dirty list', e),
+		);
 		for await (const content of this.next.readContent(id, format)) {
 			if (content.isDeleted) {
 				log.warn(`doc ${id} was deleted remotely: removing it from the store`);

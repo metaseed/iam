@@ -87,6 +87,7 @@ describe('StoreCache', () => {
 			create: vi.fn(),
 			update: vi.fn(),
 			delete: vi.fn(async () => undefined),
+			dirtyIds: vi.fn(async () => [] as number[]),
 		};
 		cache = new StoreCache(store, next as unknown as StoreNext);
 	});

@@ -57,9 +57,14 @@ export class GithubCache implements NextCache {
 	#highestIdAt = 0;
 
 	constructor(
-		private readonly repo: Repository,
+		private readonly repo: Repository | (() => Promise<Repository>),
 		private readonly options: GithubCacheOptions,
 	) {}
+
+	/** A repository, or a function that opens it on first use (so the app can start offline). */
+	async #repo(): Promise<Repository> {
+		return typeof this.repo === 'function' ? this.repo() : this.repo;
+	}
 
 	#now = () => (this.options.now ?? Date.now)();
 
@@ -71,10 +76,11 @@ export class GithubCache implements NextCache {
 
 	/** Creates the doc: an issue (a closed one is reused) for the id, the file, and the meta in the issue body. */
 	async create(content: string, format: string): Promise<Doc> {
+		const repo = await this.#repo();
 		const title = getTitle(content);
-		const closed = await this.repo.issue.list({ state: 'closed' });
+		const closed = await repo.issue.list({ state: 'closed' });
 		const reused = closed.length > 0;
-		const issue = reused ? closed[closed.length - 1]! : await this.repo.issue.create({ title });
+		const issue = reused ? closed[closed.length - 1]! : await repo.issue.create({ title });
 		log.debug(reused ? 'reused closed issue' : 'created issue', issue.number);
 		const id = issue.number;
 		try {
@@ -82,19 +88,19 @@ export class GithubCache implements NextCache {
 			const message = commitMessage(title, '1.0.0', 'create document');
 			let file;
 			try {
-				file = await this.repo.newFile(path, content, message);
+				file = await repo.newFile(path, content, message);
 			} catch (e) {
 				if (!(e instanceof HttpError) || e.status !== 422) throw e;
 				// the file is already there (a reused issue number): overwrite it
-				const { sha } = await this.repo.getSha(path);
-				file = await this.repo.updateFile(path, content, sha, message);
+				const { sha } = await repo.getSha(path);
+				file = await repo.updateFile(path, content, sha, message);
 			}
 			const url = this.options.contentUrl(id, title, format);
 			const { meta, metaStr } = metaFromContent(id, content, url, format, new Date(issue.created_at), new Date(issue.updated_at));
-			await this.repo.issue.edit(id, { title, state: 'open', body: metaStr });
+			await repo.issue.edit(id, { title, state: 'open', body: metaStr });
 			return { meta, content: { id, content, sha: file.content!.sha, format, isDeleted: false } };
 		} catch (e) {
-			await this.repo.issue.edit(id, { state: 'closed' }).catch((err) => log.error('could not close issue after failed create', err));
+			await repo.issue.edit(id, { state: 'closed' }).catch((err) => log.error('could not close issue after failed create', err));
 			throw e;
 		}
 	}
@@ -104,12 +110,13 @@ export class GithubCache implements NextCache {
 	 * reads from the first page. The old version emitted page by page; callers only need the union.
 	 */
 	async readBulkMeta(key: number | undefined, isBelowKey: boolean): Promise<DocMeta[]> {
+		const repo = await this.#repo();
 		const fresh = key === undefined || key === Number.MAX_VALUE;
 		if (fresh || (this.#highestId !== undefined && this.#now() - this.#highestIdAt > FIRST_PAGE_REFRESH_MS)) this.#highestId = undefined;
 
 		const getPage = async (page: number): Promise<DocMeta[]> => {
 			// closed issues are included so they can be marked deleted
-			const issues = await this.repo.issue.list({ state: 'all', page, per_page: GITHUB_PAGE_SIZE, sort: 'created' });
+			const issues = await repo.issue.list({ state: 'all', page, per_page: GITHUB_PAGE_SIZE, sort: 'created' });
 			if (page === 1 && issues.length > 0) {
 				this.#highestId = issues[0]!.number;
 				this.#highestIdAt = this.#now();
@@ -149,7 +156,8 @@ export class GithubCache implements NextCache {
 	}
 
 	async readMeta(id: number): Promise<DocMeta> {
-		return this.#toMeta(await this.repo.issue.get(id));
+		const repo = await this.#repo();
+		return this.#toMeta(await repo.issue.get(id));
 	}
 
 	/**
@@ -157,12 +165,13 @@ export class GithubCache implements NextCache {
 	 * deleted), then tries `<Title>_<id>.<format>` and finally the bare `<id>`. Deleted docs return `isDeleted`.
 	 */
 	async readContent(id: number, format: string): Promise<DocContent> {
+		const repo = await this.#repo();
 		let state = 0;
 		const get = async (fmt: string, isDeleted = false, title?: string): Promise<DocContent> => {
 			if (isDeleted) return { id, content: '', sha: '', format: fmt, isDeleted: true };
 			const path = `${DOCUMENTS_FOLDER_NAME}/${title ? `${sanitizeTitle(title)}_` : ''}${id}${fmt ? `.${fmt}` : ''}`;
 			try {
-				const c = (await this.repo.getContents(path)) as { content?: string; sha: string };
+				const c = (await repo.getContents(path)) as { content?: string; sha: string };
 				return { id, content: c.content ?? '', sha: c.sha, format: fmt, isDeleted: false };
 			} catch (e) {
 				if (!is404(e)) throw e;
@@ -183,29 +192,31 @@ export class GithubCache implements NextCache {
 
 	/** Commits the file (needs the stored sha), then writes the new meta into the issue. */
 	async update(docMeta: DocMeta, docContent: DocContent, changeLog: string): Promise<Doc> {
+		const repo = await this.#repo();
 		const { id, content, format, sha } = docContent;
 		const title = docMeta.title;
 		const message = commitMessage(title, splitHeadMeta(content).meta.version, changeLog);
-		const file = await this.repo.updateFile(`${DOCUMENTS_FOLDER_NAME}/${id}.${format}`, content, sha, message);
+		const file = await repo.updateFile(`${DOCUMENTS_FOLDER_NAME}/${id}.${format}`, content, sha, message);
 
 		// remove the legacy `<Title>_<id>.<format>` file if there is one (best effort)
 		const oldPath = `${DOCUMENTS_FOLDER_NAME}/${sanitizeTitle(title)}_${id}.${format}`;
-		void this.repo.delFile(oldPath).catch((e) => {
+		void repo.delFile(oldPath).catch((e) => {
 			if (!is404(e)) log.warn('could not delete the legacy file', oldPath, e);
 		});
 
 		const url = this.options.contentUrl(id, title, format);
 		const { meta, metaStr } = metaFromContent(id, content, url, format, docMeta.createDate, new Date(file.commit.committer.date), docMeta);
-		await this.repo.issue.edit(meta.id, { title, body: metaStr, labels: meta.tag });
+		await repo.issue.edit(meta.id, { title, body: metaStr, labels: meta.tag });
 		return { meta, content: { id: meta.id, content, sha: file.content!.sha, format, isDeleted: false } };
 	}
 
 	/** Closes the issue and deletes the file (already gone elsewhere is fine). */
 	async delete(id: number): Promise<void> {
-		const issue = await this.repo.issue.edit(id, { state: 'closed' });
+		const repo = await this.#repo();
+		const issue = await repo.issue.edit(id, { state: 'closed' });
 		const { format } = this.#toMeta(issue);
 		try {
-			await this.repo.delFile(`${DOCUMENTS_FOLDER_NAME}/${id}.${format}`);
+			await repo.delFile(`${DOCUMENTS_FOLDER_NAME}/${id}.${format}`);
 		} catch (e) {
 			if (!is404(e)) throw e;
 		}
@@ -213,7 +224,8 @@ export class GithubCache implements NextCache {
 
 	/** Issue title search merged with file content search; titles from issues win. */
 	async search(query: string): Promise<SearchHit[]> {
-		const [issues, files] = await Promise.all([this.repo.searchIssue(query), this.repo.searchCode(query)]);
+		const repo = await this.#repo();
+		const [issues, files] = await Promise.all([repo.searchIssue(query), repo.searchCode(query)]);
 		type Item = { number?: number; name?: string; score: number; title?: string; text_matches?: unknown };
 		const fromFiles: SearchHit[] = (files.items as Item[]).map((item) => {
 			const { id, sanitizedTitle } = parseDocumentName(item.name!);
