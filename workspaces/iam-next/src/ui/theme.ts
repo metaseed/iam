@@ -1,6 +1,6 @@
 // Light/dark theme. Web Awesome switches on the `wa-dark` class on <html>. The choice is persisted; "system" follows
 // the OS setting. Call `initTheme()` once at startup.
-import { computed, effect, signal } from '@std-ui/core';
+import { computed, effect, state } from '@std-ui/core';
 import { isDark } from './media.ts';
 
 export type ThemeChoice = 'system' | 'light' | 'dark';
@@ -11,7 +11,7 @@ const stored = (): ThemeChoice => {
 	return v === 'light' || v === 'dark' ? v : 'system';
 };
 
-export const themeChoice = signal<ThemeChoice>('system');
+export const themeChoice = state<ThemeChoice>('system');
 
 /** The theme actually applied. */
 export const theme = computed<'light' | 'dark'>(() =>

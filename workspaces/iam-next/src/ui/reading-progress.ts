@@ -1,6 +1,6 @@
 // Replaces `reading-position-indicator`: a thin fixed bar at the top showing how far the page (or a scrollable
 // element) has been read. `target` is a CSS selector for a scrollable element; empty means the window.
-import { attribute, css, signal, state, t, tag, UIElement } from '@std-ui/core';
+import { attribute, css, state, t, tag, UIElement } from '@std-ui/core';
 import { maxScrollTopOf, scrollTopOf } from '../lib/scroll.ts';
 
 /** Percentage read, clamped to 0-100; content that does not scroll counts as 0. */
@@ -18,7 +18,7 @@ export class ReadingProgress extends UIElement {
 	`;
 
 	@attribute() readonly target = state('');
-	readonly #percent = signal(0);
+	readonly #percent = state(0);
 
 	protected override connect(): void {
 		const el = this.target.peek() ? document.querySelector<HTMLElement>(this.target.peek()) : null;

@@ -1,5 +1,5 @@
 // Replaces core/services/scroll (ScrollService), scroll-spy (ScrollSpyService) and the ContainerRef scroll helpers.
-import { signal, type ReadonlySignal } from '@std-ui/core';
+import { state, type ReadonlyState } from '@std-ui/core';
 
 export type ScrollContainer = HTMLElement | Window;
 
@@ -57,16 +57,16 @@ export function activeIndex(tops: readonly number[], scrollTop: number, maxScrol
 
 export interface ScrollSpy {
 	/** The element currently being read, or `null` above the first one. */
-	readonly active: ReadonlySignal<Element | null>;
-	readonly activeIndex: ReadonlySignal<number | null>;
+	readonly active: ReadonlyState<Element | null>;
+	readonly activeIndex: ReadonlyState<number | null>;
 	/** Re-measure now (content height changed, fonts or images loaded). Also runs on resize. */
 	recalibrate(): void;
 	dispose(): void;
 }
 
 export function scrollSpy(elements: readonly Element[], container: ScrollContainer = window, topOffset = 0): ScrollSpy {
-	const index = signal<number | null>(null);
-	const active = signal<Element | null>(null);
+	const index = state<number | null>(null);
+	const active = state<Element | null>(null);
 	let tops: number[] = [];
 	let lastHeight = -1;
 	let frame = 0;

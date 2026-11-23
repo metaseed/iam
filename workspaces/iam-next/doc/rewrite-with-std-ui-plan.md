@@ -92,6 +92,8 @@ Remaining:
 - [x] Code-level keyboard/ARIA pass on the gallery components (not yet a real screen-reader run): float button now has an accessible name via visually hidden text (an `aria-label` on the `<wa-button>` host does not reach its inner `<button>`), glyph is `aria-hidden`, and Escape returns focus to the toggle; gallery status text uses `role="status"`. Bottom nav (`nav` + `aria-current`) and reading progress (`progressbar`) were already fine. A manual check with NVDA/Narrator is still worth doing before cutover.
 - **Exit:** a component gallery page in `iam-next` shows all of these with keyboard and ARIA behaviour.
 
+> **std-ui API change (Nov 23):** core's `signal()`/`ReadonlySignal` are gone; the writable primitive is now `state()` (`ReadonlyState`, `State`), and the object tree that used to be `state({...}).with(...)` is `stateTree()` in `@std-ui/ext`. `iam-next` was migrated (117 tests, `tsc` and build pass against the new build).
+
 ### Phase 2: Data layer (2 weeks): IN PROGRESS
 Done (`iam-next/src/lib`, `src/github`; `data.test.ts`, 31 tests; `tsc` clean, 57 tests total):
 - [x] `lib/retry.ts` (replaces `backoff`, `error-retry`, `timeout-monitor`): `retry`, `withTimeout`, `sleep`, interval shapes. Original error is rethrown instead of a generic "retried N times" error.
@@ -119,7 +121,12 @@ Remaining:
   - `store-cache.ts`: `StoreCache` replaces `StoreCache` + `StoreSaver`: `createDraft`, `create`, `readBulkMeta`/`readMeta`/`readContent` (apply what the db level yields to the store; sha check, remote deletes, tag line from labels via `withTags`), `update` (dirty marker, or write-through with `forceSave` that also clears `isStoreDirty`/`isDbDirty`/`isSyncing`), `delete`, `saveDirtyNow` and `startAutoSave` (10 s, rounds never overlap, 2 retries, failures stay dirty).
   - `NextCache.create` / `DbCache.create` added; the db copy is written with `put` (the old `add` failed when a reused issue id already had a stale local record).
   - Changed: the old `readDocContent` emitted the content once per meta emission; it now yields once, after the meta sync. Store search is left for Phase 6 (needs the local search service).
-- [ ] Remaining entity cache work: the db auto-saver (5 min push of dirty docs to GitHub, online event, `BroadcastChannel` to tell other tabs), and wiring the three levels together in one `createCaches()`. (`database-cache`, `github-cache`, `store-cache`) and the `rx-store` document store.
+- [x] Data layer wired end to end (9 new tests, 117 total, `tsc` clean; all against a fake GitHub, fake IndexedDB):
+  - `cache/db-auto-saver.ts` (`DbAutoSaver`, port of `DatabaseCacheSaver`): every 5 min (+ random 0-10 s so tabs differ) and 6 s after the browser goes online it pushes dirty docs to GitHub, one at a time with 2 retries; a failing doc stays dirty and the round goes on; rounds never overlap. A `BroadcastChannel` tells other tabs, which update meta, flags and content (a tab that saved to the db last keeps its editor text and takes only the new sha).
+  - `github/storage.ts`: `openRepository` (looks the repo up, creates it on 404 when signed in) and `lazyRepository` (memoized, retried after failure). `GithubCache` now accepts a repository or a function that opens it, so the app starts offline from IndexedDB.
+  - `cache/index.ts`: `createCaches({ github })` builds store -> db -> GitHub, feeds the tag store and id range, and returns `{ store, storeCache, dbCache, githubCache, dbSaver, start(), dispose() }`.
+  - `StoreCache.readContent` re-flags `isDbDirty` after a reload when the db still holds unsynced edits (old `updateDbDirtyStatus`, minus its 1 s timer hack).
+- [ ] Still open in Phase 2: sign-in UI (Phase 6 `me` page) and a manual run of reads and writes against a scratch repo (nothing has touched the real API yet). (`database-cache`, `github-cache`, `store-cache`) and the `rx-store` document store.
 - [ ] Sign-in UI (the `me` page, Phase 6) and a manual check of writes against a scratch repo.
 
 Original scope:

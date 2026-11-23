@@ -1,9 +1,9 @@
 // Replaces `EntityCacheStore`/`MemEntityCache` from rx-store: a keyed collection held in one signal. Every change
 // swaps in a new Map, so readers (effects, computeds, templates) re-run, and `all()` is cheap to compare.
-import { signal, type ReadonlySignal } from '@std-ui/core';
+import { state, type ReadonlyState } from '@std-ui/core';
 
 export class EntityMap<K extends string | number, T> {
-	readonly #items = signal<ReadonlyMap<K, T>>(new Map());
+	readonly #items = state<ReadonlyMap<K, T>>(new Map());
 	readonly #id: (item: T) => K;
 	readonly #compare?: (a: T, b: T) => number;
 
@@ -13,7 +13,7 @@ export class EntityMap<K extends string | number, T> {
 	}
 
 	/** Reactive map of all items. */
-	get map(): ReadonlySignal<ReadonlyMap<K, T>> {
+	get map(): ReadonlyState<ReadonlyMap<K, T>> {
 		return this.#items;
 	}
 

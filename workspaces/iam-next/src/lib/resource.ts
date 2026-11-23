@@ -1,6 +1,6 @@
 // Replaces rx-store effects: "load X when Y changes" (`resource`) and "do X when asked" (`mutation`).
 // Both expose loading/error/value as signals, abort superseded work, and can retry and time out.
-import { effect, signal, type ReadonlySignal } from '@std-ui/core';
+import { effect, state, type ReadonlyState } from '@std-ui/core';
 import { AbortedError, retry, withTimeout, type RetryOptions } from './retry.ts';
 
 export interface ResourceOptions {
@@ -13,9 +13,9 @@ export interface ResourceOptions {
 }
 
 export interface Resource<V> {
-	readonly value: ReadonlySignal<V | undefined>;
-	readonly error: ReadonlySignal<unknown>;
-	readonly loading: ReadonlySignal<boolean>;
+	readonly value: ReadonlyState<V | undefined>;
+	readonly error: ReadonlyState<unknown>;
+	readonly loading: ReadonlyState<boolean>;
 	/** Runs the fetcher again for the current key (e.g. after a failure or a known change). */
 	reload(): void;
 	/** Stops tracking `source` and aborts the in-flight request. */
@@ -36,10 +36,10 @@ export function resource<K, V>(
 	fetcher: (key: K, signal: AbortSignal) => Promise<V>,
 	options: ResourceOptions = {},
 ): Resource<V> {
-	const value = signal<V | undefined>(undefined);
-	const error = signal<unknown>(undefined);
-	const loading = signal(false);
-	const version = signal(0);
+	const value = state<V | undefined>(undefined);
+	const error = state<unknown>(undefined);
+	const loading = state(false);
+	const version = state(0);
 
 	const stop = effect((onCleanup) => {
 		version(); // reload() re-runs the effect
@@ -76,9 +76,9 @@ export function resource<K, V>(
 export interface Mutation<A, R> {
 	/** Rejects with the failure, and also records it in `error`. A newer `run` aborts the older one. */
 	run(arg: A): Promise<R>;
-	readonly value: ReadonlySignal<R | undefined>;
-	readonly error: ReadonlySignal<unknown>;
-	readonly loading: ReadonlySignal<boolean>;
+	readonly value: ReadonlyState<R | undefined>;
+	readonly error: ReadonlyState<unknown>;
+	readonly loading: ReadonlyState<boolean>;
 	/** Aborts the running call. */
 	cancel(): void;
 }
@@ -91,9 +91,9 @@ export function mutation<A, R>(
 	action: (arg: A, signal: AbortSignal) => Promise<R>,
 	options: ResourceOptions = {},
 ): Mutation<A, R> {
-	const value = signal<R | undefined>(undefined);
-	const error = signal<unknown>(undefined);
-	const loading = signal(false);
+	const value = state<R | undefined>(undefined);
+	const error = state<unknown>(undefined);
+	const loading = state(false);
 	let current: AbortController | undefined;
 
 	return {

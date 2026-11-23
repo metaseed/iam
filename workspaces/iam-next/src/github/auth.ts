@@ -3,7 +3,7 @@
 // The Angular app shipped an XOR-obfuscated personal access token inside the bundle. That is not secret, so it is
 // NOT copied here. Credentials are entered once (e.g. on the `me` page) and kept in localStorage; without them the
 // app is read-only through the public raw endpoint.
-import { signal, type ReadonlySignal } from '@std-ui/core';
+import { state, type ReadonlyState } from '@std-ui/core';
 
 export interface Credentials {
 	name: string;
@@ -25,9 +25,9 @@ function load(): Credentials | undefined {
 	}
 }
 
-const current = signal<Credentials | undefined>(load());
+const current = state<Credentials | undefined>(load());
 
-export const credentials: ReadonlySignal<Credentials | undefined> = current;
+export const credentials: ReadonlyState<Credentials | undefined> = current;
 /** Signed in with a token, so writes and the authenticated API are possible. */
 export const isSignedIn = (): boolean => current() !== undefined;
 

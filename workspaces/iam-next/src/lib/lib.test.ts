@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { signal } from '@std-ui/core';
+import { state } from '@std-ui/core';
 import { resource } from './resource.ts';
 import { Logger, setLogLevel } from './logger.ts';
 
@@ -7,7 +7,7 @@ const flush = () => new Promise((r) => setTimeout(r, 0));
 
 describe('resource', () => {
 	it('loads when the source changes and aborts the previous request', async () => {
-		const id = signal<string | undefined>(undefined);
+		const id = state<string | undefined>(undefined);
 		const aborted: string[] = [];
 		const r = resource(
 			() => id(),
@@ -36,7 +36,7 @@ describe('resource', () => {
 	});
 
 	it('exposes errors and clears them on the next load', async () => {
-		const id = signal('bad');
+		const id = state('bad');
 		const r = resource(
 			() => id(),
 			async (key) => {

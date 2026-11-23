@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { effect, signal } from '@std-ui/core';
+import { effect, state } from '@std-ui/core';
 import { AbortedError, intervals, retry, sleep, TimeoutError, withTimeout } from './retry.ts';
 import { buildUrl, createHttp, HttpError, isTransient } from './http.ts';
 import { mutation, resource } from './resource.ts';
@@ -121,7 +121,7 @@ describe('http', () => {
 
 describe('resource', () => {
 	it('loads, reloads, retries and keeps the previous value', async () => {
-		const key = signal<number | undefined>(1);
+		const key = state<number | undefined>(1);
 		let calls = 0;
 		const r = resource(
 			() => key(),
@@ -145,7 +145,7 @@ describe('resource', () => {
 		r.dispose();
 	});
 	it('surfaces the error and aborts a superseded request', async () => {
-		const key = signal(1);
+		const key = state(1);
 		const aborted: number[] = [];
 		const r = resource(
 			() => key(),

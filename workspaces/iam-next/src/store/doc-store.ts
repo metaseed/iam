@@ -1,6 +1,6 @@
 // Replaces `DocumentStore` (rx-store `EntityCacheStore`s + `StateSubject`s) with signals. One instance is shared by
 // the app; tests create their own.
-import { computed, signal } from '@std-ui/core';
+import { computed, state } from '@std-ui/core';
 import type { DirtyDocument, DocContent, DocMeta } from '../cache/model.ts';
 import type { SearchHit } from '../cache/github-cache.ts';
 import { EntityMap } from './entities.ts';
@@ -44,12 +44,12 @@ export class DocStore {
 	readonly dirty = new EntityMap<number, StoreDirtyDoc>((d) => d.id);
 	readonly tags = new EntityMap<string, Tag>((t) => t.name);
 
-	readonly currentId = signal<number | undefined>(undefined);
+	readonly currentId = state<number | undefined>(undefined);
 	/** Highest id of the list that is loaded (`Number.MAX_VALUE`: nothing newer); undefined: initial. */
-	readonly idRangeHigh = signal<number | undefined>(undefined);
+	readonly idRangeHigh = state<number | undefined>(undefined);
 	/** Lowest id that is loaded, exclusive (undefined: nothing older / not loaded). */
-	readonly idRangeLow = signal<number | undefined>(undefined);
-	readonly searchResult = signal<SearchHit[]>([]);
+	readonly idRangeLow = state<number | undefined>(undefined);
+	readonly searchResult = state<SearchHit[]>([]);
 
 	readonly currentMeta = computed(() => {
 		const id = this.currentId();

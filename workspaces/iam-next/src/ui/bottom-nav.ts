@@ -1,6 +1,6 @@
 // Replaces `bottom-navigation`: a fixed bottom bar of links with the current route highlighted. Place it inside
 // `<std-router>` so it can follow the route. Set `items` before or after connecting (it is a signal).
-import { css, signal, t, tag, UIElement } from '@std-ui/core';
+import { css, state, t, tag, UIElement } from '@std-ui/core';
 import type { StdRouter } from '@std-ui/router';
 
 export interface NavItem {
@@ -37,7 +37,7 @@ export class BottomNav extends UIElement {
 		.glyph { font-size: 1.25rem; line-height: 1; }
 	`;
 
-	readonly items = signal<readonly NavItem[]>([]);
+	readonly items = state<readonly NavItem[]>([]);
 
 	protected override template() {
 		const router = (this.closest('std-router') as StdRouter | null)?.router;

@@ -2,8 +2,8 @@
 import '../ui/components.ts';
 import '../ui/float-button.ts';
 import '../ui/iam-input.ts';
-import { tag, t, UIElement, signal, state } from '@std-ui/core';
-import { check, formBind, formUi, minLength, required } from '@std-ui/ext';
+import { tag, t, UIElement, state } from '@std-ui/core';
+import { check, stateTree, formBind, formUi, minLength, required } from '@std-ui/ext';
 import { snackbar } from '../ui/snackbar.ts';
 import { alert, confirm, bottomSheet, busy } from '../ui/dialogs.ts';
 import { isHandset } from '../ui/media.ts';
@@ -14,12 +14,12 @@ import { scrollToTop } from '../lib/scroll.ts';
 
 @tag('iam-gallery')
 export class Gallery extends UIElement {
-	readonly #answer = signal('(none yet)');
+	readonly #answer = state('(none yet)');
 	readonly #handset = isHandset();
-	readonly #copied = signal('');
-	readonly #lastCommand = signal('(press Ctrl+B, or Ctrl+M then F)');
+	readonly #copied = state('');
+	readonly #lastCommand = state('(press Ctrl+B, or Ctrl+M then F)');
 	readonly #form = (() => {
-		const form = state({ title: '' }).with(check).with(formUi);
+		const form = stateTree({ title: '' }).with(check).with(formUi);
 		form.title.check.validators.set([required(), minLength(3, 'At least 3 characters')]);
 		return form;
 	})();

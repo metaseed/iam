@@ -9,7 +9,7 @@
 //
 // `value` is a signal-valued property: `bind` reads it and calls `.set()` on it, and listens for `value-change`.
 import './components.ts';
-import { attribute, state, signal, t, tag, UIElement } from '@std-ui/core';
+import { attribute, state, t, tag, UIElement } from '@std-ui/core';
 import type { ValidationError } from '@std-ui/ext';
 
 /** One message for the errors of all bound properties (de-duplicated, in order). */
@@ -40,8 +40,8 @@ export class IamInput extends UIElement {
 	/** The model value. Bind with `formBind(node)` / `bind(node, { event: 'value-change' })`. */
 	readonly value = state('');
 
-	readonly #errors = signal<ReadonlyMap<string, readonly ValidationError[]>>(new Map());
-	readonly #touched = signal(false);
+	readonly #errors = state<ReadonlyMap<string, readonly ValidationError[]>>(new Map());
+	readonly #touched = state(false);
 
 	/** Called by `formBind` with the errors of one bound property (merged across properties here). */
 	setErrors(property: string, errors: readonly ValidationError[]): void {
