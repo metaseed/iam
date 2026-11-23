@@ -16,7 +16,7 @@ export interface HeadMeta {
  * first line (`# Title`), so the title line is kept in the body; a block at the very start is accepted too.
  */
 export function splitHeadMeta(source: string): { meta: HeadMeta; body: string } {
-	const m = /^([^\n]*\r?\n)?---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/.exec(source);
+	const m = /^((?:[ \t]*\r?\n)*[^\n]*\r?\n)?---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/.exec(source);
 	if (!m) return { meta: {}, body: source };
 	let meta: HeadMeta = {};
 	try {

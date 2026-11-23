@@ -12,6 +12,11 @@ describe('splitHeadMeta', () => {
 		expect(meta).toEqual({ author: 'a', tag: [] });
 		expect(body).toBe('# Workspace\ntext');
 	});
+	it('accepts blank lines before the title line (doc 312 starts with one)', () => {
+		const { meta, body } = splitHeadMeta('\n# Auto Sync\n---\nauthor: a\nenable: [toc]\n---\n## Goal');
+		expect(meta).toEqual({ author: 'a', enable: ['toc'] });
+		expect(body).toBe('\n# Auto Sync\n## Goal');
+	});
 	it('returns the source unchanged without head meta', () => {
 		expect(splitHeadMeta('# Hi')).toEqual({ meta: {}, body: '# Hi' });
 	});
