@@ -1,7 +1,7 @@
 // Replaces Angular's ConfigService: loads `public/config.json` once (same shape as the old assets/config.json).
 export interface AppConfig {
 	hotkeys: Record<string, string[]>;
-	storage: { github: { userName: string; dataRepoName: string } };
+	storage: { github: { userName: string; dataRepoName: string; branch?: string } };
 }
 
 let pending: Promise<AppConfig> | undefined;

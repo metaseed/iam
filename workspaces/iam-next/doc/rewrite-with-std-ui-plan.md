@@ -149,7 +149,8 @@ Done (128 tests, `tsc` clean, build splits each page into its own chunk; verifie
 
 Remaining:
 - [ ] Float button in the shell (needs the page actions from Phases 5-6, e.g. "new doc").
-- [ ] Wire `createCaches()` into the app (a `caches` module with the config, started on boot) once the first real page needs it (home list, Phase 6; doc view, Phase 4).
+- [x] `src/caches.ts` (`getCaches()`: config from `config.json` incl. optional `branch`, created on first use, auto savers started). The doc view reads through it (store -> IndexedDB -> GitHub); checked in the browser against the real iam-data (doc 312 renders, `iam_db_cache` created).
+- Live tests: `src/live.test.ts` (read-only, `iam-data`) and `src/live-write.test.ts` (creates, edits, pushes and deletes its own doc in `metasong/iam-test`, never touches existing docs). Token and repo come from the git-ignored `.env.local` (`IAM_LIVE_TOKEN`, `IAM_LIVE_REPO`, `IAM_LIVE_BRANCH`); `IAM_LIVE_WRITE=1` enables the write test.
 - [ ] Keyboard check of the drawer and a view-transition decision.
 
 Original scope:
