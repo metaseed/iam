@@ -9,10 +9,12 @@ const log = Logger('github-storage');
 export interface RepositoryConfig {
 	userName: string;
 	dataRepoName: string;
+	/** Branch the docs live on, default master. */
+	branch?: string;
 }
 
 /** Looks the repository up, and creates it on 404 for a signed in user. */
-export async function openRepository({ userName, dataRepoName }: RepositoryConfig, http: Http = createGithubHttp()): Promise<Repository> {
+export async function openRepository({ userName, dataRepoName, branch }: RepositoryConfig, http: Http = createGithubHttp()): Promise<Repository> {
 	try {
 		await http.get(`/repos/${userName}/${dataRepoName}`);
 	} catch (e) {
@@ -30,7 +32,7 @@ export async function openRepository({ userName, dataRepoName }: RepositoryConfi
 			has_wiki: true,
 		}, { retry: false });
 	}
-	return new Repository(userName, dataRepoName, http);
+	return new Repository(userName, dataRepoName, http, undefined, branch);
 }
 
 /**

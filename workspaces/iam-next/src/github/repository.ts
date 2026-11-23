@@ -58,6 +58,8 @@ export class Repository {
 		readonly name: string,
 		private readonly http: Http = createGithubHttp(),
 		private readonly fetchImpl: typeof fetch = (...a) => fetch(...a),
+		/** Branch the docs live on; the default for every file operation. */
+		readonly branch = 'master',
 	) {
 		this.fullName = `${owner}/${name}`;
 		this.issue = new IssuesApi(http, this.fullName);
@@ -80,12 +82,12 @@ export class Repository {
 	}
 
 	// https://docs.github.com/en/rest/repos/contents#get-repository-content
-	async getSha(path: string, branch = 'master', o: Opts = {}): Promise<{ sha: string }> {
+	async getSha(path: string, branch = this.branch, o: Opts = {}): Promise<{ sha: string }> {
 		return this.http.get(this.contentsPath(path), { ...o, params: { ref: branch } });
 	}
 
 	/** File or directory listing; file content is decoded to text. */
-	async getContents(path: string, ref = 'master', o: Opts = {}): Promise<Content | Content[]> {
+	async getContents(path: string, ref = this.branch, o: Opts = {}): Promise<Content | Content[]> {
 		const result = await this.http.get<Content | Content[]>(this.contentsPath(path), { ...o, params: { ref } });
 		const decode = (c: Content) => (c.content ? { ...c, content: base64ToText(c.content) } : c);
 		return Array.isArray(result) ? result.map(decode) : decode(result);
@@ -95,7 +97,7 @@ export class Repository {
 	 * Public raw endpoint, no auth and no rate limit of the API. The sha is computed locally.
 	 * Note: raw.githubusercontent.com can lag a few minutes behind a commit.
 	 */
-	async getContentsRaw(path: string, ref = 'master', signal?: AbortSignal): Promise<Required<Pick<Content, 'content' | 'sha'>>> {
+	async getContentsRaw(path: string, ref = this.branch, signal?: AbortSignal): Promise<Required<Pick<Content, 'content' | 'sha'>>> {
 		const res = await this.fetchImpl(`https://raw.githubusercontent.com/${this.fullName}/${ref}/${encodePath(path)}`, { signal });
 		if (!res.ok) throw new HttpError(res.status, res.statusText, res.url, undefined, res.headers);
 		const content = await res.text();
@@ -108,11 +110,11 @@ export class Repository {
 	}
 
 	// https://docs.github.com/en/rest/repos/contents#create-or-update-file-contents
-	updateFile(path: string, contents: string, sha: string, message: string, branch = 'master', o: Opts = {}): Promise<FileResult> {
+	updateFile(path: string, contents: string, sha: string, message: string, branch = this.branch, o: Opts = {}): Promise<FileResult> {
 		return this.put(path, { message, committer: this.committer, content: textToBase64(contents), sha, branch }, o);
 	}
 
-	newFile(path: string, contents: string, message: string, branch = 'master', o: Opts = {}): Promise<FileResult> {
+	newFile(path: string, contents: string, message: string, branch = this.branch, o: Opts = {}): Promise<FileResult> {
 		return this.put(path, { message, committer: this.committer, content: textToBase64(contents), branch }, o);
 	}
 
@@ -122,7 +124,7 @@ export class Repository {
 	}
 
 	/** Create or update: looks up the current sha first, and creates when the file does not exist (404). */
-	async file(path: string, contents: string, message: string, branch = 'master', o: Opts = {}): Promise<FileResult> {
+	async file(path: string, contents: string, message: string, branch = this.branch, o: Opts = {}): Promise<FileResult> {
 		let sha: string;
 		try {
 			sha = (await this.getSha(path, branch, o)).sha;
@@ -133,7 +135,7 @@ export class Repository {
 		return this.updateFile(path, contents, sha, message, branch, o);
 	}
 
-	delFileViaSha(path: string, sha: string, branch = 'master', o: Opts = {}): Promise<FileResult> {
+	delFileViaSha(path: string, sha: string, branch = this.branch, o: Opts = {}): Promise<FileResult> {
 		this.requireSignedIn();
 		return this.http.delete(this.contentsPath(path), {
 			...o,
@@ -141,7 +143,7 @@ export class Repository {
 		});
 	}
 
-	async delFile(path: string, branch = 'master', o: Opts = {}): Promise<FileResult> {
+	async delFile(path: string, branch = this.branch, o: Opts = {}): Promise<FileResult> {
 		const { sha } = await this.getSha(path, branch, o);
 		return this.delFileViaSha(path, sha, branch, o);
 	}
@@ -200,7 +202,7 @@ export class Repository {
 	 * Renames a file in a single commit by rewriting the tree.
 	 * (The old version read `response.data`, which only existed with a different HTTP client, so it never worked.)
 	 */
-	async move(oldPath: string, newPath: string, branch = 'master', o: Opts = {}): Promise<unknown> {
+	async move(oldPath: string, newPath: string, branch = this.branch, o: Opts = {}): Promise<unknown> {
 		this.requireSignedIn();
 		const { object } = await this.getRef(`heads/${branch}`, o);
 		const base = await this.http.get<{ sha: string; tree: { path: string; type: string; sha?: string }[] }>(
