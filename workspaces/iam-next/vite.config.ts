@@ -9,6 +9,7 @@ export default defineConfig({
 		alias: {
 			'@std-ui/core': stdUi('core/src/index.ts'),
 			'@std-ui/ext': stdUi('ext/src/index.ts'),
+			'@std-ui/router/testing': stdUi('router/src/dev/index.ts'), // before the prefix below: first match wins
 			'@std-ui/router': stdUi('router/src/index.ts'),
 		},
 	},

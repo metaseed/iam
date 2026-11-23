@@ -137,7 +137,22 @@ Original scope:
 - Tests: port the `rx-store` specs that remain relevant.
 - **Exit:** the document store passes the ported tests against a mocked GitHub.
 
-### Phase 3: App shell and routing (1-2 weeks)
+### Phase 3: App shell and routing (1-2 weeks): IN PROGRESS
+Done (128 tests, `tsc` clean, build splits each page into its own chunk; verified in the browser):
+- [x] `src/routes.ts`: route table `/` -> `/home`, `home` (keepAlive), `doc`, `explore`, `message`, `search`, `me`, `gallery`, `*` not-found; every page lazy with a title. Placeholder pages for explore, message, search, me, not-found, home.
+- [x] Keep-alive (G6b) works in the real app: the home element is the same instance after visiting another page, its state survives and `connect()` runs again.
+- [x] Preloading (G6c), `lib/preload.ts`: `preloadOnIdle` (routes with `meta.preload`, currently `doc`), `prefetchOnIntent` (hover, focus or touch of a link loads that route's chunk; honours the base path, ignores external links), failures are logged and retried later, never thrown.
+- [x] `lib/leave.ts` `guardUnsaved(router, isDirty)` replaces `CanDeactivateGuard`: confirm dialog on in-app navigation, browser prompt on tab close, returns an unregister function. The editor (Phase 5) will use it.
+- [x] App shell (`app.ts`): sticky top bar (menu, title, theme cycle system/light/dark), `wa-drawer` side menu that closes on link click, routed outlet, reading progress, bottom nav.
+- Finding: `<std-router>` reads `routes` when it connects, before a template property binding can set them (the router started empty). The shell builds the router with `createRouter` and assigns it in `firstUpdated()`. Upstream option: let `std-router` pick up `routes` set shortly after connect, or document it.
+- `@std-ui/router/testing` alias added for tests (`createMemoryNavigation`).
+
+Remaining:
+- [ ] Float button in the shell (needs the page actions from Phases 5-6, e.g. "new doc").
+- [ ] Wire `createCaches()` into the app (a `caches` module with the config, started on boot) once the first real page needs it (home list, Phase 6; doc view, Phase 4).
+- [ ] Keyboard check of the drawer and a view-transition decision.
+
+Original scope:
 - `<std-router>` routes: `home`, `doc`, `explore`, `message`, `search`, `me`, not-found.
 - Route keep-alive for home (G6b, upstream), preloading (G6c).
 - `beforeLeave` replaces `CanDeactivateGuard`.

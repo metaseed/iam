@@ -16,6 +16,7 @@
 		"paths": {
 			"@std-ui/core": ["../../../std-ui/src/core/src/index.ts"],
 			"@std-ui/ext": ["../../../std-ui/src/ext/src/index.ts"],
+			"@std-ui/router/testing": ["../../../std-ui/src/router/src/dev/index.ts"],
 			"@std-ui/router": ["../../../std-ui/src/router/src/index.ts"]
 		}
 	},

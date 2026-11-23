@@ -1,6 +1,18 @@
 @import '@awesome.me/webawesome/dist/styles/webawesome.css';
 
 body { margin: 0; font-family: var(--wa-font-family-body); color: var(--wa-color-text-normal); background: var(--wa-color-surface-default); }
-iam-doc-view, iam-gallery { display: block; max-width: 52rem; margin: 0 auto; padding: 1rem; }
+
+iam-app main { display: block; padding-bottom: 4.5rem; }
+iam-app .top-bar {
+	position: sticky; top: 0; z-index: 8;
+	display: flex; align-items: center; gap: var(--wa-space-s);
+	padding: var(--wa-space-2xs) var(--wa-space-s);
+	background: var(--wa-color-surface-default); border-bottom: 1px solid var(--wa-color-surface-border);
+}
+iam-app .top-bar .title { flex: 1; font-weight: var(--wa-font-weight-bold); color: inherit; text-decoration: none; }
+iam-app .drawer-nav { display: flex; flex-direction: column; gap: var(--wa-space-s); }
+iam-app .drawer-nav a { color: inherit; text-decoration: none; padding: var(--wa-space-xs) 0; }
+
+iam-home, iam-explore, iam-message, iam-search, iam-me, iam-not-found, iam-doc-view, iam-gallery { display: block; max-width: 52rem; margin: 0 auto; padding: 1rem; }
 iam-gallery section { margin-block: var(--wa-space-l); display: flex; flex-wrap: wrap; align-items: center; gap: var(--wa-space-s); }
 iam-gallery section > h2 { flex-basis: 100%; margin: 0; }
