@@ -237,7 +237,7 @@ Estimated total remaining: about 14-17 weeks for one developer. Adopting Web Awe
 
 ## 8. Next steps
 
-1. Continue Phase 4 (see "Remaining" there): toc parity next, then the markdown-it plugins. Check the new version and sub page widgets in the browser.
+1. Continue Phase 4 (see "Remaining" there): the markdown-it plugins next. Check the version, sub page and toc widgets in the browser.
 2. Finish the remaining Phase 1 items above (form input wrapper, remaining core services, a11y pass) when a page needs them.
 3. Run `npm run size` in std-ui to get the official size numbers after the `render()` change.
 4. Working agreement: do not commit or push without being asked; live tests never modify or delete existing docs (writes go to `iam-test`).
