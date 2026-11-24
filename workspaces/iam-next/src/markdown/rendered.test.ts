@@ -29,7 +29,7 @@ describe('renderedDoc', () => {
 		await tick();
 		expect(render).toHaveBeenCalledTimes(2);
 		expect(seen).toHaveLength(2);
-		expect(rendered()!.toc.map((i) => i.id)).toEqual(['one', 'b']);
+		expect(rendered()!.html).toContain('id="b"');
 		stop();
 	});
 	it('is undefined while the doc is not loaded', () => {

@@ -41,9 +41,8 @@ export function slugify(text: string): string {
 
 const md = new MarkdownIt({ html: true, linkify: true, typographer: true });
 
-// Gives every heading a unique `id` (for toc links and deep links) and collects them in `env.toc`.
+// Gives every heading a unique `id`, so deep links work from the first render.
 md.core.ruler.push('heading_ids', (state) => {
-	const toc: TocItem[] = [];
 	const used = new Map<string, number>();
 	state.tokens.forEach((token, i) => {
 		if (token.type !== 'heading_open') return;
@@ -53,14 +52,10 @@ md.core.ruler.push('heading_ids', (state) => {
 		used.set(base, n + 1);
 		const id = n === 0 ? base : `${base}-${n}`;
 		token.attrSet('id', id);
-		toc.push({ level: Number(token.tag.slice(1)), id, text });
 	});
-	(state.env as { toc?: TocItem[] }).toc = toc;
 });
 
-export function renderMarkdown(source: string): { html: string; meta: HeadMeta; toc: TocItem[] } {
+export function renderMarkdown(source: string): { html: string; meta: HeadMeta } {
 	const { meta, body } = splitHeadMeta(source);
-	const env: { toc?: TocItem[] } = {};
-	const html = md.render(body, env);
-	return { html, meta, toc: env.toc ?? [] };
+	return { html: md.render(body), meta };
 }

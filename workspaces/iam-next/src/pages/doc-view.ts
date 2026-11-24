@@ -4,7 +4,7 @@ import '../ui/components.ts';
 import { state, tag, t, unsafeHtml, UIElement } from '@std-ui/core';
 import { searchParam } from '@std-ui/router';
 import { getCaches } from '../caches.ts';
-import { decorate } from '../markdown/decorate.ts';
+import { createDecorators, decorate } from '../markdown/decorate.ts';
 import { renderedDoc } from '../markdown/rendered.ts';
 import { resource, type Resource } from '../lib/resource.ts';
 
@@ -36,6 +36,7 @@ export class DocView extends UIElement {
 	/** The rendered doc the widgets were inserted for, and the function that removes them again. */
 	#decoratedFor?: object;
 	#undecorate?: () => void;
+	readonly #decorators = createDecorators();
 
 	/** Runs after each render: when the doc changed, insert the widgets into the new html (once, not per render). */
 	protected override updated(): void {
@@ -44,7 +45,7 @@ export class DocView extends UIElement {
 		if (!value || !article || value === this.#decoratedFor) return;
 		this.#undecorate?.();
 		this.#decoratedFor = value;
-		this.#undecorate = decorate(article, value);
+		this.#undecorate = decorate(article, value, this.#decorators);
 	}
 
 	protected override disconnect(): void {

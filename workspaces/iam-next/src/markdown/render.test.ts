@@ -30,18 +30,10 @@ describe('renderMarkdown', () => {
 	});
 });
 
-describe('headings and toc', () => {
-	it('gives headings unique ids and lists them', () => {
-		const { html, toc } = renderMarkdown('# Doc\n\n## Setup\n\n### Setup\n\n## 中文 标题\n\n## `code` here');
-		expect(toc).toEqual([
-			{ level: 1, id: 'doc', text: 'Doc' },
-			{ level: 2, id: 'setup', text: 'Setup' },
-			{ level: 3, id: 'setup-1', text: 'Setup' },
-			{ level: 2, id: '中文-标题', text: '中文 标题' },
-			{ level: 2, id: 'code-here', text: 'code here' },
-		]);
-		expect(html).toContain('<h2 id="setup">Setup</h2>');
-		expect(html).toContain('<h3 id="setup-1">');
+describe('heading ids', () => {
+	it('gives headings unique ids', () => {
+		const { html } = renderMarkdown('# Doc\n\n## Setup\n\n### Setup\n\n## 中文 标题\n\n## `code` here');
+		for (const id of ['doc', 'setup', 'setup-1', '中文-标题', 'code-here']) expect(html).toContain(`id="${id}"`);
 	});
 	it('slugify falls back for symbol-only headings', () => {
 		expect(slugify('  A  b! ')).toBe('a-b');
