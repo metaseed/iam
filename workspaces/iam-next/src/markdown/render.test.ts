@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { renderMarkdown, splitHeadMeta } from './render.ts';
+import { renderMarkdown, slugify, splitHeadMeta } from './render.ts';
 
 describe('splitHeadMeta', () => {
 	it('parses the leading yaml block', () => {
@@ -25,7 +25,26 @@ describe('splitHeadMeta', () => {
 describe('renderMarkdown', () => {
 	it('renders html and exposes meta', () => {
 		const { html, meta } = renderMarkdown('---\ntag: [t]\n---\n# Title\n\ntext');
-		expect(html).toContain('<h1>Title</h1>');
+		expect(html).toContain('<h1 id="title">Title</h1>');
 		expect(meta.tag).toEqual(['t']);
+	});
+});
+
+describe('headings and toc', () => {
+	it('gives headings unique ids and lists them', () => {
+		const { html, toc } = renderMarkdown('# Doc\n\n## Setup\n\n### Setup\n\n## 中文 标题\n\n## `code` here');
+		expect(toc).toEqual([
+			{ level: 1, id: 'doc', text: 'Doc' },
+			{ level: 2, id: 'setup', text: 'Setup' },
+			{ level: 3, id: 'setup-1', text: 'Setup' },
+			{ level: 2, id: '中文-标题', text: '中文 标题' },
+			{ level: 2, id: 'code-here', text: 'code here' },
+		]);
+		expect(html).toContain('<h2 id="setup">Setup</h2>');
+		expect(html).toContain('<h3 id="setup-1">');
+	});
+	it('slugify falls back for symbol-only headings', () => {
+		expect(slugify('  A  b! ')).toBe('a-b');
+		expect(slugify('!!!')).toBe('section');
 	});
 });

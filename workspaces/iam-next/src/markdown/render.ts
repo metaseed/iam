@@ -27,9 +27,40 @@ export function splitHeadMeta(source: string): { meta: HeadMeta; body: string } 
 	return { meta, body: (m[1] ?? '') + source.slice(m[0].length) };
 }
 
+export interface TocItem {
+	/** 1-6 */
+	level: number;
+	id: string;
+	text: string;
+}
+
+/** Heading text to an id: lower case, spaces to `-`, letters (any script), digits, `_` and `-` kept. */
+export function slugify(text: string): string {
+	return text.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\p{L}\p{N}_-]/gu, '') || 'section';
+}
+
 const md = new MarkdownIt({ html: true, linkify: true, typographer: true });
 
-export function renderMarkdown(source: string): { html: string; meta: HeadMeta } {
+// Gives every heading a unique `id` (for toc links and deep links) and collects them in `env.toc`.
+md.core.ruler.push('heading_ids', (state) => {
+	const toc: TocItem[] = [];
+	const used = new Map<string, number>();
+	state.tokens.forEach((token, i) => {
+		if (token.type !== 'heading_open') return;
+		const text = (state.tokens[i + 1]?.children ?? []).map((c) => (c.type === 'text' || c.type === 'code_inline' ? c.content : '')).join('');
+		const base = slugify(text);
+		const n = used.get(base) ?? 0;
+		used.set(base, n + 1);
+		const id = n === 0 ? base : `${base}-${n}`;
+		token.attrSet('id', id);
+		toc.push({ level: Number(token.tag.slice(1)), id, text });
+	});
+	(state.env as { toc?: TocItem[] }).toc = toc;
+});
+
+export function renderMarkdown(source: string): { html: string; meta: HeadMeta; toc: TocItem[] } {
 	const { meta, body } = splitHeadMeta(source);
-	return { html: md.render(body), meta };
+	const env: { toc?: TocItem[] } = {};
+	const html = md.render(body, env);
+	return { html, meta, toc: env.toc ?? [] };
 }

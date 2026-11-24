@@ -1,6 +1,7 @@
 // Doc view at `/doc?id=<n>&f=md`: reads through the caches (store -> IndexedDB -> GitHub), so a doc seen before shows
 // at once and is refreshed when GitHub has a newer version.
 import '../ui/components.ts';
+import '../ui/toc.ts';
 import { computed, state, tag, t, unsafeHtml, UIElement } from '@std-ui/core';
 import { searchParam } from '@std-ui/router';
 import { getCaches } from '../caches.ts';
@@ -48,8 +49,10 @@ export class DocView extends UIElement {
 		if (load.error() && !value) return t`<wa-callout variant="danger">${String(load.error())}</wa-callout>`;
 		if (!value) return t`<wa-spinner style="font-size: 2rem"></wa-spinner>`;
 		const subPages = value.meta.subPage ?? [];
+		const tocItems = value.toc.filter((i) => i.level > 1);
 		return t`
 			<div>${(value.meta.tag ?? []).map((name) => t`<wa-badge pill>${name}</wa-badge> `)}</div>
+			${tocItems.length ? t`<iam-toc .items=${tocItems}></iam-toc>` : null}
 			<article>${unsafeHtml(value.html)}</article>
 			${subPages.length ? t`<nav><h2>Sub pages</h2><ul>${subPages.map((id) => t`<li><a href=${`/doc?id=${id}&f=${this.format ?? 'md'}`}>#${id}</a></li>`)}</ul></nav>` : null}`;
 	}
