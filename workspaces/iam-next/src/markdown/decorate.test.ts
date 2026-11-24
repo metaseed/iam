@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { collectHeadings, createDecorators, decorate } from './decorate.ts';
+import { collectHeadings, createDecorators, decorate, type DecorateContext } from './decorate.ts';
 import { renderMarkdown } from './render.ts';
 
 function article(html: string) {
@@ -7,8 +7,15 @@ function article(html: string) {
 	el.innerHTML = html;
 	return el;
 }
-const render = (src: string) => article(renderMarkdown(src).html);
-const items = (el: Element) => (el.querySelector('iam-toc') as unknown as { items: { id: string }[] }).items.map((i) => i.id);
+
+/** A doc as the viewer gets it: head meta block after the title, as in real docs. */
+const TOC = 'enable: [toc]';
+function doc(title: string, body: string, head = TOC) {
+	const { html, meta } = renderMarkdown(`${title}\n---\n${head}\n---\n${body}`);
+	return { el: article(html), ctx: { meta } as DecorateContext };
+}
+const widgets = (el: Element) => [...el.children].map((c) => c.tagName.toLowerCase());
+const tocItems = (el: Element) => (el.querySelector('iam-toc') as unknown as { items: { id: string }[] }).items.map((i) => i.id);
 
 describe('collectHeadings', () => {
 	it('reads headings from the dom, raw html ones included, and skips no-toc', () => {
@@ -25,42 +32,65 @@ describe('collectHeadings', () => {
 });
 
 describe('decorate: toc', () => {
-	it('inserts iam-toc right after the h1 without touching the rest', () => {
-		const el = render('# T\n\n## A\n\n## B');
+	it('is rendered right after the title for docs with enable: [toc], without touching the rest', () => {
+		const { el, ctx } = doc('# T', '## A\n\n## B');
 		const h2 = el.querySelector('h2');
-		decorate(el, { meta: {} }, createDecorators());
-		expect(el.querySelector('iam-toc')!.previousElementSibling).toBe(el.querySelector('h1'));
+		decorate(el, ctx, createDecorators());
+		expect(widgets(el)).toEqual(['h1', 'iam-toc', 'h2', 'h2']);
 		expect(el.querySelector('h2')).toBe(h2); // nothing was re-rendered
-		expect(items(el)).toEqual(['a', 'b']);
+		expect(tocItems(el)).toEqual(['a', 'b']);
 	});
-	it('cleanup removes it again', () => {
-		const el = render('# T\n\n## A');
-		decorate(el, { meta: {} }, createDecorators())();
+	it('is not added without enable: [toc] (the old app has no toc by default)', () => {
+		const { el, ctx } = doc('# T', '## A\n\n## B', 'author: a');
+		decorate(el, ctx, createDecorators());
 		expect(el.querySelector('iam-toc')).toBeNull();
 	});
+	it('skips docs without sub headings', () => {
+		const { el, ctx } = doc('# T', 'text');
+		decorate(el, ctx, createDecorators());
+		expect(el.querySelector('iam-toc')).toBeNull();
+	});
+	it('works without a title: widgets go to the top', () => {
+		const { el, ctx } = doc('', '## A\n\n## B');
+		decorate(el, ctx, createDecorators());
+		expect(widgets(el)[0]).toBe('iam-toc');
+	});
 	it('leaves the article exactly as it was after cleanup (no wrapper, no marker left)', () => {
-		const el = render('# T\n\n## A\n\n## B');
+		const { el, ctx } = doc('# T', '## A\n\n## B', 'enable: [toc]\ntag: [x]');
 		const before = el.innerHTML;
-		const undo = decorate(el, { meta: {} }, createDecorators());
+		const undo = decorate(el, ctx, createDecorators());
 		expect(el.innerHTML).not.toBe(before);
 		undo();
 		expect(el.innerHTML).toBe(before);
 	});
 	it('can be applied again for the next doc', () => {
 		const decorators = createDecorators();
-		decorate(render('# T\n\n## A'), { meta: {} }, decorators)();
-		const second = render('# U\n\n## X\n\n## Y');
-		decorate(second, { meta: {} }, decorators);
-		expect(items(second)).toEqual(['x', 'y']);
+		const first = doc('# T', '## A');
+		decorate(first.el, first.ctx, decorators)();
+		const second = doc('# U', '## X\n\n## Y');
+		decorate(second.el, second.ctx, decorators);
+		expect(tocItems(second.el)).toEqual(['x', 'y']);
 	});
-	it('skips docs without sub headings, without h1, or with a no-toc h1', () => {
-		for (const el of [render('# T\n\ntext'), render('## A\n\n## B')]) {
-			decorate(el, { meta: {} }, createDecorators());
-			expect(el.querySelector('iam-toc')).toBeNull();
+});
+
+describe('decorate: tags', () => {
+	it('renders the tags after the toc, both right after the title', () => {
+		const { el, ctx } = doc('# T', '## A', 'enable: [toc]\ntag: [one, two]');
+		decorate(el, ctx, createDecorators());
+		expect(widgets(el)).toEqual(['h1', 'iam-toc', 'iam-tags', 'h2']);
+		expect((el.querySelector('iam-tags') as unknown as { names: string[] }).names).toEqual(['one', 'two']);
+	});
+	it('passes the label lookup to the widget', () => {
+		const { el, ctx } = doc('# T', '## A', 'tag: [one]');
+		const info = { name: 'one', color: 'ff0000' };
+		decorate(el, { ...ctx, tag: (n) => (n === 'one' ? info : undefined) }, createDecorators());
+		expect((el.querySelector('iam-tags') as unknown as { lookup: (n: string) => unknown }).lookup('one')).toBe(info);
+	});
+	it('is not added for an empty tag list or none', () => {
+		for (const head of ['tag: []', 'author: a']) {
+			const { el, ctx } = doc('# T', '## A', head);
+			decorate(el, ctx, createDecorators());
+			expect(el.querySelector('iam-tags')).toBeNull();
 		}
-		const el = render('# T\n\n## A');
-		el.querySelector('h1')!.className = 'no-toc';
-		decorate(el, { meta: {} }, createDecorators());
-		expect(el.querySelector('iam-toc')).toBeNull();
 	});
 });

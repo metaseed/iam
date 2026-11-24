@@ -1,6 +1,6 @@
 // Replaces `i-toc`: a table of contents for the headings of the rendered doc. The heading that is being read is
 // highlighted (found with an IntersectionObserver on the heading elements, looked up by id in `root`).
-import { css, effect, state, t, tag, UIElement } from '@std-ui/core';
+import { attribute, css, effect, state, t, tag, UIElement } from '@std-ui/core';
 import type { TocItem } from '../markdown/render.ts';
 
 /** The heading being read: the last one at or above the top of the viewport, else the first. */
@@ -24,14 +24,8 @@ export class Toc extends UIElement {
 		a:hover { text-decoration: underline; }
 	`;
 
-	/** Items to show; set by the owner (the h1 is usually left out). */
-	get items(): readonly TocItem[] {
-		return this.#items();
-	}
-	set items(value: readonly TocItem[]) {
-		this.#items.set(value);
-	}
-	readonly #items = state<readonly TocItem[]>([]);
+	/** Items to show (the h1 is usually left out); set with a `.items=` binding. */
+	@attribute() readonly items = state<TocItem[]>([]);
 	/** Where the headings live; default the document. */
 	root: ParentNode = document;
 	readonly #active = state<string | undefined>(undefined);
@@ -40,13 +34,13 @@ export class Toc extends UIElement {
 	protected override connect(): void {
 		const tops = new Map<string, number>();
 		const update = (): void => {
-			const ids = this.#items.peek().map((i) => i.id);
+			const ids = this.items.peek().map((i) => i.id);
 			// the last sections can never reach the top of the viewport: at the page end the last heading wins
 			const atEnd = window.scrollY > 0 && window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
 			this.#active.set(atEnd ? ids.at(-1) : activeHeading(tops, ids));
 		};
 		const measure = (): void => {
-			for (const item of this.#items.peek()) {
+			for (const item of this.items.peek()) {
 				const el = this.root.querySelector(`#${CSS.escape(item.id)}`);
 				if (el) tops.set(item.id, el.getBoundingClientRect().top);
 			}
@@ -56,7 +50,7 @@ export class Toc extends UIElement {
 		window.addEventListener('resize', measure);
 		// the owner sets the items after this element connects, and the headings are in the document by then
 		const stopEffect = effect(() => {
-			this.#items();
+			this.items();
 			queueMicrotask(measure);
 		});
 		this.#stop = () => {
@@ -71,7 +65,7 @@ export class Toc extends UIElement {
 	}
 
 	protected override template() {
-		const items = this.#items();
+		const items = this.items();
 		if (!items.length) return;
 		const active = this.#active();
 		return t`<nav aria-label="Table of contents">${items.map(

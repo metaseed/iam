@@ -126,8 +126,8 @@ Remaining:
   - `github/storage.ts`: `openRepository` (looks the repo up, creates it on 404 when signed in) and `lazyRepository` (memoized, retried after failure). `GithubCache` now accepts a repository or a function that opens it, so the app starts offline from IndexedDB.
   - `cache/index.ts`: `createCaches({ github })` builds store -> db -> GitHub, feeds the tag store and id range, and returns `{ store, storeCache, dbCache, githubCache, dbSaver, start(), dispose() }`.
   - `StoreCache.readContent` re-flags `isDbDirty` after a reload when the db still holds unsynced edits (old `updateDbDirtyStatus`, minus its 1 s timer hack).
-- [ ] Still open in Phase 2: sign-in UI (Phase 6 `me` page) and a manual run of reads and writes against a scratch repo (nothing has touched the real API yet). (`database-cache`, `github-cache`, `store-cache`) and the `rx-store` document store.
-- [ ] Sign-in UI (the `me` page, Phase 6) and a manual check of writes against a scratch repo.
+- [x] Checked against the real GitHub API with the live tests: reads against `metasong/iam-data` (first page of metas, one doc's content, search, an older page), and a write round trip in the scratch repo `metasong/iam-test` (create, read, edit, store -> db -> push, force save, delete) that only touches its own doc. `Repository` has a configurable `branch` (default `master`; `RepositoryConfig.branch`).
+- [ ] Still open in Phase 2: sign-in UI (Phase 6 `me` page; the live tests sign in with the token from `.env.local`), a settings UI for user, repo and branch (the values already flow through `getCaches()` / `RepositoryConfig`), and a real-API check of `move`.
 
 Original scope:
 - Extend `src/github/client.ts` to authenticated calls (contents, issues, commits, search) with interceptor-style auth, retry/backoff (port `backoff`, `error-retry`, `timeout-monitor`) and abort. This is a real port of `net-storage/github`, not a copy.
@@ -160,7 +160,33 @@ Original scope:
 - App shell: top bar, bottom nav, float button, sidenav.
 - **Exit:** navigation works across all routes with placeholders in place.
 
-### Phase 4: Viewer (3 weeks)
+### Phase 4: Viewer (3 weeks): IN PROGRESS
+Done (154 tests, `tsc` clean; checked in the browser on real docs from `iam-data`):
+- [x] Doc view (`pages/doc-view.ts`) reads through the caches (`src/caches.ts`) and renders once with `unsafeHtml`. `markdown/rendered.ts` `renderedDoc(content)` skips unchanged text (the store swaps its whole map on any change, so a plain computed on `contents.get(id)` would re-render for other docs' changes; the compare inside the computed stops that).
+- [x] Head meta (`splitHeadMeta`) accepts blank lines before the title line (doc 312 starts with one; it showed the yaml as text before).
+- [x] Heading ids: a markdown-it core rule gives every heading a unique, deep-link-safe `id` at render time (`slugify`, any script; duplicates get `-1`, `-2`).
+- [x] Widgets are rendered *into* the rendered doc by `markdown/decorate.ts`, not by splitting the html (splitting re-rendered the article):
+  - A decorator is `(article, { meta, tag }, before) => cleanup`. `decorate()` finds the insertion point once (right after the title `h1`, else the top) and every decorator renders before that same node, so widgets keep decorator order. The doc view re-decorates only when the rendered doc is a new object, and cleans up first (the nodes are not tracked by `unsafeHtml`).
+  - `tocDecorator`: `<iam-toc>`, only for docs with `enable: [toc]`. Headings are read from the live DOM (`collectHeadings`, raw html headings count, `no-toc`/`notoc` skipped, `h1`-`h6`, ids added when missing). `ui/toc.ts` highlights the heading being read (last heading at or above the viewport top; the last one at the page end).
+  - `tagsDecorator`: `<iam-tags>` (`ui/tags.ts`), chips from `meta.tag` colored from the store's labels (late-loading labels update the chips; the color is validated as 6 hex digits before it reaches a style), each a link to `/search?tag=<name>`. View only.
+  - Note: the store rewrites the tag line from the issue labels (`withTags`), so the labels win over the file's own `tag:` line.
+- [x] std-ui change for this (committed upstream, `metasong/std-ui` `d6c6396`): `render(result, container, { before })` renders at a position next to existing children, returns a `Rendered` handle (`update`, `dispose`); without `before` it behaves as before (takes the container over) and also returns the handle. One shared `Slot` class backs both modes; `update()` after `dispose()` throws (short message in release builds). Cost measured with esbuild on the whole core index: about +1.1 kB minified, +0.3 kB gzip; run `npm run size` for the official numbers.
+- Findings about the old viewer (so the port matches it):
+  - The head-meta markdown-it plugin (`meta.ts`) emitted the widgets, in this order: `i-version`, `i-toc` (only with `enable: [toc]`), `i-tag`, `i-subpage` (even when the list is empty, so pages can be added). `prepareTitleAndToc` (insert `<i-toc>` after the `h1`) is dead code: `config_addTocByDefault` is `false`.
+  - The old `i-toc` has more modes than the port: embedded ("Contents" heading, collapsed after 4 entries), a floating panel with "TOC" and to-top buttons that show on scroll up, small-screen behaviour, and a scroll offset for the sticky top bar when jumping to a heading.
+  - Old widgets were custom elements registered lazily (`ElementsLoader` loads the module when the tag is found in the doc). The port imports its widgets with the decorator module instead; a lazy `import()` per decorator is the option if the viewer bundle needs to shrink.
+  - Old updates were debounced (content 500 ms, toc 2 s) because the editor preview re-renders on every keystroke. The viewer needs no debounce (it renders when the sha changes). In Phase 5 put one debounce on `source -> render -> decorate` in the preview, make heavy widgets lazy (IntersectionObserver, keyed by block hash) and cancel stale work with an `AbortSignal`.
+
+Remaining:
+- [ ] `<iam-version>` (version, create/update date; the history list needs commits from GitHub) and `<iam-subpage>` (list with titles from the cache; empty list still shown for editing later). Add them to `createDecorators()` in the order version, toc, tags, subpage.
+- [ ] Toc parity: "Contents" heading and collapse after 4 entries, floating panel + to-top button on scroll up, small screens, offset for the sticky top bar.
+- [ ] Tags: the "open tags cloud" link, then editing (Phase 5).
+- [ ] The ~20 markdown-it plugins (the old `markdown-it-plugins` folder), code blocks (`i-code`, Prism, code-example), Mermaid, KaTeX, lazy images (lozad), code-fence script run with the same isolation.
+- [ ] Doc view states: save pending (`isDbDirty`), deleted doc, offline; scroll position restore.
+- [ ] Sanitizing decision for raw HTML in docs.
+- [ ] Comparison against the Angular viewer on a corpus of real docs.
+
+Original scope:
 - Move the markdown-it pipeline into a `UIElement` viewer; port the ~20 plugins (`incremental-dom` rendering is replaced by setting HTML through `unsafeHtml` or a morphing step).
 - Port the viewer widgets: toc, tags, version/history, subpage (with titles), code-example/code, reading-position indicator.
 - Mermaid, KaTeX, Prism and code-fence script run, with the same isolation.
@@ -210,6 +236,7 @@ Estimated total remaining: about 14-17 weeks for one developer. Adopting Web Awe
 
 ## 8. Next steps
 
-1. Finish the remaining Phase 1 items above (form input wrapper, remaining core services, icon assets, a11y pass).
-2. Run the yarn install from the repo root once to confirm the updated workspace list.
-3. Commit the std-ui router change (it is in the sibling `M:\Workspace\std-ui` repo, uncommitted).
+1. Continue Phase 4 (see "Remaining" there): `iam-version` and `iam-subpage` decorators first, then toc parity, then the markdown-it plugins.
+2. Finish the remaining Phase 1 items above (form input wrapper, remaining core services, a11y pass) when a page needs them.
+3. Run `npm run size` in std-ui to get the official size numbers after the `render()` change.
+4. Working agreement: do not commit or push without being asked; live tests never modify or delete existing docs (writes go to `iam-test`).

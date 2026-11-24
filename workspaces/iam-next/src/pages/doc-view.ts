@@ -45,7 +45,8 @@ export class DocView extends UIElement {
 		if (!value || !article || value === this.#decoratedFor) return;
 		this.#undecorate?.();
 		this.#decoratedFor = value;
-		this.#undecorate = decorate(article, value, this.#decorators);
+		const tag = (name: string) => this.#store()?.tags.get(name); // read in the widget's template: reactive
+		this.#undecorate = decorate(article, { meta: value.meta, tag }, this.#decorators);
 	}
 
 	protected override disconnect(): void {
@@ -63,7 +64,6 @@ export class DocView extends UIElement {
 		if (!value) return t`<wa-spinner style="font-size: 2rem"></wa-spinner>`;
 		const subPages = value.meta.subPage ?? [];
 		return t`
-			<div>${(value.meta.tag ?? []).map((name) => t`<wa-badge pill>${name}</wa-badge> `)}</div>
 			<article>${unsafeHtml(value.html)}</article>
 			${subPages.length ? t`<nav><h2>Sub pages</h2><ul>${subPages.map((id) => t`<li><a href=${`/doc?id=${id}&f=${this.format ?? 'md'}`}>#${id}</a></li>`)}</ul></nav>` : null}`;
 	}
