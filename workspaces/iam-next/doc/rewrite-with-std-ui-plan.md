@@ -180,7 +180,7 @@ Done (154 tests, `tsc` clean; checked in the browser on real docs from `iam-data
 Remaining:
 - [x] `<iam-version>` (`ui/version.ts`: create/update dates from the store's meta) and `<iam-subpage>` (`ui/subpage.ts`: links titled from the store, `#id` until the title is known). Both are decorators in the old order version, toc, tags, subpage (`DecorateContext` gained `id`, `docMeta`, `format`); the inline sub page list in `doc-view.ts` is gone. 157 tests, `tsc` clean. Not browser-checked. Note: `updated` is a UIElement lifecycle hook, so the widget's props are `createdAt`/`updatedAt`.
 - [ ] Still open for these two: the commit history list in version (needs `listCommits`), and an empty sub page list shown for editing (Phase 5).
-- [ ] Toc parity: "Contents" heading and collapse after 4 entries, floating panel + to-top button on scroll up, small screens, offset for the sticky top bar.
+- [x] Toc parity (`ui/toc.ts`): embedded "Contents" heading, collapsed to the first 4 entries with an expand button, floating "▲" and "TOC" buttons that show while scrolling up (TOC opens a panel with all headings, closed by an outside click), jumps leave room for the sticky top bar (measured, not the old fixed 80 px). 160 tests, `tsc` clean; not browser-checked. The old small-screen auto-hide is not ported (the panel is closed until opened).
 - [ ] Tags: the "open tags cloud" link, then editing (Phase 5).
 - [ ] The ~20 markdown-it plugins (the old `markdown-it-plugins` folder), code blocks (`i-code`, Prism, code-example), Mermaid, KaTeX, lazy images (lozad), code-fence script run with the same isolation.
 - [ ] Doc view states: save pending (`isDbDirty`), deleted doc, offline; scroll position restore.
