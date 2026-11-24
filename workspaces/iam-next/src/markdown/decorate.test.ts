@@ -94,3 +94,31 @@ describe('decorate: tags', () => {
 		}
 	});
 });
+
+describe('decorate: version and sub pages', () => {
+	it('renders version, toc, tags, subpage in the old order', () => {
+		const { el, ctx } = doc('# T', '## A', 'enable: [toc]\ntag: [x]\nsubPage: [5]');
+		const day = new Date(2020, 0, 1);
+		decorate(el, { ...ctx, id: 1, docMeta: (id) => ({ id, title: 'Five', createDate: day, updateDate: day }) as never }, createDecorators());
+		expect(widgets(el)).toEqual(['h1', 'iam-version', 'iam-toc', 'iam-tags', 'iam-subpage', 'h2']);
+		const sub = el.querySelector('iam-subpage') as unknown as { ids: number[]; titleOf: (id: number) => string };
+		expect(sub.ids).toEqual([5]);
+		expect(sub.titleOf(5)).toBe('Five');
+	});
+	it('has no subpage widget without sub pages', () => {
+		const { el, ctx } = doc('# T', '## A', 'author: a');
+		decorate(el, ctx, createDecorators());
+		expect(el.querySelector('iam-subpage')).toBeNull();
+	});
+});
+
+describe('decorate: sub page loading', () => {
+	it('asks for the metas of the sub pages and links with their own format', () => {
+		const { el, ctx } = doc('# T', '## A', 'subPage: [5, 6]');
+		const asked: number[][] = [];
+		decorate(el, { ...ctx, loadMetas: (ids) => asked.push([...ids]), docMeta: (id) => (id === 5 ? ({ id, title: 'x', format: 'html' } as never) : undefined) }, createDecorators());
+		expect(asked).toEqual([[5, 6]]);
+		const sub = el.querySelector('iam-subpage') as unknown as { formatOf: (id: number) => string | undefined };
+		expect(sub.formatOf(5)).toBe('html');
+	});
+});

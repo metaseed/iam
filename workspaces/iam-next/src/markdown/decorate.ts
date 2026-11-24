@@ -4,8 +4,11 @@
 // A decorator returns a cleanup that undoes its change. Widgets are rendered with `render(..., { before })`, next to the
 // doc's own nodes (which `unsafeHtml` owns), so nothing is wrapped or cleared.
 import { render, t } from '@std-ui/core';
+import '../ui/subpage.ts';
 import '../ui/tags.ts';
 import '../ui/toc.ts';
+import '../ui/version.ts';
+import type { DocMeta } from '../cache/model.ts';
 import type { Tag } from '../store/doc-store.ts';
 import { slugify, type HeadMeta, type TocItem } from './render.ts';
 
@@ -13,6 +16,12 @@ export interface DecorateContext {
 	meta: HeadMeta;
 	/** Finds the label of a tag (color, description). */
 	tag?: (name: string) => Tag | undefined;
+	/** Id of the doc and a lookup of any doc's meta (dates, titles), for the version and sub page widgets. */
+	id?: number;
+	docMeta?: (id: number) => DocMeta | undefined;
+	format?: string;
+	/** Loads the metas of docs the store may not have yet (sub pages); errors are the caller's to log. */
+	loadMetas?: (ids: readonly number[]) => void;
 }
 
 /** `before` is where widgets go: all decorators render before the same node, so they end up in decorator order. */
@@ -56,7 +65,24 @@ export const tagsDecorator: Decorator = (article, { meta, tag }, before) => {
 	return () => tags.dispose();
 };
 
-export const createDecorators = (): Decorator[] => [tocDecorator, tagsDecorator];
+/** Create and update date, from the store's meta (read in the widget, so it updates when the meta changes). */
+export const versionDecorator: Decorator = (article, { id, docMeta }, before) => {
+	if (id === undefined || !docMeta) return;
+	const w = render(t`<iam-version .createdAt=${() => docMeta(id)?.createDate} .updatedAt=${() => docMeta(id)?.updateDate}></iam-version>`, article, { before });
+	return () => w.dispose();
+};
+
+/** Links to the sub pages; shown even when the list is empty in the old app, here only when there are some (editing: Phase 5). */
+export const subPageDecorator: Decorator = (article, { meta, docMeta, loadMetas }, before) => {
+	if (!meta.subPage?.length) return;
+	const titleOf = (id: number) => docMeta?.(id)?.title;
+	const formatOf = (id: number) => docMeta?.(id)?.format;
+	loadMetas?.(meta.subPage);
+	const w = render(t`<iam-subpage .ids=${meta.subPage} .formatOf=${formatOf} .titleOf=${titleOf}></iam-subpage>`, article, { before });
+	return () => w.dispose();
+};
+
+export const createDecorators = (): Decorator[] => [versionDecorator, tocDecorator, tagsDecorator, subPageDecorator];
 
 /** Runs the decorators on a rendered article; the returned function undoes all of them. */
 export function decorate(article: HTMLElement, doc: DecorateContext, decorators: readonly Decorator[]): () => void {

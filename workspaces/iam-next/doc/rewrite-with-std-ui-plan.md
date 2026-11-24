@@ -178,7 +178,8 @@ Done (154 tests, `tsc` clean; checked in the browser on real docs from `iam-data
   - Old updates were debounced (content 500 ms, toc 2 s) because the editor preview re-renders on every keystroke. The viewer needs no debounce (it renders when the sha changes). In Phase 5 put one debounce on `source -> render -> decorate` in the preview, make heavy widgets lazy (IntersectionObserver, keyed by block hash) and cancel stale work with an `AbortSignal`.
 
 Remaining:
-- [ ] `<iam-version>` (version, create/update date; the history list needs commits from GitHub) and `<iam-subpage>` (list with titles from the cache; empty list still shown for editing later). Add them to `createDecorators()` in the order version, toc, tags, subpage.
+- [x] `<iam-version>` (`ui/version.ts`: create/update dates from the store's meta) and `<iam-subpage>` (`ui/subpage.ts`: links titled from the store, `#id` until the title is known). Both are decorators in the old order version, toc, tags, subpage (`DecorateContext` gained `id`, `docMeta`, `format`); the inline sub page list in `doc-view.ts` is gone. 157 tests, `tsc` clean. Not browser-checked. Note: `updated` is a UIElement lifecycle hook, so the widget's props are `createdAt`/`updatedAt`.
+- [ ] Still open for these two: the commit history list in version (needs `listCommits`), and an empty sub page list shown for editing (Phase 5).
 - [ ] Toc parity: "Contents" heading and collapse after 4 entries, floating panel + to-top button on scroll up, small screens, offset for the sticky top bar.
 - [ ] Tags: the "open tags cloud" link, then editing (Phase 5).
 - [ ] The ~20 markdown-it plugins (the old `markdown-it-plugins` folder), code blocks (`i-code`, Prism, code-example), Mermaid, KaTeX, lazy images (lozad), code-fence script run with the same isolation.
@@ -236,7 +237,7 @@ Estimated total remaining: about 14-17 weeks for one developer. Adopting Web Awe
 
 ## 8. Next steps
 
-1. Continue Phase 4 (see "Remaining" there): `iam-version` and `iam-subpage` decorators first, then toc parity, then the markdown-it plugins.
+1. Continue Phase 4 (see "Remaining" there): toc parity next, then the markdown-it plugins. Check the new version and sub page widgets in the browser.
 2. Finish the remaining Phase 1 items above (form input wrapper, remaining core services, a11y pass) when a page needs them.
 3. Run `npm run size` in std-ui to get the official size numbers after the `render()` change.
 4. Working agreement: do not commit or push without being asked; live tests never modify or delete existing docs (writes go to `iam-test`).

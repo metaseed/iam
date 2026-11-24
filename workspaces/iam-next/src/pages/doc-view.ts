@@ -46,7 +46,13 @@ export class DocView extends UIElement {
 		this.#undecorate?.();
 		this.#decoratedFor = value;
 		const tag = (name: string) => this.#store()?.tags.get(name); // read in the widget's template: reactive
-		this.#undecorate = decorate(article, { meta: value.meta, tag }, this.#decorators);
+		this.#undecorate = decorate(article, { meta: value.meta, tag, id: Number(this.docId), format: this.format, loadMetas: (ids) => this.#loadMetas(ids), docMeta: (id) => this.#store()?.metas.get(id) }, this.#decorators);
+	}
+
+	/** Reads the metas of the sub pages (store -> IndexedDB -> GitHub); the widget updates as they arrive. */
+	#loadMetas(ids: readonly number[]): void {
+		void getCaches().then(({ storeCache }) =>
+			Promise.all(ids.map(async (id) => { try { for await (const _ of storeCache.readMeta(id)); } catch (e) { console.warn('sub page meta', id, e); } })));
 	}
 
 	protected override disconnect(): void {
@@ -62,9 +68,7 @@ export class DocView extends UIElement {
 		const value = this.#rendered?.();
 		if (load.error() && !value) return t`<wa-callout variant="danger">${String(load.error())}</wa-callout>`;
 		if (!value) return t`<wa-spinner style="font-size: 2rem"></wa-spinner>`;
-		const subPages = value.meta.subPage ?? [];
 		return t`
-			<article>${unsafeHtml(value.html)}</article>
-			${subPages.length ? t`<nav><h2>Sub pages</h2><ul>${subPages.map((id) => t`<li><a href=${`/doc?id=${id}&f=${this.format ?? 'md'}`}>#${id}</a></li>`)}</ul></nav>` : null}`;
+			<article>${unsafeHtml(value.html)}</article>`;
 	}
 }
